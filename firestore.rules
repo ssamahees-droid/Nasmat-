@@ -1,0 +1,135 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // ZERO-TRUST AUTHORIZATION (Server-Authoritative Claims Only)
+    // ==========================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Role check relies strictly on cryptographically signed Firebase Custom Claims (Server-side)
+    // No frontend document field or client parameter can grant admin privileges
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'admin' ||
+        request.auth.token.admin == true
+      );
+    }
+
+    // Support specialist role check via Custom Claims
+    function isSpecialist() {
+      return isAuthenticated() && (
+        isAdmin() ||
+        request.auth.token.role == 'therapist' ||
+        request.auth.token.role == 'specialist'
+      );
+    }
+
+    // ==========================================
+    // USER PROFILES & PRIVATE SUBCOLLECTIONS
+    // ==========================================
+
+    match /users/{userId} {
+      // User profile document
+      allow read: if isOwner(userId) || isSpecialist();
+      
+      // User can create their profile only with base role 'user' or 'anonymous'
+      // No client can self-assign 'admin' or 'therapist'
+      allow create: if isAuthenticated() && request.auth.uid == userId && (
+        !('role' in request.resource.data) || 
+        request.resource.data.role in ['user', 'anonymous']
+      );
+
+      // User can update profile details, but CANNOT touch 'role' or any authorization keys
+      allow update: if isOwner(userId) && (
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isAdmin', 'admin', 'permissions'])
+      ) || isAdmin();
+
+      allow delete: if isAdmin();
+
+      // Private User Data: Favorites
+      match /favorites/{favoriteId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Private User Data: Personal Notes
+      match /notes/{noteId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Private User Data: Daily Check-ins
+      match /checkins/{checkinId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Private User Data: Wellness Habits
+      match /wellness_habits/{habitId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Private User Data: Assessments (PHQ-9, GAD-7)
+      match /assessments/{assessmentId} {
+        allow read, create: if isOwner(userId);
+        allow update, delete: if isOwner(userId) || isSpecialist();
+      }
+
+      // Private User Data: Journey Progress
+      match /journey/{journeyId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Private User Data: CBT Reframing Thoughts
+      match /thoughts/{thoughtId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Multi-Platform Sync Journal (Android Room <-> Web PWA)
+      match /sync_journal/{syncId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // ==========================================
+    // SUPPORT & EMERGENCY REQUESTS
+    // ==========================================
+
+    match /support_requests/{requestId} {
+      // Users can only read their own requests; specialists and admins can read all
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isSpecialist());
+      
+      // Any authenticated user (including anonymous) can submit a support request
+      allow create: if isAuthenticated() && 
+                    request.resource.data.userId == request.auth.uid &&
+                    request.resource.data.status == 'pending';
+      
+      // User can cancel their own pending request; specialists/admins can update status and response
+      allow update: if isSpecialist() || (
+        isAuthenticated() && 
+        resource.data.userId == request.auth.uid && 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']) &&
+        request.resource.data.status == 'cancelled'
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // ==========================================
+    // PUBLIC EDUCATIONAL & PSYCHOLOGICAL CONTENT
+    // ==========================================
+
+    match /content/{contentId} {
+      // Public read for published content; specialists/admins can read drafts
+      allow read: if resource.data.isPublished == true || isSpecialist();
+      // Only admins can write, update or delete master content
+      allow write: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,295 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account profile and role information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "User display or chosen name" },
+        "email": { "type": "string", "format": "email", "description": "User email address" },
+        "role": {
+          "type": "string",
+          "enum": ["user", "admin", "therapist", "anonymous"],
+          "description": "User access role"
+        },
+        "isAnonymous": { "type": "boolean", "description": "Whether user is guest/anonymous" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Account creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" },
+        "themePreference": {
+          "type": "string",
+          "enum": ["dark", "light", "system"],
+          "description": "Theme UI preference"
+        }
+      },
+      "required": ["uid", "role", "createdAt"]
+    },
+    "SupportRequest": {
+      "title": "SupportRequest",
+      "description": "Emergency or psychosocial support request submitted by a user",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique support request ID" },
+        "userId": { "type": "string", "description": "UID of the requesting user" },
+        "requesterName": { "type": "string", "description": "Name or pseudonym of requester" },
+        "contactMethod": {
+          "type": "string",
+          "enum": ["whatsapp", "phone", "email", "in_app"],
+          "description": "Preferred communication channel"
+        },
+        "contactValue": { "type": "string", "description": "Phone number, email, or contact handle" },
+        "urgency": {
+          "type": "string",
+          "enum": ["emergency", "high", "normal"],
+          "description": "Urgency level of the request"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "resolved", "cancelled"],
+          "description": "Current processing status"
+        },
+        "message": { "type": "string", "description": "Detailed message or notes from user" },
+        "adminNotes": { "type": "string", "description": "Internal notes for support specialists" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Submission timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last status update timestamp" }
+      },
+      "required": ["id", "userId", "urgency", "status", "createdAt"]
+    },
+    "AssessmentResult": {
+      "title": "AssessmentResult",
+      "description": "Psychological assessment evaluation result (e.g., PHQ-9 depression scale or GAD-7)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique evaluation entry ID" },
+        "userId": { "type": "string", "description": "UID of the user who completed the test" },
+        "assessmentType": {
+          "type": "string",
+          "enum": ["phq9", "gad7", "wellbeing", "discovery"],
+          "description": "Assessment scale identifier"
+        },
+        "totalScore": { "type": "number", "description": "Calculated score" },
+        "severityLevel": {
+          "type": "string",
+          "enum": ["minimal", "mild", "moderate", "moderately_severe", "severe"],
+          "description": "Interpreted severity category"
+        },
+        "answers": {
+          "type": "string",
+          "description": "JSON stringified answer map or values"
+        },
+        "recommendation": { "type": "string", "description": "Suggested self-help or clinical recommendation" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when assessment was submitted" }
+      },
+      "required": ["id", "userId", "assessmentType", "totalScore", "severityLevel", "createdAt"]
+    },
+    "UserFavorite": {
+      "title": "UserFavorite",
+      "description": "Bookmarked content, workshop, or story by user",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Favorite item ID" },
+        "userId": { "type": "string", "description": "UID of the user" },
+        "itemType": {
+          "type": "string",
+          "enum": ["story", "workshop", "article", "quote", "game"],
+          "description": "Content category"
+        },
+        "itemId": { "type": "string", "description": "Target content ID" },
+        "title": { "type": "string", "description": "Cached title for offline view" },
+        "savedAt": { "type": "string", "format": "date-time", "description": "Timestamp when bookmarked" }
+      },
+      "required": ["id", "userId", "itemType", "itemId", "savedAt"]
+    },
+    "JourneyStep": {
+      "title": "JourneyStep",
+      "description": "Progress tracking for therapeutic journey milestones and exercises",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Milestone identifier" },
+        "userId": { "type": "string", "description": "User UID" },
+        "stepIndex": { "type": "number", "description": "Sequence order index" },
+        "completed": { "type": "boolean", "description": "Completion state" },
+        "completedAt": { "type": "string", "format": "date-time", "description": "Completion timestamp" },
+        "notes": { "type": "string", "description": "Reflections or user journal notes" }
+      },
+      "required": ["id", "userId", "stepIndex", "completed"]
+    },
+    "ReframingThought": {
+      "title": "ReframingThought",
+      "description": "Cognitive reframing entry from Feker / CBT exercises",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique thought record ID" },
+        "userId": { "type": "string", "description": "User UID" },
+        "automaticThought": { "type": "string", "description": "Initial distressing thought" },
+        "distortionId": { "type": "string", "description": "Detected cognitive distortion" },
+        "challengeQuestion": { "type": "string", "description": "Socratic question applied" },
+        "alternativeThought": { "type": "string", "description": "Balanced rational replacement thought" },
+        "confidenceBefore": { "type": "number", "description": "Belief percentage in original thought (0-100)" },
+        "confidenceAfter": { "type": "number", "description": "Belief percentage after reframing (0-100)" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["id", "userId", "automaticThought", "alternativeThought", "createdAt"]
+    },
+    "ContentItem": {
+      "title": "ContentItem",
+      "description": "Shared educational and psychological content, workshops, and stories",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Content identifier" },
+        "title": { "type": "string", "description": "Title in Arabic" },
+        "category": {
+          "type": "string",
+          "enum": ["reading", "workshop", "game", "awareness", "emergency"],
+          "description": "Category for section placement"
+        },
+        "summary": { "type": "string", "description": "Short excerpt" },
+        "body": { "type": "string", "description": "Full content markdown or text" },
+        "isPublished": { "type": "boolean", "description": "Whether visible to public users" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last edit date" }
+      },
+      "required": ["id", "title", "category", "isPublished"]
+    },
+    "SyncJournal": {
+      "title": "SyncJournal",
+      "description": "Change journal entry for bidirectional sync between Android Room and Web/PWA",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Sync event log ID" },
+        "userId": { "type": "string", "description": "User UID" },
+        "deviceId": { "type": "string", "description": "Originating device or client instance ID" },
+        "platform": {
+          "type": "string",
+          "enum": ["android_room", "web_pwa"],
+          "description": "Client platform"
+        },
+        "entityType": { "type": "string", "description": "Table or collection modified" },
+        "entityId": { "type": "string", "description": "Record ID modified" },
+        "action": {
+          "type": "string",
+          "enum": ["insert", "update", "delete"],
+          "description": "Mutation type"
+        },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Client timestamp of change" },
+        "serverTimestamp": { "type": "string", "format": "date-time", "description": "Firestore server timestamp" }
+      },
+      "required": ["id", "userId", "deviceId", "platform", "entityType", "entityId", "action", "timestamp"]
+    },
+    "PersonalNote": {
+      "title": "PersonalNote",
+      "description": "Private journal reflections and notes created in user recovery journey",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique note ID" },
+        "userId": { "type": "string", "description": "User UID" },
+        "text": { "type": "string", "description": "Note content text" },
+        "date": { "type": "string", "format": "date", "description": "Date YYYY-MM-DD" },
+        "moodTag": {
+          "type": "string",
+          "enum": ["good", "fair", "confused", "not_good", "exhausted"],
+          "description": "Optional mood associated with note"
+        },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update ISO timestamp" },
+        "deleted": { "type": "boolean", "description": "Soft delete marker" }
+      },
+      "required": ["id", "userId", "text", "date"]
+    },
+    "DailyCheckin": {
+      "title": "DailyCheckin",
+      "description": "Daily emotional check-in recording mood, optional note, and version",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique check-in ID" },
+        "userId": { "type": "string", "description": "User UID" },
+        "moodValue": {
+          "type": "string",
+          "enum": ["good", "fair", "confused", "not_good", "exhausted"],
+          "description": "Emotional state value"
+        },
+        "date": { "type": "string", "format": "date", "description": "Check-in date YYYY-MM-DD" },
+        "optionalNote": { "type": "string", "description": "Optional user comment" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "version": { "type": "number", "description": "Monotonic revision counter" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update ISO timestamp" },
+        "deleted": { "type": "boolean", "description": "Soft delete marker" }
+      },
+      "required": ["id", "userId", "moodValue", "date"]
+    },
+    "WellnessHabit": {
+      "title": "WellnessHabit",
+      "description": "Daily or weekly psychological wellness habit with completed dates log",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique habit ID" },
+        "userId": { "type": "string", "description": "User UID" },
+        "title": { "type": "string", "description": "Habit description/name" },
+        "category": {
+          "type": "string",
+          "enum": ["physical", "mindfulness", "social", "sleep", "routine"],
+          "description": "Wellness domain"
+        },
+        "frequency": {
+          "type": "string",
+          "enum": ["daily", "weekly"],
+          "description": "Target cycle"
+        },
+        "targetDaysPerWeek": { "type": "number", "description": "Target days per week (1-7)" },
+        "completedDates": {
+          "type": "string",
+          "description": "JSON array of YYYY-MM-DD completion records"
+        },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "version": { "type": "number", "description": "Monotonic revision counter" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update ISO timestamp" },
+        "deleted": { "type": "boolean", "description": "Soft delete marker" }
+      },
+      "required": ["id", "userId", "title", "frequency"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document containing preferences and access role"
+    },
+    "/users/{userId}/favorites/{favoriteId}": {
+      "schema": "UserFavorite",
+      "description": "Private subcollection of bookmarked items per user"
+    },
+    "/users/{userId}/notes/{noteId}": {
+      "schema": "PersonalNote",
+      "description": "Private subcollection of personal journey reflections per user"
+    },
+    "/users/{userId}/checkins/{checkinId}": {
+      "schema": "DailyCheckin",
+      "description": "Private subcollection of daily emotional check-in records per user"
+    },
+    "/users/{userId}/wellness_habits/{habitId}": {
+      "schema": "WellnessHabit",
+      "description": "Private subcollection of wellness habits and completion logs per user"
+    },
+    "/users/{userId}/assessments/{assessmentId}": {
+      "schema": "AssessmentResult",
+      "description": "Private subcollection of PHQ-9 and psychological assessments per user"
+    },
+    "/users/{userId}/journey/{journeyId}": {
+      "schema": "JourneyStep",
+      "description": "Private subcollection tracking user therapeutic progress steps"
+    },
+    "/users/{userId}/thoughts/{thoughtId}": {
+      "schema": "ReframingThought",
+      "description": "Private subcollection of CBT cognitive reframing cards"
+    },
+    "/support_requests/{requestId}": {
+      "schema": "SupportRequest",
+      "description": "Support and emergency requests collection readable by owner and admins"
+    },
+    "/content/{contentId}": {
+      "schema": "ContentItem",
+      "description": "Published articles, stories, and workshops readable publicly by all users"
+    },
+    "/users/{userId}/sync_journal/{syncId}": {
+      "schema": "SyncJournal",
+      "description": "Incremental change log for conflict resolution between Android Room and Web/PWA"
+    }
+  }
+}

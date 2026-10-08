@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <rect width="120" height="120" rx="28" fill="#FBF9F4"/>
+  <!-- Breeze curves -->
+  <path d="M 52 30 C 58 26 64 26 68 30 C 65 31 60 30 55 33 Z" fill="#2E5B44"/>
+  <path d="M 48 35 C 56 31 64 31 70 36 C 66 37 60 36 53 39 Z" fill="#2E5B44"/>
+  <!-- Stylized leaf as the dot of noon -->
+  <path d="M 68 28 C 84 28 88 44 88 44 C 88 44 72 44 68 28 Z" fill="#355C4A"/>
+  <path d="M 68 28 Q 78 36 88 44" stroke="#FBF9F4" stroke-width="1.5" fill="none"/>
+  <!-- Calligraphy text "نسمة حياة" represented in harmonious geometric Arabic curves -->
+  <text x="60" y="68" font-family="'Tajawal', 'Noto Sans Arabic', 'Cairo', sans-serif" font-weight="900" font-size="28" fill="#264634" text-anchor="middle" direction="rtl">نسمة حياة</text>
+  <!-- Gold divider -->
+  <line x1="28" y1="78" x2="92" y2="78" stroke="#BCA371" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="60" cy="78" r="2.5" fill="#BCA371"/>
+  <!-- Subtitle -->
+  <text x="60" y="93" font-family="'Tajawal', 'Noto Sans Arabic', 'Cairo', sans-serif" font-weight="700" font-size="10" fill="#967B4E" text-anchor="middle" direction="rtl" letter-spacing="1">للصحة النفسية</text>
+  <!-- Infinity symbol -->
+  <path d="M 54 104 C 50 100 46 100 46 104 C 46 108 50 108 54 104 C 58 100 62 100 66 104 C 70 108 74 108 74 104 C 74 100 70 100 66 104 Z" fill="none" stroke="#BCA371" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

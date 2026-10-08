@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0c0c0e;
+  --ink: #e4e4e4;
+  --accent: #c4fb6d;
+  --surface: #141416;
+  --border: rgba(255, 255, 255, 0.1);
+  --ink-dim: rgba(228, 228, 228, 0.5);
+}
+
+@layer base {
+  html {
+    font-family: 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: var(--ink);
+    background-color: var(--bg);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-color: var(--bg);
+    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+    background-size: 32px 32px;
+    color: var(--ink);
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: #000;
+  }
+}
+
+/* Variation 6 Typography & Components */
+.font-syne {
+  font-family: 'Syne', 'Tajawal', sans-serif;
+}
+
+.font-geist {
+  font-family: 'Geist Mono', monospace;
+}
+
+.meta-label {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Bordered Utility Cell */
+.cell {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.cell:hover {
+  border-color: rgba(196, 251, 109, 0.3);
+}
+
+/* Tech Buttons */
+.btn-tech {
+  font-family: 'Geist Mono', monospace;
+  padding: 0.75rem 1.75rem;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-tech:hover {
+  background: rgba(196, 251, 109, 0.1);
+}
+
+.btn-tech-fill {
+  background: var(--accent);
+  color: #000;
+  border: 1px solid var(--accent);
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-tech-fill:hover {
+  background: #d4fc88;
+  box-shadow: 0 0 20px rgba(196, 251, 109, 0.4);
+}
+
+.hero-banner-tech {
+  border: 2px solid var(--accent);
+  background: rgba(196, 251, 109, 0.03);
+  position: relative;
+}
+
+.data-box-tech {
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.big-card-tech {
+  border: 1px solid var(--border);
+  background: linear-gradient(to right, #1a1a1c, #141416);
+}
+
+/* Custom cyber scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0c0c0e;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Calming breathing pulsing animation */
+@keyframes breathePulse {
+  0%, 100% {
+    transform: scale(0.93);
+    opacity: 0.88;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+.animate-breathe {
+  animation: breathePulse 6s ease-in-out infinite;
+}

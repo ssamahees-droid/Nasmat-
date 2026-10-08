@@ -1,0 +1,6 @@
+{
+  "name": "نسمة حياة | Nesma Hayat",
+  "description": "نسمة حياة — منصة الألعاب النفسية التفاعلية؛ استكشاف الذات، دائرة السيطرة، تحويل الصوت الداخلي، وتنظيم الجهاز العصبي حركياً.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

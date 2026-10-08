@@ -1,0 +1,23 @@
+{
+  "name": "نسمة حياة",
+  "short_name": "نسمة حياة",
+  "description": "منصة عربية تفاعلية للصحة النفسية والاستكشاف الذاتي الآمن، وتمارين الاسترخاء والتهدئة، ومتابعة الرحلة الشخصية.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c0c0e",
+  "theme_color": "#355C4A",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
