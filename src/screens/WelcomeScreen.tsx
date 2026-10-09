@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Leaf, Info, ShieldCheck, HeartHandshake, ArrowLeft, X } from 'lucide-react';
+import { Leaf, Info, ShieldCheck, HeartHandshake, ArrowLeft, X, Sparkles, Heart } from 'lucide-react';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -10,128 +10,149 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
   const [showAboutModal, setShowAboutModal] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0c0c0e] text-[#e4e4e4] flex flex-col justify-between p-4 sm:p-8 font-sans">
-      {/* Background Graphic Accent */}
-      <div className="max-w-md mx-auto w-full my-auto flex flex-col items-center text-center py-8">
+    <div className="min-h-screen bg-gradient-to-b from-[#0C120F] via-[#121A16] to-[#0A0E0C] text-[#EDE8DF] flex flex-col justify-between p-4 sm:p-8 font-tajawal antialiased text-right selection:bg-emerald-500 selection:text-black">
+      
+      {/* Top subtle branding bar */}
+      <div className="max-w-md mx-auto w-full flex items-center justify-between pt-2 text-xs text-stone-400">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="font-semibold text-stone-300">مبادرة نسمة حياة</span>
+        </div>
+        <button
+          onClick={() => setShowAboutModal(true)}
+          className="text-stone-400 hover:text-emerald-300 transition-colors flex items-center gap-1"
+        >
+          <Info className="w-3.5 h-3.5" />
+          <span>عن المبادرة</span>
+        </button>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="max-w-md mx-auto w-full my-auto flex flex-col items-center text-center py-6 sm:py-10 space-y-6">
         
-        {/* Visual Hero Banner */}
-        <div className="w-full relative mb-6 border-2 border-[#c4fb6d] bg-[#141416] overflow-hidden aspect-16/9">
-          <img
-            src="/src/assets/images/nesmat_hero_nature_1791037451436.jpg"
-            alt="طبيعة هادئة وسكينة في نسمة حياة"
-            className="w-full h-full object-cover opacity-80"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0e] via-transparent to-transparent flex items-end justify-center p-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-black/80 border border-[#c4fb6d] text-[11px] font-geist text-[#c4fb6d]">
-              <span>[01] SYSTEM READY // مساحة عربية آمنة</span>
-            </div>
+        {/* Official Logo with Gentle Serene Glow */}
+        <div className="relative group">
+          <div className="absolute -inset-1 rounded-3xl bg-emerald-500/20 blur-xl transition-all group-hover:bg-emerald-500/30" />
+          <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl overflow-hidden border-2 border-emerald-500/30 bg-[#16211C] p-1.5 shadow-2xl">
+            <img 
+              src="/logo.jpg" 
+              alt="شعار مبادرة نسمة حياة الرسمي" 
+              className="w-full h-full object-cover rounded-2xl shadow-inner"
+            />
           </div>
         </div>
 
-        {/* Title & Taglines */}
+        {/* Hero Title & Humanity Greeting */}
         <div className="space-y-3">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden border border-emerald-500/40 bg-white/5 p-1 shadow-md">
-            <img src="/logo.jpg" alt="شعار مبادرة نسمة حياة" className="w-full h-full object-cover rounded-xl" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>مساحة عربية دافئة وآمنة تفهمك</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold font-syne text-white tracking-tight uppercase">
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
             نسمة حياة
           </h1>
 
-          <p className="text-sm font-geist text-[#c4fb6d]">
-            // مساحة آمنة تفهمك وتساندك
+          <p className="text-sm sm:text-base text-stone-300 leading-relaxed max-w-sm mx-auto font-medium">
+            مساحتك الخاصة للاسترخاء، وفهم مشاعرك، وتخفيف أثقال التفكير دون أحكام أو استعجال.
           </p>
+        </div>
 
-          {/* Core Quote */}
-          <div className="p-3.5 bg-[#141416] border border-white/10 max-w-sm mx-auto">
-            <p className="text-xs italic text-[#e4e4e4]/80 leading-relaxed font-sans">
-              «كثيرون يعيشون الحياة... ولكن قليلون يستمتعون بها»
-            </p>
-          </div>
+        {/* Core Reassuring Quote Card */}
+        <div className="p-4 bg-[#141E19]/90 border border-emerald-500/20 rounded-2xl max-w-sm mx-auto shadow-lg">
+          <p className="text-xs sm:text-sm italic text-emerald-100/90 leading-relaxed">
+            «كثيرون يعيشون الحياة... ولكن قليلون يستمتعون بها»
+          </p>
+          <span className="block text-[11px] text-stone-400 mt-1">
+            خذ وقتاً لنفسك، فطلب المساعدة والاعتناء بروحك ليس هزيمة بل بداية تعافٍ.
+          </span>
         </div>
 
         {/* Trust Points */}
-        <div className="mt-6 grid grid-cols-2 gap-2.5 w-full max-w-sm text-right">
-          <div className="p-3 bg-[#141416] border border-white/10 flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[#c4fb6d] shrink-0" />
-            <span className="text-xs text-[#e4e4e4]/80 font-medium">خصوصية وسرية تامة</span>
+        <div className="grid grid-cols-2 gap-2.5 w-full max-w-sm text-right text-xs">
+          <div className="p-3 bg-[#131C18] border border-white/10 rounded-xl flex items-center gap-2.5 shadow-xs">
+            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span className="text-stone-300 font-medium">خصوصية وسرية تامة</span>
           </div>
-          <div className="p-3 bg-[#141416] border border-white/10 flex items-center gap-2">
-            <HeartHandshake className="w-4 h-4 text-[#c4fb6d] shrink-0" />
-            <span className="text-xs text-[#e4e4e4]/80 font-medium">غير تشخيصي ومساند</span>
+          <div className="p-3 bg-[#131C18] border border-white/10 rounded-xl flex items-center gap-2.5 shadow-xs">
+            <Heart className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span className="text-stone-300 font-medium">مساندة بلا أحكام</span>
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="mt-8 w-full max-w-sm space-y-2.5">
+        {/* Action Button: ابدأ رحلتك */}
+        <div className="w-full max-w-sm space-y-3 pt-2">
           <button
             onClick={onStart}
-            className="btn-tech-fill w-full py-3.5 text-sm"
+            className="w-full py-4 px-6 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-sm sm:text-base rounded-2xl transition-all shadow-lg hover:shadow-emerald-500/20 active:scale-98 flex items-center justify-center gap-2 group cursor-pointer"
           >
             <span>ابدأ رحلتك</span>
-            <ArrowLeft className="w-4 h-4 mr-1" />
+            <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
           </button>
 
           <button
             onClick={() => setShowAboutModal(true)}
-            className="btn-tech w-full py-2.5 text-xs"
+            className="w-full py-2.5 px-4 bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white border border-white/10 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
           >
-            <Info className="w-3.5 h-3.5" />
-            <span>عن نسمة حياة</span>
+            <Info className="w-3.5 h-3.5 text-emerald-400" />
+            <span>تعرف أكثر على المبادرة</span>
           </button>
         </div>
+
       </div>
 
       {/* Footer Disclaimer */}
-      <footer className="max-w-md mx-auto w-full text-center pt-3 text-[10px] font-geist text-[#e4e4e4]/50 border-t border-white/10">
-        تطبيق نسمة حياة للتوعية بالصحة النفسية والاستكشاف الذاتي، وليس بديلاً عن التشخيص الطبي.
+      <footer className="max-w-md mx-auto w-full text-center pt-3 text-[11px] text-stone-500 border-t border-white/10">
+        مبادرة «نسمة حياة» للتوعية بالصحة النفسية والاستكشاف الذاتي، وليست بديلاً عن الاستشارة الطبية المتخصصة.
       </footer>
 
       {/* About Modal */}
       {showAboutModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-lg bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
-              <div className="flex items-center gap-2">
-                <Leaf className="w-5 h-5 text-[#355C4A]" />
-                <h3 className="font-bold text-lg text-[#26332D]">عن نسمة حياة</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in text-right">
+          <div className="w-full max-w-lg bg-[#141E19] border border-emerald-500/30 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-stone-200">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2.5">
+                <Leaf className="w-5 h-5 text-emerald-400" />
+                <h3 className="font-bold text-lg text-white font-tajawal">عن مبادرة نسمة حياة</h3>
               </div>
               <button 
                 onClick={() => setShowAboutModal(false)}
-                className="p-1.5 text-stone-500 hover:text-stone-800 rounded-full hover:bg-stone-200/50"
+                className="p-1.5 text-stone-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+                aria-label="إغلاق"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-3 text-sm text-[#35453E] leading-relaxed">
+            <div className="space-y-3.5 text-xs sm:text-sm text-stone-300 leading-relaxed">
               <p>
-                <strong>«نسمة حياة»</strong> تطبيق عربي للتوعية بالصحة النفسية، ومساعدة المستخدم على فهم نفسه ومشاعره، والتعرف على العلامات التي تستحق الانتباه، واستخدام أدوات بسيطة للاسترخاء والتأمل ومتابعة رحلته الشخصية.
+                <strong>«نسمة حياة»</strong> مبادرة عربية تسعى لنشر الوعي الصحي النفسي وتقديم مساحة هادئة للاسترخاء والفهم الذاتي بعيداً عن التعقيد والوصمة المجتمعية.
               </p>
               
-              <div className="p-3.5 bg-amber-50/70 border border-amber-200/60 rounded-xl space-y-1.5 text-xs text-amber-950">
-                <div className="font-bold">المبدأ الأساسي:</div>
+              <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/25 rounded-xl space-y-1 text-xs text-emerald-200">
+                <div className="font-bold text-white">المبدأ الأساسي:</div>
                 <p>
-                  التطبيق ليس بديلاً عن الطبيب أو المعالج النفسي، ولا يقوم بالتشخيص الطبي أو وصف الأدوية. هدفنا الأساسي: <strong>التوعية + الاستكشاف + الدعم + التوجيه إلى الخطوة المناسبة</strong>.
+                  المنصة مساحة توعوية ومساندة ذاتية آمنة، ولا تقدم تشخيصاً طبياً أو بديلاً عن الفحص السريري مع الطبيب النفسي المعتمد.
                 </p>
               </div>
 
-              <div className="space-y-2 text-xs text-[#52645B]">
-                <div className="font-bold text-[#26332D] text-sm">أهدافنا معكم:</div>
-                <ul className="list-disc list-inside space-y-1 pr-1">
-                  <li>الوصول إلى محتوى نفسي توعوي موثوق ومراجع.</li>
-                  <li>تمارين تنفس واسترخاء خفيفة لتخفيف التوتر.</li>
-                  <li>تسجيل الملاحظات ومتابعة الحالة اليومية دون أحكام أو لوم.</li>
-                  <li>تسهيل طلب الدعم والتوجيه عند توفر الخدمة.</li>
+              <div className="space-y-2 text-xs text-stone-300">
+                <div className="font-bold text-white text-sm">ماذا نقدم لك في نسمة حياة؟</div>
+                <ul className="list-disc list-inside space-y-1.5 pr-1 text-stone-400">
+                  <li>أدوات استكشاف الذات وبوصلة المشاعر وفحص الطاقة.</li>
+                  <li>ألعاب تفاعلية لتفكيك التفكير السلبي وممارسة اليقظة الذهنية.</li>
+                  <li>تمارين تنفس حركية لتنظيم الجهاز العصبي وتهدئة الهلع.</li>
+                  <li>كتيب مبسط للصحة النفسية يضم 12 فصلاً استرشادياً.</li>
+                  <li>خطط مساندة وشنطة إسعاف نفسي لأوقات الضيق والاحتراق.</li>
+                  <li>إمكانية طلب الدعم والتواصل بسرية تامة.</li>
                 </ul>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-[#E8DDCC]">
+            <div className="pt-3 border-t border-white/10">
               <button
                 onClick={() => setShowAboutModal(false)}
-                className="w-full py-2.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl hover:bg-[#264235] transition-colors"
+                className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold rounded-xl transition-colors cursor-pointer"
               >
                 فهمت، شكراً لكم
               </button>
