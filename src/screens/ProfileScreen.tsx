@@ -61,7 +61,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `nesmat_alhayat_data_${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `nesma_hayat_data_${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
     setExportNotice(true);
@@ -550,7 +550,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
             <div className="space-y-3 text-xs text-[#35453E] leading-relaxed">
               <div className="p-3 bg-white rounded-xl border border-[#E8DDCC] space-y-1">
-                <div className="font-bold text-[#26332D]">هل يقدم تطبيق نسمة الحياة تشخيصاً طبياً؟</div>
+                <div className="font-bold text-[#26332D]">هل يقدم تطبيق نسمة حياة تشخيصاً طبياً؟</div>
                 <p className="text-[#52645B]">كلا، التطبيق للتوعية والاستكشاف الذاتي الآمن فقط، وليس بديلاً عن الطبيب النفسي أو المرشد المعتمد.</p>
               </div>
 

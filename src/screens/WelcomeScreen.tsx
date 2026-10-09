@@ -31,8 +31,8 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
 
         {/* Title & Taglines */}
         <div className="space-y-3">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden border border-[#c4fb6d]/40 bg-white/5 p-1 shadow-md">
-            <img src="/favicon.svg" alt="شعار نسمة حياة" className="w-full h-full object-contain" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden border border-emerald-500/40 bg-white/5 p-1 shadow-md">
+            <img src="/logo.jpg" alt="شعار مبادرة نسمة حياة" className="w-full h-full object-cover rounded-xl" />
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold font-syne text-white tracking-tight uppercase">

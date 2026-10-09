@@ -1,5 +1,5 @@
 /**
- * Firebase Client Setup & Offline-First Persistence for «نسمة الحياة»
+ * Firebase Client Setup & Offline-First Persistence for «نسمة حياة»
  * 
  * Configured automatically with the provisioned AI Studio Firebase project.
  * Uses Firestore with persistent IndexedDB multi-tab cache for seamless offline support.

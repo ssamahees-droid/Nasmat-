@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Compass, Sparkles, User, LayoutDashboard, BookOpen, Brain } from 'lucide-react';
+import { Home, Compass, Gamepad2, Sparkles, MessageCircle, LayoutDashboard } from 'lucide-react';
 import { UserRole } from '../types';
 
 interface BottomNavProps {
@@ -13,124 +13,124 @@ interface BottomNavProps {
 export const BottomNav: React.FC<BottomNavProps> = ({ 
   currentTab, 
   onNavigate, 
-  userRole,
-  onOpenGwayaHekaya,
-  onOpenFeker
+  userRole
 }) => {
   const isAdmin = userRole !== 'user';
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#141416]/95 backdrop-blur-md border-t border-white/10 pb-safe shadow-lg">
-      <div className={`max-w-xl mx-auto grid ${isAdmin ? 'grid-cols-7' : 'grid-cols-6'} items-center h-16 px-1.5`}>
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#121815]/95 backdrop-blur-md border-t border-white/10 pb-safe shadow-lg">
+      <div className={`max-w-md mx-auto grid ${isAdmin ? 'grid-cols-6' : 'grid-cols-5'} items-center h-16 px-1`}>
+        
         {/* Tab 1: Home */}
         <button
-          onClick={() => onNavigate('home')}
+          onClick={() => {
+            onNavigate('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
           className={`flex flex-col items-center justify-center min-h-[44px] py-1 transition-all ${
-            currentTab === 'home' ? 'text-[#c4fb6d] font-bold scale-105' : 'text-[#e4e4e4]/60 hover:text-[#c4fb6d]'
+            currentTab === 'home' ? 'text-emerald-300 font-bold' : 'text-stone-400 hover:text-stone-200'
           }`}
           aria-label="الرئيسية"
         >
           <Home className="w-5 h-5" />
-          <span className="text-[10px] font-geist tracking-tight mt-1">الرئيسية</span>
+          <span className="text-[10px] font-tajawal mt-1">الرئيسية</span>
           {currentTab === 'home' && (
-            <span className="w-1.5 h-1.5 rounded-full bg-[#c4fb6d] mt-0.5" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-0.5" />
           )}
         </button>
 
-        {/* Tab 2: FEKER (App 2) */}
+        {/* Tab 2: Self-Discovery */}
         <button
-          onClick={() => onOpenFeker ? onOpenFeker() : onNavigate('feker')}
+          onClick={() => {
+            onNavigate('self-discovery');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
           className={`flex flex-col items-center justify-center min-h-[44px] py-1 transition-all ${
-            currentTab === 'feker' ? 'text-[#c4fb6d] font-bold scale-105' : 'text-[#c4fb6d]/80 hover:text-[#c4fb6d]'
+            currentTab === 'self-discovery' || currentTab === 'assessment' ? 'text-emerald-300 font-bold' : 'text-stone-400 hover:text-stone-200'
           }`}
-          aria-label="تطبيق فكّر"
-          title="فتح تطبيق فكّر لتفكيك الأفكار والمرونة العقلية"
-        >
-          <div className="w-7 h-7 rounded-full bg-[#c4fb6d]/15 border border-[#c4fb6d] flex items-center justify-center shadow-xs">
-            <Brain className="w-4 h-4 text-[#c4fb6d]" />
-          </div>
-          <span className="text-[10px] font-geist font-bold text-[#c4fb6d] tracking-tight mt-0.5">تطبيق فكّر</span>
-          {currentTab === 'feker' && (
-            <span className="w-1.5 h-1.5 rounded-full bg-[#c4fb6d] mt-0.5" />
-          )}
-        </button>
-
-        {/* Tab 3: Explore */}
-        <button
-          onClick={() => onNavigate('explore')}
-          className={`flex flex-col items-center justify-center min-h-[44px] py-1 transition-all ${
-            currentTab === 'explore' || currentTab === 'content-detail' ? 'text-[#c4fb6d] font-bold scale-105' : 'text-[#e4e4e4]/60 hover:text-[#c4fb6d]'
-          }`}
-          aria-label="اكتشف"
+          aria-label="افهم نفسك"
         >
           <Compass className="w-5 h-5" />
-          <span className="text-[10px] font-geist tracking-tight mt-1">اكتشف</span>
-          {(currentTab === 'explore' || currentTab === 'content-detail') && (
-            <span className="w-1.5 h-1.5 rounded-full bg-[#c4fb6d] mt-0.5" />
+          <span className="text-[10px] font-tajawal mt-1">افهم نفسك</span>
+          {(currentTab === 'self-discovery' || currentTab === 'assessment') && (
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-0.5" />
           )}
         </button>
 
-        {/* Tab 4: GWAYA HEKAYA (App 3) */}
-        {onOpenGwayaHekaya && (
-          <button
-            onClick={onOpenGwayaHekaya}
-            className="flex flex-col items-center justify-center min-h-[44px] py-1 transition-all text-[#e4e4e4]/70 hover:text-[#c4fb6d] hover:scale-105"
-            aria-label="جوايا حكاية"
-            title="فتح تطبيق جوايا حكاية التفاعلي"
-          >
-            <div className="w-7 h-7 rounded-full bg-white/5 border border-white/20 hover:border-[#c4fb6d] flex items-center justify-center">
-              <BookOpen className="w-4 h-4 text-emerald-300" />
-            </div>
-            <span className="text-[10px] font-geist font-medium text-emerald-300 tracking-tight mt-0.5">جوايا حكاية</span>
-          </button>
-        )}
-
-        {/* Tab 5: Journey */}
+        {/* Tab 3: Games & Rest */}
         <button
-          onClick={() => onNavigate('journey')}
+          onClick={() => {
+            onNavigate('games');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
           className={`flex flex-col items-center justify-center min-h-[44px] py-1 transition-all ${
-            currentTab === 'journey' ? 'text-[#c4fb6d] font-bold scale-105' : 'text-[#e4e4e4]/60 hover:text-[#c4fb6d]'
+            currentTab === 'games' || currentTab === 'feker' ? 'text-emerald-300 font-bold' : 'text-stone-400 hover:text-stone-200'
+          }`}
+          aria-label="استراحة وألعاب"
+        >
+          <Gamepad2 className="w-5 h-5" />
+          <span className="text-[10px] font-tajawal mt-1">خذ استراحة</span>
+          {(currentTab === 'games' || currentTab === 'feker') && (
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-0.5" />
+          )}
+        </button>
+
+        {/* Tab 4: Journey */}
+        <button
+          onClick={() => {
+            onNavigate('journey');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center justify-center min-h-[44px] py-1 transition-all ${
+            currentTab === 'journey' ? 'text-emerald-300 font-bold' : 'text-stone-400 hover:text-stone-200'
           }`}
           aria-label="رحلتي"
         >
           <Sparkles className="w-5 h-5" />
-          <span className="text-[10px] font-geist tracking-tight mt-1">رحلتي</span>
+          <span className="text-[10px] font-tajawal mt-1">رحلتي</span>
           {currentTab === 'journey' && (
-            <span className="w-1.5 h-1.5 rounded-full bg-[#c4fb6d] mt-0.5" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-0.5" />
           )}
         </button>
 
-        {/* Tab 6: Profile */}
+        {/* Tab 5: Support */}
         <button
-          onClick={() => onNavigate('profile')}
+          onClick={() => {
+            onNavigate('support');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
           className={`flex flex-col items-center justify-center min-h-[44px] py-1 transition-all ${
-            currentTab === 'profile' ? 'text-[#c4fb6d] font-bold scale-105' : 'text-[#e4e4e4]/60 hover:text-[#c4fb6d]'
+            currentTab === 'support' ? 'text-emerald-300 font-bold' : 'text-stone-400 hover:text-stone-200'
           }`}
-          aria-label="حسابي"
+          aria-label="اطلب الدعم"
         >
-          <User className="w-5 h-5" />
-          <span className="text-[10px] font-geist tracking-tight mt-1">حسابي</span>
-          {currentTab === 'profile' && (
-            <span className="w-1.5 h-1.5 rounded-full bg-[#c4fb6d] mt-0.5" />
+          <MessageCircle className="w-5 h-5" />
+          <span className="text-[10px] font-tajawal mt-1">اطلب الدعم</span>
+          {currentTab === 'support' && (
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-0.5" />
           )}
         </button>
 
-        {/* Tab 7: Admin (Conditional) */}
+        {/* Tab 6: Admin (if privileged) */}
         {isAdmin && (
           <button
-            onClick={() => onNavigate('admin')}
+            onClick={() => {
+              onNavigate('admin');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             className={`flex flex-col items-center justify-center min-h-[44px] py-1 transition-all ${
-              currentTab === 'admin' ? 'text-amber-400 font-bold scale-105' : 'text-[#e4e4e4]/60 hover:text-amber-400'
+              currentTab === 'admin' ? 'text-amber-400 font-bold' : 'text-stone-400 hover:text-amber-300'
             }`}
             aria-label="الإدارة"
           >
             <LayoutDashboard className="w-5 h-5" />
-            <span className="text-[10px] font-geist tracking-tight mt-1">الإدارة</span>
+            <span className="text-[10px] font-tajawal mt-1">الإدارة</span>
             {currentTab === 'admin' && (
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-0.5" />
             )}
           </button>
         )}
+
       </div>
     </nav>
   );

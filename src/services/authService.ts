@@ -1,5 +1,5 @@
 /**
- * Authentication Service for «نسمة الحياة»
+ * Authentication Service for «نسمة حياة»
  * 
  * Implements Anonymous-First Authentication and Seamless Account Linking
  * with Zero-Trust Security.

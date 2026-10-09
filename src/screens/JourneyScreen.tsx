@@ -97,7 +97,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
         </p>
       </div>
 
-      {/* خطة نسمة الحياة الخاصة بي (Pages 13 & 14 from PDF) */}
+      {/* خطة نسمة حياة الخاصة بي (Pages 13 & 14 from PDF) */}
       {onOpenPersonalPlan && (
         <section 
           onClick={onOpenPersonalPlan}
@@ -110,7 +110,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
             <div>
               <div className="flex items-center gap-1.5">
                 <h3 className="font-extrabold text-sm text-[#26332D]">
-                  خطة نسمة الحياة الخاصة بي
+                  خطة نسمة حياة الخاصة بي
                 </h3>
                 {hasSavedPlan && (
                   <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">

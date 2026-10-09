@@ -55,6 +55,11 @@ import { syncService } from './services/syncService';
 import { WelcomeScreen } from './screens/WelcomeScreen';
 import { OnboardingScreen } from './screens/OnboardingScreen';
 import { HomeScreen } from './screens/HomeScreen';
+import { StartScreen } from './screens/StartScreen';
+import { SelfDiscoveryScreen } from './screens/SelfDiscoveryScreen';
+import { GamesScreen } from './screens/GamesScreen';
+import { PracticeScreen } from './screens/PracticeScreen';
+import { RescueScreen } from './screens/RescueScreen';
 import { ExploreScreen } from './screens/ExploreScreen';
 import { ContentDetailScreen } from './screens/ContentDetailScreen';
 import { AssessmentScreen } from './screens/AssessmentScreen';
@@ -283,11 +288,90 @@ export default function App() {
           />
         )}
 
+        {currentTab === 'start' && (
+          <StartScreen
+            onNavigate={(tab) => {
+              setCurrentTab(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenBooklet={() => setIsBookletOpen(true)}
+            onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
+          />
+        )}
+
+        {currentTab === 'self-discovery' && (
+          <SelfDiscoveryScreen
+            onNavigate={(tab) => {
+              setCurrentTab(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenAssessment={() => setCurrentTab('assessment')}
+            onOpenDiscoveryQuiz={() => setIsDiscoveryQuizOpen(true)}
+            onOpenAnaDelwaqti={() => setIsAnaDelwaqtiOpen(true)}
+            onOpenEmotionCompass={() => setIsEmotionCompassOpen(true)}
+            onOpenBatteryCheck={() => setIsBatteryCheckOpen(true)}
+            onOpenTranslateFeelings={() => setIsTranslateFeelingsOpen(true)}
+          />
+        )}
+
+        {currentTab === 'games' && (
+          <GamesScreen
+            onNavigate={(tab) => {
+              setCurrentTab(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenGwayaHekaya={() => setIsGwayaHekayaOpen(true)}
+            onOpenFeker={() => setIsFekerModalOpen(true)}
+            onOpenFactGame={() => setIsFactGameOpen(true)}
+            onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
+            onOpenSoundscapeStudio={() => setIsSoundscapeOpen(true)}
+            onOpenThoughtRelease={() => setIsThoughtReleaseOpen(true)}
+            onOpenFunAndGames={(tab = 'jokes') => setFunAndGamesState({ isOpen: true, tab })}
+            onOpenNesmaLaughs={() => setIsNesmaLaughsOpen(true)}
+          />
+        )}
+
+        {currentTab === 'practice' && (
+          <PracticeScreen
+            onNavigate={(tab) => {
+              setCurrentTab(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenBreathe={() => setCurrentTab('breathe')}
+            onOpenMindfulnessStudio={() => setIsMindfulnessStudioOpen(true)}
+            onOpenThoughtJournal={() => setIsThoughtJournalOpen(true)}
+            onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
+            onOpenEnergyBudget={() => setIsEnergyBudgetOpen(true)}
+            onOpenBoundaryBuilder={() => setIsBoundaryBuilderOpen(true)}
+          />
+        )}
+
+        {currentTab === 'rescue' && (
+          <RescueScreen
+            onNavigate={(tab) => {
+              setCurrentTab(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenRescueKit={handleOpenRescueKitWithPlan}
+            onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
+            onOpenSpecialistGuide={() => setIsSpecialistGuideOpen(true)}
+            onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
+          />
+        )}
+
         {currentTab === 'explore' && (
           <ExploreScreen
             onOpenContent={handleOpenContent}
             onOpenAudioModal={handleOpenAudio}
             onOpenBooklet={() => setIsBookletOpen(true)}
+            onNavigate={(tab) => {
+              setCurrentTab(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenWorkshopsHub={() => setIsWorkshopsHubOpen(true)}
+            onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
+            onOpenConflictWithoutWar={() => setIsConflictWithoutWarOpen(true)}
+            onOpenHealingJourney={() => setIsHealingJourneyOpen(true)}
           />
         )}
 

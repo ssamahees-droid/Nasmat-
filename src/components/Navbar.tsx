@@ -1,5 +1,22 @@
 import React, { useState } from 'react';
-import { Leaf, Bell, Shield, UserCheck, X, Check, Moon, Sun } from 'lucide-react';
+import { 
+  Bell, 
+  UserCheck, 
+  X, 
+  Check, 
+  Menu, 
+  PhoneCall, 
+  Compass, 
+  Moon, 
+  Sun,
+  Gamepad2,
+  BookOpen,
+  Activity,
+  LifeBuoy,
+  MessageCircle,
+  Home,
+  Sparkles
+} from 'lucide-react';
 import { UserRole } from '../types';
 import { storage } from '../services/storage';
 
@@ -27,6 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleTheme
 }) => {
   const [showRoleMenu, setShowRoleMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const isDark = theme === 'dark';
 
   const rolesList: { id: UserRole; title: string; desc: string }[] = [
@@ -38,153 +56,105 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'specialist', title: 'Reviewer / Specialist', desc: 'مراجعة المحتوى النفسي' }
   ];
 
+  const navLinks = [
+    { id: 'home', label: 'الرئيسية' },
+    { id: 'start', label: 'ابدأ من هنا' },
+    { id: 'self-discovery', label: 'افهم نفسك' },
+    { id: 'games', label: 'خذ استراحة' },
+    { id: 'explore', label: 'تعلّم وطبّق' },
+    { id: 'practice', label: 'مارس المهارات' },
+    { id: 'rescue', label: 'خطط المساندة' },
+    { id: 'support', label: 'اطلب الدعم' },
+  ];
+
+  const handleMobileNav = (tabId: string) => {
+    onNavigate(tabId);
+    setShowMobileMenu(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <header className="sticky top-0 z-40 bg-[#141416] border-b border-white/10 text-[#e4e4e4] transition-all">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-        {/* Zone 1: Brand Logo & Title */}
+    <header className="sticky top-0 z-40 bg-[#121815]/95 backdrop-blur-md border-b border-white/10 text-stone-200 transition-all">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+        
+        {/* Zone 1: Official Brand Logo & Name */}
         <button
           onClick={() => onNavigate('home')}
-          className="flex items-center gap-3 text-right group focus:outline-hidden"
-          title="نسمة حياة"
+          className="flex items-center gap-3 text-right group focus:outline-hidden shrink-0"
+          title="نسمة حياة — الصفحة الرئيسية"
         >
           <img
-            src="/favicon.svg"
-            alt="شعار نسمة حياة"
-            className="w-9 h-9 rounded-xl object-contain shadow-xs group-hover:scale-105 transition-transform"
+            src="/logo.jpg"
+            alt="شعار مبادرة نسمة حياة"
+            className="w-10 h-10 rounded-2xl object-cover shadow-sm border border-emerald-500/30 group-hover:scale-105 transition-transform"
           />
           <div className="flex flex-col text-right">
-            <span className="font-tajawal text-base sm:text-lg font-black tracking-tight text-[#c4fb6d] leading-tight">
+            <span className="font-tajawal text-base sm:text-lg font-black tracking-tight text-white group-hover:text-emerald-300 transition-colors leading-tight">
               نسمة حياة
             </span>
-            <span className="text-[10px] text-[#e4e4e4]/60 font-medium -mt-0.5">
+            <span className="text-[10px] text-stone-400 font-medium -mt-0.5">
               للصحة النفسية
             </span>
           </div>
         </button>
 
-        {/* Telemetry / Tech Badge */}
-        <div className="hidden lg:flex items-center gap-2 font-geist text-[11px] text-[#e4e4e4]/70 border border-white/10 px-3 py-1 bg-[#0c0c0e]">
-          <span><strong className="text-[#c4fb6d]">STATUS:</strong> ACTIVE</span>
-          <span className="text-white/20">//</span>
-          <span><strong className="text-[#c4fb6d]">GRID:</strong> V6.0</span>
-          <span className="text-white/20">//</span>
-          <span><strong className="text-[#c4fb6d]">ID:</strong> SUP_001</span>
-        </div>
-
         {/* Zone 2: Navigation Links (Desktop) */}
-        <nav className="hidden md:flex items-center gap-4 text-xs font-geist">
-          <button
-            onClick={() => onNavigate('home')}
-            className={`px-3 py-1.5 border transition-all ${
-              currentTab === 'home' 
-                ? 'bg-[#c4fb6d] text-black border-[#c4fb6d] font-bold' 
-                : 'border-white/10 hover:border-[#c4fb6d] text-[#e4e4e4]/80'
-            }`}
-          >
-            الرئيسية
-          </button>
-          <button
-            onClick={() => onNavigate('explore')}
-            className={`px-3 py-1.5 border transition-all ${
-              currentTab === 'explore' 
-                ? 'bg-[#c4fb6d] text-black border-[#c4fb6d] font-bold' 
-                : 'border-white/10 hover:border-[#c4fb6d] text-[#e4e4e4]/80'
-            }`}
-          >
-            أفهم نفسي
-          </button>
-          <button
-            onClick={() => onNavigate('breathe')}
-            className={`px-3 py-1.5 border transition-all ${
-              currentTab === 'breathe' 
-                ? 'bg-[#c4fb6d] text-black border-[#c4fb6d] font-bold' 
-                : 'border-white/10 hover:border-[#c4fb6d] text-[#e4e4e4]/80'
-            }`}
-          >
-            خد نفس
-          </button>
-          <button
-            onClick={() => onNavigate('assessment')}
-            className={`px-3 py-1.5 border transition-all ${
-              currentTab === 'assessment' 
-                ? 'bg-[#c4fb6d] text-black border-[#c4fb6d] font-bold' 
-                : 'border-white/10 hover:border-[#c4fb6d] text-[#e4e4e4]/80'
-            }`}
-          >
-            قيّم حالتك
-          </button>
-          <button
-            onClick={() => onNavigate('journey')}
-            className={`px-3 py-1.5 border transition-all ${
-              currentTab === 'journey' 
-                ? 'bg-[#c4fb6d] text-black border-[#c4fb6d] font-bold' 
-                : 'border-white/10 hover:border-[#c4fb6d] text-[#e4e4e4]/80'
-            }`}
-          >
-            رحلتي
-          </button>
-          <button
-            onClick={() => onNavigate('feker')}
-            className={`px-3 py-1.5 border transition-all flex items-center gap-1.5 ${
-              currentTab === 'feker' 
-                ? 'bg-[#c4fb6d] text-black border-[#c4fb6d] font-bold shadow-xs' 
-                : 'border-[#c4fb6d]/40 hover:border-[#c4fb6d] text-[#c4fb6d] bg-[#c4fb6d]/10'
-            }`}
-            title="تطبيق فكّر المدمج لتفكيك الأفكار والمرونة العقلية"
-          >
-            <span>💡 تطبيق فكّر</span>
-            <span className="text-[9px] bg-[#c4fb6d] text-black px-1 rounded-sm font-bold">جديد</span>
-          </button>
+        <nav className="hidden lg:flex items-center gap-1 text-xs">
+          {navLinks.map((link) => {
+            const isActive = currentTab === link.id || (link.id === 'explore' && currentTab === 'content-detail');
+            return (
+              <button
+                key={link.id}
+                onClick={() => {
+                  onNavigate(link.id);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className={`px-2.5 py-1.5 rounded-xl transition-all font-semibold ${
+                  isActive
+                    ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 shadow-xs'
+                    : 'text-stone-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                {link.label}
+              </button>
+            );
+          })}
         </nav>
 
         {/* Zone 3: Actions */}
         <div className="flex items-center gap-2">
-          {/* Quick Feker Mobile Pill */}
-          <button
-            onClick={() => onNavigate('feker')}
-            className={`md:hidden py-1 px-2.5 border text-xs font-bold rounded-lg transition-colors flex items-center gap-1 ${
-              currentTab === 'feker'
-                ? 'bg-[#c4fb6d] text-black border-[#c4fb6d]'
-                : 'border-[#c4fb6d]/40 text-[#c4fb6d] bg-[#c4fb6d]/10'
-            }`}
-            title="تطبيق فكّر"
-          >
-            <span>💡 فكّر</span>
-          </button>
-
+          
           {/* Emergency Safety Protocol Button */}
           <button
             onClick={onOpenSafetyModal}
-            className="py-1 px-3 border border-[#ff4d4d] bg-[#4b1a1a]/80 text-[#ffbaba] font-geist text-[11px] font-bold tracking-wider uppercase transition-colors"
+            className="py-1 px-3 border border-rose-500/40 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow-xs"
             title="أرقام الطوارئ والدعم النفسي العاجل"
           >
-            <span>🆘 طوارئ</span>
+            <PhoneCall className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">طوارئ</span>
           </button>
 
           {/* Notifications */}
           <button
             onClick={onOpenNotifications}
-            className="relative p-2 border border-white/10 hover:border-[#c4fb6d] bg-[#0c0c0e] text-[#e4e4e4] transition-colors"
+            className="relative p-2 rounded-xl border border-white/10 hover:border-emerald-500/40 bg-white/5 text-stone-200 transition-colors"
             aria-label="الإشعارات"
           >
-            <Bell className="w-4 h-4 text-[#c4fb6d]" />
+            <Bell className="w-4 h-4 text-emerald-300" />
             {unreadNotificationsCount > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-[#c4fb6d] ring-1 ring-black" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full ring-2 ring-[#121815]" />
             )}
           </button>
 
-          {/* Role Switcher Pill for Admin Dashboard Navigation */}
+          {/* Role Switcher */}
           <div className="relative">
             <button
               onClick={() => setShowRoleMenu(!showRoleMenu)}
-              className={`flex items-center gap-1.5 py-1 px-2.5 text-xs font-bold rounded-xl border transition-colors ${
-                isDark 
-                  ? 'bg-[#588157]/20 hover:bg-[#588157]/30 text-[#F8F7F4] border-[#588157]/40' 
-                  : 'bg-[#3A5A40]/15 hover:bg-[#3A5A40]/25 text-[#3A5A40] border-[#3A5A40]/30'
-              }`}
+              className="flex items-center gap-1.5 py-1 px-2.5 text-xs font-bold rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-stone-200 transition-colors"
+              title="تبديل الصلاحية"
             >
-              <UserCheck className="w-3.5 h-3.5 text-[#588157]" />
-              <span className="max-w-[85px] sm:max-w-none truncate">
+              <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="max-w-[85px] sm:max-w-none truncate text-[11px]">
                 {currentRole === 'user' ? 'مستخدم' : currentRole}
               </span>
             </button>
@@ -192,12 +162,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Role Switcher Dropdown */}
             {showRoleMenu && (
               <div 
-                className="absolute left-0 mt-2 w-64 bg-white border border-[#E5DACB] rounded-2xl shadow-xl p-2 z-50 animate-fade-in text-right"
+                className="absolute left-0 mt-2 w-64 bg-[#141C18] border border-white/15 rounded-2xl shadow-2xl p-2 z-50 animate-fade-in text-right"
                 role="menu"
               >
-                <div className="px-3 py-1.5 text-[11px] font-bold text-[#58645C] border-b border-[#E5DACB] flex items-center justify-between">
-                  <span>تبديل الصلاحية (للتجربة والتقييم)</span>
-                  <button onClick={() => setShowRoleMenu(false)} className="text-stone-400 hover:text-stone-700">
+                <div className="px-3 py-1.5 text-[11px] font-bold text-stone-400 border-b border-white/10 flex items-center justify-between">
+                  <span>تبديل الصلاحية (للمشرفين)</span>
+                  <button onClick={() => setShowRoleMenu(false)} className="text-stone-400 hover:text-white">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -214,23 +184,75 @@ export const Navbar: React.FC<NavbarProps> = ({
                       }}
                       className={`w-full p-2 rounded-xl text-xs text-right transition-colors flex items-center justify-between ${
                         currentRole === r.id 
-                          ? 'bg-[#3A5A40]/15 text-[#3A5A40] font-bold' 
-                          : 'hover:bg-[#FAF7F2] text-[#283618]'
+                          ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30' 
+                          : 'hover:bg-white/5 text-stone-300'
                       }`}
                     >
                       <div>
                         <div className="font-semibold">{r.title}</div>
-                        <div className="text-[10px] text-[#58645C]">{r.desc}</div>
+                        <div className="text-[10px] text-stone-400">{r.desc}</div>
                       </div>
-                      {currentRole === r.id && <Check className="w-4 h-4 text-[#3A5A40]" />}
+                      {currentRole === r.id && <Check className="w-4 h-4 text-emerald-400" />}
                     </button>
                   ))}
                 </div>
               </div>
             )}
           </div>
+
+          {/* Mobile Hamburger Menu Toggle */}
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="lg:hidden p-2 rounded-xl border border-white/10 hover:border-emerald-500/40 bg-white/5 text-stone-200 transition-colors"
+            aria-label="القائمة الرئيسية"
+          >
+            {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Drawer Navigation */}
+      {showMobileMenu && (
+        <div className="lg:hidden border-t border-white/10 bg-[#121815] px-4 py-4 space-y-2 animate-fade-in text-right">
+          <div className="text-xs font-bold text-stone-400 px-2 pb-1 border-b border-white/5">
+            أقسام مبادرة نسمة حياة:
+          </div>
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            {navLinks.map((link) => {
+              const isActive = currentTab === link.id;
+              return (
+                <button
+                  key={link.id}
+                  onClick={() => handleMobileNav(link.id)}
+                  className={`p-2.5 rounded-xl text-xs font-bold text-right transition-all flex items-center justify-between ${
+                    isActive
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                      : 'bg-white/5 text-stone-300 hover:bg-white/10'
+                  }`}
+                >
+                  <span>{link.label}</span>
+                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs text-stone-400">
+            <button
+              onClick={() => handleMobileNav('journey')}
+              className="text-emerald-400 hover:underline font-semibold"
+            >
+              سجل رحلتي وعاداتي ←
+            </button>
+            <button
+              onClick={() => handleMobileNav('profile')}
+              className="text-stone-300 hover:underline"
+            >
+              حسابي والأسئلة الشائعة
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

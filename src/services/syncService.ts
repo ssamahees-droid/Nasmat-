@@ -1,5 +1,5 @@
 /**
- * Production-Hardened Sync Service for «نسمة الحياة»
+ * Production-Hardened Sync Service for «نسمة حياة»
  * 
  * Scope: Favorites, Personal Notes, Daily Check-ins, and Wellness Habits.
  * 

@@ -17,12 +17,22 @@ interface ExploreScreenProps {
   onOpenContent: (contentId: string) => void;
   onOpenAudioModal: (title: string, category: string, durationMinutes: number) => void;
   onOpenBooklet?: () => void;
+  onNavigate?: (tab: string) => void;
+  onOpenWorkshopsHub?: () => void;
+  onOpenPsychologicalER?: () => void;
+  onOpenConflictWithoutWar?: () => void;
+  onOpenHealingJourney?: () => void;
 }
 
 export const ExploreScreen: React.FC<ExploreScreenProps> = ({
   onOpenContent,
   onOpenAudioModal,
-  onOpenBooklet
+  onOpenBooklet,
+  onNavigate,
+  onOpenWorkshopsHub,
+  onOpenPsychologicalER,
+  onOpenConflictWithoutWar,
+  onOpenHealingJourney
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -77,15 +87,29 @@ export const ExploreScreen: React.FC<ExploreScreenProps> = ({
   };
 
   return (
-    <div className="pb-24 pt-4 px-4 sm:px-6 max-w-4xl mx-auto space-y-6">
+    <div className="pb-28 pt-4 px-4 sm:px-6 max-w-4xl mx-auto space-y-6 animate-fade-in text-right">
       
+      {/* Breadcrumb Navigation */}
+      {onNavigate && (
+        <nav aria-label="مسار التنقل" className="flex items-center gap-2 text-xs text-stone-400">
+          <button 
+            onClick={() => onNavigate('home')} 
+            className="hover:text-emerald-400 transition-colors"
+          >
+            الرئيسية
+          </button>
+          <span>/</span>
+          <span className="text-emerald-400 font-bold">تعلّم وطبّق — المقالات والتثقيف النفسي</span>
+        </nav>
+      )}
+
       {/* Header */}
       <div className="space-y-1.5 text-right">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#26332D]">
-          أفهم نفسي 🌸
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-tajawal">
+          تعلّم وطبّق — المعرفة النفسية الموثوقة 🌸
         </h1>
-        <p className="text-sm text-[#52645B]">
-          مكتبة محتوى «نسمة حياة» للتوعية بالصحة النفسية والفهم الذاتي
+        <p className="text-xs sm:text-sm text-stone-300">
+          مكتبة مقالات «نسمة حياة»، الجلسات الصوتية الإرشادية، والورش التطبيقية المبسطة
         </p>
       </div>
 
@@ -93,25 +117,78 @@ export const ExploreScreen: React.FC<ExploreScreenProps> = ({
       {onOpenBooklet && (
         <section 
           onClick={onOpenBooklet}
-          className="cursor-pointer bg-gradient-to-r from-emerald-50 via-white to-[#FAF7F0] border border-[#8FAF9A]/60 rounded-3xl p-4 sm:p-5 shadow-xs hover:border-[#355C4A] transition-all flex items-center justify-between group text-right"
+          className="cursor-pointer bg-gradient-to-r from-[#1E2B22] via-[#17221A] to-[#121A15] border border-emerald-500/30 rounded-3xl p-5 shadow-sm hover:border-emerald-400 transition-all flex items-center justify-between group text-right"
         >
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#355C4A] text-white flex items-center justify-center text-2xl group-hover:scale-105 transition-transform shrink-0">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center justify-center text-2xl group-hover:scale-105 transition-transform shrink-0">
               📖
             </div>
             <div>
-              <div className="text-xs font-bold text-[#355C4A]">دليل مبسط للصحة النفسية</div>
-              <h3 className="font-extrabold text-sm sm:text-base text-[#26332D]">
-                كتيب «نسمة الحياة» (12 فصلاً تفاعلياً)
-              </h3>
-              <p className="text-xs text-[#52645B] mt-0.5">
+              <div className="text-xs font-bold text-emerald-400">دليل مبسط للصحة النفسية</div>
+              <h2 className="font-extrabold text-sm sm:text-base text-white">
+                كتيب «نسمة حياة» (12 فصلاً تفاعلياً)
+              </h2>
+              <p className="text-xs text-stone-400 mt-0.5">
                 «كثيرون يعيشون الحياة... وقليلون يستمتعون بها»
               </p>
             </div>
           </div>
-          <button className="px-4 py-2 bg-white hover:bg-stone-100 text-[#355C4A] border border-[#8FAF9A] rounded-xl text-xs font-bold shrink-0">
+          <button className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-black rounded-xl text-xs font-bold shrink-0 transition-colors">
             تصفح الكتيب
           </button>
+        </section>
+      )}
+
+      {/* Workshops Section */}
+      {onOpenWorkshopsHub && (
+        <section className="bg-[#141C18] border border-white/10 rounded-3xl p-5 space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-white/10">
+            <div>
+              <h2 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                <span>🛠️ استوديو الورش التطبيقية (10 ورش عمل تفاعلية)</span>
+              </h2>
+              <p className="text-xs text-stone-400 mt-0.5">محاكاة عملية لمواجهة أزمات الحياة الزوجية والشخصية</p>
+            </div>
+            <button
+              onClick={onOpenWorkshopsHub}
+              className="text-xs font-bold text-emerald-400 hover:underline"
+            >
+              عرض الكل ←
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {onOpenPsychologicalER && (
+              <div
+                onClick={onOpenPsychologicalER}
+                className="cursor-pointer p-3 bg-black/30 hover:bg-black/50 border border-white/5 hover:border-emerald-500/40 rounded-2xl transition-all"
+              >
+                <span className="text-xl">🚨</span>
+                <div className="text-xs font-bold text-white mt-1">غرفة الطوارئ النفسية</div>
+                <div className="text-[11px] text-stone-400">تدريب عملي على 5 سيناريوهات حرجة</div>
+              </div>
+            )}
+            {onOpenConflictWithoutWar && (
+              <div
+                onClick={onOpenConflictWithoutWar}
+                className="cursor-pointer p-3 bg-black/30 hover:bg-black/50 border border-white/5 hover:border-emerald-500/40 rounded-2xl transition-all"
+              >
+                <span className="text-xl">🤝</span>
+                <div className="text-xs font-bold text-white mt-1">خلاف بدون معركة</div>
+                <div className="text-[11px] text-stone-400">مهارة تواصل أسرية دون هجوم أو انسحاب</div>
+              </div>
+            )}
+            {onOpenHealingJourney && (
+              <div
+                onClick={onOpenHealingJourney}
+                className="cursor-pointer p-3 bg-black/30 hover:bg-black/50 border border-white/5 hover:border-emerald-500/40 rounded-2xl transition-all"
+              >
+                <span className="text-xl">🌱</span>
+                <div className="text-xs font-bold text-white mt-1">اتأذيت... إزاي أتعافى؟</div>
+                <div className="text-[11px] text-stone-400">تحويل الأذى من سجن إلى وعي متزن</div>
+              </div>
+            )}
+          </div>
         </section>
       )}
 
