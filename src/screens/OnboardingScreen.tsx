@@ -4,24 +4,25 @@ import { storage } from '../services/storage';
 
 interface OnboardingScreenProps {
   onComplete: () => void;
+  onSkip?: () => void;
 }
 
 const ONBOARDING_OPTIONS = [
-  { id: 'opt1', text: 'حاسس إني مضغوط' },
+  { id: 'opt1', text: 'حاسس إني مضغوط ومحتاج هدوء' },
   { id: 'opt2', text: 'حاسس إني مش كويس ومش فاهم مالي' },
-  { id: 'opt3', text: 'محتاج حد يسمعني' },
-  { id: 'opt4', text: 'عايز أفهم نفسي أكتر' },
-  { id: 'opt5', text: 'عايز أساعد شخص قريب مني' },
-  { id: 'opt6', text: 'عايز أتعلم عن الصحة النفسية' },
-  { id: 'opt7', text: 'مش عارف... بس محتاج حاجة تساعدني' }
+  { id: 'opt3', text: 'محتاج حد يسمعني بصدق بدون أحكام' },
+  { id: 'opt4', text: 'عايز أفهم نفسي وأطور وعيي الذاتي' },
+  { id: 'opt5', text: 'عايز أساعد شخص قريب مني بيمر بأزمة' },
+  { id: 'opt6', text: 'عايز أتعلم مهارات عملية للصحة النفسية' },
+  { id: 'opt7', text: 'مش عارف بالظبط... بس محتاج حاجة تساندني' }
 ];
 
-export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
+export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete, onSkip }) => {
   const userPrefs = storage.getPreferences();
   const [selectedChoices, setSelectedChoices] = useState<string[]>(
     userPrefs.onboardingChoices.length > 0 
       ? userPrefs.onboardingChoices 
-      : ['حاسس إني مضغوط']
+      : ['حاسس إني مضغوط ومحتاج هدوء']
   );
 
   const toggleChoice = (text: string) => {
@@ -35,7 +36,6 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
   };
 
   const handleContinue = () => {
-    // Save choices to user preferences
     const currentPrefs = storage.getPreferences();
     currentPrefs.onboardingChoices = selectedChoices;
     storage.savePreferences(currentPrefs);
@@ -43,27 +43,47 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
     onComplete();
   };
 
+  const handleSkip = () => {
+    storage.setOnboarded(true);
+    if (onSkip) {
+      onSkip();
+    } else {
+      onComplete();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#F7F3EA] text-[#26332D] flex flex-col justify-between p-4 sm:p-8">
+    <div className="min-h-screen bg-gradient-to-b from-[#0C120F] via-[#121A16] to-[#0A0E0C] text-[#EDE8DF] flex flex-col justify-between p-4 sm:p-8 font-tajawal antialiased text-right selection:bg-emerald-500 selection:text-black" dir="rtl">
       <div className="max-w-md mx-auto w-full my-auto py-6">
         
-        {/* Header */}
-        <div className="space-y-3 mb-6 text-right">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#8FAF9A]/20 text-[#355C4A] text-xs font-bold rounded-full">
+        {/* Top bar with Skip button */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold rounded-full">
             <Sparkles className="w-3.5 h-3.5" />
             <span>خطوة التعارف الأولى</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#26332D]">
-            خلينا نتعرف عليك
+          <button
+            onClick={handleSkip}
+            className="text-xs text-stone-400 hover:text-emerald-300 transition-colors font-medium flex items-center gap-1 cursor-pointer"
+          >
+            <span>تخطي إلى الرئيسية</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* Header */}
+        <div className="space-y-2 mb-6">
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            خلينا نتعرف عليك 🌿
           </h2>
 
-          <p className="text-lg font-bold text-[#355C4A]">
+          <p className="text-base font-bold text-emerald-300">
             إيه اللي جابك لنسمة حياة النهارده؟
           </p>
 
-          <p className="text-xs text-[#52645B]">
-            ممكن تختار أكتر من حاجة، و«مش عارف» لا تلغي بقية الاختيارات.
+          <p className="text-xs text-stone-400">
+            ممكن تختار أكتر من حاجة، واختيارك يساعدنا في اقتراح التمارين والمسارات الأنسب لك.
           </p>
         </div>
 
@@ -75,29 +95,29 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
               <button
                 key={item.id}
                 onClick={() => toggleChoice(item.text)}
-                className={`w-full p-4 rounded-2xl border text-right transition-all flex items-center justify-between gap-3 min-h-[52px] ${
+                className={`w-full p-3.5 rounded-2xl border text-right transition-all flex items-center justify-between gap-3 min-h-[50px] cursor-pointer ${
                   isSelected
-                    ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-xs'
-                    : 'bg-[#FAF7F0] text-[#26332D] border-[#E8DDCC] hover:bg-white'
+                    ? 'bg-emerald-950/60 border-emerald-500 text-white shadow-sm ring-1 ring-emerald-500/40'
+                    : 'bg-[#131C18] text-stone-300 border-white/10 hover:border-emerald-500/30 hover:bg-[#16231d]'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <span className={`w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0 ${
-                    isSelected ? 'bg-white/20 text-white' : 'bg-stone-200 text-[#52645B]'
+                    isSelected ? 'bg-emerald-500 text-black' : 'bg-white/5 text-stone-400 border border-white/10'
                   }`}>
                     {idx + 1}
                   </span>
-                  <span className="text-sm font-medium leading-snug">
+                  <span className={`text-xs sm:text-sm font-semibold leading-snug ${isSelected ? 'text-white' : 'text-stone-300'}`}>
                     {item.text}
                   </span>
                 </div>
 
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 border ${
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border transition-all ${
                   isSelected 
-                    ? 'bg-white text-[#355C4A] border-white' 
-                    : 'border-[#D5CEBE] bg-transparent'
+                    ? 'bg-emerald-400 text-black border-emerald-400' 
+                    : 'border-white/20 bg-transparent'
                 }`}>
-                  {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                  {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
                 </div>
               </button>
             );
@@ -105,21 +125,24 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
         </div>
 
         {/* Privacy & Non-diagnostic guarantee */}
-        <div className="p-3 bg-white/60 border border-[#E8DDCC] rounded-2xl flex items-start gap-2.5 text-right mb-6">
-          <Shield className="w-4 h-4 text-[#8FAF9A] shrink-0 mt-0.5" />
-          <p className="text-[11px] text-[#52645B] leading-relaxed">
-            اختياراتك لا تُعد تشخيصاً طبياً، وتُستخدم فقط لتوجيهك للمحتوى والتمارين المناسبة. يمكنك تعديلها أو حذفها في أي وقت من ملفك الشخصي.
+        <div className="p-3 bg-[#131C18] border border-white/10 rounded-2xl flex items-start gap-2.5 text-right mb-6">
+          <Shield className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <p className="text-[11px] text-stone-400 leading-relaxed">
+            إجاباتك محفوظة بخصوصية تامة على جهازك فقط، ولا تُعد تشخيصاً طبياً، وتُستخدم لتسهيل وصولك للمحتوى المناسب. يمكنك تعديلها في أي وقت من حسابك.
           </p>
         </div>
 
         {/* Continue Button */}
-        <button
-          onClick={handleContinue}
-          className="w-full py-4 px-6 bg-[#355C4A] hover:bg-[#264235] text-white font-bold text-base rounded-2xl shadow-md shadow-[#355C4A]/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
-        >
-          <span>متابعة</span>
-          <ArrowLeft className="w-4 h-4 mr-1" />
-        </button>
+        <div className="space-y-2">
+          <button
+            onClick={handleContinue}
+            className="w-full py-3.5 px-6 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-black font-extrabold text-sm sm:text-base rounded-2xl shadow-lg hover:shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
+          >
+            <span>متابعة إلى نسمة حياة</span>
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+        </div>
+
       </div>
     </div>
   );

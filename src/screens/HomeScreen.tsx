@@ -110,6 +110,62 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   });
   const [justSavedCheckin, setJustSavedCheckin] = useState(false);
   const [savedFavorites, setSavedFavorites] = useState<string[]>(storage.getFavorites());
+  const [selectedNeedId, setSelectedNeedId] = useState<string>('stressed');
+
+  const NEED_BASED_PATHS = [
+    {
+      id: 'stressed',
+      title: 'متوتر أو قلقان',
+      desc: 'نبضك سريع أو أفكارك متلاحقة؟ ابدأ بتهدئة جهازك العصبي فوراً دون تعقيد.',
+      emoji: '🌊',
+      actionLabel: 'تمرين التنفس 4-7-8',
+      action: () => onNavigate('breathe'),
+      secondaryActionLabel: 'خطة وقت الانفعال',
+      secondaryAction: () => onNavigate('rescue')
+    },
+    {
+      id: 'scattered',
+      title: 'مشتت وتائه في الأفكار',
+      desc: 'عقلك ينسج سيناريوهات مقلقة؟ افرز الأفكار المنطقية عن المخاوف الافتراضية.',
+      emoji: '🌀',
+      actionLabel: 'استوديو تفكيك الأفكار (فكّر)',
+      action: () => onOpenFeker ? onOpenFeker() : onNavigate('games'),
+      secondaryActionLabel: 'فك عقدة المشاعر',
+      secondaryAction: () => onOpenUntangleKnot()
+    },
+    {
+      id: 'heavy',
+      title: 'مخنوق أو حزين',
+      desc: 'حاسس بحمل تقيل على صدرك؟ امنح نفسك مساحة تفريغ آمنة دون لوم أو أحكام.',
+      emoji: '🌧️',
+      actionLabel: 'تفريغ وفكفكة المشاعر',
+      action: () => onOpenTranslateFeelings(),
+      secondaryActionLabel: 'خطة وقت الضيق والخنقة',
+      secondaryAction: () => onNavigate('rescue')
+    },
+    {
+      id: 'exhausted',
+      title: 'منهك وبطاريتي فارغة',
+      desc: 'طاقتك في الحضيض ولا تستطيع التركيز؟ اعرف ما يستنزف طاقتك وكيف تشحنها.',
+      emoji: '🔋',
+      actionLabel: 'فحص شاحن الطاقة النفسية',
+      action: () => onOpenBatteryCheck(),
+      secondaryActionLabel: 'ميزانية الطاقة والحدود',
+      secondaryAction: () => onOpenEnergyBudget()
+    },
+    {
+      id: 'curious',
+      title: 'أبحث عن فهم ذاتي وتطوير',
+      desc: 'تريد استكشاف محركات سلوكك، بوصلة مشاعرك، وبناء خطة مرونة حقيقية؟',
+      emoji: '🧭',
+      actionLabel: 'الفحص الذاتي الشامل',
+      action: () => onNavigate('self-discovery'),
+      secondaryActionLabel: 'لعبة جوايا حكاية',
+      secondaryAction: () => onOpenGwayaHekaya()
+    }
+  ];
+
+  const activeNeed = NEED_BASED_PATHS.find(n => n.id === selectedNeedId) || NEED_BASED_PATHS[0];
 
   const suggestedContent: ContentItem[] = storage.getContent()
     .filter(c => c.isSuggested || c.reviewStatus === 'published')
@@ -251,6 +307,85 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             سجل أيامي وملاحظاتي ←
           </button>
         </div>
+      </section>
+
+      {/* 2.5 Start Here According to Your Need: ابدأ بحسب حالتك واحتياجك الآن */}
+      <section className="p-5 sm:p-6 bg-gradient-to-br from-[#121B16] to-[#0D1511] border border-emerald-500/20 rounded-3xl space-y-4 shadow-md">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold mb-1">
+              <Compass className="w-3.5 h-3.5" />
+              <span>ابدأ من هنا</span>
+            </div>
+            <h2 className="text-base sm:text-lg font-bold text-white">
+              ما الذي يصف ما تمر به في هذه اللحظة؟
+            </h2>
+            <p className="text-xs text-stone-400">
+              اختر حالتك لنقترح عليك الخطوة الأنسب فوراً دون حيرة
+            </p>
+          </div>
+          <button
+            onClick={() => onNavigate('start')}
+            className="text-xs text-emerald-400 hover:underline flex items-center gap-1 font-semibold self-start sm:self-auto"
+          >
+            <span>دليل البدء الكامل</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* State Badges */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+          {NEED_BASED_PATHS.map((item) => {
+            const isSelected = selectedNeedId === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setSelectedNeedId(item.id)}
+                className={`p-2.5 rounded-xl border text-right transition-all cursor-pointer flex items-center gap-2 ${
+                  isSelected
+                    ? 'bg-emerald-950/60 border-emerald-500 text-white shadow-sm ring-1 ring-emerald-500/30'
+                    : 'bg-[#0a100d] border-white/10 hover:border-white/20 text-stone-300'
+                }`}
+              >
+                <span className="text-xl">{item.emoji}</span>
+                <span className={`text-xs font-bold ${isSelected ? 'text-emerald-300' : 'text-stone-300'}`}>
+                  {item.title}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Active Need Tailored Guidance Card */}
+        {activeNeed && (
+          <div className="p-4 bg-[#0a100d] border border-emerald-500/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
+                <span>{activeNeed.emoji}</span>
+                <span>المسار الموصى به لـ: {activeNeed.title}</span>
+              </div>
+              <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                {activeNeed.desc}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0 flex-wrap">
+              <button
+                onClick={activeNeed.action}
+                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+              >
+                <span>{activeNeed.actionLabel}</span>
+                <ArrowLeft className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={activeNeed.secondaryAction}
+                className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-stone-300 text-xs font-semibold rounded-xl transition-colors"
+              >
+                <span>{activeNeed.secondaryActionLabel}</span>
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* 3. Section Overview Cards: اكتشف أقسام نسمة حياة */}

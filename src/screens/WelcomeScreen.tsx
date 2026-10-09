@@ -3,10 +3,11 @@ import { Leaf, Info, ShieldCheck, HeartHandshake, ArrowLeft, X, Sparkles, Heart 
 
 interface WelcomeScreenProps {
   onStart: () => void;
+  onSkip?: () => void;
   onOpenAbout?: () => void;
 }
 
-export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
+export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart, onSkip }) => {
   const [showAboutModal, setShowAboutModal] = useState(false);
 
   return (
@@ -18,13 +19,23 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="font-semibold text-stone-300">مبادرة نسمة حياة</span>
         </div>
-        <button
-          onClick={() => setShowAboutModal(true)}
-          className="text-stone-400 hover:text-emerald-300 transition-colors flex items-center gap-1"
-        >
-          <Info className="w-3.5 h-3.5" />
-          <span>عن المبادرة</span>
-        </button>
+        <div className="flex items-center gap-3">
+          {onSkip && (
+            <button
+              onClick={onSkip}
+              className="text-stone-400 hover:text-emerald-300 transition-colors cursor-pointer"
+            >
+              تخطي إلى الرئيسية
+            </button>
+          )}
+          <button
+            onClick={() => setShowAboutModal(true)}
+            className="text-stone-400 hover:text-emerald-300 transition-colors flex items-center gap-1 cursor-pointer"
+          >
+            <Info className="w-3.5 h-3.5" />
+            <span>عن المبادرة</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Content Area */}

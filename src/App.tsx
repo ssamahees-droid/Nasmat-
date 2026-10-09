@@ -70,14 +70,73 @@ import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminDashboardScreen } from './screens/AdminDashboardScreen';
 import { FekerAppScreen } from './screens/FekerAppScreen';
 
+const VALID_TABS: Record<string, string> = {
+  '': 'home',
+  'home': 'home',
+  'start': 'start',
+  'self-discovery': 'self-discovery',
+  'games': 'games',
+  'explore': 'explore',
+  'practice': 'practice',
+  'rescue': 'rescue',
+  'support': 'support',
+  'journey': 'journey',
+  'profile': 'profile',
+  'account': 'profile',
+  'feker': 'feker',
+  'admin': 'admin',
+  'breathe': 'breathe',
+  'assessment': 'assessment'
+};
+
+function getRouteFromLocation(): { tab: string; isExplicitDeepLink: boolean } {
+  if (typeof window === 'undefined') return { tab: 'home', isExplicitDeepLink: false };
+  const path = window.location.pathname.replace(/^\/+/, '').split('/')[0].toLowerCase();
+  const hash = window.location.hash.replace(/^#\/?/, '').split('/')[0].toLowerCase();
+  const segment = path || hash;
+  if (segment && VALID_TABS[segment]) {
+    return { tab: VALID_TABS[segment], isExplicitDeepLink: segment !== '' && segment !== 'home' };
+  }
+  return { tab: 'home', isExplicitDeepLink: false };
+}
+
 export default function App() {
+  const initialRoute = getRouteFromLocation();
   const [hasOnboarded, setHasOnboarded] = useState<boolean>(() => storage.hasCompletedOnboarding());
-  const [currentStep, setCurrentStep] = useState<'welcome' | 'onboarding' | 'main'>(
-    storage.hasCompletedOnboarding() ? 'main' : 'welcome'
-  );
-  const [currentTab, setCurrentTab] = useState<string>('home');
+  const [currentStep, setCurrentStep] = useState<'welcome' | 'onboarding' | 'main'>(() => {
+    if (storage.hasCompletedOnboarding()) {
+      return 'main';
+    }
+    // If a visitor directly opened a specific section (e.g. /rescue, /support),
+    // enter directly so urgent help isn't blocked by onboarding
+    if (initialRoute.isExplicitDeepLink) {
+      return 'main';
+    }
+    return 'welcome';
+  });
+  const [currentTab, setCurrentTab] = useState<string>(initialRoute.tab);
   const [currentRole, setCurrentRole] = useState<UserRole>(() => storage.getUser().role);
   const [selectedContentId, setSelectedContentId] = useState<string>('c1');
+
+  const handleNavigate = (tab: string, pushHistory: boolean = true) => {
+    setCurrentTab(tab);
+    if (pushHistory && typeof window !== 'undefined') {
+      const targetUrl = tab === 'home' ? '/' : `/${tab}`;
+      if (window.location.pathname !== targetUrl) {
+        window.history.pushState({ tab }, '', targetUrl);
+      }
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const { tab } = getRouteFromLocation();
+      setCurrentTab(tab);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Theme state: Variation 1 (Dark Zen Obsidian) vs Warm Light
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -168,8 +227,7 @@ export default function App() {
 
   const handleOpenContent = (id: string) => {
     setSelectedContentId(id);
-    setCurrentTab('content-detail');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    handleNavigate('content-detail');
   };
 
   const handleOpenAudio = (title: string, category: string, durationMinutes: number) => {
@@ -202,6 +260,12 @@ export default function App() {
     return (
       <WelcomeScreen
         onStart={() => setCurrentStep('onboarding')}
+        onSkip={() => {
+          setHasOnboarded(true);
+          storage.setOnboarded(true);
+          setCurrentStep('main');
+          handleNavigate('home');
+        }}
       />
     );
   }
@@ -212,8 +276,15 @@ export default function App() {
       <OnboardingScreen
         onComplete={() => {
           setHasOnboarded(true);
+          storage.setOnboarded(true);
           setCurrentStep('main');
-          setCurrentTab('home');
+          handleNavigate('home');
+        }}
+        onSkip={() => {
+          setHasOnboarded(true);
+          storage.setOnboarded(true);
+          setCurrentStep('main');
+          handleNavigate('home');
         }}
       />
     );
@@ -226,10 +297,7 @@ export default function App() {
       {/* Top Navbar */}
       <Navbar
         currentTab={currentTab}
-        onNavigate={(tab) => {
-          setCurrentTab(tab);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onNavigate={handleNavigate}
         currentRole={currentRole}
         onRoleChange={(role) => setCurrentRole(role)}
         unreadNotificationsCount={unreadNotifs}
@@ -244,10 +312,7 @@ export default function App() {
         {currentTab === 'home' && (
           <HomeScreen
             theme={theme}
-            onNavigate={(tab) => {
-              setCurrentTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onNavigate={handleNavigate}
             onOpenContent={handleOpenContent}
             onOpenAudioModal={handleOpenAudio}
             onOpenThoughtRelease={() => setIsThoughtReleaseOpen(true)}
@@ -290,10 +355,7 @@ export default function App() {
 
         {currentTab === 'start' && (
           <StartScreen
-            onNavigate={(tab) => {
-              setCurrentTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onNavigate={handleNavigate}
             onOpenBooklet={() => setIsBookletOpen(true)}
             onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
           />
@@ -301,11 +363,8 @@ export default function App() {
 
         {currentTab === 'self-discovery' && (
           <SelfDiscoveryScreen
-            onNavigate={(tab) => {
-              setCurrentTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            onOpenAssessment={() => setCurrentTab('assessment')}
+            onNavigate={handleNavigate}
+            onOpenAssessment={() => handleNavigate('assessment')}
             onOpenDiscoveryQuiz={() => setIsDiscoveryQuizOpen(true)}
             onOpenAnaDelwaqti={() => setIsAnaDelwaqtiOpen(true)}
             onOpenEmotionCompass={() => setIsEmotionCompassOpen(true)}
@@ -316,10 +375,7 @@ export default function App() {
 
         {currentTab === 'games' && (
           <GamesScreen
-            onNavigate={(tab) => {
-              setCurrentTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onNavigate={handleNavigate}
             onOpenGwayaHekaya={() => setIsGwayaHekayaOpen(true)}
             onOpenFeker={() => setIsFekerModalOpen(true)}
             onOpenFactGame={() => setIsFactGameOpen(true)}
@@ -333,11 +389,8 @@ export default function App() {
 
         {currentTab === 'practice' && (
           <PracticeScreen
-            onNavigate={(tab) => {
-              setCurrentTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            onOpenBreathe={() => setCurrentTab('breathe')}
+            onNavigate={handleNavigate}
+            onOpenBreathe={() => handleNavigate('breathe')}
             onOpenMindfulnessStudio={() => setIsMindfulnessStudioOpen(true)}
             onOpenThoughtJournal={() => setIsThoughtJournalOpen(true)}
             onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
@@ -348,10 +401,7 @@ export default function App() {
 
         {currentTab === 'rescue' && (
           <RescueScreen
-            onNavigate={(tab) => {
-              setCurrentTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onNavigate={handleNavigate}
             onOpenRescueKit={handleOpenRescueKitWithPlan}
             onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
             onOpenSpecialistGuide={() => setIsSpecialistGuideOpen(true)}
@@ -364,10 +414,7 @@ export default function App() {
             onOpenContent={handleOpenContent}
             onOpenAudioModal={handleOpenAudio}
             onOpenBooklet={() => setIsBookletOpen(true)}
-            onNavigate={(tab) => {
-              setCurrentTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onNavigate={handleNavigate}
             onOpenWorkshopsHub={() => setIsWorkshopsHubOpen(true)}
             onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
             onOpenConflictWithoutWar={() => setIsConflictWithoutWarOpen(true)}
@@ -378,8 +425,8 @@ export default function App() {
         {currentTab === 'content-detail' && (
           <ContentDetailScreen
             contentId={selectedContentId}
-            onBack={() => setCurrentTab('explore')}
-            onNavigateToSupport={() => setCurrentTab('support')}
+            onBack={() => handleNavigate('explore')}
+            onNavigateToSupport={() => handleNavigate('support')}
             onOpenAudioModal={handleOpenAudio}
           />
         )}
@@ -390,8 +437,8 @@ export default function App() {
 
         {currentTab === 'assessment' && (
           <AssessmentScreen
-            onNavigateToContent={() => setCurrentTab('explore')}
-            onNavigateToSupport={() => setCurrentTab('support')}
+            onNavigateToContent={() => handleNavigate('explore')}
+            onNavigateToSupport={() => handleNavigate('support')}
             onTriggerSafetyModal={() => setIsEmergencyHelpOpen(true)}
           />
         )}
@@ -399,13 +446,14 @@ export default function App() {
         {currentTab === 'support' && (
           <SupportScreen
             onOpenSafetyModal={() => setIsEmergencyHelpOpen(true)}
+            onNavigate={handleNavigate}
           />
         )}
 
         {currentTab === 'journey' && (
           <JourneyScreen
-            onOpenAssessment={() => setCurrentTab('assessment')}
-            onNavigateToContent={() => setCurrentTab('explore')}
+            onOpenAssessment={() => handleNavigate('assessment')}
+            onNavigateToContent={() => handleNavigate('explore')}
             onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
             onOpenThoughtJournal={() => setIsThoughtJournalOpen(true)}
             onOpenMindfulnessStudio={() => setIsMindfulnessStudioOpen(true)}
@@ -414,10 +462,7 @@ export default function App() {
 
         {currentTab === 'profile' && (
           <ProfileScreen
-            onNavigate={(tab) => {
-              setCurrentTab(tab);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onNavigate={handleNavigate}
             onOpenContent={handleOpenContent}
             onRestartOnboarding={handleRestartOnboarding}
           />
@@ -425,10 +470,7 @@ export default function App() {
 
         {currentTab === 'feker' && (
           <FekerAppScreen
-            onBackToHome={() => {
-              setCurrentTab('home');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onBackToHome={() => handleNavigate('home')}
           />
         )}
 
@@ -436,7 +478,7 @@ export default function App() {
           <AdminDashboardScreen
             currentRole={currentRole}
             onRoleChange={(role) => setCurrentRole(role)}
-            onNavigateToUserApp={() => setCurrentTab('home')}
+            onNavigateToUserApp={() => handleNavigate('home')}
           />
         )}
       </main>
@@ -444,10 +486,7 @@ export default function App() {
       {/* Bottom Ergonomic Navigation Bar */}
       <BottomNav
         currentTab={currentTab}
-        onNavigate={(tab) => {
-          setCurrentTab(tab);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onNavigate={handleNavigate}
         userRole={currentRole}
         onOpenGwayaHekaya={() => setIsGwayaHekayaOpen(true)}
         onOpenFeker={() => setIsFekerModalOpen(true)}

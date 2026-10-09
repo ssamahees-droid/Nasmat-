@@ -1,247 +1,340 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
-  HeartHandshake, 
   ShieldAlert, 
-  Stethoscope, 
-  PhoneCall, 
-  ArrowLeft, 
   Sparkles, 
-  HelpCircle,
-  ChevronLeft,
-  LifeBuoy
+  ArrowLeft, 
+  CheckCircle2, 
+  HelpCircle, 
+  PhoneCall, 
+  Wind, 
+  Brain, 
+  Flame, 
+  BatteryCharging, 
+  Clock, 
+  ChevronDown, 
+  ChevronUp, 
+  AlertTriangle,
+  Lightbulb,
+  HeartHandshake
 } from 'lucide-react';
-import { RESCUE_KIT_PLANS } from '../data/newPhaseData';
+import { RESCUE_KIT_PLANS, RescuePlan } from '../data/newPhaseData';
 
 interface RescueScreenProps {
   onNavigate: (tab: string) => void;
-  onOpenRescueKit: (planId?: string) => void;
-  onOpenPsychologicalER: () => void;
-  onOpenSpecialistGuide: () => void;
-  onOpenEmergencyHelp: () => void;
+  onOpenArticle?: (id: string) => void;
+  onOpenEmergencyModal?: () => void;
+  onOpenRescueKit?: (planId?: string) => void;
+  onOpenPsychologicalER?: () => void;
+  onOpenSpecialistGuide?: () => void;
+  onOpenEmergencyHelp?: () => void;
 }
 
 export const RescueScreen: React.FC<RescueScreenProps> = ({
   onNavigate,
+  onOpenArticle,
+  onOpenEmergencyModal,
   onOpenRescueKit,
   onOpenPsychologicalER,
   onOpenSpecialistGuide,
   onOpenEmergencyHelp
 }) => {
+  const [selectedPlanId, setSelectedPlanId] = useState<string>(RESCUE_KIT_PLANS[0]?.id || 'distress');
+  const [expandedSteps, setExpandedSteps] = useState<Record<number, boolean>>({ 1: true, 2: true, 3: true, 4: true });
+
+  const activePlan = RESCUE_KIT_PLANS.find(p => p.id === selectedPlanId) || RESCUE_KIT_PLANS[0];
+
+  const toggleStep = (stepNum: number) => {
+    setExpandedSteps(prev => ({
+      ...prev,
+      [stepNum]: !prev[stepNum]
+    }));
+  };
+
   return (
-    <div className="pb-28 pt-4 px-4 sm:px-6 max-w-5xl mx-auto space-y-8 animate-fade-in text-right">
-      
-      {/* Breadcrumb Navigation */}
-      <nav aria-label="مسار التنقل" className="flex items-center gap-2 text-xs text-stone-400">
-        <button 
-          onClick={() => onNavigate('home')} 
-          className="hover:text-emerald-400 transition-colors"
-        >
-          الرئيسية
-        </button>
-        <span>/</span>
-        <span className="text-emerald-300 font-bold">عندما تحتاج إلى مساعدة — خطط المساندة النفسية</span>
-      </nav>
-
-      {/* Header Banner */}
-      <section className="bg-gradient-to-br from-[#241717] via-[#1B1414] to-[#120E0E] border border-rose-500/25 rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
-        <div className="space-y-3 max-w-2xl relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/15 border border-rose-500/30 rounded-full text-rose-300 text-xs font-bold">
-            <LifeBuoy className="w-3.5 h-3.5" />
-            <span>القسم السادس // حقيبة الإنقاذ وخطط المساندة الميدانية</span>
+    <div className="min-h-screen bg-[#070b09] text-[#e8f2ec] pb-24 font-sans selection:bg-[#355C4A]/40" dir="rtl">
+      {/* Top Banner / Breadcrumb */}
+      <div className="border-b border-[#1b2f25]/80 bg-[#0c1410]/80 backdrop-blur-md sticky top-0 z-20">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs md:text-sm text-[#7aa892]">
+            <button 
+              onClick={() => onNavigate('home')}
+              className="hover:text-emerald-300 transition-colors cursor-pointer"
+            >
+              الرئيسية
+            </button>
+            <span>/</span>
+            <span className="text-[#d8f0e2] font-medium">خطط المساندة</span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-white leading-tight font-tajawal">
-            شنطة الإسعاف النفسي... طوق نجاة في الأوقات الصعبة 🎒
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onOpenEmergencyModal ? onOpenEmergencyModal() : onNavigate('support')}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/15 border border-rose-500/40 text-rose-300 rounded-lg text-xs font-bold hover:bg-rose-500/25 transition-all cursor-pointer"
+            >
+              <AlertTriangle className="w-3.5 h-3.5" />
+              <span>خط ساخن للطوارئ</span>
+            </button>
+            <button
+              onClick={() => onNavigate('home')}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#213a2e] text-[#a4c9b6] hover:bg-[#13221b] text-xs transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>عودة</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 pt-8 md:pt-12">
+        {/* Section Header */}
+        <div className="max-w-3xl mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium mb-3">
+            <ShieldAlert className="w-3.5 h-3.5" />
+            <span>القسم الخامس: خطط المساندة والإنقاذ النفسي السريع</span>
+          </div>
+          <h1 className="text-2xl md:text-4xl font-extrabold text-[#f2f9f5] tracking-tight leading-snug mb-3">
+            خطط مساندة عملية للحظات الصعبة
           </h1>
-
-          <p className="text-sm sm:text-base text-stone-300 leading-relaxed">
-            "مش علاج نهائي... لكنها خطوات إنسانية صغيرة تساعدك تعدّي اللحظة الصعبة بسلام". عندما تهب العاصفة وتتزاحم المشاعر، لا تحتاج إلى نظريات معقدة؛ تحتاج فقط إلى خطوات محددة تخبرك ماذا تفعل الآن، وماذا تتجنب، ومتى تطلب المساعدة.
+          <p className="text-sm md:text-base text-[#9abfb0] leading-relaxed">
+            عندما يفور الانفعال أو تضيق الأنفاس أو تشتتك الحيرة، لا تحتاج إلى نصائح فلسفية عامة، بل خطوات محددة بالترتيب: ماذا تفعل بجسدك الآن، وكيف تهدئ عقلك خطوة بخطوة.
           </p>
-
-          <div className="p-3 bg-black/40 border border-white/10 rounded-2xl flex items-center gap-3 text-xs text-stone-300">
-            <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
-            <span>
-              <strong>إخلاء مسؤولية توعوي:</strong> هذه الخطط للمساندة الذاتية الأولية وليست بديلاً عن العلاج السريري أو الأدوية النفسية الموصوفة.
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* 7 Rescue Plans Grid */}
-      <section className="space-y-4">
-        <div className="border-b border-white/10 pb-3 flex items-center justify-between">
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold text-white">
-              خطط المساندة العملية (اختر الخطة المناسبة لحالتك)
-            </h2>
-            <p className="text-xs text-stone-400 mt-1">
-              مقسمة إلى خطوات واضحة (1، 2، 3) ترشدك إلى تهدئة الجسد وحماية نفسك:
-            </p>
-          </div>
-          <button
-            onClick={() => onOpenRescueKit()}
-            className="text-xs font-bold text-rose-400 hover:underline hidden sm:block"
-          >
-            تصفح الشنطة كاملة
-          </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          {RESCUE_KIT_PLANS.map((plan) => (
-            <div
-              key={plan.id}
-              onClick={() => onOpenRescueKit(plan.id)}
-              className="cursor-pointer p-5 bg-[#141C18] hover:bg-[#1C221E] border border-white/10 hover:border-rose-500/50 rounded-3xl transition-all shadow-md flex flex-col justify-between group"
-            >
-              <div className="space-y-2">
-                <div className="text-3xl p-2 rounded-2xl bg-white/5 inline-block group-hover:scale-110 transition-transform">
-                  {plan.emoji}
+        {/* Plan Selector Grid */}
+        <div className="mb-8">
+          <h2 className="text-sm font-semibold text-[#8eb5a2] mb-3 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <span>اختر الحالة التي تصف ما تمر به الآن:</span>
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2.5">
+            {RESCUE_KIT_PLANS.map((plan) => {
+              const isSelected = plan.id === selectedPlanId;
+              return (
+                <button
+                  key={plan.id}
+                  onClick={() => {
+                    setSelectedPlanId(plan.id);
+                    setExpandedSteps({ 1: true, 2: true, 3: true, 4: true });
+                  }}
+                  className={`p-3 rounded-xl border text-right transition-all cursor-pointer flex flex-col justify-between ${
+                    isSelected
+                      ? 'bg-emerald-950/40 border-emerald-500/60 shadow-lg shadow-emerald-950/30 ring-1 ring-emerald-500/30'
+                      : 'bg-[#0f1914] border-[#1b2f25] hover:border-[#2d4e3e] text-[#a4c9b6]'
+                  }`}
+                >
+                  <div className="text-2xl mb-1.5">{plan.emoji}</div>
+                  <div>
+                    <h3 className={`text-xs md:text-sm font-bold leading-tight ${isSelected ? 'text-white' : 'text-[#d8ece1]'}`}>
+                      {plan.title.replace('خطة وقت ', '')}
+                    </h3>
+                    <span className="text-[10px] text-[#709583] line-clamp-1 mt-0.5">
+                      {plan.steps.length} خطوات عملية
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Active Plan Detail Card */}
+        {activePlan && (
+          <div className="bg-[#0e1813] border border-[#213a2e] rounded-2xl p-5 md:p-8 mb-10 shadow-xl">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#1b2f25]">
+              <div className="flex items-center gap-3.5">
+                <div className="w-14 h-14 rounded-2xl bg-[#14241c] border border-[#264434] flex items-center justify-center text-3xl">
+                  {activePlan.emoji}
                 </div>
-                
-                <h3 className="text-base font-bold text-white group-hover:text-rose-300 transition-colors">
-                  {plan.title}
+                <div>
+                  <h3 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
+                    <span>{activePlan.title}</span>
+                  </h3>
+                  <p className="text-xs md:text-sm text-[#9ec4b3] mt-1">
+                    {activePlan.tagline}
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 flex-wrap">
+                {activePlan.relatedToolTab && (
+                  <button
+                    onClick={() => onNavigate(activePlan.relatedToolTab!)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold transition-all cursor-pointer"
+                  >
+                    <Wind className="w-3.5 h-3.5" />
+                    <span>تمرين متصل بهذه الخطة</span>
+                  </button>
+                )}
+                {activePlan.relatedArticleId && onOpenArticle && (
+                  <button
+                    onClick={() => onOpenArticle(activePlan.relatedArticleId!)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#13221b] hover:bg-[#1a3026] border border-[#284838] text-[#c2dfd1] text-xs font-semibold transition-all cursor-pointer"
+                  >
+                    <span>قراءة المقال المرتبط</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Steps Container */}
+            <div className="pt-6 space-y-4">
+              <h4 className="text-sm font-bold text-[#b5dac7] flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>الخطوات الموصى بها بالترتيب:</span>
+              </h4>
+
+              <div className="space-y-3.5">
+                {activePlan.steps.map((step) => {
+                  const isExpanded = expandedSteps[step.number] ?? true;
+                  return (
+                    <div 
+                      key={step.number}
+                      className="border border-[#1f372b] rounded-xl bg-[#09110d] overflow-hidden transition-all"
+                    >
+                      <button
+                        onClick={() => toggleStep(step.number)}
+                        className="w-full px-4 py-3.5 flex items-center justify-between text-right hover:bg-[#0d1813] transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-bold text-xs flex items-center justify-center">
+                            {step.number}
+                          </span>
+                          <span className="text-sm md:text-base font-bold text-white">
+                            {step.title}
+                          </span>
+                        </div>
+                        <div className="text-[#6d9480]">
+                          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        </div>
+                      </button>
+
+                      {isExpanded && (
+                        <div className="px-4 pb-4 pt-1 border-t border-[#16271e] text-xs md:text-sm space-y-3">
+                          <p className="text-[#cae4d6] leading-relaxed bg-[#0e1b15] p-3 rounded-lg border border-[#1d3528]">
+                            {step.action}
+                          </p>
+                          <div className="flex items-start gap-2 text-[#8eb7a3] bg-emerald-950/20 p-2.5 rounded-lg border border-emerald-900/30">
+                            <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                            <p className="leading-relaxed">
+                              <span className="font-semibold text-amber-300">نصيحة أخصائي: </span>
+                              {step.tip}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Immediate Mental First Aid & Hotline Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          {/* Card 1: Emergency Helplines */}
+          <div className="bg-gradient-to-br from-[#121b16] to-[#0d1611] border border-rose-500/30 rounded-2xl p-6 relative overflow-hidden">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-300 shrink-0">
+                <PhoneCall className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white mb-1">
+                  الخطوط الساخنة المجانية للمساندة النفسية
                 </h3>
-
-                <p className="text-xs text-stone-400 leading-relaxed font-medium">
-                  {plan.tagline}
+                <p className="text-xs text-[#a3c9b7] leading-relaxed mb-4">
+                  إذا كنت في خطر فوري أو تشعر بأنك عاجز تماماً عن السيطرة على أفكارك، لا تتردد في الاتصال المباشر بالمختصين مجاناً:
                 </p>
-
-                <div className="text-[11px] text-emerald-400/90 font-bold pt-1">
-                  ✓ {plan.steps.length} خطوات عملية مجربة
+                <div className="space-y-2">
+                  <div className="p-2.5 rounded-lg bg-[#09110d] border border-[#213a2e] flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-rose-200">الأمانة العامة للصحة النفسية (مصر)</div>
+                      <div className="text-[11px] text-[#7da391]">خدمة مجانية على مدار 24 ساعة</div>
+                    </div>
+                    <span className="text-sm font-extrabold text-emerald-300 font-mono" dir="ltr">16328 / 08008880700</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-[#09110d] border border-[#213a2e] flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-rose-200">خط نجدة الطفل والإرشاد الأسري</div>
+                      <div className="text-[11px] text-[#7da391]">دعم نفسي واستشارات متخصصة</div>
+                    </div>
+                    <span className="text-sm font-extrabold text-emerald-300 font-mono" dir="ltr">16000</span>
+                  </div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-rose-300 font-bold">
-                <span>فتح الخطة</span>
-                <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          {/* Card 2: Interactive Rescue Tools */}
+          <div className="bg-[#0d1612] border border-[#20372b] rounded-2xl p-6 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-300">
+                  <HeartHandshake className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">
+                    أدوات تهدئة فورية داخل نسمة حياة
+                  </h3>
+                  <p className="text-xs text-[#8ab19e]">
+                    جرب تمرين تفريغ أو تنفس مخصص قبل اتخاذ أي قرار
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-
-          {/* Quick Hotline Emergency Card */}
-          <div
-            onClick={onOpenEmergencyHelp}
-            className="cursor-pointer p-5 bg-gradient-to-br from-[#301616] to-[#1E1111] border border-rose-500/50 rounded-3xl transition-all shadow-md flex flex-col justify-between group"
-          >
-            <div className="space-y-2">
-              <div className="text-3xl p-2 rounded-2xl bg-rose-500/20 inline-block group-hover:scale-110 transition-transform">
-                🆘
-              </div>
-              
-              <h3 className="text-base font-bold text-rose-200">
-                خطوط الطوارئ والدعم الفوري
-              </h3>
-
-              <p className="text-xs text-rose-300/80 leading-relaxed font-medium">
-                أرقام رسمية ومجانية للدعم والمساعدة النفسية المباشرة في الأوقات الحرجة.
+              <p className="text-xs text-[#a0c5b3] leading-relaxed mb-4">
+                جميع هذه الأدوات متاحة بدون تسجيل، تحفظ بياناتك على جهازك فقط وتوفر لك مساحة آمنة لتنظيم نبضات قلبك وأفكارك.
               </p>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-rose-500/30 flex items-center justify-between text-xs text-rose-200 font-bold">
-              <span>عرض أرقام الطوارئ</span>
-              <PhoneCall className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                onClick={() => onNavigate('breathe')}
+                className="p-2.5 rounded-xl bg-[#122019] hover:bg-[#182c22] border border-[#274536] text-right transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-300 mb-0.5">
+                  <Wind className="w-3.5 h-3.5" />
+                  <span>تنفس 4-7-8</span>
+                </div>
+                <div className="text-[10px] text-[#7fa693]">لتهدئة ضربات القلب</div>
+              </button>
+
+              <button
+                onClick={() => onNavigate('untangle')}
+                className="p-2.5 rounded-xl bg-[#122019] hover:bg-[#182c22] border border-[#274536] text-right transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-300 mb-0.5">
+                  <Brain className="w-3.5 h-3.5" />
+                  <span>فكفكة المشاعر</span>
+                </div>
+                <div className="text-[10px] text-[#7fa693]">تسمية وفصل الأفكار</div>
+              </button>
+
+              <button
+                onClick={() => onNavigate('battery')}
+                className="p-2.5 rounded-xl bg-[#122019] hover:bg-[#182c22] border border-[#274536] text-right transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-300 mb-0.5">
+                  <BatteryCharging className="w-3.5 h-3.5" />
+                  <span>شاحن الطاقة</span>
+                </div>
+                <div className="text-[10px] text-[#7fa693]">فحص طاقتك وتوزيعها</div>
+              </button>
+
+              <button
+                onClick={() => onNavigate('support')}
+                className="p-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-right transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-200 mb-0.5">
+                  <HeartHandshake className="w-3.5 h-3.5" />
+                  <span>طلب استشارة</span>
+                </div>
+                <div className="text-[10px] text-[#86ac98]">تواصل مباشر بسرية</div>
+              </button>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Featured Clinical Interactive Support Tools */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        
-        {/* Tool 1: غرفة الطوارئ النفسية */}
-        <div className="p-6 bg-[#141C18] border border-white/10 hover:border-emerald-500/50 rounded-3xl transition-all shadow-md flex flex-col justify-between group">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-3xl p-2 rounded-2xl bg-rose-500/15 text-rose-300">🚨</span>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 font-bold">محاكاة عملية</span>
-            </div>
-
-            <h3 className="text-lg font-bold text-white group-hover:text-rose-300 transition-colors">
-              غرفة الطوارئ النفسية (Psychological ER)
-            </h3>
-
-            <div className="text-xs text-stone-300 space-y-2 leading-relaxed">
-              <p>
-                <strong>الهدف:</strong> تدريب عملي وتفاعلي على 5 سيناريوهات حرجة (نوبة هلع، ألم عاطفي حاد، انهيار بكاء، رغبة في الانعزال التام، أفكار سوداوية).
-              </p>
-              <p>
-                <strong>ماذا تتعلم منها:</strong> إتقان مهارة: ماذا أفعل فوراً؟ وماذا لا أفعله تحت أي ظرف؟ ومتى تكون استشارة الطبيب حتمية؟
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
-            <span className="text-xs text-stone-400">٥ سيناريوهات ميدانية</span>
-            <button
-              onClick={onOpenPsychologicalER}
-              className="px-5 py-2.5 bg-rose-500 hover:bg-rose-400 text-black text-xs font-extrabold rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-1.5"
-            >
-              <span>بدء المحاكاة</span>
-              <ArrowLeft className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Tool 2: أخصائي أم طبيب نفسي؟ */}
-        <div className="p-6 bg-[#141C18] border border-white/10 hover:border-emerald-500/50 rounded-3xl transition-all shadow-md flex flex-col justify-between group">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-3xl p-2 rounded-2xl bg-teal-500/15 text-teal-300">🩺</span>
-              <span className="text-xs px-2.5 py-1 rounded-full bg-teal-500/20 text-teal-300 font-bold">دليل بدون وصمة</span>
-            </div>
-
-            <h3 className="text-lg font-bold text-white group-hover:text-teal-300 transition-colors">
-              دليل استشارة المختص: أخصائي أم طبيب نفسي؟
-            </h3>
-
-            <div className="text-xs text-stone-300 space-y-2 leading-relaxed">
-              <p>
-                <strong>الهدف:</strong> توضيح الفروق الجوهرية بين المعالج النفسي (Psychologist) والطبيب النفسي (Psychiatrist) بدون أي وصمة عار.
-              </p>
-              <p>
-                <strong>كيف يفيدك:</strong> يوضح لك أيهما تحتاج بحسب طبيعة الأعراض، وكيف تحضر نفسك للجلسة الأولى، والأسئلة التي يحق لك طرحها.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
-            <span className="text-xs text-stone-400">دليل مبسط ومطمئن</span>
-            <button
-              onClick={onOpenSpecialistGuide}
-              className="px-5 py-2.5 bg-teal-500 hover:bg-teal-400 text-black text-xs font-extrabold rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-1.5"
-            >
-              <span>قراءة الدليل</span>
-              <ArrowLeft className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-
-      </section>
-
-      {/* Direct Link to Support Ticket */}
-      <section className="bg-gradient-to-r from-[#1E2C22] via-[#162019] to-[#141C18] border border-emerald-500/30 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
-        <div className="space-y-2 max-w-xl">
-          <div className="inline-flex items-center gap-2 text-xs text-emerald-400 font-bold">
-            <HeartHandshake className="w-4 h-4" />
-            <span>طلب مساندة شخصية مباشرة</span>
-          </div>
-          <h3 className="text-lg sm:text-xl font-bold text-white">
-            هل تحتاج إلى من يسمعك ويوجهك في سرية تامة؟
-          </h3>
-          <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
-            يمكنك إرسال طلب دعم خاص لفريق مبادرة نسمة حياة مع الحفاظ التام على خصوصيتك وسريتك.
-          </p>
-        </div>
-
-        <button
-          onClick={() => onNavigate('support')}
-          className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs sm:text-sm rounded-2xl transition-all shadow-md active:scale-95 shrink-0 flex items-center gap-2"
-        >
-          <span>الانتقال لطلب الدعم</span>
-          <ArrowLeft className="w-4 h-4" />
-        </button>
-      </section>
-
+      </div>
     </div>
   );
 };
