@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0c0c0e;
-  --ink: #e4e4e4;
-  --accent: #c4fb6d;
-  --surface: #141416;
-  --border: rgba(255, 255, 255, 0.1);
-  --ink-dim: rgba(228, 228, 228, 0.5);
+  --bg: #0b0f0d;
+  --ink: #e8ede9;
+  --accent: #34d399;
+  --surface: #121a15;
+  --surface-hover: #17231c;
+  --border: rgba(52, 211, 153, 0.14);
+  --ink-dim: rgba(232, 237, 233, 0.6);
 }
 
 @layer base {
@@ -15,134 +16,63 @@
     color: var(--ink);
     background-color: var(--bg);
     -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
   }
 
   body {
     min-height: 100vh;
     overflow-x: hidden;
     background-color: var(--bg);
-    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(52, 211, 153, 0.05) 1px, transparent 1px);
     background-size: 32px 32px;
     color: var(--ink);
   }
 
   ::selection {
-    background: var(--accent);
-    color: #000;
+    background: #34d399;
+    color: #052e16;
   }
 }
 
-/* Variation 6 Typography & Components */
-.font-syne {
-  font-family: 'Syne', 'Tajawal', sans-serif;
-}
-
-.font-geist {
-  font-family: 'Geist Mono', monospace;
-}
-
-.meta-label {
-  font-family: 'Geist Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-/* Bordered Utility Cell */
-.cell {
+/* Zen Garden Glass & Card Tokens */
+.garden-card {
+  background-color: var(--surface);
   border: 1px solid var(--border);
-  background: var(--surface);
-  position: relative;
-  transition: all 0.2s ease;
+  border-radius: 1.5rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.cell:hover {
-  border-color: rgba(196, 251, 109, 0.3);
+.garden-card:hover {
+  background-color: var(--surface-hover);
+  border-color: rgba(52, 211, 153, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(52, 211, 153, 0.1);
 }
 
-/* Tech Buttons */
-.btn-tech {
-  font-family: 'Geist Mono', monospace;
-  padding: 0.75rem 1.75rem;
-  border: 1px solid var(--accent);
-  background: transparent;
-  color: var(--accent);
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.btn-tech:hover {
-  background: rgba(196, 251, 109, 0.1);
-}
-
-.btn-tech-fill {
-  background: var(--accent);
-  color: #000;
-  border: 1px solid var(--accent);
-  font-family: 'Geist Mono', monospace;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.btn-tech-fill:hover {
-  background: #d4fc88;
-  box-shadow: 0 0 20px rgba(196, 251, 109, 0.4);
-}
-
-.hero-banner-tech {
-  border: 2px solid var(--accent);
-  background: rgba(196, 251, 109, 0.03);
-  position: relative;
-}
-
-.data-box-tech {
-  border: 1px solid var(--border);
-  background: var(--surface);
-}
-
-.big-card-tech {
-  border: 1px solid var(--border);
-  background: linear-gradient(to right, #1a1a1c, #141416);
-}
-
-/* Custom cyber scrollbars */
+/* Calming Organic Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0c0c0e;
+  background: #0b0f0d;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(52, 211, 153, 0.2);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
+  background: rgba(52, 211, 153, 0.4);
 }
 
-/* Calming breathing pulsing animation */
+/* Calming Breathing Animation */
 @keyframes breathePulse {
   0%, 100% {
-    transform: scale(0.93);
-    opacity: 0.88;
+    transform: scale(0.95);
+    opacity: 0.85;
   }
   50% {
-    transform: scale(1.15);
+    transform: scale(1.08);
     opacity: 1;
   }
 }
@@ -150,3 +80,17 @@
 .animate-breathe {
   animation: breathePulse 6s ease-in-out infinite;
 }
+
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-gentle-float {
+  animation: gentleFloat 4s ease-in-out infinite;
+}
+

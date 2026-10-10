@@ -292,7 +292,11 @@ export default function App() {
 
   // 3. Main Application Flow
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-[#0c0c0e] text-[#e4e4e4] selection:bg-[#c4fb6d] selection:text-black">
+    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
+      theme === 'dark' 
+        ? 'bg-[#0b0f0d] text-[#e8ede9] selection:bg-emerald-500 selection:text-black' 
+        : 'bg-[#f7f9f6] text-[#1a2920] selection:bg-emerald-400 selection:text-black'
+    }`}>
       
       {/* Top Navbar */}
       <Navbar
@@ -406,6 +410,8 @@ export default function App() {
             onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
             onOpenSpecialistGuide={() => setIsSpecialistGuideOpen(true)}
             onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
+            onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
+            onOpenBatteryCheck={() => setIsBatteryCheckOpen(true)}
           />
         )}
 

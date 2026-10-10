@@ -35,7 +35,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#121815]/95 backdrop-blur-md border-t border-white/10 pb-safe shadow-lg" dir="rtl">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#101713]/95 backdrop-blur-md border-t border-emerald-500/15 pb-safe shadow-lg" dir="rtl">
       <div className={`max-w-md mx-auto grid ${isAdmin ? 'grid-cols-7' : 'grid-cols-6'} items-center h-16 px-1`}>
         
         {navItems.map((item) => {

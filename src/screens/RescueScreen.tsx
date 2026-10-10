@@ -27,6 +27,8 @@ interface RescueScreenProps {
   onOpenPsychologicalER?: () => void;
   onOpenSpecialistGuide?: () => void;
   onOpenEmergencyHelp?: () => void;
+  onOpenUntangleKnot?: () => void;
+  onOpenBatteryCheck?: () => void;
 }
 
 export const RescueScreen: React.FC<RescueScreenProps> = ({
@@ -36,7 +38,9 @@ export const RescueScreen: React.FC<RescueScreenProps> = ({
   onOpenRescueKit,
   onOpenPsychologicalER,
   onOpenSpecialistGuide,
-  onOpenEmergencyHelp
+  onOpenEmergencyHelp,
+  onOpenUntangleKnot,
+  onOpenBatteryCheck
 }) => {
   const [selectedPlanId, setSelectedPlanId] = useState<string>(RESCUE_KIT_PLANS[0]?.id || 'distress');
   const [expandedSteps, setExpandedSteps] = useState<Record<number, boolean>>({ 1: true, 2: true, 3: true, 4: true });
@@ -300,7 +304,7 @@ export const RescueScreen: React.FC<RescueScreenProps> = ({
               </button>
 
               <button
-                onClick={() => onNavigate('untangle')}
+                onClick={() => onOpenUntangleKnot ? onOpenUntangleKnot() : onNavigate('games')}
                 className="p-2.5 rounded-xl bg-[#122019] hover:bg-[#182c22] border border-[#274536] text-right transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-300 mb-0.5">
@@ -311,7 +315,7 @@ export const RescueScreen: React.FC<RescueScreenProps> = ({
               </button>
 
               <button
-                onClick={() => onNavigate('battery')}
+                onClick={() => onOpenBatteryCheck ? onOpenBatteryCheck() : onNavigate('self-discovery')}
                 className="p-2.5 rounded-xl bg-[#122019] hover:bg-[#182c22] border border-[#274536] text-right transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-300 mb-0.5">

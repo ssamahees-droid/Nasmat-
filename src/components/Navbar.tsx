@@ -75,13 +75,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#121815]/95 backdrop-blur-md border-b border-white/10 text-stone-200 transition-all">
+    <header className={`sticky top-0 z-40 backdrop-blur-md border-b transition-all ${
+      isDark 
+        ? 'bg-[#101713]/95 border-white/10 text-stone-200' 
+        : 'bg-white/95 border-emerald-600/15 text-stone-800 shadow-xs'
+    }`}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
         
         {/* Zone 1: Official Brand Logo & Name */}
         <button
           onClick={() => onNavigate('home')}
-          className="flex items-center gap-3 text-right group focus:outline-hidden shrink-0"
+          className="flex items-center gap-3 text-right group focus:outline-hidden shrink-0 cursor-pointer"
           title="نسمة حياة — الصفحة الرئيسية"
         >
           <img
@@ -90,10 +94,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="w-10 h-10 rounded-2xl object-cover shadow-sm border border-emerald-500/30 group-hover:scale-105 transition-transform"
           />
           <div className="flex flex-col text-right">
-            <span className="font-tajawal text-base sm:text-lg font-black tracking-tight text-white group-hover:text-emerald-300 transition-colors leading-tight">
+            <span className={`font-tajawal text-base sm:text-lg font-black tracking-tight group-hover:text-emerald-400 transition-colors leading-tight ${
+              isDark ? 'text-white' : 'text-stone-900'
+            }`}>
               نسمة حياة
             </span>
-            <span className="text-[10px] text-stone-400 font-medium -mt-0.5">
+            <span className={`text-[10px] font-medium -mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>
               للصحة النفسية
             </span>
           </div>
@@ -110,10 +116,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onNavigate(link.id);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className={`px-2.5 py-1.5 rounded-xl transition-all font-semibold ${
+                className={`px-2.5 py-1.5 rounded-xl transition-all font-semibold cursor-pointer ${
                   isActive
-                    ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 shadow-xs'
-                    : 'text-stone-300 hover:text-white hover:bg-white/5'
+                    ? 'bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30 shadow-xs'
+                    : isDark 
+                      ? 'text-stone-300 hover:text-white hover:bg-white/5' 
+                      : 'text-stone-600 hover:text-stone-900 hover:bg-emerald-50'
                 }`}
               >
                 {link.label}
@@ -128,10 +136,26 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* PWA Install Button (Desktop & Compact) */}
           <PWAInstallButton variant="compact" className="hidden md:flex" />
 
+          {/* Theme Toggle Button */}
+          {onToggleTheme && (
+            <button
+              onClick={onToggleTheme}
+              className={`p-2 rounded-xl border transition-colors cursor-pointer ${
+                isDark 
+                  ? 'border-white/10 hover:border-emerald-500/40 bg-white/5 text-stone-200' 
+                  : 'border-stone-200 hover:border-emerald-500/40 bg-stone-50 text-stone-700'
+              }`}
+              title={isDark ? 'التبديل إلى الوضع النهاري الهادئ' : 'التبديل إلى الوضع الليلي المريح'}
+              aria-label="تبديل المظهر"
+            >
+              {isDark ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4 text-emerald-700" />}
+            </button>
+          )}
+
           {/* Emergency Safety Protocol Button */}
           <button
             onClick={onOpenSafetyModal}
-            className="py-1 px-3 border border-rose-500/40 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow-xs"
+            className="py-1 px-3 border border-rose-500/40 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
             title="أرقام الطوارئ والدعم النفسي العاجل"
           >
             <PhoneCall className="w-3.5 h-3.5" />
