@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { MoodValue, ContentItem } from '../types';
 import { storage } from '../services/storage';
+import { PWAInstallButton } from '../components/PWAInstallButton';
 
 interface HomeScreenProps {
   onNavigate: (tab: string) => void;
@@ -725,7 +726,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       <footer className="border-t border-white/10 pt-8 pb-4 text-stone-400 space-y-6 text-right">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
           {/* Col 1 */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex items-center gap-2.5">
               <img src="/logo.jpg" alt="شعار نسمة حياة" className="w-8 h-8 rounded-xl object-cover" />
               <span className="font-bold text-white text-sm">نسمة حياة</span>
@@ -733,6 +734,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <p className="text-stone-400 leading-relaxed text-[11px]">
               مبادرة عربية إنسانية لنشر الوعي بالصحة النفسية ومساندة الأفراد في رحلة استكشاف الذات والتعافي بكرامة وأمان.
             </p>
+            <div className="pt-1">
+              <PWAInstallButton variant="compact" />
+            </div>
           </div>
 
           {/* Col 2 */}

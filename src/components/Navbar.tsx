@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { UserRole } from '../types';
 import { storage } from '../services/storage';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface NavbarProps {
   currentTab: string;
@@ -124,6 +125,9 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Zone 3: Actions */}
         <div className="flex items-center gap-2">
           
+          {/* PWA Install Button (Desktop & Compact) */}
+          <PWAInstallButton variant="compact" className="hidden md:flex" />
+
           {/* Emergency Safety Protocol Button */}
           <button
             onClick={onOpenSafetyModal}
@@ -235,6 +239,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               );
             })}
+          </div>
+
+          <div className="pt-2">
+            <PWAInstallButton variant="full" />
           </div>
 
           <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs text-stone-400">
