@@ -56,11 +56,26 @@ export default defineConfig(() => {
           ]
         },
         workbox: {
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,jpg}'],
           navigateFallback: '/index.html',
           // Strictly protect sensitive user data by refusing to cache backend/auth/database endpoints
           navigateFallbackDenylist: [/^\/api\//, /^https:\/\/(identitytoolkit|securetoken|firestore)\.googleapis\.com/],
           runtimeCaching: [
+            {
+              urlPattern: /^\/audio\/.*\.mp3$/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'nature-audio-cache',
+                expiration: {
+                  maxEntries: 15,
+                  maxAgeSeconds: 60 * 60 * 24 * 30
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
               handler: 'CacheFirst',

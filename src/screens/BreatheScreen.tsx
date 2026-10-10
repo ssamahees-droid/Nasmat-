@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { INITIAL_BREATHING_SESSIONS } from '../data/initialData';
 import { BreathingSession } from '../types';
-import { ambientSound } from '../utils/audioSynth';
+import { ambientSound, SoundChannelId } from '../utils/audioSynth';
 import { storage } from '../services/storage';
 
 interface BreatheScreenProps {
@@ -29,7 +29,7 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [phaseSecondsLeft, setPhaseSecondsLeft] = useState(selectedSession.instructions[0].seconds);
   const [totalSecondsElapsed, setTotalSecondsElapsed] = useState(0);
-  const [soundMode, setSoundMode] = useState<'meditation' | 'rain' | 'breeze' | 'waves'>('meditation');
+  const [soundMode, setSoundMode] = useState<SoundChannelId>('waves');
   const [showPostFeedback, setShowPostFeedback] = useState(false);
   const [postFeeling, setPostFeeling] = useState<string | null>(null);
   const [chimeEnabled, setChimeEnabled] = useState(true);
@@ -216,21 +216,23 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
         </div>
 
         {/* Sound Ambience Selector */}
-        <div className="relative z-10 w-full max-w-xs mb-5 flex items-center justify-center gap-1.5 p-1 bg-stone-200/60 rounded-xl text-xs">
+        <div className="relative z-10 w-full max-w-md mb-5 flex flex-wrap items-center justify-center gap-1.5 p-1 bg-stone-200/60 rounded-xl text-xs">
           {[
-            { id: 'meditation', label: 'تأمل' },
-            { id: 'rain', label: 'مطر' },
-            { id: 'breeze', label: 'نسيم' },
-            { id: 'waves', label: 'أمواج' }
+            { id: 'waves' as SoundChannelId, label: 'أمواج 🌊' },
+            { id: 'rain' as SoundChannelId, label: 'مطر 🌧️' },
+            { id: 'stream' as SoundChannelId, label: 'جدول 💧' },
+            { id: 'birds' as SoundChannelId, label: 'طيور 🐦' },
+            { id: 'forest' as SoundChannelId, label: 'غابة 🌲' },
+            { id: 'breeze' as SoundChannelId, label: 'نسيم 🍃' }
           ].map(snd => (
             <button
               key={snd.id}
               onClick={() => {
-                setSoundMode(snd.id as typeof soundMode);
-                if (isActive) ambientSound.playAmbient(snd.id as typeof soundMode, 0.4);
+                setSoundMode(snd.id);
+                if (isActive) ambientSound.playAmbient(snd.id, 0.4);
               }}
-              className={`flex-1 py-1 text-[11px] font-medium rounded-lg transition-colors ${
-                soundMode === snd.id ? 'bg-[#355C4A] text-white' : 'text-[#52645B] hover:text-[#26332D]'
+              className={`py-1 px-2.5 text-[11px] font-medium rounded-lg transition-colors cursor-pointer ${
+                soundMode === snd.id ? 'bg-[#355C4A] text-white shadow-2xs' : 'text-[#52645B] hover:text-[#26332D]'
               }`}
             >
               {snd.label}
