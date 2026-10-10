@@ -75,14 +75,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className={`sticky top-0 z-40 backdrop-blur-md border-b transition-all ${
-      isDark 
-        ? 'bg-[#101713]/95 border-white/10 text-stone-200' 
-        : 'bg-white/95 border-emerald-600/15 text-stone-800 shadow-xs'
-    }`}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+    <header className="sticky top-0 z-40 bg-[#F2EFEB] dark:bg-[#121214] border-b-[1.5px] border-[#111113] dark:border-white/20 transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
         
-        {/* Zone 1: Official Brand Logo & Name */}
+        {/* Zone 1: Variation 6 Brand Lockup */}
         <button
           onClick={() => onNavigate('home')}
           className="flex items-center gap-3 text-right group focus:outline-hidden shrink-0 cursor-pointer"
@@ -91,22 +87,20 @@ export const Navbar: React.FC<NavbarProps> = ({
           <img
             src="/logo.jpg"
             alt="شعار مبادرة نسمة حياة"
-            className="w-10 h-10 rounded-2xl object-cover shadow-sm border border-emerald-500/30 group-hover:scale-105 transition-transform"
+            className="w-10 h-10 rounded-xl object-cover border-[1.5px] border-[#111113] shadow-[2px_2px_0_#111113] group-hover:scale-105 transition-transform"
           />
-          <div className="flex flex-col text-right">
-            <span className={`font-tajawal text-base sm:text-lg font-black tracking-tight group-hover:text-emerald-400 transition-colors leading-tight ${
-              isDark ? 'text-white' : 'text-stone-900'
-            }`}>
-              نسمة حياة
+          <div className="flex flex-col text-right leading-none">
+            <span className="font-jetbrains text-[9px] sm:text-[10px] font-semibold text-[#E36E4D] tracking-widest uppercase">
+              MOUBADARA_01
             </span>
-            <span className={`text-[10px] font-medium -mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>
-              للصحة النفسية
+            <span className="font-syne font-black text-lg sm:text-2xl text-[#111113] dark:text-[#F2EFEB] tracking-tight mt-0.5">
+              نسمة حياة
             </span>
           </div>
         </button>
 
         {/* Zone 2: Navigation Links (Desktop) */}
-        <nav className="hidden lg:flex items-center gap-1 text-xs">
+        <nav className="hidden lg:flex items-center gap-1.5 text-xs font-cairo">
           {navLinks.map((link) => {
             const isActive = currentTab === link.id || (link.id === 'explore' && currentTab === 'content-detail');
             return (
@@ -116,12 +110,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onNavigate(link.id);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className={`px-2.5 py-1.5 rounded-xl transition-all font-semibold cursor-pointer ${
+                className={`px-3 py-1.5 rounded-full transition-all font-bold cursor-pointer whitespace-nowrap ${
                   isActive
-                    ? 'bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30 shadow-xs'
-                    : isDark 
-                      ? 'text-stone-300 hover:text-white hover:bg-white/5' 
-                      : 'text-stone-600 hover:text-stone-900 hover:bg-emerald-50'
+                    ? 'bg-[#111113] text-[#F2EFEB] dark:bg-[#F2EFEB] dark:text-[#111113] shadow-[2px_2px_0_#E36E4D]'
+                    : 'text-[#111113]/80 dark:text-[#F2EFEB]/80 hover:text-[#111113] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5'
                 }`}
               >
                 {link.label}
@@ -130,9 +122,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Zone 3: Actions */}
-        <div className="flex items-center gap-2">
+        {/* Zone 3: Actions & System Info */}
+        <div className="flex items-center gap-2.5">
           
+          <div className="hidden xl:block font-jetbrains text-[10px] text-[#111113]/50 dark:text-[#F2EFEB]/50 uppercase tracking-widest px-2">
+            UPDATE_V2026
+          </div>
+
           {/* PWA Install Button (Desktop & Compact) */}
           <PWAInstallButton variant="compact" className="hidden md:flex" />
 
@@ -140,37 +136,33 @@ export const Navbar: React.FC<NavbarProps> = ({
           {onToggleTheme && (
             <button
               onClick={onToggleTheme}
-              className={`p-2 rounded-xl border transition-colors cursor-pointer ${
-                isDark 
-                  ? 'border-white/10 hover:border-emerald-500/40 bg-white/5 text-stone-200' 
-                  : 'border-stone-200 hover:border-emerald-500/40 bg-stone-50 text-stone-700'
-              }`}
-              title={isDark ? 'التبديل إلى الوضع النهاري الهادئ' : 'التبديل إلى الوضع الليلي المريح'}
+              className="p-2 rounded-xl border-[1.5px] border-[#111113] dark:border-white/20 bg-white dark:bg-[#18181C] text-[#111113] dark:text-[#F2EFEB] hover:shadow-[2px_2px_0_#111113] transition-all cursor-pointer"
+              title={isDark ? 'التبديل إلى الوضع النهاري (Variation 6)' : 'التبديل إلى الوضع الليلي'}
               aria-label="تبديل المظهر"
             >
-              {isDark ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4 text-emerald-700" />}
+              {isDark ? <Sun className="w-4 h-4 text-[#FF7E5B]" /> : <Moon className="w-4 h-4 text-[#111113]" />}
             </button>
           )}
 
           {/* Emergency Safety Protocol Button */}
           <button
             onClick={onOpenSafetyModal}
-            className="py-1 px-3 border border-rose-500/40 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
+            className="py-1.5 px-3.5 bg-[#E36E4D] text-white text-xs font-bold rounded-full border-[1.5px] border-[#111113] shadow-[3px_3px_0_#111113] hover:translate-y-[-1px] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1.5 cursor-pointer font-cairo"
             title="أرقام الطوارئ والدعم النفسي العاجل"
           >
             <PhoneCall className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">طوارئ</span>
+            <span className="font-syne">طوارئ / SOS</span>
           </button>
 
           {/* Notifications */}
           <button
             onClick={onOpenNotifications}
-            className="relative p-2 rounded-xl border border-white/10 hover:border-emerald-500/40 bg-white/5 text-stone-200 transition-colors"
+            className="relative p-2 rounded-xl border-[1.5px] border-[#111113] dark:border-white/20 bg-white dark:bg-[#18181C] text-[#111113] dark:text-[#F2EFEB] hover:shadow-[2px_2px_0_#111113] transition-all cursor-pointer"
             aria-label="الإشعارات"
           >
-            <Bell className="w-4 h-4 text-emerald-300" />
+            <Bell className="w-4 h-4 text-[#E36E4D]" />
             {unreadNotificationsCount > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full ring-2 ring-[#121815]" />
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-[#E36E4D] rounded-full ring-2 ring-white dark:ring-black" />
             )}
           </button>
 
@@ -178,24 +170,24 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="relative">
             <button
               onClick={() => setShowRoleMenu(!showRoleMenu)}
-              className="flex items-center gap-1.5 py-1 px-2.5 text-xs font-bold rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-stone-200 transition-colors"
+              className="flex items-center gap-1.5 py-1.5 px-2.5 text-xs font-bold rounded-xl border-[1.5px] border-[#111113] dark:border-white/20 bg-white dark:bg-[#18181C] text-[#111113] dark:text-[#F2EFEB] hover:shadow-[2px_2px_0_#111113] transition-all cursor-pointer font-jetbrains"
               title="تبديل الصلاحية"
             >
-              <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="max-w-[85px] sm:max-w-none truncate text-[11px]">
-                {currentRole === 'user' ? 'مستخدم' : currentRole}
+              <UserCheck className="w-3.5 h-3.5 text-[#E36E4D]" />
+              <span className="max-w-[75px] sm:max-w-none truncate text-[11px]">
+                {currentRole === 'user' ? 'USER' : currentRole.toUpperCase()}
               </span>
             </button>
 
             {/* Role Switcher Dropdown */}
             {showRoleMenu && (
               <div 
-                className="absolute left-0 mt-2 w-64 bg-[#141C18] border border-white/15 rounded-2xl shadow-2xl p-2 z-50 animate-fade-in text-right"
+                className="absolute left-0 mt-2 w-64 bg-[#F2EFEB] dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-2xl shadow-[6px_6px_0_#111113] p-2 z-50 animate-fade-in text-right font-cairo"
                 role="menu"
               >
-                <div className="px-3 py-1.5 text-[11px] font-bold text-stone-400 border-b border-white/10 flex items-center justify-between">
+                <div className="px-3 py-1.5 text-[11px] font-bold text-[#111113]/70 dark:text-[#F2EFEB]/70 border-b border-[#111113]/15 flex items-center justify-between">
                   <span>تبديل الصلاحية (للمشرفين)</span>
-                  <button onClick={() => setShowRoleMenu(false)} className="text-stone-400 hover:text-white">
+                  <button onClick={() => setShowRoleMenu(false)} className="text-[#111113] hover:text-[#E36E4D]">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -210,17 +202,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                         setShowRoleMenu(false);
                         if (r.id !== 'user') onNavigate('admin');
                       }}
-                      className={`w-full p-2 rounded-xl text-xs text-right transition-colors flex items-center justify-between ${
+                      className={`w-full p-2 rounded-xl text-xs text-right transition-all flex items-center justify-between cursor-pointer ${
                         currentRole === r.id 
-                          ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30' 
-                          : 'hover:bg-white/5 text-stone-300'
+                          ? 'bg-[#111113] text-white dark:bg-[#F2EFEB] dark:text-[#111113] font-bold shadow-xs' 
+                          : 'hover:bg-black/5 dark:hover:bg-white/5 text-[#111113] dark:text-[#F2EFEB]'
                       }`}
                     >
                       <div>
                         <div className="font-semibold">{r.title}</div>
-                        <div className="text-[10px] text-stone-400">{r.desc}</div>
+                        <div className="text-[10px] opacity-70">{r.desc}</div>
                       </div>
-                      {currentRole === r.id && <Check className="w-4 h-4 text-emerald-400" />}
+                      {currentRole === r.id && <Check className="w-4 h-4 text-[#E36E4D]" />}
                     </button>
                   ))}
                 </div>
@@ -231,7 +223,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Hamburger Menu Toggle */}
           <button
             onClick={() => setShowMobileMenu(!showMobileMenu)}
-            className="lg:hidden p-2 rounded-xl border border-white/10 hover:border-emerald-500/40 bg-white/5 text-stone-200 transition-colors"
+            className="lg:hidden p-2 rounded-xl border-[1.5px] border-[#111113] dark:border-white/20 bg-white dark:bg-[#18181C] text-[#111113] dark:text-[#F2EFEB] transition-all cursor-pointer"
             aria-label="القائمة الرئيسية"
           >
             {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -241,9 +233,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer Navigation */}
       {showMobileMenu && (
-        <div className="lg:hidden border-t border-white/10 bg-[#121815] px-4 py-4 space-y-2 animate-fade-in text-right">
-          <div className="text-xs font-bold text-stone-400 px-2 pb-1 border-b border-white/5">
-            أقسام مبادرة نسمة حياة:
+        <div className="lg:hidden border-t-[1.5px] border-[#111113] dark:border-white/20 bg-[#F2EFEB] dark:bg-[#18181C] px-4 py-4 space-y-2 animate-fade-in text-right font-cairo">
+          <div className="text-xs font-bold text-[#E36E4D] px-2 pb-1 border-b border-[#111113]/10 font-jetbrains uppercase">
+            // SECTIONS_NAVIGATION
           </div>
           <div className="grid grid-cols-2 gap-2 pt-1">
             {navLinks.map((link) => {
@@ -252,14 +244,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={link.id}
                   onClick={() => handleMobileNav(link.id)}
-                  className={`p-2.5 rounded-xl text-xs font-bold text-right transition-all flex items-center justify-between ${
+                  className={`p-2.5 rounded-xl text-xs font-bold text-right transition-all flex items-center justify-between border-[1.5px] cursor-pointer ${
                     isActive
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                      : 'bg-white/5 text-stone-300 hover:bg-white/10'
+                      ? 'bg-[#111113] text-white border-[#111113] shadow-[2px_2px_0_#E36E4D]'
+                      : 'bg-white dark:bg-[#121214] text-[#111113] dark:text-[#F2EFEB] border-[#111113]/30 hover:border-[#111113]'
                   }`}
                 >
                   <span>{link.label}</span>
-                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#E36E4D]" />}
                 </button>
               );
             })}
@@ -269,16 +261,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             <PWAInstallButton variant="full" />
           </div>
 
-          <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs text-stone-400">
+          <div className="pt-2 border-t border-[#111113]/10 flex items-center justify-between text-xs">
             <button
               onClick={() => handleMobileNav('journey')}
-              className="text-emerald-400 hover:underline font-semibold"
+              className="text-[#E36E4D] hover:underline font-bold"
             >
               سجل رحلتي وعاداتي ←
             </button>
             <button
               onClick={() => handleMobileNav('profile')}
-              className="text-stone-300 hover:underline"
+              className="text-[#111113] dark:text-[#F2EFEB] hover:underline"
             >
               حسابي والأسئلة الشائعة
             </button>

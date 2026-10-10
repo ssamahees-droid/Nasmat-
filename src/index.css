@@ -1,18 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0b0f0d;
-  --ink: #e8ede9;
-  --accent: #34d399;
-  --surface: #121a15;
-  --surface-hover: #17231c;
-  --border: rgba(52, 211, 153, 0.14);
-  --ink-dim: rgba(232, 237, 233, 0.6);
+  --bg: #F2EFEB;
+  --ink: #111113;
+  --accent: #E36E4D;
+  --ink-faint: rgba(17, 17, 19, 0.08);
+  --surface: #FFFFFF;
+  --surface-hover: #F8F6F2;
+  --border: #111113;
+  --ink-dim: rgba(17, 17, 19, 0.65);
+}
+
+[data-theme='dark'] {
+  --bg: #121214;
+  --ink: #F2EFEB;
+  --accent: #FF7E5B;
+  --ink-faint: rgba(242, 239, 235, 0.08);
+  --surface: #18181C;
+  --surface-hover: #222228;
+  --border: rgba(242, 239, 235, 0.3);
+  --ink-dim: rgba(242, 239, 235, 0.65);
 }
 
 @layer base {
   html {
-    font-family: 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     color: var(--ink);
     background-color: var(--bg);
     -webkit-tap-highlight-color: transparent;
@@ -23,74 +35,179 @@
     min-height: 100vh;
     overflow-x: hidden;
     background-color: var(--bg);
-    background-image: radial-gradient(rgba(52, 211, 153, 0.05) 1px, transparent 1px);
-    background-size: 32px 32px;
     color: var(--ink);
   }
 
   ::selection {
-    background: #34d399;
-    color: #052e16;
+    background: var(--accent);
+    color: #ffffff;
   }
 }
 
-/* Zen Garden Glass & Card Tokens */
-.garden-card {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 1.5rem;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+/* Variation 6 Distinctive Typography Utilities */
+.font-cairo {
+  font-family: 'Cairo', sans-serif;
 }
 
-.garden-card:hover {
-  background-color: var(--surface-hover);
-  border-color: rgba(52, 211, 153, 0.3);
+.font-syne {
+  font-family: 'Syne', sans-serif;
+}
+
+.font-jetbrains {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Variation 6 Interactive Grid and Cards */
+.variation6-dot-grid {
+  background-image: radial-gradient(circle, var(--ink-faint) 1.25px, transparent 1.25px);
+  background-size: 32px 32px;
+}
+
+.stat-card {
+  background: var(--bg);
+  border: 1.5px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  padding: 1.75rem;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
+}
+
+.stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(52, 211, 153, 0.1);
+  box-shadow: 8px 8px 0 var(--ink);
+}
+
+.emergency-banner {
+  background: var(--accent);
+  color: white;
+  padding: 1.75rem;
+  border: 1.5px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
+}
+
+.emergency-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 8px 8px 0 var(--ink);
+}
+
+.btn-pill {
+  background-color: var(--ink);
+  color: var(--bg);
+  padding: 1rem 2.5rem;
+  border-radius: 9999px;
+  border: 2px solid var(--ink);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-pill:hover {
+  background-color: transparent;
+  color: var(--ink);
+}
+
+.btn-pill:active {
+  transform: translate(2px, 2px);
+}
+
+.btn-circle {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.825rem;
+  line-height: 1.2;
+  cursor: pointer;
+  font-weight: 700;
+  background: transparent;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-circle:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .emoji-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+.emoji-box {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.85rem;
+  border: 1.5px solid var(--ink);
+  background: #ffffff;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme='dark'] .emoji-box {
+  background: #1e1e24;
+}
+
+.emoji-box:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.emoji-box:active,
+.emoji-box.active {
+  transform: translate(2px, 2px);
+  background: var(--accent);
+  color: white;
+  box-shadow: none;
+}
+
+/* Editorial Brutalist Cards */
+.variation6-card {
+  background: var(--surface);
+  border: 1.5px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  border-radius: 16px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.variation6-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0 var(--ink);
 }
 
 /* Calming Organic Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b0f0d;
+  background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(52, 211, 153, 0.2);
+  background: var(--ink);
   border-radius: 9999px;
+  border: 2px solid var(--bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(52, 211, 153, 0.4);
-}
-
-/* Calming Breathing Animation */
-@keyframes breathePulse {
-  0%, 100% {
-    transform: scale(0.95);
-    opacity: 0.85;
-  }
-  50% {
-    transform: scale(1.08);
-    opacity: 1;
-  }
-}
-
-.animate-breathe {
-  animation: breathePulse 6s ease-in-out infinite;
-}
-
-@keyframes gentleFloat {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
-.animate-gentle-float {
-  animation: gentleFloat 4s ease-in-out infinite;
+  background: var(--accent);
 }
 

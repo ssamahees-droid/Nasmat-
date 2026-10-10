@@ -482,10 +482,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <span className="text-xs px-2.5 py-0.5 rounded-md bg-white/5 text-emerald-400 font-bold">بوابة 04</span>
               </div>
               <h3 className={`text-base font-bold transition-colors group-hover:text-emerald-300 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                تعلّم وطبّق — الكتيب والمقالات والورش
+                تعلّم وطبّق — المكتبة والمعرفة النفسية
               </h3>
               <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                كتيب نسمة حياة (12 فصلاً تفاعلياً)، مكتبة المقالات الموثوقة، الجلسات الصوتية، واستوديو الورش التطبيقية.
+                مكتبة التثقيف النفسي (30 موضوعاً في 6 مسارات موثوقة)، كتيب نسمة حياة (12 فصلاً تفاعلياً)، والورش التطبيقية.
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-white/5">

@@ -48,6 +48,7 @@ import { FunAndGamesHubModal } from './components/FunAndGamesHubModal';
 import { GwayaHekayaGameModal } from './components/GwayaHekayaGameModal';
 import { PersonalDiscoveryQuizModal } from './components/PersonalDiscoveryQuizModal';
 import { FekerAppModal } from './components/FekerAppModal';
+import { Footer } from './components/Footer';
 import { initAnonymousAuth } from './services/authService';
 import { syncService } from './services/syncService';
 
@@ -488,6 +489,13 @@ export default function App() {
           />
         )}
       </main>
+
+      {/* Variation 6 Footer */}
+      <Footer
+        onNavigate={handleNavigate}
+        onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
+        onOpenBooklet={() => setIsBookletOpen(true)}
+      />
 
       {/* Bottom Ergonomic Navigation Bar */}
       <BottomNav
