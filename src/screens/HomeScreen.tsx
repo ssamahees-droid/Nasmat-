@@ -26,6 +26,7 @@ import {
 import { MoodValue, ContentItem } from '../types';
 import { storage } from '../services/storage';
 import { PWAInstallButton } from '../components/PWAInstallButton';
+import { CompanionHeroSection } from '../components/CompanionHeroSection';
 
 interface HomeScreenProps {
   onNavigate: (tab: string) => void;
@@ -63,6 +64,7 @@ interface HomeScreenProps {
   onOpenGwayaHekaya: () => void;
   onOpenFeker?: () => void;
   onOpenDiscoveryQuiz: () => void;
+  onOpenCompanion?: () => void;
   theme?: 'dark' | 'light';
 }
 
@@ -105,6 +107,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenGwayaHekaya,
   onOpenFeker,
   onOpenDiscoveryQuiz,
+  onOpenCompanion,
   theme = 'dark'
 }) => {
   const isDark = theme === 'dark';
@@ -192,6 +195,35 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     setSavedFavorites(storage.getFavorites());
   };
 
+  const handleOpenModalByName = (modalName: string) => {
+    switch (modalName) {
+      case 'ana_delwaqti': onOpenAnaDelwaqti(); break;
+      case 'untangle_knot': onOpenUntangleKnot(); break;
+      case 'thought_release': onOpenThoughtRelease(); break;
+      case 'gwaya_hekaya': onOpenGwayaHekaya(); break;
+      case 'soundscape': onOpenSoundscapeStudio(); break;
+      case 'emotion_compass': onOpenEmotionCompass(); break;
+      case 'daily_wisdom': onOpenDailyWisdom(); break;
+      case 'energy_budget': onOpenEnergyBudget(); break;
+      case 'boundary_builder': onOpenBoundaryBuilder(); break;
+      case 'specialist_guide': onOpenSpecialistGuide(); break;
+      case 'booklet': onOpenBooklet(); break;
+      case 'emergency_help': onOpenEmergencyHelp(); break;
+      case 'rescue_kit': onOpenRescueKit(); break;
+      case 'battery_check': onOpenBatteryCheck(); break;
+      case 'translate_feelings': onOpenTranslateFeelings(); break;
+      case 'fact_game': onOpenFactGame(); break;
+      case 'nesma_laughs': onOpenNesmaLaughs(); break;
+      case 'feker': onOpenFeker ? onOpenFeker() : onNavigate('games'); break;
+      case 'discovery_quiz': onOpenDiscoveryQuiz(); break;
+      case 'workshops_hub': onOpenWorkshopsHub(); break;
+      case 'psychological_er': onOpenPsychologicalER(); break;
+      case 'conflict_without_war': onOpenConflictWithoutWar(); break;
+      case 'healing_journey': onOpenHealingJourney(); break;
+      default: break;
+    }
+  };
+
   return (
     <div className={`pb-28 pt-4 px-4 sm:px-6 max-w-5xl mx-auto space-y-10 animate-fade-in text-right ${isDark ? 'text-[#e8ede9]' : 'text-[#1a2920]'}`}>
       
@@ -250,6 +282,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <Wind className="w-4 h-4 text-emerald-400" />
                 <span>دقيقة تنفس هادئة</span>
               </button>
+
+              {onOpenCompanion && (
+                <button
+                  onClick={onOpenCompanion}
+                  className="px-4 py-2.5 bg-linear-to-r from-[#355C4A] to-[#254234] hover:from-[#2A493B] hover:to-[#1B3126] text-white text-xs font-bold rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-2 cursor-pointer border border-emerald-400/30"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-300" />
+                  <span>تحدث مع رفيقي 🌿</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -272,6 +314,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
         </div>
       </section>
+
+      {/* 🌿 رفيقي — مرآتك وحضوره الإنساني المباشر من اللحظة الأولى */}
+      <CompanionHeroSection
+        theme={theme}
+        onOpenFullCompanion={() => onOpenCompanion && onOpenCompanion()}
+        onOpenModalByName={handleOpenModalByName}
+        onNavigate={onNavigate}
+        onOpenAudioModal={onOpenAudioModal}
+      />
 
       {/* 2. Emotional Mood Check-in & Daily Oasis: ركن الاطمئنان اليومي */}
       <section className={`p-5 sm:p-6 border rounded-3xl space-y-4 shadow-md transition-all ${

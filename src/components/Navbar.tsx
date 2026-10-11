@@ -29,6 +29,7 @@ interface NavbarProps {
   unreadNotificationsCount: number;
   onOpenNotifications: () => void;
   onOpenSafetyModal: () => void;
+  onOpenCompanion?: () => void;
   theme?: 'dark' | 'light';
   onToggleTheme?: () => void;
 }
@@ -41,6 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   unreadNotificationsCount,
   onOpenNotifications,
   onOpenSafetyModal,
+  onOpenCompanion,
   theme = 'dark',
   onToggleTheme
 }) => {
@@ -141,6 +143,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               aria-label="تبديل المظهر"
             >
               {isDark ? <Sun className="w-4 h-4 text-[#FF7E5B]" /> : <Moon className="w-4 h-4 text-[#111113]" />}
+            </button>
+          )}
+
+          {/* Rafiqi Digital Companion Button */}
+          {onOpenCompanion && (
+            <button
+              onClick={onOpenCompanion}
+              className="py-1.5 px-3 bg-[#355C4A] hover:bg-[#2A493B] text-white text-xs font-bold rounded-full border-[1.5px] border-[#111113] shadow-[2.5px_2.5px_0_#111113] hover:translate-y-[-1px] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1.5 cursor-pointer font-cairo"
+              title="تحدث مع رفيقي — رفيق رحلة نسمة حياة"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>رفيقي</span>
             </button>
           )}
 
@@ -257,7 +271,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </div>
 
-          <div className="pt-2">
+          <div className="pt-2 space-y-2">
+            {onOpenCompanion && (
+              <button
+                onClick={() => {
+                  setShowMobileMenu(false);
+                  onOpenCompanion();
+                }}
+                className="w-full py-2.5 px-3 bg-[#355C4A] text-white text-xs font-bold rounded-xl border-[1.5px] border-[#111113] shadow-[2.5px_2.5px_0_#111113] flex items-center justify-center gap-2 cursor-pointer font-cairo"
+              >
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                <span>تحدث مع رفيقي (الرفيق الرقمي) 🌿</span>
+              </button>
+            )}
             <PWAInstallButton variant="full" />
           </div>
 

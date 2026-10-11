@@ -48,6 +48,8 @@ import { FunAndGamesHubModal } from './components/FunAndGamesHubModal';
 import { GwayaHekayaGameModal } from './components/GwayaHekayaGameModal';
 import { PersonalDiscoveryQuizModal } from './components/PersonalDiscoveryQuizModal';
 import { FekerAppModal } from './components/FekerAppModal';
+import { CompanionModal } from './components/CompanionModal';
+import { CompanionFloatingButton } from './components/CompanionFloatingButton';
 import { Footer } from './components/Footer';
 import { initAnonymousAuth } from './services/authService';
 import { syncService } from './services/syncService';
@@ -211,6 +213,92 @@ export default function App() {
   const [isGwayaHekayaOpen, setIsGwayaHekayaOpen] = useState(false);
   const [isDiscoveryQuizOpen, setIsDiscoveryQuizOpen] = useState(false);
   const [isFekerModalOpen, setIsFekerModalOpen] = useState(false);
+  const [isCompanionOpen, setIsCompanionOpen] = useState(false);
+
+  const handleOpenModalByName = (modalName: string, extraData?: any) => {
+    switch (modalName) {
+      case 'ana_delwaqti':
+        setIsAnaDelwaqtiOpen(true);
+        break;
+      case 'untangle_knot':
+        setIsUntangleKnotOpen(true);
+        break;
+      case 'thought_release':
+        setIsThoughtReleaseOpen(true);
+        break;
+      case 'gwaya_hekaya':
+        setIsGwayaHekayaOpen(true);
+        break;
+      case 'soundscape':
+        setIsSoundscapeOpen(true);
+        break;
+      case 'emotion_compass':
+        setIsEmotionCompassOpen(true);
+        break;
+      case 'daily_wisdom':
+        setIsDailyWisdomOpen(true);
+        break;
+      case 'energy_budget':
+        setIsEnergyBudgetOpen(true);
+        break;
+      case 'boundary_builder':
+        setIsBoundaryBuilderOpen(true);
+        break;
+      case 'specialist_guide':
+        setIsSpecialistGuideOpen(true);
+        break;
+      case 'booklet':
+        setIsBookletOpen(true);
+        break;
+      case 'emergency_help':
+        setIsEmergencyHelpOpen(true);
+        break;
+      case 'rescue_kit':
+        setIsRescueKitOpen(true);
+        break;
+      case 'battery_check':
+        setIsBatteryCheckOpen(true);
+        break;
+      case 'translate_feelings':
+        setIsTranslateFeelingsOpen(true);
+        break;
+      case 'fact_game':
+        setIsFactGameOpen(true);
+        break;
+      case 'nesma_laughs':
+        setIsNesmaLaughsOpen(true);
+        break;
+      case 'feker':
+        setIsFekerModalOpen(true);
+        break;
+      case 'discovery_quiz':
+        setIsDiscoveryQuizOpen(true);
+        break;
+      case 'workshops_hub':
+        setIsWorkshopsHubOpen(true);
+        break;
+      case 'psychological_er':
+        setIsPsychologicalEROpen(true);
+        break;
+      case 'conflict_without_war':
+        setIsConflictWithoutWarOpen(true);
+        break;
+      case 'healing_journey':
+        setIsHealingJourneyOpen(true);
+        break;
+      case 'thought_journal':
+        setIsThoughtJournalOpen(true);
+        break;
+      case 'mindfulness_studio':
+        setIsMindfulnessStudioOpen(true);
+        break;
+      case 'fun_games':
+        setFunAndGamesState({ isOpen: true, tab: 'jokes' });
+        break;
+      default:
+        console.warn('Unknown modal name:', modalName);
+    }
+  };
 
   const [audioModalState, setAudioModalState] = useState<{
     isOpen: boolean;
@@ -308,6 +396,7 @@ export default function App() {
         unreadNotificationsCount={unreadNotifs}
         onOpenNotifications={() => setIsNotificationsOpen(true)}
         onOpenSafetyModal={() => setIsEmergencyHelpOpen(true)}
+        onOpenCompanion={() => setIsCompanionOpen(true)}
         theme={theme}
         onToggleTheme={handleToggleTheme}
       />
@@ -355,6 +444,8 @@ export default function App() {
             onOpenFeker={() => setIsFekerModalOpen(true)}
             // Personal Discovery Quiz
             onOpenDiscoveryQuiz={() => setIsDiscoveryQuizOpen(true)}
+            // Rafiqi Digital Companion
+            onOpenCompanion={() => setIsCompanionOpen(true)}
           />
         )}
 
@@ -707,6 +798,20 @@ export default function App() {
       <DailyWisdomModal
         isOpen={isDailyWisdomOpen}
         onClose={() => setIsDailyWisdomOpen(false)}
+      />
+
+      {/* 🌿 رفيقي — رفيق رحلة نسمة حياة */}
+      <CompanionFloatingButton
+        onClick={() => setIsCompanionOpen(true)}
+        isOpen={isCompanionOpen}
+      />
+
+      <CompanionModal
+        isOpen={isCompanionOpen}
+        onClose={() => setIsCompanionOpen(false)}
+        onNavigate={handleNavigate}
+        onOpenModal={handleOpenModalByName}
+        onOpenAudio={handleOpenAudio}
       />
     </div>
   );
