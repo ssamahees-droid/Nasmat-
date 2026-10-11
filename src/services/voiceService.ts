@@ -4,6 +4,7 @@ export interface VoiceServiceCallbacks {
   onStart?: () => void;
   onEnd?: () => void;
   onError?: (err: any) => void;
+  onBoundary?: (charIndex: number) => void;
 }
 
 class VoiceService {
@@ -68,6 +69,10 @@ class VoiceService {
       utterance.onstart = () => {
         this.isSpeakingState = true;
         callbacks?.onStart?.();
+      };
+
+      utterance.onboundary = (event) => {
+        callbacks?.onBoundary?.(event.charIndex);
       };
 
       utterance.onend = () => {

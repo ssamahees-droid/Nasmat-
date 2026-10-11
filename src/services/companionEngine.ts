@@ -158,6 +158,24 @@ export class CompanionEngine {
       };
     }
 
+    if (persona === 'father') {
+      return {
+        id: 'welcome-init',
+        sender: 'companion',
+        text: 'أهلاً بك يا صديقي.. أنا الأب الداخلي 🛡️ صوت الأمان والحزم الحنون والتوجيه المتزن. أنا معاك لنحتضن ما تعيشه ونرتب خطواتك دون قسوة أو لوم مبالغ على الذات. طمني، إيه اللي شاغل بالك وعايزنا نتأمله ونشوف خطوته الصح معاً؟',
+        timestamp: Date.now(),
+        expression: 'welcome',
+        suggestedActions: [
+          { id: 'act-knot', label: 'تفكيك فكرة تشغلني (فك العقدة)', icon: '🧶', actionType: 'modal', target: 'untangle_knot' },
+          { id: 'act-battery', label: 'فحص شاحن الطاقة والراحة', icon: '🔋', actionType: 'modal', target: 'battery_check' },
+          { id: 'act-rescue', label: 'حقيبة الإنقاذ النفسي', icon: '🧰', actionType: 'modal', target: 'rescue_kit' }
+        ],
+        reflectionQuestions: [
+          'ما هي الخطوة الواقعية المريحة التي يمكننا الاتفاق عليها الآن؟'
+        ]
+      };
+    }
+
     return {
       id: 'welcome-init',
       sender: 'companion',

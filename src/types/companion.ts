@@ -1,4 +1,4 @@
-export type CompanionPersona = 'adult' | 'child';
+export type CompanionPersona = 'adult' | 'child' | 'father';
 
 export type CompanionExpression = 
   | 'welcome' 
