@@ -800,10 +800,13 @@ export default function App() {
         onClose={() => setIsDailyWisdomOpen(false)}
       />
 
-      {/* 🌿 رفيقي — رفيق رحلة نسمة حياة */}
+      {/* 🌿 شخصية نسمة حياة — الحضور التفاعلي الدائم عبر كامل أقسام المنصة */}
       <CompanionFloatingButton
         onClick={() => setIsCompanionOpen(true)}
         isOpen={isCompanionOpen}
+        currentTab={currentTab}
+        onNavigate={handleNavigate}
+        onOpenModalByName={handleOpenModalByName}
       />
 
       <CompanionModal

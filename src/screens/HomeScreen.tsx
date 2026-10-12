@@ -289,7 +289,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   className="px-4 py-2.5 bg-linear-to-r from-[#355C4A] to-[#254234] hover:from-[#2A493B] hover:to-[#1B3126] text-white text-xs font-bold rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-2 cursor-pointer border border-emerald-400/30"
                 >
                   <Sparkles className="w-4 h-4 text-amber-300" />
-                  <span>تحدث مع رفيقي 🌿</span>
+                  <span>تحدث مع شخصية نسمة حياة 🌿</span>
                 </button>
               )}
             </div>
@@ -315,7 +315,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </section>
 
-      {/* 🌿 رفيقي — مرآتك وحضوره الإنساني المباشر من اللحظة الأولى */}
+      {/* 🌿 شخصية نسمة حياة — الحضور التفاعلي المباشر */}
       <CompanionHeroSection
         theme={theme}
         onOpenFullCompanion={() => onOpenCompanion && onOpenCompanion()}

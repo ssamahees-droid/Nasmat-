@@ -90,7 +90,9 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
       sender: 'companion',
       text: targetPersona === 'child'
         ? 'أنا مساحة لطفلك الداخلي الآن 🌱.. مساحة دافئة للاحتواء والأمان العاطفي، دون لوم أو إحراج. طمني يا غالي، إيه أكتر حاجة قلبك محتاجها دلوقتي؟'
-        : 'أنا معك الآن بوضع «صورتي الآن — أنا كما أنا اليوم» 🌿.. مساحة متزنة لفهم واقعك الحالي، مشاعرك، ضغوطك، واحتياجاتك، لنخطو معاً خطوات واضحة وواقعية.',
+        : targetPersona === 'father'
+        ? 'أنا معك الآن بوضع «الأب الداخلي الحكيم والداعم» 🛡️.. صوت الأمان والحزم الحنون والتوجيه الراسخ دون قسوة أو جلد ذات. كيف أستطيع مساندتك وحماية سلامك الداخلي اليوم؟'
+        : 'أنا معك الآن بوضع «الراشد المتزن» 🌿.. مساحة واعية لفهم واقعك الحالي، مشاعرك، ضغوطك، واحتياجاتك، لنخطو معاً خطوات واضحة وواقعية.',
       timestamp: Date.now(),
       expression: 'welcome'
     };
@@ -305,7 +307,7 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg sm:text-xl font-black text-white font-tajawal tracking-tight">
-                رفيقي — مرآتك في نسمة حياة
+                شخصية نسمة حياة
               </h2>
               <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
                 حاضر معك 🌿
@@ -379,11 +381,13 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
 
           <div className="text-center space-y-1">
             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
-              {settings.persona === 'child' ? '🌱 طفلي الداخلي' : '🌿 صورتي الآن'}
+              {settings.persona === 'child' ? '🌱 طفلي الداخلي' : settings.persona === 'father' ? '🛡️ الأب الداخلي' : '🌿 الراشد المتزن'}
             </span>
             <p className="text-[11px] text-stone-400 max-w-[190px]">
               {settings.persona === 'child' 
                 ? 'مرآة لطفولتك وأمانك العاطفي' 
+                : settings.persona === 'father'
+                ? 'مرآة لحكمتك وحمايتك لنفسك'
                 : 'مرآة لواقعك كشخص بالغ اليوم'}
             </p>
           </div>
@@ -392,14 +396,14 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
         {/* Left Column: Mirror Selector & Conversation Stream */}
         <div className="md:col-span-8 lg:col-span-9 space-y-4">
           
-          {/* 1. Mirror Perspective Selector (الاختيار بين صورتي الآن وطفلي الداخلي) */}
+          {/* 1. Mirror Perspective Selector (الاختيار بين الشخصيات الثلاث) */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-bold text-stone-300 flex items-center gap-1.5">
-              <span>اختر الصورة التي تريد أن ترى نفسك من خلالها اليوم:</span>
+              <span>اختر الجانب النفسي الذي تريد أن ترى نفسك من خلاله اليوم:</span>
             </label>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {/* Option 1: صورتي الآن */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              {/* Option 1: الراشد */}
               <button
                 onClick={() => handleSelectPersona('adult')}
                 className={`p-3 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
@@ -409,16 +413,16 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-white">
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-white">
                     <User className="w-4 h-4 text-emerald-400" />
-                    <span>صورتي الآن — أنا كما أنا اليوم</span>
+                    <span>الراشد 🌿</span>
                   </div>
                   {settings.persona === 'adult' && (
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   )}
                 </div>
-                <p className="text-[11px] text-stone-300 leading-relaxed">
-                  حوار يناسب واقعك الحالي؛ لفهم مشاعرك وضغوطك واحتياجاتك واتخاذ خطوات واقعية.
+                <p className="text-[10px] text-stone-300 leading-relaxed">
+                  حوار متزن لفهم واقعك الحالي وضغوطك واتخاذ خطوات واقعية.
                 </p>
               </button>
 
@@ -432,16 +436,39 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm text-white">
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-white">
                     <Heart className="w-4 h-4 text-rose-400" />
-                    <span>طفلي الداخلي — الجزء الصغير بداخلي</span>
+                    <span>الطفل الداخلي 🌱</span>
                   </div>
                   {settings.persona === 'child' && (
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   )}
                 </div>
-                <p className="text-[11px] text-stone-300 leading-relaxed">
-                  حوار لطيف للتعبير عن الخوف أو الاحتياج العاطفي بأمان وحب ودون لوم أو إحراج.
+                <p className="text-[10px] text-stone-300 leading-relaxed">
+                  حوار لطيف للتعبير عن الخوف والاحتياج العاطفي بأمان وحب.
+                </p>
+              </button>
+
+              {/* Option 3: الأب الداخلي */}
+              <button
+                onClick={() => handleSelectPersona('father')}
+                className={`p-3 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
+                  settings.persona === 'father'
+                    ? 'bg-linear-to-r from-emerald-950/80 to-[#1e342a]/80 border-emerald-400/60 shadow-md ring-2 ring-emerald-500/25'
+                    : 'bg-black/20 hover:bg-black/30 border-white/10 text-stone-300'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-white">
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    <span>الأب الداخلي 🛡️</span>
+                  </div>
+                  {settings.persona === 'father' && (
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  )}
+                </div>
+                <p className="text-[10px] text-stone-300 leading-relaxed">
+                  حكمة وحزم حنون لوقف جلد الذات وتوفير أمان وحماية راسخة.
                 </p>
               </button>
             </div>
@@ -452,7 +479,7 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
             <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
-                  {settings.persona === 'child' ? '🌱 رفيق الطفل الداخلي' : '🌿 الرفيق الإنساني'}
+                  {settings.persona === 'child' ? '🌱 الطفل الداخلي' : settings.persona === 'father' ? '🛡️ الأب الداخلي' : '🌿 شخصية نسمة حياة'}
                 </span>
                 {isThinking && (
                   <span className="text-[11px] text-amber-300 animate-pulse flex items-center gap-1">
@@ -565,7 +592,7 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
                       >
                         <div className="flex items-center justify-between gap-2 mb-1 text-[10px] text-stone-400">
                           <span className="font-bold">
-                            {msg.sender === 'user' ? 'أنت' : (settings.persona === 'child' ? 'رفيق الطفل الداخلي' : 'رفيقي')}
+                            {msg.sender === 'user' ? 'أنت' : (settings.persona === 'child' ? 'الطفل الداخلي' : settings.persona === 'father' ? 'الأب الداخلي' : 'شخصية نسمة حياة')}
                           </span>
                         </div>
                         <p className="leading-relaxed">{msg.text}</p>

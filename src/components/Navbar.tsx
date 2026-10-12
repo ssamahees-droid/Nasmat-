@@ -146,15 +146,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          {/* Rafiqi Digital Companion Button */}
+          {/* Digital Character Button */}
           {onOpenCompanion && (
             <button
               onClick={onOpenCompanion}
               className="py-1.5 px-3 bg-[#355C4A] hover:bg-[#2A493B] text-white text-xs font-bold rounded-full border-[1.5px] border-[#111113] shadow-[2.5px_2.5px_0_#111113] hover:translate-y-[-1px] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1.5 cursor-pointer font-cairo"
-              title="تحدث مع رفيقي — رفيق رحلة نسمة حياة"
+              title="تحدث مع شخصية نسمة حياة"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>رفيقي</span>
+              <span>شخصية نسمة حياة</span>
             </button>
           )}
 
@@ -281,7 +281,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="w-full py-2.5 px-3 bg-[#355C4A] text-white text-xs font-bold rounded-xl border-[1.5px] border-[#111113] shadow-[2.5px_2.5px_0_#111113] flex items-center justify-center gap-2 cursor-pointer font-cairo"
               >
                 <Sparkles className="w-4 h-4 text-amber-300" />
-                <span>تحدث مع رفيقي (الرفيق الرقمي) 🌿</span>
+                <span>تحدث مع شخصية نسمة حياة 🌿</span>
               </button>
             )}
             <PWAInstallButton variant="full" />

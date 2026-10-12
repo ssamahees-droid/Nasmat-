@@ -1,6 +1,22 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
   <head>
+    <script>
+      // Suppress unavoidable Vite HMR WebSocket notices in iframe preview environment
+      window.addEventListener('error', function (e) {
+        if (e && (e.message?.includes('WebSocket') || e.filename?.includes('@vite/client'))) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          return true;
+        }
+      }, true);
+      window.addEventListener('unhandledrejection', function (e) {
+        if (e && (e.reason?.message?.includes('WebSocket') || String(e.reason).includes('@vite/client'))) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true);
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>نسمة حياة | Nesma Hayat</title>

@@ -25,7 +25,10 @@ import {
   Eye,
   ZapOff,
   Square,
-  Play
+  Play,
+  Palette,
+  AlertTriangle,
+  Loader2
 } from 'lucide-react';
 import { CompanionAvatar } from './CompanionAvatar';
 import { 
@@ -35,8 +38,9 @@ import {
   CompanionAction, 
   CompanionUserSettings 
 } from '../types/companion';
-import { CompanionEngine } from '../services/companionEngine';
+import { CompanionEngine, COMPANION_PERSONAS } from '../services/companionEngine';
 import { voiceService } from '../services/voiceService';
+import { stylizeImageToAnime } from '../utils/animeCanvasStylizer';
 
 interface CompanionModalProps {
   isOpen: boolean;
@@ -61,7 +65,7 @@ const MIRROR_REFLECTION_JOURNEYS = [
     title: 'اسمع نفسك',
     icon: '🧭',
     desc: 'تفريغ ما يدور في الذهن والقلب دون مقاطعة أو أحكام.',
-    prompt: 'أريد أن أقف أمام مرآتي الرقمية الآن لأسمع نفسي بصدق.. ماذا يحدث في داخلي اليوم؟'
+    prompt: 'أريد أن أتحدث مع شخصية نسمة حياة الآن لأسمع نفسي بصدق.. ماذا يحدث في داخلي اليوم؟'
   },
   {
     id: 'critic',
@@ -117,7 +121,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
   const [activeSpeakingMsgId, setActiveSpeakingMsgId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Digital Mirror ("قابل نفسك — مرآتي الرقمية") state
+  // Self Reflection & Custom Avatar state
   const [modalViewTab, setModalViewTab] = useState<'chat' | 'mirror'>('chat');
   const [customUserPhoto, setCustomUserPhoto] = useState<string | null>(() => {
     return localStorage.getItem('nesmat_custom_mirror_photo') || null;
@@ -126,16 +130,60 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
     return localStorage.getItem('nesmat_mirror_consent') === 'true';
   });
 
+  // Anime Transformation State (مستقل عن الصورة الأصلية)
+  const [animeAvatarUrl, setAnimeAvatarUrl] = useState<string | null>(() => {
+    return localStorage.getItem('nesmat_custom_anime_avatar') || null;
+  });
+  const [pendingAnimeUrl, setPendingAnimeUrl] = useState<string | null>(null);
+  const [isGeneratingAnime, setIsGeneratingAnime] = useState(false);
+  const [animeConsentGiven, setAnimeConsentGiven] = useState<boolean>(() => {
+    return localStorage.getItem('nesmat_anime_ai_consent') === 'true';
+  });
+  const [avatarDisplayMode, setAvatarDisplayMode] = useState<'anime' | 'photo' | 'default'>(() => {
+    const saved = localStorage.getItem('nesmat_avatar_display_mode') as 'anime' | 'photo' | 'default';
+    if (saved && ['anime', 'photo', 'default'].includes(saved)) return saved;
+    if (localStorage.getItem('nesmat_custom_anime_avatar')) return 'anime';
+    if (localStorage.getItem('nesmat_custom_mirror_photo')) return 'photo';
+    return 'default';
+  });
+  const [animeServiceDetails, setAnimeServiceDetails] = useState<{
+    status?: string;
+    serviceName?: string;
+    message?: string;
+    error?: string;
+    requirements?: {
+      provider?: string;
+      model?: string;
+      pricingTier?: string;
+      approximateCost?: string;
+      alternativeService?: string;
+    };
+  } | null>(null);
+
+  // Active Avatar Photo computation
+  const activeAvatarPhoto = avatarDisplayMode === 'anime'
+    ? (animeAvatarUrl || customUserPhoto)
+    : avatarDisplayMode === 'photo'
+    ? customUserPhoto
+    : null;
+
   // "صوتي أنا" (Personal Voice Cloning) state
   const [isRecordingVoice, setIsRecordingVoice] = useState(false);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState<string | null>(() => {
-    return localStorage.getItem('nesmat_custom_voice_url') || null;
+    const saved = localStorage.getItem('nesmat_custom_voice_data') || localStorage.getItem('nesmat_custom_voice_url');
+    // If it's a stale blob url from a past session, ignore it
+    if (saved && saved.startsWith('blob:')) {
+      return null;
+    }
+    return saved || null;
   });
   const [voiceConsentGiven, setVoiceConsentGiven] = useState<boolean>(() => {
     return localStorage.getItem('nesmat_voice_consent') === 'true';
   });
   const [voiceStatus, setVoiceStatus] = useState<'none' | 'recording' | 'processing' | 'ready'>(() => {
-    return localStorage.getItem('nesmat_custom_voice_url') ? 'ready' : 'none';
+    const saved = localStorage.getItem('nesmat_custom_voice_data') || localStorage.getItem('nesmat_custom_voice_url');
+    if (saved && !saved.startsWith('blob:')) return 'ready';
+    return 'none';
   });
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -217,13 +265,143 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
   const handleClearCustomPhoto = () => {
     setCustomUserPhoto(null);
     localStorage.removeItem('nesmat_custom_mirror_photo');
-    setToastMessage('تمت العودة للرفيق الافتراضي بنجاح.');
+    if (avatarDisplayMode === 'photo') {
+      const fallbackMode = animeAvatarUrl ? 'anime' : 'default';
+      setAvatarDisplayMode(fallbackMode);
+      localStorage.setItem('nesmat_avatar_display_mode', fallbackMode);
+    }
+    setToastMessage('تمت إزالة صورتك الأصلية والعودة للوضع السابق.');
   };
 
   const handleConsentToggle = () => {
     const next = !privacyConsentGiven;
     setPrivacyConsentGiven(next);
     localStorage.setItem('nesmat_mirror_consent', next ? 'true' : 'false');
+  };
+
+  const handleAnimeConsentToggle = () => {
+    const next = !animeConsentGiven;
+    setAnimeConsentGiven(next);
+    localStorage.setItem('nesmat_anime_ai_consent', next ? 'true' : 'false');
+  };
+
+  // 100% Free, local in-browser anime/cel-shaded portrait stylization (zero external calls, zero cost)
+  const handleLocalAnimeStylize = async () => {
+    if (!customUserPhoto) {
+      setToastMessage('يرجى رفع صورتك الشخصية أولاً قبل تحويلها إلى أنمي.');
+      return;
+    }
+
+    setIsGeneratingAnime(true);
+    setAnimeServiceDetails(null);
+    setPendingAnimeUrl(null);
+
+    try {
+      const stylizedUrl = await stylizeImageToAnime(customUserPhoto, {
+        width: 512,
+        height: 512,
+        outlineStrength: 0.65,
+        colorLevels: 6,
+        saturationBoost: 1.25,
+        brightnessBoost: 1.08
+      });
+      setPendingAnimeUrl(stylizedUrl);
+      setToastMessage('تم تحويل صورتك بنجاح إلى أسلوب الأنمي فنياً ومحلياً (مجاناً 100%)! يمكنك الآن معاينتها واعتمادها.');
+    } catch (err: unknown) {
+      console.error('Local anime stylization failed:', err);
+      setToastMessage('تعذر إتمام التحويل المحلي للصورة.');
+    } finally {
+      setIsGeneratingAnime(false);
+    }
+  };
+
+  const handleGenerateAnimeAvatar = async () => {
+    if (!customUserPhoto) {
+      setToastMessage('يرجى رفع صورتك الشخصية أولاً قبل تحويلها إلى أنمي.');
+      return;
+    }
+    if (!animeConsentGiven) {
+      setToastMessage('يرجى تأكيد موافقة الخصوصية الصريحة قبل إرسال الصورة لخدمة التوليد السحابية.');
+      return;
+    }
+
+    setIsGeneratingAnime(true);
+    setAnimeServiceDetails(null);
+    setPendingAnimeUrl(null);
+
+    try {
+      const response = await fetch('/api/companion/generate-anime-avatar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          imageBase64: customUserPhoto,
+          consentGiven: true
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success && data.animeImageUrl) {
+        setPendingAnimeUrl(data.animeImageUrl);
+        setToastMessage('تم توليد شخصية الأنمي بنجاح! يمكنك الآن معاينتها واعتمادها.');
+      } else {
+        setAnimeServiceDetails({
+          status: String(response.status),
+          serviceName: data.serviceName || 'Google Gemini Image Generation',
+          message: data.message || 'تعذر توليد شخصية الأنمي.',
+          error: data.error || 'error',
+          requirements: data.requirements
+        });
+        setToastMessage(data.message || 'تعذر توليد شخصية الأنمي حالياً.');
+      }
+    } catch (err: unknown) {
+      const error = err as Error;
+      setAnimeServiceDetails({
+        status: 'network_error',
+        serviceName: 'Google Gemini Image Generation',
+        message: 'تعذر الاتصال بالخادم: ' + error.message,
+        error: 'network_error'
+      });
+      setToastMessage('حدث خطأ في الاتصال بالخادم أثناء طلب التوليد.');
+    } finally {
+      setIsGeneratingAnime(false);
+    }
+  };
+
+  const handleAcceptAnimeAvatar = () => {
+    if (!pendingAnimeUrl) return;
+    setAnimeAvatarUrl(pendingAnimeUrl);
+    localStorage.setItem('nesmat_custom_anime_avatar', pendingAnimeUrl);
+    setAvatarDisplayMode('anime');
+    localStorage.setItem('nesmat_avatar_display_mode', 'anime');
+    setPendingAnimeUrl(null);
+    setToastMessage('تم اعتماد شخصية الأنمي بنجاح! 🎨');
+  };
+
+  const handleDiscardPendingAnime = () => {
+    setPendingAnimeUrl(null);
+    setToastMessage('تم إلغاء المعاينة مع الاحتفاظ بصورتك الأصلية.');
+  };
+
+  const handleClearAnimeAvatar = () => {
+    setAnimeAvatarUrl(null);
+    localStorage.removeItem('nesmat_custom_anime_avatar');
+    const nextMode = customUserPhoto ? 'photo' : 'default';
+    setAvatarDisplayMode(nextMode);
+    localStorage.setItem('nesmat_avatar_display_mode', nextMode);
+    setToastMessage('تمت إزالة شخصية الأنمي والعودة للوضع السابق.');
+  };
+
+  const handleSetAvatarDisplayMode = (mode: 'anime' | 'photo' | 'default') => {
+    setAvatarDisplayMode(mode);
+    localStorage.setItem('nesmat_avatar_display_mode', mode);
+    setToastMessage(
+      mode === 'anime' ? 'تم تفعيل شخصية الأنمي 🎨' :
+      mode === 'photo' ? 'تم تفعيل صورتك الأصلية للتأمل الذاتي 🪞' :
+      'تم تفعيل مظهر شخصية نسمة حياة 🌿'
+    );
   };
 
   const handleVoiceConsentToggle = () => {
@@ -252,14 +430,19 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
 
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        setRecordedAudioUrl(audioUrl);
-        setVoiceStatus('processing');
-        localStorage.setItem('nesmat_custom_voice_url', audioUrl);
-        setTimeout(() => {
-          setVoiceStatus('ready');
-          setToastMessage('تم تجهيز وصقل عينة الصوت الشخصي بنجاح 🎙️!');
-        }, 1200);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64data = reader.result as string;
+          setRecordedAudioUrl(base64data);
+          setVoiceStatus('processing');
+          localStorage.setItem('nesmat_custom_voice_data', base64data);
+          localStorage.setItem('nesmat_custom_voice_url', base64data);
+          setTimeout(() => {
+            setVoiceStatus('ready');
+            setToastMessage('تم حفظ وصقل عينة الصوت الشخصي بنجاح 🎙️!');
+          }, 1000);
+        };
+        reader.readAsDataURL(audioBlob);
         stream.getTracks().forEach(t => t.stop());
       };
 
@@ -285,6 +468,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
     setRecordedAudioUrl(null);
     setVoiceStatus('none');
     localStorage.removeItem('nesmat_custom_voice_url');
+    localStorage.removeItem('nesmat_custom_voice_data');
     setToastMessage('تمت إزالة العينة الصوتية الشخصية.');
   };
 
@@ -305,7 +489,9 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
       sender: 'companion',
       text: targetPersona === 'child'
         ? 'أنا مساحة لطفلك الداخلي الآن 🌱.. مساحة دافئة للاحتواء والأمان العاطفي، دون لوم أو إحراج. طمني يا غالي، إيه أكتر حاجة قلبك محتاجها دلوقتي؟'
-        : 'أنا معك الآن بوضع «صورتي الآن — أنا كما أنا اليوم» 🌿.. مساحة متزنة لفهم واقعك الحالي، مشاعرك، ضغوطك، واحتياجاتك، لنخطو معاً خطوات واضحة وواقعية.',
+        : targetPersona === 'father'
+        ? 'أنا معك الآن بوضع «الأب الداخلي الحكيم والداعم» 🛡️.. صوت الأمان والحزم الحنون والتوجيه الراسخ دون قسوة أو جلد ذات. كيف أستطيع مساندتك وحماية سلامك الداخلي اليوم؟'
+        : 'أنا معك الآن بوضع «الراشد المتزن» 🌿.. مساحة واعية لفهم واقعك الحالي، مشاعرك، ضغوطك، واحتياجاتك، لنخطو معاً خطوات واضحة وواقعية.',
       timestamp: Date.now(),
       expression: 'welcome'
     };
@@ -378,8 +564,8 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
         setCurrentExpression('welcome');
       }
     }, {
-      pitch: settings.persona === 'child' ? 1.15 : 0.98,
-      rate: settings.persona === 'child' ? 0.98 : 0.92
+      pitch: COMPANION_PERSONAS[settings.persona]?.voicePitch ?? 0.98,
+      rate: COMPANION_PERSONAS[settings.persona]?.voiceRate ?? 0.92
     });
   };
 
@@ -513,9 +699,9 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
             </div>
             <div>
               <h3 className="font-black text-base sm:text-lg text-[#26332D] dark:text-[#E8DDCC] leading-tight flex items-center gap-2">
-                <span>رفيقي — مرآتي الرقمية وصوتي</span>
+                <span>شخصية نسمة حياة</span>
                 <span className="text-xs font-normal px-2.5 py-0.5 rounded-full bg-[#355C4A]/10 text-[#355C4A] dark:bg-emerald-500/20 dark:text-emerald-300">
-                  {customUserPhoto ? 'نسختك الشخصية 🪞' : (settings.persona === 'child' ? 'طفلي الداخلي 🌱' : 'صورتي الآن 🌿')}
+                  {avatarDisplayMode === 'anime' && animeAvatarUrl ? 'شخصية الأنمي 🎨' : customUserPhoto && avatarDisplayMode === 'photo' ? 'نسختك الشخصية 🪞' : (settings.persona === 'child' ? 'الطفل الداخلي 🌱' : settings.persona === 'father' ? 'الأب الداخلي 🛡️' : 'الراشد 🌿')}
                 </span>
               </h3>
               <p className="text-[11px] text-[#52645B] dark:text-stone-400">
@@ -572,7 +758,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>محادثة رفيقي</span>
+              <span>محادثة شخصية نسمة حياة</span>
             </button>
             <button
               onClick={() => setModalViewTab('mirror')}
@@ -630,10 +816,10 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
             {/* Intro Header */}
             <div className="p-4 rounded-2xl bg-white dark:bg-[#202C27] border border-[#E8DDCC] dark:border-stone-700 shadow-xs space-y-2">
               <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-black text-base">
-                <span>🪞🎙️ وضع «قابل نفسك — مرآتي الرقمية وصوتي أنا»</span>
+                <span>🪞🎙️ وضع «التأمل الذاتي والتسجيل الصوتي الشخصي»</span>
               </div>
               <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
-                هنا تقف أمام مرآتك الرقمية لتتحدث وتسمع ردودًا بصوت مستوحى من بصمتك الصوتية الصادقة، بالإضافة لتخصيص صورتك الشخصية ومسارات التأمل النفسي الواعية.
+                هنا مساحة آمنة لتتحدث وتسمع تسجيلك الصوتي الصادق، بالإضافة لتخصيص مظهر شخصيتك ومسارات التأمل النفسي الواعية.
               </p>
             </div>
 
@@ -664,7 +850,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                 />
                 <label htmlFor="privacy-consent" className="text-stone-700 dark:text-stone-300 leading-relaxed cursor-pointer">
                   <strong className="text-stone-900 dark:text-white block mb-0.5">موافقة الخصوصية للصورة:</strong>
-                  أوافق على معالجة صورتي محلياً في متصفحي لإنشاء مرآتي الرقمية دون إرسالها لخادم خارجي.
+                  أوافق على معالجة صورتي محلياً في متصفحي لإنشاء صورتي التعبيرية دون إرسالها لخادم خارجي.
                 </label>
               </div>
 
@@ -700,12 +886,263 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
               </div>
             </div>
 
-            {/* "صوتي أنا" (My Voice Cloning Setup) Card */}
+            {/* 2. Anime Avatar Transformation Card */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#202C27] border border-[#E8DDCC] dark:border-stone-700 shadow-xs space-y-4">
+              <div className="flex items-center justify-between">
+                <h4 className="font-bold text-xs sm:text-sm text-stone-800 dark:text-stone-200 flex items-center gap-2">
+                  <Palette className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  <span>2. شخصية الأنمي المستوحاة من صورتك 🎨:</span>
+                </h4>
+                {animeAvatarUrl && (
+                  <button
+                    onClick={handleClearAnimeAvatar}
+                    className="text-xs text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
+                  >
+                    إزالة شخصية الأنمي
+                  </button>
+                )}
+              </div>
+
+              <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
+                تحويل صورتك الشخصية المحفوظة محلياً إلى نمط أنمي كرتوني دافئ وودود، مع الحفاظ الكامل على صورتك الأصلية واستقلالية كل منهما.
+              </p>
+
+              {/* Display Mode Selection Tabs */}
+              {(customUserPhoto || animeAvatarUrl) && (
+                <div className="space-y-1.5 p-3 rounded-xl bg-stone-50 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700">
+                  <span className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    اختر مظهر الشخصية النشط:
+                  </span>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleSetAvatarDisplayMode('anime')}
+                      disabled={!animeAvatarUrl}
+                      className={`p-2 rounded-lg text-xs font-bold transition-all flex flex-col items-center gap-1 border cursor-pointer ${
+                        avatarDisplayMode === 'anime'
+                          ? 'bg-purple-50 dark:bg-purple-950/60 border-purple-500 text-purple-800 dark:text-purple-300 shadow-xs'
+                          : animeAvatarUrl
+                          ? 'bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-100'
+                          : 'opacity-40 cursor-not-allowed bg-stone-100 dark:bg-stone-800 border-dashed border-stone-300 text-stone-400'
+                      }`}
+                    >
+                      <Palette className="w-3.5 h-3.5" />
+                      <span>شخصية الأنمي 🎨</span>
+                      {!animeAvatarUrl && <span className="text-[9px] font-normal">(غير مولدة بعد)</span>}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleSetAvatarDisplayMode('photo')}
+                      disabled={!customUserPhoto}
+                      className={`p-2 rounded-lg text-xs font-bold transition-all flex flex-col items-center gap-1 border cursor-pointer ${
+                        avatarDisplayMode === 'photo'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500 text-emerald-800 dark:text-emerald-300 shadow-xs'
+                          : customUserPhoto
+                          ? 'bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-100'
+                          : 'opacity-40 cursor-not-allowed bg-stone-100 dark:bg-stone-800 border-dashed border-stone-300 text-stone-400'
+                      }`}
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>صورتي الحقيقية 🪞</span>
+                      {!customUserPhoto && <span className="text-[9px] font-normal">(ارفع صورتك أولاً)</span>}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleSetAvatarDisplayMode('default')}
+                      className={`p-2 rounded-lg text-xs font-bold transition-all flex flex-col items-center gap-1 border cursor-pointer ${
+                        avatarDisplayMode === 'default'
+                          ? 'bg-stone-200 dark:bg-stone-700 border-stone-400 text-stone-900 dark:text-white shadow-xs'
+                          : 'bg-white dark:bg-stone-800 border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-100'
+                      }`}
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>المظهر الافتراضي 🌿</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Photo presence check */}
+              {!customUserPhoto ? (
+                <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                  <Info className="w-4 h-4 shrink-0 text-amber-600" />
+                  <span>يرجى رفع صورتك الشخصية أولاً في الخطوة (1) لتتمكن من إنشاء شخصية أنمي مستوحاة منها.</span>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Option A: Recommended 100% Free Local Anime Stylization */}
+                  <div className="p-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-700/60 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4 text-emerald-600" />
+                        <span>الخيار المجاني الفوري (محلي 100% وخاص بجهازك):</span>
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-200 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                        مجاني تماماً • بدون سحابة
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-emerald-800 dark:text-emerald-300 leading-relaxed">
+                      يحول صورتك الحقيقية إلى شخصية كرتونية/أنمي ناعمة (Cel-Shading) مع خطوط تحديد وألوان دافئة، بالكامل داخل متصفحك دون أن تغادر صورتك جهازك ودون أي تكلفة أو كوتا.
+                    </p>
+                    <div className="pt-1">
+                      <button
+                        type="button"
+                        onClick={handleLocalAnimeStylize}
+                        disabled={isGeneratingAnime}
+                        className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                      >
+                        {isGeneratingAnime ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>جارِ التحويل الفني المحلي...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Palette className="w-4 h-4" />
+                            <span>{animeAvatarUrl ? 'إعادة التحويل إلى أنمي محلياً 🎨' : 'تحويل صورتي إلى أنمي محلياً (مجاني 100%) ✨'}</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Option B: Cloud AI Generation with explicit disclosure */}
+                  <div className="p-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1.5">
+                        <Bot className="w-4 h-4 text-purple-500" />
+                        <span>التوليد بالذكاء الاصطناعي السحابي (Google Gemini):</span>
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                        يتطلب خطة مدفوعة
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed">
+                      نماذج توليد الصور في Google Gemini تخصص حصة مجانية = 0 (تتطلب اشتراكاً مدفوعاً). نلتزم بالخطة المجانية لحمايتك من أي تكلفة.
+                    </p>
+
+                    {/* AI Cloud Transformation Consent Checkbox */}
+                    <div className="flex items-start gap-2 p-2.5 rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-[11px]">
+                      <input
+                        type="checkbox"
+                        id="anime-consent"
+                        checked={animeConsentGiven}
+                        onChange={handleAnimeConsentToggle}
+                        className="mt-0.5 w-3.5 h-3.5 text-purple-600 rounded border-stone-300 focus:ring-purple-500 cursor-pointer"
+                      />
+                      <label htmlFor="anime-consent" className="text-stone-600 dark:text-stone-400 leading-relaxed cursor-pointer">
+                        أوافق صراحةً على إرسال ملامح صورتي لخدمة التوليد السحابية في حال رغبتي بتجربة الفحص السحابي.
+                      </label>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleGenerateAnimeAvatar}
+                        disabled={isGeneratingAnime || !animeConsentGiven}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+                          isGeneratingAnime
+                            ? 'bg-purple-300 text-white cursor-wait'
+                            : animeConsentGiven
+                            ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                            : 'bg-stone-200 text-stone-400 dark:bg-stone-800 dark:text-stone-600 cursor-not-allowed'
+                        }`}
+                      >
+                        <Bot className="w-3.5 h-3.5" />
+                        <span>فحص التوليد السحابي</span>
+                      </button>
+                      {!animeConsentGiven && (
+                        <span className="text-[10px] text-stone-400">
+                          (يتطلب تفعيل الموافقة)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Side-by-Side Preview for pending generated avatar */}
+              {pendingAnimeUrl && (
+                <div className="p-4 rounded-2xl bg-purple-50/70 dark:bg-purple-950/40 border-2 border-purple-300 dark:border-purple-700 space-y-3 animate-fadeIn">
+                  <div className="flex items-center justify-between">
+                    <h5 className="font-bold text-xs text-purple-900 dark:text-purple-200 flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-purple-600" />
+                      <span>معاينة النتيجة: صورتك الأصلية وشخصية الأنمي المقترحة</span>
+                    </h5>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-4 py-2">
+                    {/* Original Photo */}
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-stone-300 shadow-xs">
+                        <img src={customUserPhoto || ''} alt="صورتك الأصلية" className="w-full h-full object-cover" />
+                      </div>
+                      <span className="text-[10px] font-bold text-stone-600 dark:text-stone-300">الصورة الأصلية 🪞</span>
+                    </div>
+
+                    <div className="text-purple-500 font-bold text-lg">⟷</div>
+
+                    {/* Generated Anime */}
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-purple-500 shadow-md ring-2 ring-purple-400/40">
+                        <img src={pendingAnimeUrl} alt="شخصية الأنمي المقترحة" className="w-full h-full object-cover" />
+                      </div>
+                      <span className="text-[10px] font-bold text-purple-700 dark:text-purple-300">شخصية الأنمي 🎨</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={handleAcceptAnimeAvatar}
+                      className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>اعتماد شخصية الأنمي ✅</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleDiscardPendingAnime}
+                      className="px-3 py-2 rounded-xl bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 text-xs font-medium transition-all cursor-pointer"
+                    >
+                      إلغاء والاحتفاظ بالأصل
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Technical Service Diagnostic & Transparency Box */}
+              {animeServiceDetails && (
+                <div className="p-3.5 rounded-2xl bg-stone-50 dark:bg-[#151E1A] border border-amber-300/80 dark:border-amber-700/80 space-y-2 text-xs">
+                  <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold">
+                    <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                    <span>تقرير فحص خدمة التوليد السحابية وحالة الكوتا (شفافية تقنية):</span>
+                  </div>
+                  <p className="text-stone-700 dark:text-stone-300 leading-relaxed">
+                    {animeServiceDetails.message}
+                  </p>
+                  {animeServiceDetails.requirements && (
+                    <div className="p-2.5 rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-[11px] space-y-1 text-stone-600 dark:text-stone-400">
+                      <div>• <strong>المزود والطراز:</strong> {animeServiceDetails.requirements.provider} ({animeServiceDetails.requirements.model})</div>
+                      <div>• <strong>خطة التسعير:</strong> {animeServiceDetails.requirements.pricingTier}</div>
+                      <div>• <strong>التكلفة التقديرية:</strong> {animeServiceDetails.requirements.approximateCost}</div>
+                      <div>• <strong>البدائل المتخصصة:</strong> {animeServiceDetails.requirements.alternativeService}</div>
+                      <div className="text-emerald-700 dark:text-emerald-400 pt-0.5">• <strong>ضمانة الأمان:</strong> لم يتم استهلاك أي رصيد أو إنشاء اشتراك مدفوع تلقائياً.</div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* "صوتي أنا" (Voice Recording & Audio Setup) Card */}
             <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#202C27] border border-[#E8DDCC] dark:border-stone-700 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-xs sm:text-sm text-stone-800 dark:text-stone-200 flex items-center gap-2">
                   <Mic className="w-4 h-4 text-emerald-600" />
-                  <span>2. ميزة «صوتي أنا» (استنساخ البصمة الصوتية):</span>
+                  <span>3. ميزة تسجيل الصوت الشخصي («صوتي أنا»):</span>
                 </h4>
                 {voiceStatus === 'ready' && (
                   <button
@@ -727,8 +1164,8 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                   className="mt-0.5 w-4 h-4 text-[#355C4A] rounded border-stone-300 focus:ring-emerald-500 cursor-pointer"
                 />
                 <label htmlFor="voice-consent" className="text-stone-700 dark:text-stone-300 leading-relaxed cursor-pointer">
-                  <strong className="text-stone-900 dark:text-white block mb-0.5">موافقة صريحة على استخدام الصوت:</strong>
-                  أوافق على تسجيل عينة صوتية واستخدامها لتوليد نبرة صوتية رقمية لمساعدتي في التأمل الذاتي داخل رفيقي حصرياً.
+                  <strong className="text-stone-900 dark:text-white block mb-0.5">موافقة صريحة على حفظ عينة الصوت:</strong>
+                  أوافق على تسجيل عينة صوتية للاستماع إليها كمرجع شخصي ومرافقتي في التأمل الذاتي داخل المنصة حصرياً دون مشاركتها خارج جهازي.
                 </label>
               </div>
 
@@ -763,11 +1200,11 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                   <div className="flex items-center gap-1.5 text-xs font-bold">
                     {voiceStatus === 'none' && <span className="text-stone-500">لم يُضف صوت بعد</span>}
                     {voiceStatus === 'recording' && <span className="text-rose-600 animate-pulse">جارٍ التسجيل الآن...</span>}
-                    {voiceStatus === 'processing' && <span className="text-amber-600 animate-pulse">جارٍ تجهيز وصقل البصمة الصوتية...</span>}
+                    {voiceStatus === 'processing' && <span className="text-amber-600 animate-pulse">جارٍ حفظ العينة الصوتية محلياً...</span>}
                     {voiceStatus === 'ready' && (
                       <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
                         <CheckCircle2 className="w-4 h-4" />
-                        <span>الصوت الشخصي جاهز ومفعّل</span>
+                        <span>عينة صوتك مسجلة ومحفوظة محلياً 🎙️</span>
                       </span>
                     )}
                   </div>
@@ -775,14 +1212,23 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
 
                 {/* Audio Sample Playback Preview */}
                 {recordedAudioUrl && voiceStatus === 'ready' && (
-                  <div className="pt-2 flex items-center gap-3">
+                  <div className="pt-2 space-y-1.5">
+                    <span className="text-[11px] font-bold text-stone-600 dark:text-stone-400 block">
+                      استمع إلى عينتك الصوتية الشخصية:
+                    </span>
                     <audio ref={sampleAudioRef} src={recordedAudioUrl} controls className="h-9 w-full max-w-xs" />
                   </div>
                 )}
+
+                {/* Technical Transparency Note */}
+                <div className="mt-2 p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 text-[11px] text-stone-600 dark:text-stone-400 space-y-1 leading-relaxed">
+                  <div>• <strong>عينتك الصوتية:</strong> محفوظة محلياً على جهازك، ويمكنك الاستماع إليها في أي وقت للتأمل الذاتي وسماع صوتك بوضوح.</div>
+                  <div>• <strong>قراءة المحادثة صوتياً:</strong> تتم عبر محرك النطق المجاني في المتصفح (Web Speech API) بالنبرات المخصصة للشخصيات (الطفل / الراشد / الأب) مجاناً 100% ودون ادعاء استنساخ صوتك الشخصي، التزاماً بالأمانة التقنية وحماية لخطة العمل المجانية.</div>
+                </div>
               </div>
             </div>
 
-            {/* Preview of Digital Mirror Avatar */}
+            {/* Preview of Digital Mirror / Active Avatar */}
             <div className="flex flex-col items-center justify-center py-4 bg-white/60 dark:bg-stone-900/40 rounded-2xl border border-dashed border-[#E8DDCC] dark:border-stone-700">
               <div className="relative w-28 h-28 rounded-full overflow-hidden ring-4 ring-[#355C4A]/30 shadow-lg">
                 <CompanionAvatar
@@ -793,11 +1239,15 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                   size="md"
                   isAnimated={settings.isAnimated}
                   allowAnimationToggle={false}
-                  customPhoto={customUserPhoto}
+                  customPhoto={activeAvatarPhoto}
                 />
               </div>
               <span className="mt-2 text-xs font-bold text-stone-700 dark:text-stone-300">
-                {customUserPhoto ? 'مرآتك الرقمية الشخصية نشطة' : 'المرآة الافتراضية نشطة'}
+                {avatarDisplayMode === 'anime' && animeAvatarUrl
+                  ? 'شخصية الأنمي الخاصة نشطة 🎨'
+                  : customUserPhoto && avatarDisplayMode === 'photo'
+                  ? 'مرآتك الرقمية الشخصية نشطة 🪞'
+                  : 'شخصية نسمة حياة نشطة 🌿'}
               </span>
             </div>
 
@@ -839,6 +1289,51 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
         ) : (
           /* Chat Stream Container */
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 text-sm leading-relaxed">
+            {/* Interactive Persona Switching Bar */}
+            <div className="bg-white/80 dark:bg-stone-900/60 backdrop-blur-xs p-2.5 rounded-2xl border border-[#E8DDCC] dark:border-stone-800 shadow-xs">
+              <div className="flex items-center justify-between gap-2 mb-2 px-1">
+                <span className="text-[11px] font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1.5">
+                  <span>🎭 الشخصية النفسية النشطة:</span>
+                  <span className="text-emerald-700 dark:text-emerald-400 font-extrabold">
+                    {COMPANION_PERSONAS[settings.persona]?.title}
+                  </span>
+                </span>
+                <span className="text-[10px] text-stone-500 dark:text-stone-400">
+                  {COMPANION_PERSONAS[settings.persona]?.subtitle}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                {(['adult', 'child', 'father'] as CompanionPersona[]).map((pKey) => {
+                  const pMeta = COMPANION_PERSONAS[pKey];
+                  const isActive = settings.persona === pKey;
+                  return (
+                    <button
+                      key={pKey}
+                      type="button"
+                      onClick={() => handleSelectPersona(pKey)}
+                      className={`p-2 rounded-xl text-right transition-all cursor-pointer flex flex-col justify-between border ${
+                        isActive
+                          ? 'bg-emerald-50 dark:bg-[#20362B] border-emerald-500/60 shadow-xs ring-1 ring-emerald-500/30'
+                          : 'bg-stone-50 dark:bg-stone-800/50 hover:bg-stone-100 dark:hover:bg-stone-800 border-stone-200 dark:border-stone-700/60 opacity-80 hover:opacity-100'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-0.5">
+                        <span className="text-base">{pMeta.icon}</span>
+                        {isActive && <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-pulse" />}
+                      </div>
+                      <span className={`text-xs font-bold ${isActive ? 'text-emerald-900 dark:text-emerald-300' : 'text-stone-800 dark:text-stone-200'}`}>
+                        {pMeta.title}
+                      </span>
+                      <span className="text-[9px] text-stone-500 dark:text-stone-400 truncate mt-0.5">
+                        {pMeta.subtitle}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="flex flex-col items-center justify-center py-2 bg-stone-100/50 dark:bg-stone-900/30 rounded-2xl mb-2">
               <CompanionAvatar
                 persona={settings.persona}
@@ -849,7 +1344,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                 isAnimated={settings.isAnimated}
                 allowAnimationToggle={true}
                 onToggleAnimation={handleToggleAnimation}
-                customPhoto={customUserPhoto}
+                customPhoto={activeAvatarPhoto}
               />
             </div>
             {messages.map((msg) => {
@@ -875,7 +1370,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                     {!isUser && (
                       <div className="flex items-center justify-between gap-3 mb-1.5 pb-1 border-b border-stone-100 dark:border-stone-700/60">
                         <span className="text-[11px] font-bold text-[#355C4A] dark:text-emerald-400 flex items-center gap-1">
-                          {customUserPhoto ? '🪞 مرآتك الرقمية' : (settings.persona === 'child' ? '🌱 رفيق الطفل الداخلي' : '🌿 الرفيق البشري')}
+                          {avatarDisplayMode === 'anime' && animeAvatarUrl ? '🎨 شخصية الأنمي' : customUserPhoto && avatarDisplayMode === 'photo' ? '🪞 نسختك الشخصية' : (settings.persona === 'child' ? '🌱 الطفل الداخلي' : settings.persona === 'father' ? '🛡️ الأب الداخلي' : '🌿 شخصية نسمة حياة')}
                         </span>
                         <button
                           onClick={() => handleSpeakMessage(msg)}
@@ -1045,10 +1540,10 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={
                   isListeningMic 
-                    ? 'مرآتك الرقمية تستمع لصوتك الآن.. تحدث براحتك...' 
+                    ? 'شخصية نسمة حياة تستمع لصوتك الآن.. تحدث براحتك...' 
                     : settings.persona === 'child'
-                    ? 'اكتب لرفيق طفلك الداخلي.. احكيله اللي في قلبك...'
-                    : 'شارك مرآتك الرقمية بما تشعر به أو تساءل عنه...'
+                    ? 'اكتب لطفلك الداخلي.. احكيله اللي في قلبك...'
+                    : 'شارك شخصية نسمة حياة بما تشعر به أو تساءل عنه...'
                 }
                 className="flex-1 px-4 py-3 rounded-2xl bg-stone-50 dark:bg-stone-800/80 border border-[#E8DDCC] dark:border-stone-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#355C4A] dark:focus:ring-emerald-500 text-stone-900 dark:text-stone-100 placeholder:text-stone-400"
                 disabled={isThinking}
@@ -1066,7 +1561,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
 
             <div className="mt-2 text-center">
               <p className="text-[10px] text-stone-500 dark:text-stone-400 leading-tight">
-                «مرآتي الرقمية وصوتي» وسيلة للتأمل الذاتي والوعي النفسي، وليست بديلاً عن العلاج النفسي الطبي المتخصص.
+                «شخصية نسمة حياة» وسيلة للتأمل الذاتي والوعي النفسي، وليست بديلاً عن العلاج النفسي الطبي المتخصص.
               </p>
             </div>
           </div>

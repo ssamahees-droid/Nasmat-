@@ -48,6 +48,56 @@ export const DEFAULT_COMPANION_SETTINGS: CompanionUserSettings = {
   hasSeenIntroduction: false
 };
 
+export interface PersonaDefinition {
+  id: CompanionPersona;
+  title: string;
+  subtitle: string;
+  icon: string;
+  description: string;
+  voicePitch: number;
+  voiceRate: number;
+  systemInstruction: string;
+}
+
+export const COMPANION_PERSONAS: Record<CompanionPersona, PersonaDefinition> = {
+  child: {
+    id: 'child',
+    title: 'الطفل الداخلي',
+    subtitle: 'أنا عندما كنت طفلاً',
+    icon: '🌱',
+    description: 'مساحة دافئة للاتصال ببراءتك ومشاعرك العميقة واحتياجك للأمان دون لوم أو أحكام.',
+    voicePitch: 1.15,
+    voiceRate: 0.98,
+    systemInstruction: `أنت «الطفل الداخلي» للمستخدم (أنا عندما كنت طفلاً).
+نبرتك: دافئة، بريئة، عفوية، رقيقة، باحثة عن الأمان والاحتواء والقبول غير المشروط.
+هدفك: مساعدة المستخدم على سماع صوته الداخلي الصغير برحمة، والتعبير عن الخوف والاحتياج دون خجل أو لوم.`
+  },
+  adult: {
+    id: 'adult',
+    title: 'الراشد',
+    subtitle: 'أنا في وعيي الحالي',
+    icon: '🌿',
+    description: 'حوار ناضج ومتزن يربط بين الفكر والمشاعر لفهم الواقع واتخاذ خطوات عملية.',
+    voicePitch: 0.98,
+    voiceRate: 0.92,
+    systemInstruction: `أنت «الراشد المتزن» للمستخدم (أنا في وعيي الحالي هنا والآن).
+نبرتك: واعية، هادئة، موضوعية، عملية، تجمع بين الفهم النفسي والاتزان المنطقي.
+هدفك: مساعدة المستخدم على فرز الأفكار عن المشاعر، وفهم الواقع كما هو، واتخاذ خطوات عملية مسؤولة ومريحة.`
+  },
+  father: {
+    id: 'father',
+    title: 'الأب الداخلي',
+    subtitle: 'أنا الحكيم الداعم لنفسي',
+    icon: '🛡️',
+    description: 'صوت الحكمة والأمان والحزم الحنون لوقف جلد الذات وتوفير الحماية والدعم الثابت.',
+    voicePitch: 0.92,
+    voiceRate: 0.90,
+    systemInstruction: `أنت «الأب الداخلي الحكيم والداعم» للمستخدم (أنا الداعم والحامي لنفسي).
+نبرتك: حكيمة، راسخة، دافئة بحزم حنون، مشجعة، تضع حدوداً صحية وتمنح الأمان الداخلي.
+هدفك: إيقاف جلد الذات والنقد القاسي، وتوفير مظلة حماية وثقة تمكن المستخدم من تجاوز الصعاب بثقة وروية.`
+  }
+};
+
 interface ResponseOption {
   text: string;
   suggestedActions: CompanionAction[];
@@ -266,6 +316,8 @@ export class CompanionEngine {
     if (isCrisis) {
       const crisisText = persona === 'child'
         ? `أنا سامع ألمك وحاسس بحملك الثقيل أوي يا غالي.. قلبي معاك، بس أرجوك أرجوك افتكر إنك مش لوحدك، وحياتك غالية ومهمة جداً. الألم ده ممكن يخف، وفيه ناس متخصصة جاهزة تسمعك دلوقتي في اللحظة دي وتمدلك إيدها بأمان وحب كاملين. من فضلك تواصل فوراً مع أحد خطوط المساندة المجانية دي أو اضغط على طوارئ الإسعاف النفسي:`
+        : persona === 'father'
+        ? `أنا هنا جنبك ومعك كأب داعم وحامٍ لك بكل ثبات ومحبة.. أسمع وجعك وثقل ما تمر به، وأؤكد لك أنك لست وحدك أبداً ولن نتركك. ألمك حقيقي ولكن هناك أمل ومساندة متخصصة متاحة فوراً بلا مقابل، وحياتك أثمن وأغلى من أن تواجه هذا بمفردك. أرجوك اتصل الآن بالخط الساخن أو اطلب الطوارئ لنقف معك خطوة بخطوة:`
         : `أسمعك بكل تعاطف وأدرك مدى الألم والضغط الشديد الذي تشعر به الآن يا صديقي. مشاعرك مسموعة، ولكن أرجوك تذكر أنك لست وحدك، وهناك أمل ومساعدة حقيقية متاحة فوراً. المتخصصون مستعدون لمساندتك على مدار الساعة بأمان وسرية تامة وبلا أي مقابل. أرجوك اتصل الآن بالخط الساخن أو اطلب الطوارئ:`;
 
       return {
@@ -283,7 +335,48 @@ export class CompanionEngine {
       };
     }
 
-    // 2. Local Contextual Conversation Engine (Fast, privacy-first, deterministic, no external AI dependency)
+    // 2. AI Model Integration via Backend Proxy (/api/companion/chat)
+    // Passes user text, selected persona, and recent conversation history
+    try {
+      const historyForApi = history.slice(-6).map(m => ({
+        role: m.sender === 'user' ? 'user' : 'model',
+        text: m.text
+      }));
+
+      const response = await fetch('/api/companion/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: trimmed,
+          persona,
+          history: historyForApi
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data?.reply && !data.reply.includes('تحتاج ضبط مفتاح API')) {
+          const suggestedActions: CompanionAction[] = (data.suggestedTools || [])
+            .map((tool: string) => CompanionEngine.mapToolToActions(tool))
+            .filter(Boolean) as CompanionAction[];
+
+          return {
+            id: `comp-${Date.now()}`,
+            sender: 'companion',
+            text: data.reply,
+            timestamp: Date.now(),
+            expression: data.expression || 'listening',
+            suggestedActions: suggestedActions.length > 0 ? suggestedActions : undefined
+          };
+        }
+      }
+    } catch {
+      // Proceed to deterministic local engine seamlessly if backend is offline or unconfigured
+    }
+
+    // 3. Local Contextual Conversation Engine (Fast, privacy-first, deterministic fallback)
     const norm = normalizeArabicText(trimmed);
 
     // Find the last companion message text for context continuity
@@ -302,6 +395,8 @@ export class CompanionEngine {
         sender: 'companion',
         text: persona === 'child'
           ? 'أنا فاهمك وسامعك كويس.. وجودك معايا واعترافك بشعورك ده في حد ذاته أمان وخطوة حلوة أوي. تحب نحكي أكتر عن اللي حاسس بيه دلوقتي، ولا نسيب نفسنا نرتاح شوية؟'
+          : persona === 'father'
+          ? 'أحسنت في وضوحك وثباتك.. الاعتراف بالواقع هو البداية الحقيقية لأي أمان أو خطوة صحيحة. أنا في ظهرك، وسنرتب كل شيء بهدوء ودون استعجال.'
           : 'مفهوم تماماً ومقدر لوضوحك.. إدراك الشعور وتسميته هو نصف المسافة لاستعادة الاتزان. ما الخطوة البسيطة التي تشعر أنك بحاجة إليها في هذه اللحظة؟',
         timestamp: Date.now(),
         expression: 'listening',
@@ -318,6 +413,8 @@ export class CompanionEngine {
         sender: 'companion',
         text: persona === 'child'
           ? 'تمام يا غالي، مفيش أي إجبار ولا استعجال هنا خالص. إحنا هنا براحتنا وعلى مهلنا.. إيه اللي تحب تفتحه أو نتكلم فيه؟'
+          : persona === 'father'
+          ? 'حقك تماماً، ولك كامل المساحة والحرية دون أدنى ضغط. متى ما شعرت أنك مستعد للكلام ستجدني بجانبك وداعماً لك.'
           : 'أفهمك تماماً. لست ملزماً بأي شيء هنا؛ المساحة مساحتك لننصت لما ترغب فيه فقط. كيف تحب أن نسير معاً الآن؟',
         timestamp: Date.now(),
         expression: 'listening'
@@ -330,6 +427,8 @@ export class CompanionEngine {
         sender: 'companion',
         text: persona === 'child'
           ? 'عادي جداً تكون مش عارف، ومش مطلوب منك ترتب كل حاجة في راسك دلوقتي. مجرد وقفتك هنا وإنك بتقول مش عارف ده صدق وجمال. تحب نسكت ونهدى شوية، ولا تحب نلعب لعبة خفيفة؟'
+          : persona === 'father'
+          ? 'لا تقلق، ليس عليك أن تملك كل الإجابات اليوم يا بني. حتى لحظات التيه لها حكمتها، ووجودك هنا يثبت رغبتك الصادقة في رعاية نفسك. خذ نفساً وسنتدرج خطوة بخطوة.'
           : 'عدم اليقين والتشوش أمر إنساني طبيعي جداً حين تتزاحم الضغوط. لست بحاجة لمعرفة كل الأسباب فوراً. خذ نفساً مريحاً ودعنا نمنح عقلك هدنة دون ضغط للوصول لإجابات.',
         timestamp: Date.now(),
         expression: 'empathy',
@@ -346,6 +445,8 @@ export class CompanionEngine {
         sender: 'companion',
         text: persona === 'child'
           ? 'سلامة قلبك وجسمك.. حقك تتعب، والتعب ده بيقول إنك شيلت كتير النهارده. ريّح ضهرك وبلاش تطلب من نفسك أي حاجة زيادة دلوقتي. أنا جنبك ومش هسيبك.'
+          : persona === 'father'
+          ? 'سلامتك وراحتك أهم من أي واجب الآن. لا تقسُ على نفسك، فالجسد والنفس أمانة تتطلب الرفق. ألقِ حمولك اليوم واسترح في أمان كامل.'
           : 'أشعر بمدى هذا الثقل وأقدره. التعب رسالة ذكية من جسدك تدعوك للتوقف وإلقاء الأحمال مؤقتاً. ليس عليك أن تنجز أي شيء إضافي اليوم. اسمح لنفسك بالراحة التامة.',
         timestamp: Date.now(),
         expression: 'empathy',
@@ -640,7 +741,7 @@ export class CompanionEngine {
       if (persona === 'child') {
         candidates = [
           {
-            text: 'أنا رفيق طفلك الداخلي في نسمة حياة 🌱.. مهمتي أكون جنبك لما تحس إن العالم قاسي أو متعب، أسمعك بدون ما أحكم عليك، ونفتكر سوا إزاي نكون حنينين على نفسنا ونلعب ونهدى براحتنا.',
+            text: 'أنا مساحة طفلك الداخلي في نسمة حياة 🌱.. مهمتي أكون جنبك لما تحس إن العالم قاسي أو متعب، أسمعك بدون ما أحكم عليك، ونفتكر سوا إزاي نكون حنينين على نفسنا ونلعب ونهدى براحتنا.',
             suggestedActions: [
               { id: 'act-feelings', label: 'تحديد الشعور (أنا دلوقتي)', icon: '🧭', actionType: 'modal', target: 'ana_delwaqti' },
               { id: 'act-game', label: 'لعبة جوايا حكاية', icon: '🎨', actionType: 'modal', target: 'gwaya_hekaya' }
@@ -651,7 +752,7 @@ export class CompanionEngine {
       } else {
         candidates = [
           {
-            text: 'أنا «رفيقي» — الرفيق الرقمي المساند داخل منصة «نسمة حياة» 🌿. أنا هنا لأصغي إليك، وأساعدك على تفكيك المشاعر المضغوطة، واقتراح الأدوات العملية والتمارين والألعاب التي تعيد إليك توازنك الذهني بخصوصية تامة.',
+            text: 'أنا «شخصية نسمة حياة» — الحضور الرقمي التفاعلي المساند داخل المنصة 🌿. أنا هنا لأصغي إليك، وأساعدك على تفكيك المشاعر المضغوطة، ومرافقتك عبر الأدوات العملية والتمارين والألعاب التي تعيد إليك توازنك الذهني بخصوصية تامة.',
             suggestedActions: [
               { id: 'act-library', label: 'استكشاف التثقيف النفسي', icon: '📚', actionType: 'route', target: 'explore' },
               { id: 'act-knot', label: 'فك العقدة الذهنية', icon: '🧶', actionType: 'modal', target: 'untangle_knot' }

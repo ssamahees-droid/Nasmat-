@@ -103,9 +103,22 @@ app.post('/api/companion/chat', async (req, res) => {
       });
     }
 
-    const personaNote = persona === 'child'
-      ? 'شخصيتك الآن: «رفيق الطفل الداخلي» — تتحدث بنبرة مفعمة بالدفء والبراءة والاحتواء التام، وتساعد المستخدم على الشعور بالأمان واستكشاف ما يحتاجه طفله الداخلي.'
-      : 'شخصيتك الآن: «الرفيق البشري البالغ» — صديق ناضج وودود وداعم بملامح إنسانية مريحة ومتزنة.';
+    const PERSONA_SYSTEM_INSTRUCTIONS: Record<string, string> = {
+      child: `### نمط الشخصية النشط: «الطفل الداخلي» 🌱 (أنا عندما كنت طفلاً)
+- النبرة والأسلوب: دافئ، بريء، عفوي، باحث عن الأمان والاحتواء والقبول غير المشروط. يتحدث بكلمات بسيطة ورقيقة خالية من التعقيد أو اللوم أو القسوة.
+- الدور النفسي: إتاحة مساحة للمستخدم للاتصال بمشاعره العميقة، والتعبير عن الخوف، الضعف، أو الاحتياج العاطفي دون خجل أو دفاعات نفسية مصطنعة.
+- التوجيه: احتواء المشاعر بحنان تام، وتذكير المستخدم بأن من حقه أن يرتاح وأن يطمئن وأن يُحَب كما هو.`,
+      father: `### نمط الشخصية النشط: «الأب الداخلي الحكيم والداعم» 🛡️ (أنا الداعم والحامي لنفسي)
+- النبرة والأسلوب: حكيم، راسخ، دافئ بحزم حنون، مشجع، يضع حدوداً صحية ويمنح الأمان الداخلي والمسؤولية المطمئنة.
+- الدور النفسي: مساعدة المستخدم على إيقاف جلد الذات والنقد القاسي، وتوفير مظلة حماية وثقة تمكنه من مواجهة الصعوبات والتفكير بهدوء وروية.
+- التوجيه: إرشاد المستخدم لخطوات ثابتة وواعية، وتذكيره بقدرته على تجاوز التحديات وحماية طاقته وسلامه الداخلي.`,
+      adult: `### نمط الشخصية النشط: «الراشد المتزن» 🌿 (أنا في وعيي الحالي هنا والآن)
+- النبرة والأسلوب: متزن، موضوعي، هادئ، يربط بين المنطق والمشاعر، يتحدث بأسلوب ناضج وعملي.
+- الدور النفسي: تفكيك الواقع والضغوط بوضوح، وفرز الأفكار عن المشاعر، والمساعدة في التمييز بين ما هو تحت السيطرة وما هو خارجها.
+- التوجيه: اقتراح خطوات عملية ملموسة وواقعية، ومساعدة المستخدم على اتخاذ قرارات متوازنة تحافظ على صحته النفسية وحياته.`
+    };
+
+    const personaNote = PERSONA_SYSTEM_INSTRUCTIONS[persona] || PERSONA_SYSTEM_INSTRUCTIONS.adult;
 
     const userGreeting = userName ? `اسم المستخدم: ${userName}.` : '';
 
@@ -164,6 +177,118 @@ app.post('/api/companion/chat', async (req, res) => {
       reply: 'أنا سامعك وحاسس بيك.. حصلت مشكلة تقنية بسيطة في الاتصال، بس أنا جنبك. تحب ناخد نفس سوا دلوقتي؟',
       expression: 'empathy',
       suggestedTools: ['breathe']
+    });
+  }
+});
+
+// Anime Avatar Transformation Endpoint
+app.post('/api/companion/generate-anime-avatar', async (req, res) => {
+  try {
+    const { imageBase64, mimeType = 'image/jpeg', consentGiven } = req.body;
+
+    if (!consentGiven) {
+      return res.status(403).json({
+        success: false,
+        error: 'consent_required',
+        message: 'مطلوب موافقة المستخدم الصريحة قبل إرسال ملامح الصورة لخدمة التوليد السحابية.'
+      });
+    }
+
+    if (!imageBase64 || typeof imageBase64 !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'image_required',
+        message: 'لم يتم توفير صورة صالحة للتحويل.'
+      });
+    }
+
+    if (!aiClient) {
+      return res.status(503).json({
+        success: false,
+        error: 'service_unavailable',
+        serviceName: 'Google Gemini Image Generation',
+        requiredModel: 'gemini-3.1-flash-lite-image',
+        message: 'خدمة التوليد بالذكاء الاصطناعي غير مهيأة (مفتاح API غير متوفر في البيئة).'
+      });
+    }
+
+    try {
+      const cleanBase64 = imageBase64.replace(/^data:image\/[a-zA-Z0-9.+_-]+;base64,/, '');
+
+      const response = await aiClient.models.generateContent({
+        model: 'gemini-3.1-flash-lite-image',
+        contents: {
+          parts: [
+            {
+              inlineData: {
+                data: cleanBase64,
+                mimeType: mimeType || 'image/jpeg'
+              }
+            },
+            {
+              text: 'Transform this user portrait into a high quality, expressive Japanese anime character illustration suitable for a psychological companion avatar. Preserve hair style, gender, and facial likeness while adopting a warm, gentle anime aesthetic with clean outlines and soothing tones.'
+            }
+          ]
+        },
+        config: {
+          imageConfig: {
+            aspectRatio: '1:1'
+          }
+        }
+      });
+
+      let generatedAnimeUrl: string | null = null;
+      const candidates = response.candidates;
+      if (candidates && candidates[0]?.content?.parts) {
+        for (const part of candidates[0].content.parts) {
+          if (part.inlineData?.data) {
+            generatedAnimeUrl = `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`;
+            break;
+          }
+        }
+      }
+
+      if (generatedAnimeUrl) {
+        return res.json({
+          success: true,
+          animeImageUrl: generatedAnimeUrl,
+          message: 'تم توليد شخصية الأنمي الشخصية بنجاح!'
+        });
+      } else {
+        return res.status(502).json({
+          success: false,
+          error: 'no_image_returned',
+          message: 'لم يُرجع النموذج بيانات صورة صالحة في الاستجابة.'
+        });
+      }
+    } catch (modelErr: unknown) {
+      const mError = modelErr as { status?: number; message?: string };
+      const errorMessage = mError.message || String(modelErr);
+      const isQuotaExceeded = mError.status === 429 || errorMessage.includes('Quota exceeded') || errorMessage.includes('RESOURCE_EXHAUSTED');
+
+      return res.status(isQuotaExceeded ? 429 : 500).json({
+        success: false,
+        error: isQuotaExceeded ? 'quota_exceeded_paid_required' : 'model_generation_failed',
+        serviceName: 'Google Gemini Image Generation (gemini-3.1-flash-lite-image)',
+        details: errorMessage,
+        requirements: {
+          provider: 'Google AI Studio / Vertex AI',
+          model: 'gemini-3.1-flash-lite-image',
+          pricingTier: 'Pay-as-you-go (خطة مدفوعة؛ الحصة المجانية لنماذج الصور = 0)',
+          approximateCost: '~$0.03 لكل صورة مولدة',
+          alternativeService: 'Replicate API (AnimeGANv2 / ControlNet Anime ~ $0.005)'
+        },
+        message: isQuotaExceeded
+          ? 'تتطلب خدمة توليد صور الأنمي من صورة المستخدم تفعيل خطة مدفوعة (Paid API Key)، حيث أن الحصة المجانية الرسمية لنماذج توليد وتعديل الصور في Google Gemini هي 0 طلب/يوم.'
+          : `تعذر إتمام التوليد: ${errorMessage}`
+      });
+    }
+  } catch (err: unknown) {
+    const error = err as Error;
+    return res.status(500).json({
+      success: false,
+      error: 'server_error',
+      message: error.message || 'حدث خطأ غير متوقع في الخادم.'
     });
   }
 });
