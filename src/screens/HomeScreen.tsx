@@ -65,6 +65,10 @@ interface HomeScreenProps {
   onOpenFeker?: () => void;
   onOpenDiscoveryQuiz: () => void;
   onOpenCompanion?: () => void;
+  onOpenInnerBurdens?: () => void;
+  onOpenEmotionalBridge?: () => void;
+  onOpenGratitudeGarden?: () => void;
+  onOpenInnerCompass?: () => void;
   theme?: 'dark' | 'light' | 'system';
 }
 
@@ -108,6 +112,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenFeker,
   onOpenDiscoveryQuiz,
   onOpenCompanion,
+  onOpenInnerBurdens,
+  onOpenEmotionalBridge,
+  onOpenGratitudeGarden,
+  onOpenInnerCompass,
   theme = 'dark'
 }) => {
   const isDark = theme === 'dark';
@@ -220,6 +228,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       case 'psychological_er': onOpenPsychologicalER(); break;
       case 'conflict_without_war': onOpenConflictWithoutWar(); break;
       case 'healing_journey': onOpenHealingJourney(); break;
+      case 'inner_burdens': onOpenInnerBurdens ? onOpenInnerBurdens() : onNavigate('games'); break;
+      case 'emotional_bridge': onOpenEmotionalBridge ? onOpenEmotionalBridge() : onNavigate('games'); break;
+      case 'gratitude_garden': onOpenGratitudeGarden ? onOpenGratitudeGarden() : onNavigate('games'); break;
+      case 'inner_compass': onOpenInnerCompass ? onOpenInnerCompass() : onNavigate('games'); break;
       default: break;
     }
   };
@@ -760,6 +772,91 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </button>
               </div>
 
+            </div>
+
+            {/* 🎮 4 New Creative Psychological Games Mini-Row */}
+            <div className="pt-2">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-black">ألعاب نفسية تفاعلية جديدة 🎈</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold">
+                    إبداعات حصرية
+                  </span>
+                </div>
+                <button
+                  onClick={() => onNavigate('games')}
+                  className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <span>عرض الكل في قسم الألعاب</span>
+                  <span>←</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {/* 1. فرقعة الفقاعات النفسية */}
+                <button
+                  onClick={onOpenInnerBurdens || (() => onNavigate('games'))}
+                  className={`p-3 rounded-2xl border text-right transition-all cursor-pointer flex flex-col justify-between ${
+                    isDark 
+                      ? 'bg-gradient-to-br from-[#16251D] to-[#0E1712] border-emerald-500/30 hover:border-emerald-400' 
+                      : 'bg-white border-emerald-600/20 hover:border-emerald-500 shadow-sm'
+                  }`}
+                >
+                  <span className="text-2xl mb-1.5">🫧</span>
+                  <div className="space-y-0.5">
+                    <span className="text-xs font-black block">فرقعة الأعباء</span>
+                    <span className="text-[10px] text-stone-400 block line-clamp-1">تفريغ بصري ولمسي لحظي</span>
+                  </div>
+                </button>
+
+                {/* 2. بناء الجسر العاطفي */}
+                <button
+                  onClick={onOpenEmotionalBridge || (() => onNavigate('games'))}
+                  className={`p-3 rounded-2xl border text-right transition-all cursor-pointer flex flex-col justify-between ${
+                    isDark 
+                      ? 'bg-gradient-to-br from-[#201D17] to-[#14120E] border-amber-500/30 hover:border-amber-400' 
+                      : 'bg-white border-amber-600/20 hover:border-amber-500 shadow-sm'
+                  }`}
+                >
+                  <span className="text-2xl mb-1.5">🌉</span>
+                  <div className="space-y-0.5">
+                    <span className="text-xs font-black block">الجسر العاطفي</span>
+                    <span className="text-[10px] text-stone-400 block line-clamp-1">حل الخلافات ووضع الحدود</span>
+                  </div>
+                </button>
+
+                {/* 3. حديقة الامتنان */}
+                <button
+                  onClick={onOpenGratitudeGarden || (() => onNavigate('games'))}
+                  className={`p-3 rounded-2xl border text-right transition-all cursor-pointer flex flex-col justify-between ${
+                    isDark 
+                      ? 'bg-gradient-to-br from-[#16231C] to-[#0E1712] border-teal-500/30 hover:border-teal-400' 
+                      : 'bg-white border-teal-600/20 hover:border-teal-500 shadow-sm'
+                  }`}
+                >
+                  <span className="text-2xl mb-1.5">🌸</span>
+                  <div className="space-y-0.5">
+                    <span className="text-xs font-black block">حديقة الامتنان</span>
+                    <span className="text-[10px] text-stone-400 block line-clamp-1">ازرع نبتة لكل نعمة</span>
+                  </div>
+                </button>
+
+                {/* 4. رحلة البوصلة الداخلية */}
+                <button
+                  onClick={onOpenInnerCompass || (() => onNavigate('games'))}
+                  className={`p-3 rounded-2xl border text-right transition-all cursor-pointer flex flex-col justify-between ${
+                    isDark 
+                      ? 'bg-gradient-to-br from-[#132123] to-[#0C1517] border-cyan-500/30 hover:border-cyan-400' 
+                      : 'bg-white border-cyan-600/20 hover:border-cyan-500 shadow-sm'
+                  }`}
+                >
+                  <span className="text-2xl mb-1.5">🧭</span>
+                  <div className="space-y-0.5">
+                    <span className="text-xs font-black block">البوصلة الداخلية</span>
+                    <span className="text-[10px] text-stone-400 block line-clamp-1">اكتشاف اتجاهك النفسي اليوم</span>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
         )}

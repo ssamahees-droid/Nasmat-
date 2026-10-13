@@ -18,9 +18,10 @@ import {
   AlertTriangle,
   PhoneCall
 } from 'lucide-react';
-import { CompanionAvatar, CompanionExpression } from './CompanionAvatar';
+import { CompanionAvatar, CompanionExpression, CompanionVisualStyle } from './CompanionAvatar';
 import { CompanionEngine } from '../services/companionEngine';
 import { voiceService } from '../services/voiceService';
+import { chimeService } from '../services/chimeService';
 import { CompanionPersona, CompanionMessage, CompanionUserSettings, CompanionAction } from '../types/companion';
 
 interface CompanionHeroSectionProps {
@@ -172,6 +173,58 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
       pitch: settings.persona === 'child' ? 1.15 : 0.98,
       rate: settings.persona === 'child' ? 0.98 : 0.92
     });
+  };
+
+  // Quick Empathy Mood Radar
+  const handleEmpathyMoodClick = (mood: 'anxious' | 'sad' | 'exhausted' | 'peaceful') => {
+    chimeService.playReassuranceChime();
+
+    let targetPersona: CompanionPersona = settings.persona;
+    let text = '';
+    let expression: CompanionExpression = 'empathy';
+
+    if (mood === 'anxious') {
+      targetPersona = 'adult';
+      expression = 'empathy';
+      text = 'أشعر بما يثقل صدرك الآن.. خذ نفساً عميقاً، ضع قدميك على الأرض، وتذكر أن الأفكار المتسارعة ليست حقائق قاطعة. أنت في أمان هنا، والضغط سينقضي خطوة بخطوة 🌿';
+    } else if (mood === 'sad') {
+      targetPersona = 'child';
+      expression = 'listening';
+      text = 'من حق قلبك أن يشعر بالحزن دون لوم أو خجل.. حزنك تعبير عن قيمة ما مررت به. لست وحدك، وأنا هنا بجانبك أحتضن مشاعرك بكل دفء وأمان 🤍';
+    } else if (mood === 'exhausted') {
+      targetPersona = 'father';
+      expression = 'thinking';
+      text = 'طاقتك أمانة غالية.. توقف عن الركض، وأعطِ لنفسك إذناً بالراحة الآن دون تأنيب ضمير. ما لا يكتمل اليوم سينتظر غداً بحكمة وثبات، وأنت تستحق أن تهدأ 🛡️';
+    } else if (mood === 'peaceful') {
+      expression = 'encouraging';
+      text = 'يا لجمال هذه السكينة في روحك! احفظ هذا النور الداخلي واجعله مرساة ترجع إليها كلما عصفت الحياة. استمتع بكل ثانية من هذا الهدوء ✨';
+    }
+
+    if (targetPersona !== settings.persona) {
+      const updated = { ...settings, persona: targetPersona };
+      setSettings(updated);
+      CompanionEngine.saveSettings(updated);
+    }
+
+    setCurrentExpression(expression);
+
+    const moodMessage: CompanionMessage = {
+      id: `mood-${Date.now()}`,
+      sender: 'companion',
+      text,
+      timestamp: Date.now(),
+      expression
+    };
+
+    setMessages(prev => {
+      const next = [...prev, moodMessage];
+      CompanionEngine.saveHistory(next);
+      return next;
+    });
+
+    if (settings.isVoiceAutoPlay) {
+      handleSpeakMessage(moodMessage);
+    }
   };
 
   // Microphone toggle
@@ -405,15 +458,13 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
 
           <div className="text-center space-y-1">
             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
-              {settings.persona === 'child' ? '🌱 طفلي الداخلي' : settings.persona === 'father' ? '🛡️ الأب الداخلي' : settings.persona === 'my_photo' ? '🪞 صورتي الشخصية' : '🌿 الراشد المتزن'}
+              {settings.persona === 'child' ? '🌱 طفلي الداخلي' : settings.persona === 'father' ? '🛡️ الأب الداخلي' : '🌿 الراشد المتزن'}
             </span>
             <p className="text-[11px] text-stone-400 max-w-[200px]">
               {settings.persona === 'child' 
                 ? 'مرآة لطفولتك وأمانك العاطفي' 
                 : settings.persona === 'father'
                 ? 'مرآة لحكمتك وحمايتك لنفسك'
-                : settings.persona === 'my_photo'
-                ? 'مرآة ذاتية لتأمل نفسك الصادقة'
                 : 'مرآة لواقعك كشخص بالغ اليوم'}
             </p>
             <p className="text-[10px] text-emerald-400/80 font-medium pt-0.5">
@@ -431,7 +482,7 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
               <span>اختر الجانب النفسي الذي تريد أن ترى نفسك من خلاله اليوم:</span>
             </label>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               {/* Option 1: الراشد */}
               <button
                 onClick={() => handleSelectPersona('adult')}
@@ -500,28 +551,55 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
                   حكمة وحزم حنون لوقف جلد الذات وتوفير أمان وحماية راسخة.
                 </p>
               </button>
+            </div>
+          </div>
 
-              {/* Option 4: صورتي الشخصية */}
+          {/* Quick Empathy Mood Radar (رادار المشاعر اللحظي لمساندة سريعة) */}
+          <div className="p-3 sm:p-3.5 rounded-2xl bg-black/20 border border-white/10 backdrop-blur-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-stone-200 flex items-center gap-1.5">
+                <span>💭 كيف تشعر في هذه اللحظة؟ (لمسة مساندة فورية):</span>
+              </span>
+              <span className="text-[10px] text-emerald-400/90 font-medium hidden sm:inline">
+                استجابة ورنين سكينة فوري ✨
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <button
-                onClick={() => handleSelectPersona('my_photo')}
-                className={`p-3 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
-                  settings.persona === 'my_photo'
-                    ? 'bg-linear-to-r from-teal-950/80 to-[#1b3430]/80 border-teal-400/60 shadow-md ring-2 ring-teal-500/25'
-                    : 'bg-black/20 hover:bg-black/30 border-white/10 text-stone-300'
-                }`}
+                type="button"
+                onClick={() => handleEmpathyMoodClick('anxious')}
+                className="p-2 rounded-xl bg-white/5 hover:bg-emerald-950/50 border border-white/10 hover:border-emerald-500/40 text-stone-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-xs"
+                title="أشعر بالقلق أو التوتر"
               >
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-white">
-                    <Camera className="w-4 h-4 text-teal-400" />
-                    <span>صورتي الشخصية 🪞</span>
-                  </div>
-                  {settings.persona === 'my_photo' && (
-                    <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-                  )}
-                </div>
-                <p className="text-[10px] text-stone-300 leading-relaxed">
-                  مرآتك الذاتية الخاصة للتأمل الصادق ومحادثة نفسك برحمة واعتزاز.
-                </p>
+                <span>🌪️</span>
+                <span>قلق أو متوتر</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleEmpathyMoodClick('sad')}
+                className="p-2 rounded-xl bg-white/5 hover:bg-rose-950/50 border border-white/10 hover:border-rose-500/40 text-stone-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-xs"
+                title="أشعر بالحزن أو الوحدة"
+              >
+                <span>🌧️</span>
+                <span>حزين أو وحيد</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleEmpathyMoodClick('exhausted')}
+                className="p-2 rounded-xl bg-white/5 hover:bg-amber-950/50 border border-white/10 hover:border-amber-500/40 text-stone-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-xs"
+                title="أشعر بالإرهاق والتشتت"
+              >
+                <span>⚡</span>
+                <span>مرهق ومشتت</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleEmpathyMoodClick('peaceful')}
+                className="p-2 rounded-xl bg-white/5 hover:bg-teal-950/50 border border-white/10 hover:border-teal-500/40 text-stone-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-xs"
+                title="أشعر بالهدوء والامتنان"
+              >
+                <span>🌸</span>
+                <span>هادئ وممتن</span>
               </button>
             </div>
           </div>

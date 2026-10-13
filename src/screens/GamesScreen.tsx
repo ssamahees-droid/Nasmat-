@@ -21,9 +21,17 @@ interface GamesScreenProps {
   onOpenFactGame: () => void;
   onOpenUntangleKnot: () => void;
   onOpenSoundscapeStudio: () => void;
-  onOpenThoughtRelease: () => void;
   onOpenFunAndGames: (tab?: 'jokes' | 'bubbles' | 'riddles' | 'wheel' | 'memory') => void;
   onOpenNesmaLaughs: () => void;
+  onOpenInnerBurdens: () => void;
+  onOpenEmotionalBridge: () => void;
+  onOpenGratitudeGarden: () => void;
+  onOpenInnerCompass: () => void;
+  onOpenThoughtRelease: () => void;
+  onOpenReframingPuzzle: () => void;
+  onOpenInnerLabyrinth: () => void;
+  onOpenDigitalRelease: () => void;
+  onOpenRelationalEnergy: () => void;
 }
 
 export const GamesScreen: React.FC<GamesScreenProps> = ({
@@ -35,7 +43,11 @@ export const GamesScreen: React.FC<GamesScreenProps> = ({
   onOpenSoundscapeStudio,
   onOpenThoughtRelease,
   onOpenFunAndGames,
-  onOpenNesmaLaughs
+  onOpenNesmaLaughs,
+  onOpenInnerBurdens,
+  onOpenEmotionalBridge,
+  onOpenGratitudeGarden,
+  onOpenInnerCompass
 }) => {
   return (
     <div className="pb-28 pt-4 px-4 sm:px-6 max-w-5xl mx-auto space-y-8 animate-fade-in text-right">
@@ -149,6 +161,134 @@ export const GamesScreen: React.FC<GamesScreenProps> = ({
       {/* Games & Activities Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         
+        {/* Game: فرقعة الفقاعات النفسية */}
+        <div className="p-6 bg-gradient-to-br from-[#1A261F] to-[#121A15] border-2 border-emerald-500/40 hover:border-emerald-400 rounded-3xl transition-all shadow-lg flex flex-col justify-between group relative overflow-hidden">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="text-3xl p-2.5 rounded-2xl bg-emerald-500/20 text-emerald-300 inline-block">🫧</div>
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                ✨ جديد / تفريغ لحظي
+              </span>
+            </div>
+            
+            <h3 className="text-base font-extrabold text-white group-hover:text-emerald-300 transition-colors">
+              لعبة «فرقعة الفقاعات النفسية» (Pop the Burdens)
+            </h3>
+
+            <div className="text-xs text-stone-300 space-y-1.5 leading-relaxed">
+              <p><strong>الهدف:</strong> تفريغ بصري ولمسي سريع؛ فقاعات طافية تمثل أعباءك السلبية تفرقعها لتتحول لرسائل طمأنينة وتوكيدات بديلة.</p>
+              <p><strong>الفئة:</strong> من يشعر بزحام في رأسه، تأنيب ضمير، أو خوف من المستقبل ويحتاج لتفريغ فوري.</p>
+              <p><strong>المزايا:</strong> أصوات سينث مهدئة، عداد تحرير الأعباء، وحفظ مباشر في دفتر الخواطر.</p>
+            </div>
+          </div>
+
+          <div className="mt-5 pt-3 border-t border-white/10">
+            <button
+              onClick={onOpenInnerBurdens}
+              className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>بدء فرقعة الأعباء 🫧</span>
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Game: بناء الجسر العاطفي */}
+        <div className="p-6 bg-gradient-to-br from-[#211E18] to-[#141410] border-2 border-amber-500/40 hover:border-amber-400 rounded-3xl transition-all shadow-lg flex flex-col justify-between group relative overflow-hidden">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="text-3xl p-2.5 rounded-2xl bg-amber-500/20 text-amber-300 inline-block">🌉</div>
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
+                ✨ جديد / ذكاء عاطفي
+              </span>
+            </div>
+            
+            <h3 className="text-base font-extrabold text-white group-hover:text-amber-300 transition-colors">
+              لعبة «بناء الجسر العاطفي» (Build the Bridge)
+            </h3>
+
+            <div className="text-xs text-stone-300 space-y-1.5 leading-relaxed">
+              <p><strong>الهدف:</strong> حل سيناريوهات سوء الفهم ووضع الحدود بحكمة عبر ترتيب حجارة التواصل الصحي لسد فجوة الخلاف.</p>
+              <p><strong>الفئة:</strong> من يجد صعوبة في التعبير عن حدوده، قول "لا"، أو التعامل مع النقد القاسي دون حرب.</p>
+              <p><strong>المزايا:</strong> توضيح نفسي فوري للأخطاء الشائعة وبطاقة خلاصة قابلة للحفظ والمشاركة.</p>
+            </div>
+          </div>
+
+          <div className="mt-5 pt-3 border-t border-white/10">
+            <button
+              onClick={onOpenEmotionalBridge}
+              className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black text-xs font-black rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>بناء الجسر العاطفي 🌉</span>
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Game: حديقة الامتنان اليومية */}
+        <div className="p-6 bg-gradient-to-br from-[#16241D] to-[#101914] border-2 border-teal-500/40 hover:border-teal-400 rounded-3xl transition-all shadow-lg flex flex-col justify-between group relative overflow-hidden">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="text-3xl p-2.5 rounded-2xl bg-teal-500/20 text-teal-300 inline-block">🌸</div>
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-teal-500/20 text-teal-300 font-bold border border-teal-500/30">
+                ✨ جديد / نمو وتقدم
+              </span>
+            </div>
+            
+            <h3 className="text-base font-extrabold text-white group-hover:text-teal-300 transition-colors">
+              لعبة «حديقة الامتنان اليومية» (Gratitude Garden)
+            </h3>
+
+            <div className="text-xs text-stone-300 space-y-1.5 leading-relaxed">
+              <p><strong>الهدف:</strong> ازرع بذور الامتنان للنعم الصغيرة واسقها لتتفتح أزهار حديقتك الافتراضية مع كل لحظة شكر.</p>
+              <p><strong>الفئة:</strong> من يعاني من التركيز على السلبيات ويريد تدريب عينه على التقاط النعم الصغيرة.</p>
+              <p><strong>المزايا:</strong> سقاية النباتات، حفظ دائم للنباتات في جهازك، ومشاركة بطاقة الحديقة المزهرة.</p>
+            </div>
+          </div>
+
+          <div className="mt-5 pt-3 border-t border-white/10">
+            <button
+              onClick={onOpenGratitudeGarden}
+              className="w-full py-2.5 bg-teal-400 hover:bg-teal-300 text-black text-xs font-black rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>دخول حديقة الامتنان 🌸</span>
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Game: رحلة البوصلة الداخلية */}
+        <div className="p-6 bg-gradient-to-br from-[#152326] to-[#0E181B] border-2 border-cyan-500/40 hover:border-cyan-400 rounded-3xl transition-all shadow-lg flex flex-col justify-between group relative overflow-hidden">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="text-3xl p-2.5 rounded-2xl bg-cyan-500/20 text-cyan-300 inline-block">🧭</div>
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">
+                ✨ جديد / اكتشاف يومي
+              </span>
+            </div>
+            
+            <h3 className="text-base font-extrabold text-white group-hover:text-cyan-300 transition-colors">
+              لعبة «رحلة البوصلة الداخلية» (Inner Compass)
+            </h3>
+
+            <div className="text-xs text-stone-300 space-y-1.5 leading-relaxed">
+              <p><strong>الهدف:</strong> رحلة من ٤ مواقف سريعة بين مسار الاستنزاف ومسار الاستماع للذات، تكشف اتجاه بوصلتك النفسية اليوم.</p>
+              <p><strong>الفئة:</strong> للتحقق السريع من حالتك النفسية قبل بدء اليوم أو في نهايته.</p>
+              <p><strong>المزايا:</strong> مؤشر بوصلة تفاعلي، درجة التناغم مع الذات، وتوصية نفسية وتوكيد مخصص ليومك.</p>
+            </div>
+          </div>
+
+          <div className="mt-5 pt-3 border-t border-white/10">
+            <button
+              onClick={onOpenInnerCompass}
+              className="w-full py-2.5 bg-cyan-400 hover:bg-cyan-300 text-black text-xs font-black rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>بدء رحلة البوصلة 🧭</span>
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
         {/* Game 3: الحقيقة ولا الحكاية؟ */}
         <div className="p-6 bg-[#141C18] border border-white/10 hover:border-emerald-500/50 rounded-3xl transition-all shadow-md flex flex-col justify-between group">
           <div className="space-y-3">

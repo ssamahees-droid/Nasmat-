@@ -46,6 +46,14 @@ import { MindfulnessStudioModal } from './components/MindfulnessStudioModal';
 // Fun, Jokes & Mind Games Hub
 import { FunAndGamesHubModal } from './components/FunAndGamesHubModal';
 import { GwayaHekayaGameModal } from './components/GwayaHekayaGameModal';
+import { InnerBurdensBubbleGameModal } from './components/InnerBurdensBubbleGameModal';
+import { EmotionalBridgeGameModal } from './components/EmotionalBridgeGameModal';
+import { GratitudeGardenModal } from './components/GratitudeGardenModal';
+import { InnerCompassJourneyModal } from './components/InnerCompassJourneyModal';
+import { CognitiveReframingPuzzleModal } from './components/CognitiveReframingPuzzleModal';
+import { InnerLabyrinthModal } from './components/InnerLabyrinthModal';
+import { DigitalReleaseRitualModal } from './components/DigitalReleaseRitualModal';
+import { RelationalEnergyMatrixModal } from './components/RelationalEnergyMatrixModal';
 import { PersonalDiscoveryQuizModal } from './components/PersonalDiscoveryQuizModal';
 import { FekerAppModal } from './components/FekerAppModal';
 import { CompanionModal } from './components/CompanionModal';
@@ -250,8 +258,42 @@ export default function App() {
   const [isFekerModalOpen, setIsFekerModalOpen] = useState(false);
   const [isCompanionOpen, setIsCompanionOpen] = useState(false);
 
+  // Creative Psychological Games
+  const [isInnerBurdensOpen, setIsInnerBurdensOpen] = useState(false);
+  const [isEmotionalBridgeOpen, setIsEmotionalBridgeOpen] = useState(false);
+  const [isGratitudeGardenOpen, setIsGratitudeGardenOpen] = useState(false);
+  const [isInnerCompassOpen, setIsInnerCompassOpen] = useState(false);
+  const [isReframingPuzzleOpen, setIsReframingPuzzleOpen] = useState(false);
+  const [isInnerLabyrinthOpen, setIsInnerLabyrinthOpen] = useState(false);
+  const [isDigitalReleaseOpen, setIsDigitalReleaseOpen] = useState(false);
+  const [isRelationalEnergyOpen, setIsRelationalEnergyOpen] = useState(false);
+
   const handleOpenModalByName = (modalName: string, extraData?: any) => {
     switch (modalName) {
+      case 'inner_burdens':
+        setIsInnerBurdensOpen(true);
+        break;
+      case 'emotional_bridge':
+        setIsEmotionalBridgeOpen(true);
+        break;
+      case 'gratitude_garden':
+        setIsGratitudeGardenOpen(true);
+        break;
+      case 'inner_compass':
+        setIsInnerCompassOpen(true);
+        break;
+      case 'reframing_puzzle':
+        setIsReframingPuzzleOpen(true);
+        break;
+      case 'inner_labyrinth':
+        setIsInnerLabyrinthOpen(true);
+        break;
+      case 'digital_release':
+        setIsDigitalReleaseOpen(true);
+        break;
+      case 'relational_energy':
+        setIsRelationalEnergyOpen(true);
+        break;
       case 'ana_delwaqti':
         setIsAnaDelwaqtiOpen(true);
         break;
@@ -479,7 +521,6 @@ export default function App() {
             onOpenFeker={() => setIsFekerModalOpen(true)}
             // Personal Discovery Quiz
             onOpenDiscoveryQuiz={() => setIsDiscoveryQuizOpen(true)}
-            // Rafiqi Digital Companion
             onOpenCompanion={() => setIsCompanionOpen(true)}
           />
         )}
@@ -515,6 +556,14 @@ export default function App() {
             onOpenThoughtRelease={() => setIsThoughtReleaseOpen(true)}
             onOpenFunAndGames={(tab = 'jokes') => setFunAndGamesState({ isOpen: true, tab })}
             onOpenNesmaLaughs={() => setIsNesmaLaughsOpen(true)}
+            onOpenInnerBurdens={() => setIsInnerBurdensOpen(true)}
+            onOpenEmotionalBridge={() => setIsEmotionalBridgeOpen(true)}
+            onOpenGratitudeGarden={() => setIsGratitudeGardenOpen(true)}
+            onOpenInnerCompass={() => setIsInnerCompassOpen(true)}
+            onOpenReframingPuzzle={() => setIsReframingPuzzleOpen(true)}
+            onOpenInnerLabyrinth={() => setIsInnerLabyrinthOpen(true)}
+            onOpenDigitalRelease={() => setIsDigitalReleaseOpen(true)}
+            onOpenRelationalEnergy={() => setIsRelationalEnergyOpen(true)}
           />
         )}
 
@@ -659,6 +708,54 @@ export default function App() {
       <GwayaHekayaGameModal
         isOpen={isGwayaHekayaOpen}
         onClose={() => setIsGwayaHekayaOpen(false)}
+      />
+
+      {/* 🫧 1. لعبة فرقعة الفقاعات النفسية (Pop the Inner Burdens) */}
+      <InnerBurdensBubbleGameModal
+        isOpen={isInnerBurdensOpen}
+        onClose={() => setIsInnerBurdensOpen(false)}
+      />
+
+      {/* 🌉 2. لعبة بناء الجسر العاطفي (Build the Bridge) */}
+      <EmotionalBridgeGameModal
+        isOpen={isEmotionalBridgeOpen}
+        onClose={() => setIsEmotionalBridgeOpen(false)}
+      />
+
+      {/* 🌸 3. لعبة حديقة الامتنان اليومية (The Daily Gratitude Garden) */}
+      <GratitudeGardenModal
+        isOpen={isGratitudeGardenOpen}
+        onClose={() => setIsGratitudeGardenOpen(false)}
+      />
+
+      {/* 🧭 4. لعبة رحلة البوصلة الداخلية (Inner Compass Journey) */}
+      <InnerCompassJourneyModal
+        isOpen={isInnerCompassOpen}
+        onClose={() => setIsInnerCompassOpen(false)}
+      />
+
+      {/* 🧩 5. لعبة صانع الأنماط: فك شفرة الأفكار (Cognitive Reframing Puzzle) */}
+      <CognitiveReframingPuzzleModal
+        isOpen={isReframingPuzzleOpen}
+        onClose={() => setIsReframingPuzzleOpen(false)}
+      />
+
+      {/* 🌀 6. لعبة متاهة الهدوء التفاعلية (The Inner Labyrinth) */}
+      <InnerLabyrinthModal
+        isOpen={isInnerLabyrinthOpen}
+        onClose={() => setIsInnerLabyrinthOpen(false)}
+      />
+
+      {/* 🪞 7. لعبة مرآة الأعماق: طقوس التحرر الرقمي (Digital Release Ritual) */}
+      <DigitalReleaseRitualModal
+        isOpen={isDigitalReleaseOpen}
+        onClose={() => setIsDigitalReleaseOpen(false)}
+      />
+
+      {/* 🪐 8. لعبة حصاد طاقة الروابط (The Relational Energy Matrix) */}
+      <RelationalEnergyMatrixModal
+        isOpen={isRelationalEnergyOpen}
+        onClose={() => setIsRelationalEnergyOpen(false)}
       />
 
       {/* 🧭 Personal Discovery Quiz */}

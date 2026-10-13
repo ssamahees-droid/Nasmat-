@@ -42,7 +42,8 @@ const KEYS = {
   ENERGY_BUDGET: 'nesmat_energy_budget_v1',
   SLEEP_LOGS: 'nesmat_sleep_logs_v1',
   THOUGHT_POSTS: 'nesmat_thought_posts_v1',
-  MINDFULNESS_SESSIONS: 'nesmat_mindfulness_sessions_v1'
+  MINDFULNESS_SESSIONS: 'nesmat_mindfulness_sessions_v1',
+  GRATITUDE_GARDEN: 'nesmat_gratitude_garden_v1'
 };
 
 export interface PersonalNote {
@@ -53,6 +54,19 @@ export interface PersonalNote {
   moodTag?: MoodValue;
   version?: number;
   updatedAt?: string;
+}
+
+export interface GratitudePlant {
+  id: string;
+  text: string;
+  seedType: 'small_blessings' | 'warmth' | 'achievement' | 'peace' | 'deep_gratitude';
+  plantName: string;
+  emoji: string;
+  flowerColor: string;
+  stage: number;
+  waterCount: number;
+  plantedAt: string;
+  lastWateredAt: string;
 }
 
 export type ThoughtCategory = 'awareness' | 'gratitude' | 'reframing' | 'release' | 'gentleness';
@@ -925,6 +939,80 @@ class StorageService {
     records.unshift(newRecord);
     localStorage.setItem(KEYS.MINDFULNESS_SESSIONS, JSON.stringify(records.slice(0, 30)));
     return newRecord;
+  }
+
+  // --- 🌸 The Daily Gratitude Garden ---
+  getGratitudePlants(): GratitudePlant[] {
+    const raw = localStorage.getItem(KEYS.GRATITUDE_GARDEN);
+    if (!raw) {
+      // Default initial starter plants so garden is never completely empty
+      const initialPlants: GratitudePlant[] = [
+        {
+          id: 'plant_init_1',
+          text: 'فنجان قهوة الصباح الهادئ ونسمة الهواء الباردة',
+          seedType: 'small_blessings',
+          plantName: 'برعم النعم اليومية',
+          emoji: '🌱',
+          flowerColor: '#10B981',
+          stage: 3,
+          waterCount: 3,
+          plantedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+          lastWateredAt: new Date().toISOString()
+        },
+        {
+          id: 'plant_init_2',
+          text: 'مكالمة ودودة من شخص سأل عني بصدق واهتمام',
+          seedType: 'warmth',
+          plantName: 'دوار شمس العلاقات الدافئة',
+          emoji: '🌻',
+          flowerColor: '#F59E0B',
+          stage: 3,
+          waterCount: 4,
+          plantedAt: new Date(Date.now() - 86400000).toISOString(),
+          lastWateredAt: new Date().toISOString()
+        }
+      ];
+      localStorage.setItem(KEYS.GRATITUDE_GARDEN, JSON.stringify(initialPlants));
+      return initialPlants;
+    }
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return [];
+    }
+  }
+
+  addGratitudePlant(plant: Omit<GratitudePlant, 'id' | 'plantedAt' | 'lastWateredAt' | 'stage' | 'waterCount'>): GratitudePlant {
+    const plants = this.getGratitudePlants();
+    const newPlant: GratitudePlant = {
+      ...plant,
+      id: 'plant_' + Date.now(),
+      stage: 1, // begins as sprout
+      waterCount: 1,
+      plantedAt: new Date().toISOString(),
+      lastWateredAt: new Date().toISOString()
+    };
+    plants.unshift(newPlant);
+    localStorage.setItem(KEYS.GRATITUDE_GARDEN, JSON.stringify(plants));
+    return newPlant;
+  }
+
+  waterGratitudePlant(id: string): GratitudePlant | null {
+    const plants = this.getGratitudePlants();
+    const plant = plants.find(p => p.id === id);
+    if (!plant) return null;
+    plant.waterCount += 1;
+    plant.lastWateredAt = new Date().toISOString();
+    if (plant.stage < 3) {
+      plant.stage += 1;
+    }
+    localStorage.setItem(KEYS.GRATITUDE_GARDEN, JSON.stringify(plants));
+    return plant;
+  }
+
+  deleteGratitudePlant(id: string): void {
+    const plants = this.getGratitudePlants().filter(p => p.id !== id);
+    localStorage.setItem(KEYS.GRATITUDE_GARDEN, JSON.stringify(plants));
   }
 
   // --- Privacy & Egyptian Data Law 151 / 2020 Compliance ---

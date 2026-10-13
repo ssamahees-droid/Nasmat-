@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
-  Sparkles, Eye, Volume2, Mic, Heart, RefreshCw, ZapOff, Shield, Smile, 
-  Palette, Check, X, Camera, Upload, Trash2, Image as ImageIcon, Lock, User
+  Sparkles, Eye, Volume2, VolumeX, Mic, Heart, RefreshCw, ZapOff, Shield, Smile, 
+  Palette, Check, X, Camera, Upload, Trash2, Image as ImageIcon, Lock, User,
+  Sparkle, Copy, BookOpen, Wind
 } from 'lucide-react';
 import { AnimeTheme, AnimeAccessory, CompanionPersona, CompanionExpression } from '../types/companion';
+import { CompanionAnimeRig } from './CompanionAnimeRig';
+import { chimeService } from '../services/chimeService';
+import { storage } from '../services/storage';
 
 export type { CompanionExpression, CompanionPersona, AnimeTheme, AnimeAccessory };
+export type CompanionVisualStyle = 'anime' | 'realistic' | 'photo';
 
 export interface CompanionAvatarProps {
   persona: CompanionPersona;
@@ -24,9 +29,11 @@ export interface CompanionAvatarProps {
   onThemeChange?: (theme: AnimeTheme) => void;
   onAccessoryChange?: (accessory: AnimeAccessory) => void;
   allowCustomization?: boolean;
+  visualStyle?: CompanionVisualStyle;
+  onVisualStyleChange?: (style: CompanionVisualStyle) => void;
 }
 
-// Realistic high-resolution human portrait photographs per persona
+// 1. Realistic Photographic Human Portraits
 export const PERSONA_REALISTIC_PORTRAITS: Record<CompanionPersona, {
   src: string;
   alt: string;
@@ -61,7 +68,7 @@ export const PERSONA_REALISTIC_PORTRAITS: Record<CompanionPersona, {
   }
 };
 
-// 21 Warm, authentic psychological reassurance whispers (7 per persona)
+// 2. 21 Warm, authentic psychological reassurance whispers (7 per persona)
 export const REASSURANCE_WHISPERS: Record<CompanionPersona, string[]> = {
   child: [
     'كل شيء سيكون بخير، ابتسم! أنا هنا جنبك دايماً 🌱',
@@ -107,10 +114,10 @@ export const ACCESSORY_OPTIONS: { id: AnimeAccessory; label: string; icon: strin
   { id: 'none', label: 'طبيعي بدون زينة', icon: '✨' }
 ];
 
-const LOCAL_STORAGE_THEME_KEY = 'nesmat_anime_avatar_theme';
-const LOCAL_STORAGE_ACCESSORY_KEY = 'nesmat_anime_avatar_accessory';
+export const LOCAL_STORAGE_THEME_KEY = 'nesmat_anime_avatar_theme';
+export const LOCAL_STORAGE_ACCESSORY_KEY = 'nesmat_anime_avatar_accessory';
 export const LOCAL_STORAGE_USER_PHOTO_KEY = 'nesmat_custom_mirror_photo';
-export const LOCAL_STORAGE_USE_USER_PHOTO_KEY = 'nesmat_avatar_use_user_photo';
+export const LOCAL_STORAGE_VISUAL_STYLE_KEY = 'nesmat_companion_visual_style';
 
 export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
   persona,
@@ -128,9 +135,33 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
   accessory: controlledAccessory,
   onThemeChange,
   onAccessoryChange,
-  allowCustomization = true
+  allowCustomization = true,
+  visualStyle: controlledStyle,
+  onVisualStyleChange
 }) => {
-  // 1. Personal photo state stored locally (Privacy guaranteed)
+  // 1. Visual Style State: 'anime' | 'realistic' | 'photo'
+  const [internalStyle, setInternalStyle] = useState<CompanionVisualStyle>(() => {
+    try {
+      const saved = localStorage.getItem(LOCAL_STORAGE_VISUAL_STYLE_KEY);
+      if (saved && ['anime', 'realistic', 'photo'].includes(saved)) {
+        return saved as CompanionVisualStyle;
+      }
+    } catch (_) {}
+    return 'realistic';
+  });
+
+  const currentStyle = controlledStyle || internalStyle;
+
+  const handleSelectStyle = (newStyle: CompanionVisualStyle) => {
+    setInternalStyle(newStyle);
+    try {
+      localStorage.setItem(LOCAL_STORAGE_VISUAL_STYLE_KEY, newStyle);
+      window.dispatchEvent(new Event('nesmat_avatar_style_changed'));
+    } catch (_) {}
+    if (onVisualStyleChange) onVisualStyleChange(newStyle);
+  };
+
+  // 2. Personal Photo State
   const [localUserPhoto, setLocalUserPhoto] = useState<string | null>(() => {
     try {
       return localStorage.getItem(LOCAL_STORAGE_USER_PHOTO_KEY) || null;
@@ -139,39 +170,28 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
     }
   });
 
-  const [useUserPhoto, setUseUserPhoto] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem(LOCAL_STORAGE_USE_USER_PHOTO_KEY) === 'true';
-    } catch (_) {
-      return false;
-    }
-  });
-
-  // Listen for storage events so changes in any component update immediately
+  // Listen for storage events to synchronize style & photos across instances
   useEffect(() => {
     const handleSync = () => {
       try {
         const photo = localStorage.getItem(LOCAL_STORAGE_USER_PHOTO_KEY);
-        const shouldUse = localStorage.getItem(LOCAL_STORAGE_USE_USER_PHOTO_KEY) === 'true';
         setLocalUserPhoto(photo || null);
-        setUseUserPhoto(shouldUse);
+        const style = localStorage.getItem(LOCAL_STORAGE_VISUAL_STYLE_KEY);
+        if (style && ['anime', 'realistic', 'photo'].includes(style)) {
+          setInternalStyle(style as CompanionVisualStyle);
+        }
       } catch (_) {}
     };
 
     window.addEventListener('storage', handleSync);
-    window.addEventListener('nesmat_avatar_photo_changed', handleSync);
+    window.addEventListener('nesmat_avatar_style_changed', handleSync);
     return () => {
       window.removeEventListener('storage', handleSync);
-      window.removeEventListener('nesmat_avatar_photo_changed', handleSync);
+      window.removeEventListener('nesmat_avatar_style_changed', handleSync);
     };
   }, []);
 
-  // Determine effective photo to render
-  const effectivePhoto = customPhoto !== undefined
-    ? customPhoto
-    : (useUserPhoto && localUserPhoto ? localUserPhoto : null);
-
-  // 2. Aura theme state with persistence
+  // 3. Aura Theme & Accessory State
   const [internalTheme, setInternalTheme] = useState<AnimeTheme>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_THEME_KEY);
@@ -216,37 +236,115 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
     } catch (_) {}
   };
 
-  // 3. Modals and Popovers
+  // 4. Modals and Popovers
+  const [showStyleModal, setShowStyleModal] = useState<boolean>(false);
   const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
   const [showThemeModal, setShowThemeModal] = useState<boolean>(false);
   const [uploadFeedback, setUploadFeedback] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 4. Interactive Reassurance Touch State
+  // 5. Interactive Reassurance Touch & Chime State
   const [activeWhisper, setActiveWhisper] = useState<string | null>(null);
   const [showHeartsBurst, setShowHeartsBurst] = useState<boolean>(false);
-  const [isHeartbeating, setIsHeartbeating] = useState<boolean>(false);
+  const [isWinking, setIsWinking] = useState<boolean>(false);
+  const [hasCopiedWhisper, setHasCopiedWhisper] = useState<boolean>(false);
+  const [hasSavedWhisper, setHasSavedWhisper] = useState<boolean>(false);
+  const [isChimeMuted, setIsChimeMuted] = useState<boolean>(() => chimeService.isMuted());
   const whisperTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Synchronized Breathing Session State with Companion
+  const [isBreathingSync, setIsBreathingSync] = useState<boolean>(false);
+  const [breathPhase, setBreathPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
+  const [breathCount, setBreathCount] = useState<number>(4);
+
+  // Breathing Cycle Loop
+  useEffect(() => {
+    if (!isBreathingSync) return;
+
+    let seconds = 0;
+    // Play initial inhale cue
+    chimeService.playBreathCue('inhale');
+
+    const interval = setInterval(() => {
+      seconds = (seconds + 1) % 12; // 4s inhale, 4s hold, 4s exhale
+      if (seconds < 4) {
+        setBreathPhase('inhale');
+        setBreathCount(4 - seconds);
+        if (seconds === 0) chimeService.playBreathCue('inhale');
+      } else if (seconds < 8) {
+        setBreathPhase('hold');
+        setBreathCount(8 - seconds);
+      } else {
+        setBreathPhase('exhale');
+        setBreathCount(12 - seconds);
+        if (seconds === 8) chimeService.playBreathCue('exhale');
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isBreathingSync]);
+
+  const handleToggleBreathingSync = () => {
+    setIsBreathingSync(prev => !prev);
+  };
+
+  const handleToggleChimeMute = () => {
+    const muted = chimeService.toggleMute();
+    setIsChimeMuted(muted);
+  };
+
   const handleAvatarTouch = () => {
-    // Pick reassurance quote from the 21 authentic quotes for active persona
     const quotes = REASSURANCE_WHISPERS[persona];
     const quote = quotes[Math.floor(Math.random() * quotes.length)];
     setActiveWhisper(quote);
 
-    // Trigger sweet heart burst and soft heartbeat animation
     setShowHeartsBurst(true);
-    setIsHeartbeating(true);
+    setIsWinking(true);
+    setHasCopiedWhisper(false);
+    setHasSavedWhisper(false);
+
+    // Play soothing singing-bowl chime
+    chimeService.playReassuranceChime();
 
     if (whisperTimerRef.current) clearTimeout(whisperTimerRef.current);
     whisperTimerRef.current = setTimeout(() => {
       setActiveWhisper(null);
       setShowHeartsBurst(false);
-      setIsHeartbeating(false);
-    }, 4200);
+      setIsWinking(false);
+    }, 5500);
   };
 
-  // 5. Reduced Motion detection
+  const handleCopyWhisper = async () => {
+    if (!activeWhisper) return;
+    try {
+      await navigator.clipboard.writeText(activeWhisper);
+      setHasCopiedWhisper(true);
+      setTimeout(() => setHasCopiedWhisper(false), 3000);
+    } catch (_) {}
+  };
+
+  const handleSaveWhisperToJournal = () => {
+    if (!activeWhisper) return;
+    try {
+      const personaLabels: Record<CompanionPersona, string> = {
+        child: 'الطفل الداخلي',
+        adult: 'الراشد المتزن',
+        father: 'الأب الداخلي'
+      };
+      storage.addThoughtPost({
+        title: `همسة طمأنينة من ${personaLabels[persona]} ✨`,
+        content: activeWhisper,
+        category: 'gentleness',
+        mood: 'peaceful' as any,
+        promptUsed: 'لمسة طمأنينة وتواصل مع رفيقي',
+        isFavorite: true
+      });
+      setHasSavedWhisper(true);
+      setTimeout(() => setHasSavedWhisper(false), 3500);
+    } catch (_) {}
+  };
+
+  // 6. Reduced Motion Detection
   const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
     try {
       return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -275,7 +373,54 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
     }
   };
 
-  // 6. Handle Personal Photo Upload & Storage (Strictly local, no server upload)
+  // 7. Blinking, Visemes, and Breathing cycles
+  const [isBlinking, setIsBlinking] = useState<boolean>(false);
+  const [visemeIndex, setVisemeIndex] = useState<number>(0);
+  const [breathTick, setBreathTick] = useState<number>(0);
+
+  // Natural blink loop for anime rig
+  useEffect(() => {
+    if (!isAnimatedMode || currentStyle !== 'anime') return;
+    let timer: NodeJS.Timeout;
+    const scheduleNextBlink = () => {
+      const delay = 3200 + Math.random() * 2800;
+      timer = setTimeout(() => {
+        setIsBlinking(true);
+        setTimeout(() => {
+          setIsBlinking(false);
+          scheduleNextBlink();
+        }, 180);
+      }, delay);
+    };
+    scheduleNextBlink();
+    return () => clearTimeout(timer);
+  }, [isAnimatedMode, currentStyle]);
+
+  // Speaking mouth movement for anime rig
+  useEffect(() => {
+    if (!isSpeaking || !isAnimatedMode || currentStyle !== 'anime') {
+      setVisemeIndex(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setVisemeIndex(prev => (prev + 1) % 5);
+    }, 120);
+    return () => {
+      clearInterval(interval);
+      setVisemeIndex(0);
+    };
+  }, [isSpeaking, isAnimatedMode, currentStyle]);
+
+  // Gentle breath loop
+  useEffect(() => {
+    if (!isAnimatedMode) return;
+    const interval = setInterval(() => {
+      setBreathTick(t => (t + 1) % 60);
+    }, 100);
+    return () => clearInterval(interval);
+  }, [isAnimatedMode]);
+
+  // 8. Personal Photo File Upload (Client-side only)
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -286,7 +431,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
     }
 
     if (file.size > 8 * 1024 * 1024) {
-      setUploadFeedback('حجم الصورة كبير جداً، يرجى اختيار صورة أقل من 8 ميجابايت.');
+      setUploadFeedback('حجم الصورة كبير، يرجى اختيار صورة أقل من 8 ميجابايت.');
       return;
     }
 
@@ -295,7 +440,6 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
       const result = event.target?.result as string;
       if (!result) return;
 
-      // Compress slightly via canvas to ensure safe localStorage fit
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
@@ -320,11 +464,9 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
 
           try {
             localStorage.setItem(LOCAL_STORAGE_USER_PHOTO_KEY, compressedDataUrl);
-            localStorage.setItem(LOCAL_STORAGE_USE_USER_PHOTO_KEY, 'true');
             setLocalUserPhoto(compressedDataUrl);
-            setUseUserPhoto(true);
-            setUploadFeedback('تم حفظ وتفعيل صورتك الشخصية محلياً بنجاح! 🌿');
-            window.dispatchEvent(new Event('nesmat_avatar_photo_changed'));
+            handleSelectStyle('photo');
+            setUploadFeedback('تم حفظ صورتك الشخصية محلياً وتفعيلها بنجاح! 🌿');
           } catch (_) {
             setUploadFeedback('تعذر حفظ الصورة محلياً؛ قد تكون مساحة التخزين ممتلئة.');
           }
@@ -338,23 +480,13 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
   const handleDeleteUserPhoto = () => {
     try {
       localStorage.removeItem(LOCAL_STORAGE_USER_PHOTO_KEY);
-      localStorage.setItem(LOCAL_STORAGE_USE_USER_PHOTO_KEY, 'false');
       setLocalUserPhoto(null);
-      setUseUserPhoto(false);
-      setUploadFeedback('تم حذف الصورة الشخصية واستعادة الصورة الواقعية للشخصية.');
-      window.dispatchEvent(new Event('nesmat_avatar_photo_changed'));
+      handleSelectStyle('realistic');
+      setUploadFeedback('تم حذف الصورة الشخصية واستعادة المظهر الواقعي.');
     } catch (_) {}
   };
 
-  const handleToggleUseUserPhoto = (active: boolean) => {
-    try {
-      localStorage.setItem(LOCAL_STORAGE_USE_USER_PHOTO_KEY, active ? 'true' : 'false');
-      setUseUserPhoto(active);
-      window.dispatchEvent(new Event('nesmat_avatar_photo_changed'));
-    } catch (_) {}
-  };
-
-  // 7. Sizing Definitions (44px to 224px spectrum)
+  // 9. Sizing Definitions (44px to 224px spectrum)
   const sizeMap = {
     xs: { px: 44, classNames: 'w-11 h-11' },
     sm: { px: 64, classNames: 'w-16 h-16' },
@@ -364,27 +496,76 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
   };
   const currentSize = sizeMap[size];
 
-  // 8. Persona metadata & active theme
+  // Persona metadata
   const personaMeta = PERSONA_REALISTIC_PORTRAITS[persona];
   const activeThemeMeta = useMemo(() => {
     return THEME_OPTIONS.find(t => t.id === currentTheme) || THEME_OPTIONS[0];
   }, [currentTheme]);
 
-  // Image source and description
-  const activeImageSrc = effectivePhoto || personaMeta.src;
-  const activeImageAlt = effectivePhoto ? 'صورتك الشخصية النشطة' : personaMeta.alt;
-  const isCustomUserPhotoActive = Boolean(effectivePhoto);
+  // Determine what to display
+  const effectiveUserPhoto = customPhoto || localUserPhoto;
+  const isDisplayingUserPhoto = currentStyle === 'photo' && Boolean(effectiveUserPhoto);
+  const isDisplayingAnime = currentStyle === 'anime';
+  const isDisplayingRealistic = currentStyle === 'realistic' || (!isDisplayingAnime && !isDisplayingUserPhoto);
 
   return (
     <div className={`relative flex flex-col items-center justify-center select-none group ${className}`}>
       
+      {/* Floating Synchronized Breathing HUD */}
+      {isBreathingSync && (
+        <div className="absolute -top-14 z-40 px-3.5 py-1.5 bg-teal-950/90 text-teal-100 backdrop-blur-md rounded-full shadow-lg border border-teal-500/40 text-xs font-bold flex items-center gap-2 animate-pulse">
+          <Wind className="w-3.5 h-3.5 text-teal-400 animate-spin" />
+          <span>
+            {breathPhase === 'inhale' ? 'شهيق عميق... (امتلئ بالسكينة)' : breathPhase === 'hold' ? 'حبس هادئ... (استشعر الاتزان)' : 'زفير لطيف... (أخرج كل توتر)'}
+          </span>
+          <span className="w-5 h-5 rounded-full bg-teal-800 text-teal-200 flex items-center justify-center text-[10px]">
+            {breathCount}
+          </span>
+        </div>
+      )}
+
       {/* Floating Reassurance Whisper Bubble */}
-      {activeWhisper && (
-        <div className="absolute -top-16 z-40 max-w-[240px] sm:max-w-[300px] px-3.5 py-2 bg-white/95 dark:bg-[#1A2520]/95 backdrop-blur-md rounded-2xl shadow-xl border border-emerald-500/30 text-right animate-in fade-in zoom-in-95 duration-200">
+      {activeWhisper && !isBreathingSync && (
+        <div className="absolute -top-20 z-40 max-w-[260px] sm:max-w-[320px] px-3.5 py-2.5 bg-white/95 dark:bg-[#1A2520]/95 backdrop-blur-md rounded-2xl shadow-xl border border-emerald-500/40 text-right animate-in fade-in zoom-in-95 duration-200">
+          <div className="flex items-center justify-between pb-1 mb-1 border-b border-emerald-500/20 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
+            <span className="flex items-center gap-1">
+              <span>✨</span>
+              <span>{personaMeta.badge} - همسة طمأنينة</span>
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCopyWhisper();
+                }}
+                className="p-1 rounded-md hover:bg-emerald-50 dark:hover:bg-stone-800 text-stone-500 hover:text-emerald-600 transition-colors cursor-pointer"
+                title="نسخ الهمسة"
+              >
+                {hasCopiedWhisper ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSaveWhisperToJournal();
+                }}
+                className="p-1 rounded-md hover:bg-emerald-50 dark:hover:bg-stone-800 text-stone-500 hover:text-emerald-600 transition-colors cursor-pointer"
+                title="حفظ في مفكرة أفكاري"
+              >
+                {hasSavedWhisper ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <BookOpen className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+          </div>
           <p className="text-xs font-semibold text-[#253D32] dark:text-[#E8F1EC] leading-snug">
             {activeWhisper}
           </p>
-          <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white dark:bg-[#1A2520] border-r border-b border-emerald-500/30 rotate-45" />
+          {(hasCopiedWhisper || hasSavedWhisper) && (
+            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-1">
+              {hasCopiedWhisper ? 'تم نسخ الهمسة إلى الحافظة ✨' : 'تم حفظ الهمسة في مفكرة أفكارك 📖'}
+            </p>
+          )}
+          <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white dark:bg-[#1A2520] border-r border-b border-emerald-500/40 rotate-45" />
         </div>
       )}
 
@@ -404,7 +585,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
         </div>
       )}
 
-      {/* Main Avatar Character Canvas / Rig */}
+      {/* Main Avatar Canvas / Frame */}
       <div 
         onClick={handleAvatarTouch}
         onKeyDown={(e) => {
@@ -415,25 +596,81 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
         }}
         role="button"
         tabIndex={0}
-        aria-label={`شخصية ${isCustomUserPhotoActive ? 'صورتي الشخصية' : personaMeta.badge} - اضغط أو انقر للحصول على لمسة طمأنينة`}
+        aria-label={`شخصية ${
+          isDisplayingUserPhoto ? 'صورتي الشخصية' :
+          isDisplayingAnime ? `أنمي ${personaMeta.badge}` :
+          `واقعي ${personaMeta.badge}`
+        } - اضغط أو انقر للحصول على لمسة طمأنينة`}
         title="انقر هنا أو اضغط Enter للمسة طمأنينة وتفاعل مع الشخصية ✨"
-        className={`relative ${currentSize.classNames} rounded-full overflow-hidden transition-all duration-500 ease-out bg-stone-100 dark:bg-stone-900 ring-4 ${personaMeta.ringColor} shadow-md cursor-pointer hover:scale-[1.03] active:scale-[0.98] focus:outline-hidden focus:ring-4 focus:ring-emerald-500/60 ${
-          isHeartbeating ? 'scale-105 ring-rose-400 shadow-rose-400/40' : ''
-        }`}
+        className={`relative ${currentSize.classNames} rounded-full overflow-hidden transition-all duration-700 ease-out bg-stone-100 dark:bg-stone-900 ring-4 ${
+          isBreathingSync 
+            ? breathPhase === 'inhale' 
+              ? 'ring-8 ring-teal-400 scale-105 shadow-xl shadow-teal-500/30' 
+              : breathPhase === 'hold'
+              ? 'ring-6 ring-emerald-400 scale-105 shadow-md shadow-emerald-500/20'
+              : 'ring-4 ring-teal-300 scale-95 shadow-xs'
+            : personaMeta.ringColor
+        } shadow-md cursor-pointer hover:scale-[1.03] active:scale-[0.98] focus:outline-hidden focus:ring-4 focus:ring-emerald-500/60`}
       >
-        {/* Real Human Photographic Portrait */}
-        <img
-          src={activeImageSrc}
-          alt={activeImageAlt}
-          referrerPolicy="no-referrer"
-          className={`w-full h-full object-cover transition-transform duration-700 ${
-            isAnimatedMode && isSpeaking ? 'scale-105' : 'scale-100'
-          }`}
-          loading="eager"
-        />
+        {/* Render Mode A: Anime Character Rig (Vector SVG) */}
+        {isDisplayingAnime && (
+          <CompanionAnimeRig
+            persona={persona}
+            expression={expression}
+            isSpeaking={isSpeaking}
+            isListening={isListening}
+            isAnimatedMode={isAnimatedMode}
+            breathTick={breathTick}
+            isBlinking={isBlinking}
+            isWinking={isWinking}
+            visemeIndex={visemeIndex}
+            accessory={currentAccessory}
+            theme={currentTheme}
+          />
+        )}
+
+        {/* Render Mode B: Realistic Human Photographic Portrait */}
+        {isDisplayingRealistic && (
+          <img
+            src={personaMeta.src}
+            alt={personaMeta.alt}
+            referrerPolicy="no-referrer"
+            className={`w-full h-full object-cover transition-transform duration-700 ${
+              isAnimatedMode && isSpeaking ? 'scale-105' : 'scale-100'
+            }`}
+            loading="eager"
+          />
+        )}
+
+        {/* Render Mode C: My Personal Photo */}
+        {isDisplayingUserPhoto && (
+          <img
+            src={effectiveUserPhoto!}
+            alt="صورتك الشخصية النشطة"
+            referrerPolicy="no-referrer"
+            className={`w-full h-full object-cover transition-transform duration-700 ${
+              isAnimatedMode && isSpeaking ? 'scale-105' : 'scale-100'
+            }`}
+            loading="eager"
+          />
+        )}
+
+        {/* If Photo mode selected but no photo exists yet */}
+        {currentStyle === 'photo' && !effectiveUserPhoto && (
+          <div 
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowPhotoModal(true);
+            }}
+            className="w-full h-full flex flex-col items-center justify-center p-2 text-center bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"
+          >
+            <Camera className="w-6 h-6 mb-1 text-emerald-600" />
+            <span className="text-[10px] font-bold">ارفع صورتك</span>
+          </div>
+        )}
 
         {/* Ambient Aesthetic Gradient Glow Layer */}
-        <div className={`absolute inset-0 bg-gradient-to-tr ${activeThemeMeta.gradient} opacity-40 mix-blend-overlay pointer-events-none`} />
+        <div className={`absolute inset-0 bg-gradient-to-tr ${activeThemeMeta.gradient} opacity-35 mix-blend-overlay pointer-events-none`} />
 
         {/* Floating Atmospheric Particles */}
         {isAnimatedMode && (
@@ -498,17 +735,62 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
             <>
               <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
               <span className="text-[#52645B] dark:text-stone-300">
-                {isCustomUserPhotoActive ? 'مرآتك الشخصية نشطة' : 'حاضر معك في رحلتك'}
+                {isDisplayingUserPhoto ? 'مرآتك الشخصية نشطة 🪞' : isDisplayingAnime ? 'شخصية الأنمي نشطة 🎨' : 'شخصية بشرية واقعية 🌿'}
               </span>
             </>
           )}
         </div>
       )}
 
-      {/* Bottom Controls Bar: Persona + Personal Photo + Reassurance + Themes */}
+      {/* Bottom Controls Bar */}
       {(size === 'lg' || size === 'xl') && (
         <div className="mt-2.5 flex items-center flex-wrap justify-center gap-1.5 text-[11px] text-[#52645B] dark:text-stone-400">
           
+          {/* 3-Way Style Quick Segmented Selector */}
+          <div className="flex items-center p-0.5 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 shadow-inner">
+            <button
+              onClick={() => handleSelectStyle('anime')}
+              className={`px-2 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                currentStyle === 'anime'
+                  ? 'bg-white dark:bg-stone-900 text-purple-700 dark:text-purple-300 shadow-xs'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+              }`}
+              title="عرض شخصية الأنمي الكرتونية"
+            >
+              <span>🎨 أنمي</span>
+            </button>
+
+            <button
+              onClick={() => handleSelectStyle('realistic')}
+              className={`px-2 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                currentStyle === 'realistic'
+                  ? 'bg-white dark:bg-stone-900 text-emerald-800 dark:text-emerald-300 shadow-xs'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+              }`}
+              title="عرض الصور البشرية الواقعية"
+            >
+              <span>👤 واقعي</span>
+            </button>
+
+            <button
+              onClick={() => {
+                if (!effectiveUserPhoto) {
+                  setShowPhotoModal(true);
+                } else {
+                  handleSelectStyle('photo');
+                }
+              }}
+              className={`px-2 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                currentStyle === 'photo'
+                  ? 'bg-white dark:bg-stone-900 text-amber-700 dark:text-amber-300 shadow-xs'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+              }`}
+              title="عرض صورتي الشخصية"
+            >
+              <span>🪞 صورتي</span>
+            </button>
+          </div>
+
           {/* Persona Switcher */}
           {onTogglePersona && (
             <button
@@ -525,27 +807,24 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
           <button
             onClick={handleAvatarTouch}
             className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900/50 transition-colors cursor-pointer font-medium"
-            title="الحصول على كلمة تطمين فورية"
+            title="الحصول على كلمة تطمين فورية ورنين السكينة"
           >
             <Heart className="w-3 h-3 text-rose-500 fill-rose-500/30" />
             <span>لمسة طمأنينة</span>
           </button>
 
-          {/* My Personal Photo Button */}
+          {/* Synchronized Breathing Mode Toggle */}
           <button
-            onClick={() => {
-              setUploadFeedback(null);
-              setShowPhotoModal(true);
-            }}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border transition-colors cursor-pointer font-medium ${
-              isCustomUserPhotoActive
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
-                : 'bg-[#FAF7F0] dark:bg-stone-800 hover:bg-emerald-50 text-stone-700 dark:text-stone-300 border-[#E8DDCC] dark:border-stone-700'
+            onClick={handleToggleBreathingSync}
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
+              isBreathingSync 
+                ? 'bg-teal-600 text-white border-teal-500 shadow-md shadow-teal-500/25 animate-pulse' 
+                : 'bg-[#FAF7F0] dark:bg-stone-800 text-teal-800 dark:text-teal-300 border-[#E8DDCC] dark:border-stone-700 hover:bg-teal-50 dark:hover:bg-stone-700'
             }`}
-            title="رفع أو إدارة صورتك الشخصية"
+            title="جلسة تنفس واسترخاء متزامن مع رفيقي"
           >
-            <Camera className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-            <span>صورتي الشخصية</span>
+            <Wind className={`w-3 h-3 ${isBreathingSync ? 'animate-spin' : ''}`} />
+            <span>{isBreathingSync ? 'إيقاف التنفس' : 'تنفس مع رفيقي'}</span>
           </button>
 
           {/* Animation Toggle */}
@@ -566,18 +845,43 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
           {/* Atmosphere Theme Selector Toggle */}
           {allowCustomization && (
             <button
-              onClick={() => setShowThemeModal(prev => !prev)}
+              onClick={() => setShowThemeModal(true)}
               className="flex items-center gap-1 px-2 py-1 rounded-lg border bg-[#FAF7F0] dark:bg-stone-800 hover:bg-amber-50 text-stone-700 dark:text-stone-300 border-[#E8DDCC] dark:border-stone-700 transition-colors cursor-pointer"
-              title="تخصيص هالة الأجواء النفسية"
+              title="تخصيص هالة الأجواء والزينة"
             >
               <Palette className="w-3 h-3 text-amber-600 dark:text-amber-400" />
-              <span>هالة الأجواء</span>
+              <span>الهالة والزينة</span>
             </button>
           )}
+
+          {/* Reassurance Chime Sound Toggle */}
+          <button
+            onClick={handleToggleChimeMute}
+            className={`p-1 rounded-lg border transition-colors cursor-pointer ${
+              !isChimeMuted 
+                ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800' 
+                : 'bg-stone-100 dark:bg-stone-800 text-stone-400 border-stone-200 dark:border-stone-700'
+            }`}
+            title={!isChimeMuted ? 'رنين السكينة مفعّل (انقر للكتم)' : 'رنين السكينة صامت (انقر للتشغيل)'}
+          >
+            {!isChimeMuted ? <Volume2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" /> : <VolumeX className="w-3.5 h-3.5 text-stone-400" />}
+          </button>
+
+          {/* Manage Personal Photo Button */}
+          <button
+            onClick={() => {
+              setUploadFeedback(null);
+              setShowPhotoModal(true);
+            }}
+            className="p-1 rounded-lg border bg-[#FAF7F0] dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-emerald-50 border-[#E8DDCC] dark:border-stone-700 transition-colors cursor-pointer"
+            title="إدارة صورتي الشخصية"
+          >
+            <Camera className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+          </button>
         </div>
       )}
 
-      {/* 9. Modal for "صورتي الشخصية" (Upload, Preview, Change, Delete, Privacy Notice) */}
+      {/* Modal 1: Personal Photo Manager */}
       {showPhotoModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="relative w-full max-w-md bg-white dark:bg-[#1C2621] rounded-3xl p-6 shadow-2xl border border-stone-200 dark:border-stone-700 text-right space-y-5">
@@ -590,10 +894,10 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
                 </div>
                 <div>
                   <h3 className="font-bold text-sm text-stone-900 dark:text-stone-100">
-                    صورتي الشخصية في «رفيقي»
+                    إدارة «صورتي الشخصية»
                   </h3>
                   <p className="text-[11px] text-stone-500 dark:text-stone-400">
-                    استخدم صورتك كمرآة رقمية للتأمل الذاتي
+                    مرآتك الرقمية للتأمل والتواصل مع ذاتك
                   </p>
                 </div>
               </div>
@@ -612,23 +916,30 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
                 <span>خصوصيتك محمية 100%</span>
               </div>
               <p className="text-[11px] leading-relaxed text-emerald-800 dark:text-emerald-300">
-                صورتك تُعالج وتُحفظ محلياً داخل متصفح جهازك فقط. لن يتم رفعها أو إرسالها إلى أي خادم خارجي على الإطلاق دون موافقتك الصريحة.
+                صورتك الشخصية تُعالج وتُحفظ محلياً فقط في ذاكرة متصفح جهازك. لن يتم رفعها أو مشاركتها مع أي خادم خارجي دون إذنك.
               </p>
             </div>
 
             {/* Preview Section */}
             <div className="flex flex-col items-center justify-center py-2">
               <div className="relative w-28 h-28 rounded-full overflow-hidden ring-4 ring-emerald-500/40 shadow-lg bg-stone-100 dark:bg-stone-800">
-                <img
-                  src={localUserPhoto || personaMeta.src}
-                  alt="معاينة الصورة"
-                  className="w-full h-full object-cover"
-                />
+                {localUserPhoto ? (
+                  <img
+                    src={localUserPhoto}
+                    alt="معاينة صورتك الشخصية"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-stone-400">
+                    <User className="w-10 h-10 mb-1" />
+                    <span className="text-[10px]">لا توجد صورة بعد</span>
+                  </div>
+                )}
               </div>
               <span className="mt-2 text-xs font-bold text-stone-700 dark:text-stone-300">
                 {localUserPhoto 
-                  ? (useUserPhoto ? 'صورتك الشخصية نشطة حالياً 🪞' : 'صورتك محفوظة ولكن غير مفعلة')
-                  : 'تُعرض حالياً الصورة الواقعية للشخصية'}
+                  ? (currentStyle === 'photo' ? 'صورتك الشخصية نشطة حالياً 🪞' : 'صورتك محفوظة ومتاحة للاختيار')
+                  : 'يمكنك رفع صورتك الآن لمرآة التأمل'}
               </span>
             </div>
 
@@ -662,14 +973,14 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => handleToggleUseUserPhoto(!useUserPhoto)}
-                    className={`py-2 px-3 rounded-xl border text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
-                      useUserPhoto 
-                        ? 'bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300'
-                        : 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300'
-                    }`}
+                    onClick={() => {
+                      handleSelectStyle('photo');
+                      setShowPhotoModal(false);
+                    }}
+                    className="py-2 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                   >
-                    <span>{useUserPhoto ? 'التبديل للشخصية الواقعية' : 'تفعيل صورتي الشخصية'}</span>
+                    <Check className="w-3.5 h-3.5" />
+                    <span>تفعيل صورتي الآن</span>
                   </button>
 
                   <button
@@ -697,7 +1008,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
         </div>
       )}
 
-      {/* 10. Modal for Atmosphere Aura Theme */}
+      {/* Modal 2: Aura Themes & Anime Accessories */}
       {showThemeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="relative w-full max-w-sm bg-white dark:bg-[#1C2621] rounded-3xl p-5 shadow-2xl border border-stone-200 dark:border-stone-700 text-right space-y-4">
@@ -705,7 +1016,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
             <div className="flex items-center justify-between pb-2 border-b border-stone-100 dark:border-stone-800">
               <span className="font-bold text-xs text-stone-800 dark:text-stone-100 flex items-center gap-1.5">
                 <Palette className="w-4 h-4 text-amber-500" />
-                <span>هالة الأجواء النفسية</span>
+                <span>هالة الأجواء والزينة النفسية</span>
               </span>
               <button 
                 onClick={() => setShowThemeModal(false)}
@@ -718,7 +1029,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
             {/* Themes Grid */}
             <div className="space-y-1.5">
               <div className="text-[10px] font-bold text-stone-500 dark:text-stone-400">
-                اختر طابع الهالة المحيطة:
+                1. هالة الأجواء المحيطة:
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {THEME_OPTIONS.map(themeItem => {
@@ -747,6 +1058,32 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
               </div>
             </div>
 
+            {/* Accessories Grid (for Anime mode) */}
+            <div className="space-y-1.5">
+              <div className="text-[10px] font-bold text-stone-500 dark:text-stone-400">
+                2. الزينة النفسية لشخصية الأنمي:
+              </div>
+              <div className="grid grid-cols-3 gap-1.5">
+                {ACCESSORY_OPTIONS.map(accItem => {
+                  const isSelected = currentAccessory === accItem.id;
+                  return (
+                    <button
+                      key={accItem.id}
+                      onClick={() => handleSelectAccessory(accItem.id)}
+                      className={`p-1.5 rounded-xl border text-center transition-all text-[10px] cursor-pointer ${
+                        isSelected
+                          ? 'bg-amber-50 dark:bg-amber-950/60 border-amber-500 text-amber-800 dark:text-amber-300 font-bold shadow-xs'
+                          : 'bg-stone-50 dark:bg-stone-800/60 border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:bg-stone-100'
+                      }`}
+                    >
+                      <div className="text-sm mb-0.5">{accItem.icon}</div>
+                      <div className="truncate">{accItem.label}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Footer with Reset */}
             <div className="pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-[11px]">
               <button
@@ -758,7 +1095,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
               </button>
               <button
                 onClick={() => setShowThemeModal(false)}
-                className="px-3 py-1 rounded-lg bg-emerald-600 text-white font-bold"
+                className="px-3.5 py-1 rounded-xl bg-emerald-600 text-white font-bold"
               >
                 تم
               </button>

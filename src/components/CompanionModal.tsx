@@ -397,10 +397,13 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
   const handleSetAvatarDisplayMode = (mode: 'anime' | 'photo' | 'default') => {
     setAvatarDisplayMode(mode);
     localStorage.setItem('nesmat_avatar_display_mode', mode);
+    const styleKey = mode === 'anime' ? 'anime' : mode === 'photo' ? 'photo' : 'realistic';
+    localStorage.setItem('nesmat_companion_visual_style', styleKey);
+    window.dispatchEvent(new Event('nesmat_avatar_style_changed'));
     setToastMessage(
       mode === 'anime' ? 'تم تفعيل شخصية الأنمي 🎨' :
       mode === 'photo' ? 'تم تفعيل صورتك الأصلية للتأمل الذاتي 🪞' :
-      'تم تفعيل مظهر شخصية نسمة حياة 🌿'
+      'تم تفعيل مظهر الشخصيات البشرية الواقعية 🌿'
     );
   };
 
@@ -491,8 +494,6 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
         ? 'أنا مساحة لطفلك الداخلي الآن 🌱.. مساحة دافئة للاحتواء والأمان العاطفي، دون لوم أو إحراج. طمني يا غالي، إيه أكتر حاجة قلبك محتاجها دلوقتي؟'
         : targetPersona === 'father'
         ? 'أنا معك الآن بوضع «الأب الداخلي الحكيم والداعم» 🛡️.. صوت الأمان والحزم الحنون والتوجيه الراسخ دون قسوة أو جلد ذات. كيف أستطيع مساندتك وحماية سلامك الداخلي اليوم؟'
-        : targetPersona === 'my_photo'
-        ? 'أنا هنا كمرآتك الذاتية الحية 🪞.. مساحة للحوار مع نفسك برحمة وإنصاف، بعيداً عن التوقعات والأحكام. ما الذي تود أن تقوله لنفسك اليوم؟'
         : 'أنا معك الآن بوضع «الراشد المتزن» 🌿.. مساحة واعية لفهم واقعك الحالي، مشاعرك، ضغوطك، واحتياجاتك، لنخطو معاً خطوات واضحة وواقعية.',
       timestamp: Date.now(),
       expression: 'welcome'
@@ -805,17 +806,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                     : 'text-stone-600 dark:text-stone-400'
                 }`}
               >
-                الأب 🛡️
-              </button>
-              <button
-                onClick={() => handleSelectPersona('my_photo')}
-                className={`px-2 py-1 rounded-md text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer ${
-                  settings.persona === 'my_photo'
-                    ? 'bg-white dark:bg-[#355C4A] text-[#355C4A] dark:text-white shadow-xs'
-                    : 'text-stone-600 dark:text-stone-400'
-                }`}
-              >
-                صورتي 🪞
+                الأب الداخلي 🛡️
               </button>
             </div>
           )}
@@ -1315,8 +1306,8 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {(['adult', 'child', 'father', 'my_photo'] as CompanionPersona[]).map((pKey) => {
+              <div className="grid grid-cols-3 gap-2">
+                {(['adult', 'child', 'father'] as CompanionPersona[]).map((pKey) => {
                   const pMeta = COMPANION_PERSONAS[pKey];
                   const isActive = settings.persona === pKey;
                   return (
@@ -1356,9 +1347,18 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                 isAnimated={settings.isAnimated}
                 allowAnimationToggle={true}
                 onToggleAnimation={handleToggleAnimation}
-                customPhoto={customUserPhoto}
-                onCustomPhotoChange={(newPhoto) => {
-                  setCustomUserPhoto(newPhoto);
+                customPhoto={activeAvatarPhoto}
+                theme={settings.animeTheme}
+                accessory={settings.animeAccessory}
+                onThemeChange={(newTheme) => {
+                  const updated = { ...settings, animeTheme: newTheme };
+                  setSettings(updated);
+                  CompanionEngine.saveSettings(updated);
+                }}
+                onAccessoryChange={(newAcc) => {
+                  const updated = { ...settings, animeAccessory: newAcc };
+                  setSettings(updated);
+                  CompanionEngine.saveSettings(updated);
                 }}
               />
             </div>
