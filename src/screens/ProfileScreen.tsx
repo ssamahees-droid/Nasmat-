@@ -52,16 +52,30 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   // Edit profile state
   const [tempName, setTempName] = useState(user.name);
   const [tempContact, setTempContact] = useState(user.emailOrPhone);
+  const [tempAvatar, setTempAvatar] = useState(user.avatarUrl || '');
 
-  const savedContentIds = storage.getFavorites();
-  const savedItems = storage.getContent().filter(c => savedContentIds.includes(c.id));
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setTempAvatar(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    storage.updateUserProfile(tempName, tempContact);
+    storage.updateUserProfile(tempName, tempContact, tempAvatar);
     setUser(storage.getUser());
     setActiveModal(null);
   };
+
+  const savedContentIds = storage.getFavorites();
+  const savedItems = storage.getContent().filter(c => savedContentIds.includes(c.id));
 
   const handleExportData = () => {
     const jsonStr = storage.exportAllUserData();
@@ -112,8 +126,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Profile Header */}
       <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-6 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#355C4A] text-white flex items-center justify-center font-bold text-xl shadow-xs">
-            {user.name ? user.name[0] : 'ن'}
+          <div className="w-14 h-14 rounded-2xl bg-[#355C4A] text-white flex items-center justify-center font-bold text-xl shadow-xs overflow-hidden">
+            {user.avatarUrl ? (
+              <img src={user.avatarUrl} alt="صورة البروفيل" className="w-full h-full object-cover" />
+            ) : (
+              user.name ? user.name[0] : 'ن'
+            )}
           </div>
           <div>
             <h1 className="text-xl font-bold text-[#26332D]">
@@ -527,7 +545,31 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <button type="button" onClick={() => setActiveModal(null)} className="text-stone-500 hover:text-stone-800 text-sm">✕</button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
+              {/* Avatar Preview & Upload */}
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-20 h-20 rounded-2xl bg-[#355C4A] text-white flex items-center justify-center font-bold text-2xl shadow-sm overflow-hidden border-2 border-[#E8DDCC]">
+                  {tempAvatar ? (
+                    <img src={tempAvatar} alt="معاينة البروفيل" className="w-full h-full object-cover" />
+                  ) : (
+                    tempName ? tempName[0] : 'ن'
+                  )}
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <label className="cursor-pointer py-1.5 px-3 bg-white hover:bg-stone-100 text-[#355C4A] border border-[#E8DDCC] rounded-xl text-xs font-semibold transition-colors inline-flex items-center gap-1.5">
+                    <span>اختر صورة بروفيل جديدة</span>
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setTempAvatar('/logo.jpg')}
+                    className="text-[11px] text-[#355C4A] hover:underline"
+                  >
+                    استخدام شعار نسمة حياة 🌿
+                  </button>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-xs font-bold text-[#26332D] mb-1">الاسم أو اللقب</label>
                 <input

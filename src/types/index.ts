@@ -10,6 +10,7 @@ export interface User {
   id: string;
   emailOrPhone: string;
   name: string;
+  avatarUrl?: string;
   createdAt: string;
   lastLogin: string;
   consentVersion: string;

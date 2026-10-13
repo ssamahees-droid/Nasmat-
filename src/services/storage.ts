@@ -203,10 +203,13 @@ class StorageService {
     this.logAction(user.id, user.name, 'UPDATE_ROLE', 'User', user.id);
   }
 
-  updateUserProfile(name: string, emailOrPhone: string): void {
+  updateUserProfile(name: string, emailOrPhone: string, avatarUrl?: string): void {
     const user = this.getUser();
     user.name = name;
     user.emailOrPhone = emailOrPhone;
+    if (avatarUrl !== undefined) {
+      user.avatarUrl = avatarUrl;
+    }
     this.setUser(user);
   }
 
