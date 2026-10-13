@@ -14,7 +14,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { storage, PersonalNote } from '../services/storage';
-import { DailyCheckin, MoodValue, AssessmentRecord } from '../types';
+import { DailyCheckin, MoodValue, AssessmentRecord, WellnessHabit, HabitCategory } from '../types';
 
 interface JourneyScreenProps {
   onOpenAssessment: () => void;
@@ -42,6 +42,8 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
   const [checkins, setCheckins] = useState<DailyCheckin[]>(storage.getDailyCheckins());
   const [notes, setNotes] = useState<PersonalNote[]>(storage.getNotes());
   const [assessments, setAssessments] = useState<AssessmentRecord[]>(storage.getAssessments());
+  const [habits, setHabits] = useState<WellnessHabit[]>(storage.getHabits());
+  
   const hasSavedPlan = !!storage.getPersonalPlan();
   const thoughtPostsCount = storage.getThoughtPosts().length;
   const mindfulnessSessionsCount = storage.getMindfulnessRecords().length;
@@ -50,6 +52,11 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
   const [newNoteText, setNewNoteText] = useState('');
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [selectedNoteMood, setSelectedNoteMood] = useState<MoodValue | undefined>(undefined);
+
+  // Habit writing state
+  const [isAddingHabit, setIsAddingHabit] = useState(false);
+  const [newHabitTitle, setNewHabitTitle] = useState('');
+  const [newHabitCategory, setNewHabitCategory] = useState<HabitCategory>('mindfulness');
 
   // Deleting check-in handler (as per spec page 7 & 18)
   const handleDeleteCheckin = (id: string) => {
@@ -77,6 +84,44 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
     storage.deleteAssessment(id);
     setAssessments(storage.getAssessments());
   };
+
+  // Habit actions
+  const handleToggleHabit = (habitId: string, dateStr: string) => {
+    storage.toggleHabitCompletion(habitId, dateStr);
+    setHabits(storage.getHabits());
+  };
+
+  const handleSaveHabit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newHabitTitle.trim()) return;
+    storage.addHabit({
+      title: newHabitTitle.trim(),
+      category: newHabitCategory,
+      frequency: 'daily',
+      targetDaysPerWeek: 7
+    });
+    setHabits(storage.getHabits());
+    setNewHabitTitle('');
+    setIsAddingHabit(false);
+  };
+
+  const handleDeleteHabit = (id: string) => {
+    storage.deleteHabit(id);
+    setHabits(storage.getHabits());
+  };
+
+  const getLast7Days = () => {
+    const dates = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const dayLabel = d.toLocaleDateString('ar-EG', { weekday: 'narrow' });
+      dates.push({ dateStr, dayLabel, dayNum: d.getDate() });
+    }
+    return dates;
+  };
+  const weekDays = getLast7Days();
 
   // Strictly Descriptive Statistics (Section 15 & 19 from Spec)
   // e.g., "سجلت حالتك 5 أيام هذا الأسبوع" rather than medical claims like "اكتئابك انخفض 40%"
@@ -163,6 +208,146 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
           </div>
         )}
       </div>
+
+      {/* Wellness Habits & Weekly Consistency Tracker */}
+      <section className="bg-gradient-to-br from-[#FAF7F0] via-white to-emerald-50/40 border border-[#E8DDCC] rounded-3xl p-5 shadow-xs space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <h2 className="text-base font-bold text-[#26332D] flex items-center gap-2">
+              <Check className="w-5 h-5 text-[#355C4A]" />
+              <span>عادات الصحة النفسية اليومية</span>
+            </h2>
+            <p className="text-xs text-[#52645B]">
+              «الاستمرارية الهادئة تصنع فارقاً حقيقياً»
+            </p>
+          </div>
+          {!isAddingHabit && (
+            <button
+              onClick={() => setIsAddingHabit(true)}
+              className="py-1.5 px-3 bg-[#355C4A] text-white text-xs font-bold rounded-xl flex items-center gap-1 hover:bg-[#264235] transition-colors shadow-2xs"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>إضافة عادة</span>
+            </button>
+          )}
+        </div>
+
+        {/* Add Habit Form */}
+        {isAddingHabit && (
+          <form onSubmit={handleSaveHabit} className="p-4 bg-white border border-[#355C4A]/40 rounded-2xl space-y-3 animate-fade-in shadow-xs">
+            <input
+              type="text"
+              value={newHabitTitle}
+              onChange={(e) => setNewHabitTitle(e.target.value)}
+              placeholder="مثال: تمرين التنفس العميق، المشي 10 دقائق، شرب الماء بوعي..."
+              required
+              className="w-full p-3 text-xs bg-[#FAF7F0] border border-[#E8DDCC] rounded-xl focus:outline-hidden focus:bg-white text-[#26332D]"
+            />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs text-[#52645B]">
+                <span>التصنيف:</span>
+                <select
+                  value={newHabitCategory}
+                  onChange={(e) => setNewHabitCategory(e.target.value as HabitCategory)}
+                  className="p-1.5 text-xs bg-[#FAF7F0] border border-[#E8DDCC] rounded-xl text-[#26332D]"
+                >
+                  <option value="mindfulness">يقظة واسترخاء 🧘</option>
+                  <option value="physical">صحة جسدية 💧</option>
+                  <option value="routine">روتين يومي ☀️</option>
+                  <option value="sleep">نوم واسترخاء 🌙</option>
+                  <option value="social">تواصل إيجابي 🌱</option>
+                </select>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsAddingHabit(false)}
+                  className="py-1.5 px-3 text-xs text-[#52645B] hover:text-[#26332D]"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="py-1.5 px-4 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
+                >
+                  حفظ العادة
+                </button>
+              </div>
+            </div>
+          </form>
+        )}
+
+        {habits.length === 0 ? (
+          <div className="p-6 bg-white/70 border border-[#E8DDCC] rounded-2xl text-center text-xs text-[#7D8F85]">
+            لم تقم بإضافة أي عادات بعد. أضف عادتك الأولى لتبدأ تتبع رحلتك اليومية.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {habits.map(habit => {
+              const completedDatesSet = new Set(habit.completedDates || []);
+              const weeklyCompletedCount = weekDays.filter(d => completedDatesSet.has(d.dateStr)).length;
+              const habitIcon = 
+                habit.category === 'mindfulness' ? '🧘' :
+                habit.category === 'physical' ? '💧' :
+                habit.category === 'sleep' ? '🌙' :
+                habit.category === 'social' ? '🌱' : '☀️';
+
+              return (
+                <div key={habit.id} className="p-4 bg-white/90 border border-[#E8DDCC] rounded-2xl space-y-3 shadow-2xs hover:border-[#355C4A]/50 transition-all">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-xl">{habitIcon}</span>
+                      <div>
+                        <h3 className="font-bold text-xs text-[#26332D]">{habit.title}</h3>
+                        <span className="text-[10px] text-[#52645B] font-medium">
+                          إنجاز هذا الأسبوع: <strong className="text-[#355C4A]">{weeklyCompletedCount}</strong> من 7 أيام
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteHabit(habit.id)}
+                      className="text-stone-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-stone-100 transition-colors"
+                      title="حذف العادة"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  {/* 7-Day Consistency Visualization & Toggle Grid */}
+                  <div className="pt-2 border-t border-[#E8DDCC]/60">
+                    <div className="text-[11px] text-[#52645B] mb-2 font-medium">متابعة الأيام الـ 7 الأخيرة (اضغط لتحديد اليوم):</div>
+                    <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+                      {weekDays.map(day => {
+                        const isDone = completedDatesSet.has(day.dateStr);
+                        const isToday = day.dateStr === new Date().toISOString().split('T')[0];
+
+                        return (
+                          <button
+                            key={day.dateStr}
+                            onClick={() => handleToggleHabit(habit.id, day.dateStr)}
+                            className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${
+                              isDone
+                                ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-xs'
+                                : 'bg-[#FAF7F0] text-[#52645B] border-[#E8DDCC] hover:border-[#355C4A]'
+                            } ${isToday && !isDone ? 'ring-2 ring-[#355C4A]/40' : ''}`}
+                            title={`${day.dateStr}: ${isDone ? 'مكتملة (اضغط للإلغاء)' : 'غير مكتملة (اضغط للإنجاز)'}`}
+                          >
+                            <span className="text-[10px] font-bold">{day.dayLabel}</span>
+                            <span className="text-xs font-mono font-extrabold mt-0.5">{day.dayNum}</span>
+                            <span className="text-[10px] mt-1">
+                              {isDone ? '✓' : '·'}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
 
       {/* Descriptive Statistics Card (Page 19) */}
       <section className="bg-gradient-to-r from-[#FAF7F0] to-[#EFEAE0] border border-[#E8DDCC] rounded-3xl p-5 shadow-xs space-y-3">

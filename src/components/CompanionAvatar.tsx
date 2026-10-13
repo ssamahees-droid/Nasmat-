@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Sparkles, Eye, Volume2, Mic, Heart, RefreshCw, ZapOff, Shield, Smile } from 'lucide-react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { 
+  Sparkles, Eye, Volume2, Mic, Heart, RefreshCw, ZapOff, Shield, Smile, 
+  Palette, Check, X, Camera, Upload, Trash2, Image as ImageIcon, Lock, User
+} from 'lucide-react';
+import { AnimeTheme, AnimeAccessory, CompanionPersona, CompanionExpression } from '../types/companion';
 
-export type CompanionExpression = 'welcome' | 'listening' | 'thinking' | 'empathy' | 'encouraging' | 'speaking';
-export type CompanionPersona = 'adult' | 'child' | 'father';
+export type { CompanionExpression, CompanionPersona, AnimeTheme, AnimeAccessory };
 
 export interface CompanionAvatarProps {
   persona: CompanionPersona;
@@ -16,7 +19,98 @@ export interface CompanionAvatarProps {
   onToggleAnimation?: () => void;
   customPhoto?: string | null;
   className?: string;
+  theme?: AnimeTheme;
+  accessory?: AnimeAccessory;
+  onThemeChange?: (theme: AnimeTheme) => void;
+  onAccessoryChange?: (accessory: AnimeAccessory) => void;
+  allowCustomization?: boolean;
 }
+
+// Realistic high-resolution human portrait photographs per persona
+export const PERSONA_REALISTIC_PORTRAITS: Record<CompanionPersona, {
+  src: string;
+  alt: string;
+  label: string;
+  badge: string;
+  subtitle: string;
+  ringColor: string;
+}> = {
+  child: {
+    src: '/src/assets/images/companion_child_portrait_1791644396286.jpg',
+    alt: 'بورتريه بشري واقعي للطفل الداخلي - براءة وعفوية وأمان عاطفي',
+    label: 'الطفل الداخلي',
+    badge: '🌱 الطفل الداخلي',
+    subtitle: 'براءة، عفوية، واحتواء عاطفي دافئ',
+    ringColor: 'ring-amber-400/50 dark:ring-amber-400/40'
+  },
+  adult: {
+    src: '/src/assets/images/companion_adult_portrait_1791644375469.jpg',
+    alt: 'بورتريه بشري واقعي للراشد المتزن - سكينة ووعي وسلام داخلي',
+    label: 'الراشد المتزن',
+    badge: '🌿 الراشد المتزن',
+    subtitle: 'سكينة، وعي حاضر، واتزان نفسي',
+    ringColor: 'ring-emerald-500/50 dark:ring-emerald-400/40'
+  },
+  father: {
+    src: '/src/assets/images/companion_father_portrait_1791879032939.jpg',
+    alt: 'بورتريه بشري واقعي للأب الداخلي - حكمة ووقار وحماية مطمئنة',
+    label: 'الأب الداخلي',
+    badge: '🛡️ الأب الداخلي',
+    subtitle: 'حكمة، وقار، وحزم حنون يحمي حدودك',
+    ringColor: 'ring-blue-500/50 dark:ring-blue-400/40'
+  }
+};
+
+// 21 Warm, authentic psychological reassurance whispers (7 per persona)
+export const REASSURANCE_WHISPERS: Record<CompanionPersona, string[]> = {
+  child: [
+    'كل شيء سيكون بخير، ابتسم! أنا هنا جنبك دايماً 🌱',
+    'مشاعرك نقية وغالية.. خذ نفس عميق وافتكر إنك في أمان 🌸',
+    'يلا نبتسم سوا! وجودك في الدنيا بيضيف نور وبهجة ✨',
+    'مش لازم تكون مثالي دايماً، كفاية إنك بتحاول وتتعلم من قلبك 🎈',
+    'قلبك يستاهل كل الحنان واللطف.. خفف عن نفسك شوية 🤍',
+    'أنت محبوب كما أنت، وكل يوم خطوة صغيرة بتنوّر طريقك 🌟',
+    'مشاعرك دي طبيعية ومفهومة جداً.. خد وقتك على مهلك 🍃'
+  ],
+  adult: [
+    'تنفس بهدوء.. كل خطوة واعية تخطوها اليوم تصنع فارقاً حقيقياً 🌿',
+    'وازن بين واجباتك وحق روحك في السكينة والراحة والتقدير ⚖️',
+    'أنت لست أفكارك المتسارعة، أنت الوعي الهادئ الذي يراقبها 🕊️',
+    'مهما تراكمت الضغوط، خذ الأمر خطوة بخطوة وستنجزها بثبات 🍃',
+    'سلامك النفسي أولوية حقيقية وليس رفاهية.. ركّز على ما تملك تغييره 🎯',
+    'قبول الواقع بمرونة هو بداية كل تغيير حقيقي ومتزن 🧭',
+    'قوتك تكمن في قدرتك على التوقف والاستماع لنفسك بإنصاف 💎'
+  ],
+  father: [
+    'أنا فخور بيك وبصبرك.. مهما كانت الصعوبات، قوتك كافية لتجاوزها 🛡️',
+    'أنت في حماية حكمتك.. لن تترك نفسك للضياع بعد اليوم 🧭',
+    'استند على قوتك الداخلية وثق في قراراتك، الخطأ مجرد درس للنمو 🌲',
+    'لا تقسُ على ذاتك.. الحزم الحنون هو طريق الرجولة والنضج الحقيقي 🌟',
+    'اطمئن، ظهرك محمي وإرادتك راسخة.. أكمل طريقك بجبين مرفوع 🦅',
+    'لكل عاصفة نهاية مؤكدة، وثباتك الواعي الآن هو رأس مالك غداً ⚓',
+    'أنت قادر على حماية حدودك النفسية ورسم مسارك بكرامة واطمئنان 🏔️'
+  ]
+};
+
+export const THEME_OPTIONS: { id: AnimeTheme; label: string; icon: string; desc: string; gradient: string }[] = [
+  { id: 'ghibli', label: 'طبيعة جيبلي', icon: '🍃', desc: 'نسائم خضراء ودفء شروق الشمس', gradient: 'from-emerald-500/25 via-teal-400/20 to-amber-300/20' },
+  { id: 'sakura', label: 'نسيم الساكورا', icon: '🌸', desc: 'أزهار كرز وردية وسكينة ربيعية', gradient: 'from-rose-400/30 via-pink-300/20 to-amber-200/20' },
+  { id: 'starlight', label: 'أفق الشهب', icon: '✨', desc: 'سماء ليلية لامعة ونجوم هادئة', gradient: 'from-indigo-600/30 via-purple-500/25 to-amber-300/20' },
+  { id: 'ocean', label: 'سكينة البحر', icon: '🌊', desc: 'أمواج فيروزية وتأمل عميق', gradient: 'from-cyan-500/30 via-blue-400/25 to-teal-300/20' }
+];
+
+export const ACCESSORY_OPTIONS: { id: AnimeAccessory; label: string; icon: string }[] = [
+  { id: 'sprout', label: 'نبتة الأمل', icon: '🌱' },
+  { id: 'sakura', label: 'زهرة السلام', icon: '🌸' },
+  { id: 'crescent', label: 'هلال السكينة', icon: '🌙' },
+  { id: 'glasses', label: 'نظارات الحكمة', icon: '👓' },
+  { id: 'none', label: 'طبيعي بدون زينة', icon: '✨' }
+];
+
+const LOCAL_STORAGE_THEME_KEY = 'nesmat_anime_avatar_theme';
+const LOCAL_STORAGE_ACCESSORY_KEY = 'nesmat_anime_avatar_accessory';
+export const LOCAL_STORAGE_USER_PHOTO_KEY = 'nesmat_custom_mirror_photo';
+export const LOCAL_STORAGE_USE_USER_PHOTO_KEY = 'nesmat_avatar_use_user_photo';
 
 export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
   persona,
@@ -29,10 +123,149 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
   isAnimated = true,
   onToggleAnimation,
   customPhoto,
-  className = ''
+  className = '',
+  theme: controlledTheme,
+  accessory: controlledAccessory,
+  onThemeChange,
+  onAccessoryChange,
+  allowCustomization = true
 }) => {
-  const [internalAnimatedMode, setInternalAnimatedMode] = useState<boolean>(true);
-  const isAnimatedMode = isAnimated !== undefined ? isAnimated : internalAnimatedMode;
+  // 1. Personal photo state stored locally (Privacy guaranteed)
+  const [localUserPhoto, setLocalUserPhoto] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(LOCAL_STORAGE_USER_PHOTO_KEY) || null;
+    } catch (_) {
+      return null;
+    }
+  });
+
+  const [useUserPhoto, setUseUserPhoto] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(LOCAL_STORAGE_USE_USER_PHOTO_KEY) === 'true';
+    } catch (_) {
+      return false;
+    }
+  });
+
+  // Listen for storage events so changes in any component update immediately
+  useEffect(() => {
+    const handleSync = () => {
+      try {
+        const photo = localStorage.getItem(LOCAL_STORAGE_USER_PHOTO_KEY);
+        const shouldUse = localStorage.getItem(LOCAL_STORAGE_USE_USER_PHOTO_KEY) === 'true';
+        setLocalUserPhoto(photo || null);
+        setUseUserPhoto(shouldUse);
+      } catch (_) {}
+    };
+
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('nesmat_avatar_photo_changed', handleSync);
+    return () => {
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('nesmat_avatar_photo_changed', handleSync);
+    };
+  }, []);
+
+  // Determine effective photo to render
+  const effectivePhoto = customPhoto !== undefined
+    ? customPhoto
+    : (useUserPhoto && localUserPhoto ? localUserPhoto : null);
+
+  // 2. Aura theme state with persistence
+  const [internalTheme, setInternalTheme] = useState<AnimeTheme>(() => {
+    try {
+      const saved = localStorage.getItem(LOCAL_STORAGE_THEME_KEY);
+      if (saved && ['ghibli', 'sakura', 'starlight', 'ocean'].includes(saved)) {
+        return saved as AnimeTheme;
+      }
+    } catch (_) {}
+    return 'ghibli';
+  });
+
+  const [internalAccessory, setInternalAccessory] = useState<AnimeAccessory>(() => {
+    try {
+      const saved = localStorage.getItem(LOCAL_STORAGE_ACCESSORY_KEY);
+      if (saved && ['none', 'sprout', 'sakura', 'crescent', 'glasses'].includes(saved)) {
+        return saved as AnimeAccessory;
+      }
+    } catch (_) {}
+    return 'sprout';
+  });
+
+  const currentTheme = controlledTheme || internalTheme;
+  const currentAccessory = controlledAccessory || internalAccessory;
+
+  const handleSelectTheme = (t: AnimeTheme) => {
+    setInternalTheme(t);
+    try { localStorage.setItem(LOCAL_STORAGE_THEME_KEY, t); } catch (_) {}
+    if (onThemeChange) onThemeChange(t);
+  };
+
+  const handleSelectAccessory = (a: AnimeAccessory) => {
+    setInternalAccessory(a);
+    try { localStorage.setItem(LOCAL_STORAGE_ACCESSORY_KEY, a); } catch (_) {}
+    if (onAccessoryChange) onAccessoryChange(a);
+  };
+
+  const handleResetDefaults = () => {
+    handleSelectTheme('ghibli');
+    handleSelectAccessory('sprout');
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_THEME_KEY);
+      localStorage.removeItem(LOCAL_STORAGE_ACCESSORY_KEY);
+    } catch (_) {}
+  };
+
+  // 3. Modals and Popovers
+  const [showPhotoModal, setShowPhotoModal] = useState<boolean>(false);
+  const [showThemeModal, setShowThemeModal] = useState<boolean>(false);
+  const [uploadFeedback, setUploadFeedback] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 4. Interactive Reassurance Touch State
+  const [activeWhisper, setActiveWhisper] = useState<string | null>(null);
+  const [showHeartsBurst, setShowHeartsBurst] = useState<boolean>(false);
+  const [isHeartbeating, setIsHeartbeating] = useState<boolean>(false);
+  const whisperTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleAvatarTouch = () => {
+    // Pick reassurance quote from the 21 authentic quotes for active persona
+    const quotes = REASSURANCE_WHISPERS[persona];
+    const quote = quotes[Math.floor(Math.random() * quotes.length)];
+    setActiveWhisper(quote);
+
+    // Trigger sweet heart burst and soft heartbeat animation
+    setShowHeartsBurst(true);
+    setIsHeartbeating(true);
+
+    if (whisperTimerRef.current) clearTimeout(whisperTimerRef.current);
+    whisperTimerRef.current = setTimeout(() => {
+      setActiveWhisper(null);
+      setShowHeartsBurst(false);
+      setIsHeartbeating(false);
+    }, 4200);
+  };
+
+  // 5. Reduced Motion detection
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
+    try {
+      return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (_) {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+      mediaQuery.addEventListener('change', listener);
+      return () => mediaQuery.removeEventListener('change', listener);
+    } catch (_) {}
+  }, []);
+
+  const [internalAnimatedMode, setInternalAnimatedMode] = useState<boolean>(false);
+  const isAnimatedMode = (isAnimated !== undefined ? isAnimated : internalAnimatedMode) && !prefersReducedMotion;
 
   const handleToggleAnimated = () => {
     if (onToggleAnimation) {
@@ -42,245 +275,130 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
     }
   };
 
-  // Natural Blinking State
-  const [isBlinking, setIsBlinking] = useState<boolean>(false);
-  // Viseme mouth step for true lip sync when speaking
-  const [visemeIndex, setVisemeIndex] = useState<number>(0);
-  // Idle breathing cycle counter
-  const [breathTick, setBreathTick] = useState<number>(0);
+  // 6. Handle Personal Photo Upload & Storage (Strictly local, no server upload)
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  // Natural organic blink loop (every 3 to 6 seconds)
-  useEffect(() => {
-    if (!isAnimatedMode) return;
-    let timer: NodeJS.Timeout;
-
-    const scheduleBlink = () => {
-      const nextDelay = 2800 + Math.random() * 3200;
-      timer = setTimeout(() => {
-        setIsBlinking(true);
-        setTimeout(() => {
-          setIsBlinking(false);
-          scheduleBlink();
-        }, 130);
-      }, nextDelay);
-    };
-
-    scheduleBlink();
-    return () => clearTimeout(timer);
-  }, [isAnimatedMode]);
-
-  // Syllabic Phonetic Lip-Sync when speaking (synced strictly with isSpeaking state)
-  useEffect(() => {
-    if (!isSpeaking || !isAnimatedMode) {
-      setVisemeIndex(0);
+    if (!file.type.startsWith('image/')) {
+      setUploadFeedback('يرجى اختيار ملف صورة صالح (JPG, PNG, WebP).');
       return;
     }
 
-    // Cycles through visemes: 0 (closed/rest), 1 (open A/O), 2 (mid E/H), 3 (wide I/smile), 4 (pursed U/W)
-    const visemeInterval = setInterval(() => {
-      setVisemeIndex(prev => {
-        const next = (prev + 1 + Math.floor(Math.random() * 2)) % 5;
-        return next === 0 ? 1 : next;
-      });
-    }, 115);
+    if (file.size > 8 * 1024 * 1024) {
+      setUploadFeedback('حجم الصورة كبير جداً، يرجى اختيار صورة أقل من 8 ميجابايت.');
+      return;
+    }
 
-    return () => {
-      clearInterval(visemeInterval);
-      setVisemeIndex(0);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      if (!result) return;
+
+      // Compress slightly via canvas to ensure safe localStorage fit
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_DIM = 640;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height && width > MAX_DIM) {
+          height = Math.round((height * MAX_DIM) / width);
+          width = MAX_DIM;
+        } else if (height > MAX_DIM) {
+          width = Math.round((width * MAX_DIM) / height);
+          height = MAX_DIM;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+
+          try {
+            localStorage.setItem(LOCAL_STORAGE_USER_PHOTO_KEY, compressedDataUrl);
+            localStorage.setItem(LOCAL_STORAGE_USE_USER_PHOTO_KEY, 'true');
+            setLocalUserPhoto(compressedDataUrl);
+            setUseUserPhoto(true);
+            setUploadFeedback('تم حفظ وتفعيل صورتك الشخصية محلياً بنجاح! 🌿');
+            window.dispatchEvent(new Event('nesmat_avatar_photo_changed'));
+          } catch (_) {
+            setUploadFeedback('تعذر حفظ الصورة محلياً؛ قد تكون مساحة التخزين ممتلئة.');
+          }
+        }
+      };
+      img.src = result;
     };
-  }, [isSpeaking, isAnimatedMode]);
+    reader.readAsDataURL(file);
+  };
 
-  // Gentle breathing cycle loop
-  useEffect(() => {
-    if (!isAnimatedMode) return;
-    const interval = setInterval(() => {
-      setBreathTick(t => (t + 1) % 60);
-    }, 100);
-    return () => clearInterval(interval);
-  }, [isAnimatedMode]);
+  const handleDeleteUserPhoto = () => {
+    try {
+      localStorage.removeItem(LOCAL_STORAGE_USER_PHOTO_KEY);
+      localStorage.setItem(LOCAL_STORAGE_USE_USER_PHOTO_KEY, 'false');
+      setLocalUserPhoto(null);
+      setUseUserPhoto(false);
+      setUploadFeedback('تم حذف الصورة الشخصية واستعادة الصورة الواقعية للشخصية.');
+      window.dispatchEvent(new Event('nesmat_avatar_photo_changed'));
+    } catch (_) {}
+  };
 
-  // Effective expression: if speaking, expression visually behaves as 'speaking'
-  const effectiveExpression = isSpeaking ? 'speaking' : expression;
+  const handleToggleUseUserPhoto = (active: boolean) => {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_USE_USER_PHOTO_KEY, active ? 'true' : 'false');
+      setUseUserPhoto(active);
+      window.dispatchEvent(new Event('nesmat_avatar_photo_changed'));
+    } catch (_) {}
+  };
 
-  // Head tilt & gaze offset based on state
-  const { headTilt, eyeShiftX, eyeShiftY, chestBreathing } = useMemo(() => {
-    if (!isAnimatedMode) {
-      return { headTilt: 0, eyeShiftX: 0, eyeShiftY: 0, chestBreathing: 0 };
-    }
-
-    const sinBreath = Math.sin((breathTick * Math.PI) / 30);
-    const chestBreathing = sinBreath * 1.5;
-
-    let headTilt = sinBreath * 0.5;
-    let eyeShiftX = 0;
-    let eyeShiftY = 0;
-
-    switch (effectiveExpression) {
-      case 'listening':
-        headTilt = 3.5;
-        eyeShiftX = 0;
-        eyeShiftY = 1.2;
-        break;
-      case 'thinking':
-        headTilt = -3.2;
-        eyeShiftX = -2.5;
-        eyeShiftY = -2.5;
-        break;
-      case 'empathy':
-        headTilt = -4.0;
-        eyeShiftX = 0;
-        eyeShiftY = 0.8;
-        break;
-      case 'encouraging':
-        headTilt = 2.2;
-        eyeShiftX = 0;
-        eyeShiftY = -0.5;
-        break;
-      case 'speaking':
-        headTilt = Math.sin((breathTick * Math.PI) / 10) * 1.8;
-        eyeShiftX = 0;
-        eyeShiftY = 0.5;
-        break;
-      case 'welcome':
-      default:
-        headTilt = sinBreath * 1.0;
-        eyeShiftX = 0;
-        eyeShiftY = 0;
-        break;
-    }
-
-    return { headTilt, eyeShiftX, eyeShiftY, chestBreathing };
-  }, [isAnimatedMode, effectiveExpression, breathTick]);
-
-  // Dimensions based on size prop
+  // 7. Sizing Definitions (44px to 224px spectrum)
   const sizeMap = {
-    xs: { px: 44, svgSize: 100, classNames: 'w-11 h-11' },
-    sm: { px: 64, svgSize: 100, classNames: 'w-16 h-16' },
-    md: { px: 96, svgSize: 100, classNames: 'w-24 h-24' },
-    lg: { px: 160, svgSize: 100, classNames: 'w-36 h-36 sm:w-44 sm:h-44' },
-    xl: { px: 220, svgSize: 100, classNames: 'w-48 h-48 sm:w-56 sm:h-56' }
+    xs: { px: 44, classNames: 'w-11 h-11' },
+    sm: { px: 64, classNames: 'w-16 h-16' },
+    md: { px: 96, classNames: 'w-24 h-24' },
+    lg: { px: 160, classNames: 'w-36 h-36 sm:w-44 sm:h-44' },
+    xl: { px: 220, classNames: 'w-48 h-48 sm:w-56 sm:h-56' }
   };
   const currentSize = sizeMap[size];
 
-  // Persona Palette & Stylings
-  const personaTheme = useMemo(() => {
-    switch (persona) {
-      case 'child':
-        return {
-          title: 'الطفل الداخلي',
-          badge: '🌱 طفلي الداخلي',
-          skinTone: '#FDE3C8',
-          skinShadow: '#F8CCA5',
-          hairColor: '#4A2E18',
-          hairHighlight: '#684022',
-          clothingMain: '#E88665', // Warm peach terracotta
-          clothingAccent: '#8FAF9A',
-          blush: '#FF9B9B',
-          auraRing: isListening 
-            ? 'ring-4 ring-emerald-400 shadow-lg shadow-emerald-400/30' 
-            : isSpeaking 
-            ? 'ring-4 ring-[#E88665] shadow-lg shadow-[#E88665]/35' 
-            : 'ring-3 ring-[#E88665]/40 shadow-md',
-          glowGradient: 'from-amber-400/20 via-rose-300/15 to-emerald-400/20'
-        };
-      case 'father':
-        return {
-          title: 'الأب الداخلي',
-          badge: '🛡️ الأب الداخلي',
-          skinTone: '#EAC3A4',
-          skinShadow: '#D8A782',
-          hairColor: '#2B3130',
-          hairHighlight: '#4B5554',
-          clothingMain: '#243C31', // Deep noble pine
-          clothingAccent: '#D4AF37', // Subtle warm gold
-          blush: '#E59B80',
-          auraRing: isListening 
-            ? 'ring-4 ring-emerald-400 shadow-lg shadow-emerald-400/30' 
-            : isSpeaking 
-            ? 'ring-4 ring-emerald-600 shadow-lg shadow-emerald-600/35' 
-            : 'ring-3 ring-emerald-700/40 shadow-md',
-          glowGradient: 'from-emerald-600/20 via-amber-500/15 to-stone-700/20'
-        };
-      case 'adult':
-      default:
-        return {
-          title: 'الراشد المتزن',
-          badge: '🌿 الراشد المتزن',
-          skinTone: '#F6D5B8',
-          skinShadow: '#E6BA95',
-          hairColor: '#2C3A33',
-          hairHighlight: '#3E5349',
-          clothingMain: '#355C4A', // Nesmat signature emerald
-          clothingAccent: '#8FAF9A',
-          blush: '#EFA694',
-          auraRing: isListening 
-            ? 'ring-4 ring-emerald-400 shadow-lg shadow-emerald-400/30' 
-            : isSpeaking 
-            ? 'ring-4 ring-[#355C4A] shadow-lg shadow-[#355C4A]/35' 
-            : 'ring-3 ring-[#355C4A]/40 shadow-md',
-          glowGradient: 'from-emerald-500/20 via-teal-400/15 to-amber-300/20'
-        };
-    }
-  }, [persona, isListening, isSpeaking]);
+  // 8. Persona metadata & active theme
+  const personaMeta = PERSONA_REALISTIC_PORTRAITS[persona];
+  const activeThemeMeta = useMemo(() => {
+    return THEME_OPTIONS.find(t => t.id === currentTheme) || THEME_OPTIONS[0];
+  }, [currentTheme]);
 
-  // Eyebrow geometry based on expression
-  const { left: leftBrowPath, right: rightBrowPath } = useMemo(() => {
-    switch (effectiveExpression) {
-      case 'listening':
-        return { left: 'M 32 38 Q 40 33 48 37', right: 'M 52 37 Q 60 33 68 38' };
-      case 'thinking':
-        return { left: 'M 32 36 Q 40 31 48 35', right: 'M 52 40 Q 60 38 68 41' };
-      case 'empathy':
-        return { left: 'M 32 39 Q 40 35 48 39', right: 'M 52 39 Q 60 35 68 39' };
-      case 'encouraging':
-        return { left: 'M 32 36 Q 40 31 48 36', right: 'M 52 36 Q 60 31 68 36' };
-      case 'speaking':
-        return { left: 'M 32 36 Q 40 32 48 37', right: 'M 52 37 Q 60 32 68 36' };
-      case 'welcome':
-      default:
-        return { left: 'M 32 37 Q 40 34 48 38', right: 'M 52 38 Q 60 34 68 37' };
-    }
-  }, [effectiveExpression]);
-
-  // Mouth Path Morphing for Viseme Lip-Sync (Pure SVG Paths)
-  const mouthPath = useMemo(() => {
-    if (isSpeaking) {
-      switch (visemeIndex) {
-        case 1: // Open A/O
-          return 'M 42 66 Q 50 63 58 66 Q 58 75 50 75 Q 42 75 42 66 Z';
-        case 2: // Mid E
-          return 'M 41 67 Q 50 64 59 67 Q 59 72 50 72 Q 41 72 41 67 Z';
-        case 3: // Wide I/smile
-          return 'M 39 67 Q 50 65 61 67 Q 58 74 50 74 Q 42 74 39 67 Z';
-        case 4: // Round O/U
-          return 'M 45 66 Q 50 63 55 66 Q 55 74 50 74 Q 45 74 45 66 Z';
-        case 0:
-        default: // Soft closed
-          return 'M 42 67 Q 50 69 58 67';
-      }
-    }
-
-    // Static Resting Expression Smiles
-    switch (effectiveExpression) {
-      case 'encouraging':
-        return 'M 40 66 Q 50 76 60 66';
-      case 'thinking':
-        return 'M 43 68 Q 50 66 57 68';
-      case 'listening':
-        return 'M 41 67 Q 50 71 59 67';
-      case 'empathy':
-        return 'M 41 66 Q 50 73 59 66';
-      case 'welcome':
-      default:
-        return 'M 41 66 Q 50 73 59 66';
-    }
-  }, [isSpeaking, visemeIndex, effectiveExpression]);
+  // Image source and description
+  const activeImageSrc = effectivePhoto || personaMeta.src;
+  const activeImageAlt = effectivePhoto ? 'صورتك الشخصية النشطة' : personaMeta.alt;
+  const isCustomUserPhotoActive = Boolean(effectivePhoto);
 
   return (
     <div className={`relative flex flex-col items-center justify-center select-none group ${className}`}>
       
+      {/* Floating Reassurance Whisper Bubble */}
+      {activeWhisper && (
+        <div className="absolute -top-16 z-40 max-w-[240px] sm:max-w-[300px] px-3.5 py-2 bg-white/95 dark:bg-[#1A2520]/95 backdrop-blur-md rounded-2xl shadow-xl border border-emerald-500/30 text-right animate-in fade-in zoom-in-95 duration-200">
+          <p className="text-xs font-semibold text-[#253D32] dark:text-[#E8F1EC] leading-snug">
+            {activeWhisper}
+          </p>
+          <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white dark:bg-[#1A2520] border-r border-b border-emerald-500/30 rotate-45" />
+        </div>
+      )}
+
+      {/* Floating Hearts / Sparkles Burst on Touch */}
+      {showHeartsBurst && (
+        <div className="absolute -top-6 inset-x-0 flex items-center justify-center gap-3 pointer-events-none z-30 animate-bounce">
+          <Heart className="w-4 h-4 text-rose-500 fill-rose-500 animate-ping" />
+          <Sparkles className="w-5 h-5 text-amber-400 fill-amber-400 drop-shadow-md" />
+          <Heart className="w-4 h-4 text-rose-400 fill-rose-400" />
+        </div>
+      )}
+
       {/* Floating Sparkles for Encouraging / Speaking */}
-      {isAnimatedMode && (effectiveExpression === 'encouraging' || isSpeaking) && (
+      {isAnimatedMode && (expression === 'encouraging' || isSpeaking) && !showHeartsBurst && (
         <div className="absolute -top-2.5 -right-1 text-amber-300 animate-bounce pointer-events-none z-20">
           <Sparkles className="w-4 h-4 drop-shadow-md text-amber-400" />
         </div>
@@ -288,239 +406,61 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
 
       {/* Main Avatar Character Canvas / Rig */}
       <div 
-        className={`relative ${currentSize.classNames} rounded-full overflow-hidden transition-all duration-500 ease-out bg-gradient-to-b from-[#FDFBF7] to-[#F2EFEB] dark:from-[#1C2521] dark:to-[#121A16] ${personaTheme.auraRing}`}
-        style={{
-          transform: isAnimatedMode ? `rotate(${headTilt}deg) translateY(${chestBreathing}px)` : 'none'
+        onClick={handleAvatarTouch}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleAvatarTouch();
+          }
         }}
+        role="button"
+        tabIndex={0}
+        aria-label={`شخصية ${isCustomUserPhotoActive ? 'صورتي الشخصية' : personaMeta.badge} - اضغط أو انقر للحصول على لمسة طمأنينة`}
+        title="انقر هنا أو اضغط Enter للمسة طمأنينة وتفاعل مع الشخصية ✨"
+        className={`relative ${currentSize.classNames} rounded-full overflow-hidden transition-all duration-500 ease-out bg-stone-100 dark:bg-stone-900 ring-4 ${personaMeta.ringColor} shadow-md cursor-pointer hover:scale-[1.03] active:scale-[0.98] focus:outline-hidden focus:ring-4 focus:ring-emerald-500/60 ${
+          isHeartbeating ? 'scale-105 ring-rose-400 shadow-rose-400/40' : ''
+        }`}
       >
-        {/* Ambient Gradient Glow Background */}
-        <div className={`absolute inset-0 bg-gradient-to-tr ${personaTheme.glowGradient} opacity-60 pointer-events-none`} />
+        {/* Real Human Photographic Portrait */}
+        <img
+          src={activeImageSrc}
+          alt={activeImageAlt}
+          referrerPolicy="no-referrer"
+          className={`w-full h-full object-cover transition-transform duration-700 ${
+            isAnimatedMode && isSpeaking ? 'scale-105' : 'scale-100'
+          }`}
+          loading="eager"
+        />
 
-        {/* Pure Animated Vector Character Rig (SVG) */}
-        <svg 
-          viewBox="0 0 100 100" 
-          className="w-full h-full object-cover transition-transform duration-300"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            {/* Skin Gradient */}
-            <linearGradient id={`skinGrad-${persona}`} x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={personaTheme.skinTone} />
-              <stop offset="100%" stopColor={personaTheme.skinShadow} />
-            </linearGradient>
+        {/* Ambient Aesthetic Gradient Glow Layer */}
+        <div className={`absolute inset-0 bg-gradient-to-tr ${activeThemeMeta.gradient} opacity-40 mix-blend-overlay pointer-events-none`} />
 
-            {/* Hair Gradient */}
-            <linearGradient id={`hairGrad-${persona}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={personaTheme.hairHighlight} />
-              <stop offset="100%" stopColor={personaTheme.hairColor} />
-            </linearGradient>
-
-            {/* Clothes Gradient */}
-            <linearGradient id={`clothGrad-${persona}`} x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={personaTheme.clothingAccent} />
-              <stop offset="40%" stopColor={personaTheme.clothingMain} />
-              <stop offset="100%" stopColor="#1B2822" />
-            </linearGradient>
-
-            {/* Soft Shadow Filter */}
-            <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
-              <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" floodOpacity="0.15" />
-            </filter>
-          </defs>
-
-          {/* Torso / Shoulders with Breathing Animation */}
-          <g 
-            style={{ 
-              transform: isAnimatedMode ? `translateY(${-chestBreathing * 0.8}px)` : 'none',
-              transformOrigin: '50% 90%'
-            }}
-          >
-            {/* Base Clothing Torso */}
-            <path
-              d="M 20 86 C 24 76, 32 72, 42 74 L 50 76 L 58 74 C 68 72, 76 76, 80 86 C 82 92, 82 100, 82 100 L 18 100 C 18 100, 18 92, 20 86 Z"
-              fill={`url(#clothGrad-${persona})`}
-            />
-
-            {/* Persona Collar / Identity Accents */}
-            {persona === 'child' ? (
-              // Cute hoodie drawstring / collar
-              <path
-                d="M 40 76 Q 50 84 60 76"
-                stroke="#FFE1D6"
-                strokeWidth="2.5"
-                fill="none"
-                strokeLinecap="round"
-              />
-            ) : persona === 'father' ? (
-              // Wise protective cloak trim
-              <>
-                <path
-                  d="M 38 75 L 50 88 L 62 75"
-                  stroke="#E8C967"
-                  strokeWidth="2.5"
-                  fill="none"
-                  strokeLinecap="round"
-                />
-                <circle cx="50" cy="88" r="2" fill="#E8C967" />
-              </>
-            ) : (
-              // Adult calm balanced modern v-neck collar
-              <path
-                d="M 42 75 L 50 83 L 58 75"
-                stroke="#C5DBCB"
-                strokeWidth="2"
-                fill="none"
-                strokeLinecap="round"
-              />
-            )}
-          </g>
-
-          {/* Neck */}
-          <path
-            d="M 44 64 L 44 76 Q 50 78 56 76 L 56 64 Z"
-            fill={personaTheme.skinShadow}
-          />
-
-          {/* Head & Face Group */}
-          <g>
-            {/* Ears */}
-            <circle cx="28" cy="51" r="5" fill={personaTheme.skinShadow} />
-            <circle cx="72" cy="51" r="5" fill={personaTheme.skinShadow} />
-
-            {/* Face Shape */}
-            <path
-              d={persona === 'child'
-                ? "M 30 46 C 30 33, 40 28, 50 28 C 60 28, 70 33, 70 46 C 70 59, 62 67, 50 67 C 38 67, 30 59, 30 46 Z"
-                : "M 31 46 C 31 32, 40 27, 50 27 C 60 27, 69 32, 69 46 C 69 60, 61 68, 50 68 C 39 68, 31 60, 31 46 Z"
-              }
-              fill={`url(#skinGrad-${persona})`}
-              filter="url(#softShadow)"
-            />
-
-            {/* Soft Cheeks / Blush */}
-            <ellipse cx="37" cy="54" rx="4.5" ry="2.5" fill={personaTheme.blush} opacity={persona === 'child' ? "0.55" : "0.35"} />
-            <ellipse cx="63" cy="54" rx="4.5" ry="2.5" fill={personaTheme.blush} opacity={persona === 'child' ? "0.55" : "0.35"} />
-
-            {/* Eyebrows */}
-            <path
-              d={leftBrowPath}
-              stroke={personaTheme.hairColor}
-              strokeWidth={persona === 'father' ? "3" : "2.4"}
-              strokeLinecap="round"
-              fill="none"
-            />
-            <path
-              d={rightBrowPath}
-              stroke={personaTheme.hairColor}
-              strokeWidth={persona === 'father' ? "3" : "2.4"}
-              strokeLinecap="round"
-              fill="none"
-            />
-
-            {/* Eyes & Blinking Animation */}
-            {isBlinking ? (
-              // Natural Closed Blink Arcs
-              <g>
-                <path d="M 36 47 Q 41 50 46 47" stroke={personaTheme.hairColor} strokeWidth="2.5" strokeLinecap="round" fill="none" />
-                <path d="M 54 47 Q 59 50 64 47" stroke={personaTheme.hairColor} strokeWidth="2.5" strokeLinecap="round" fill="none" />
-              </g>
-            ) : (
-              // Open Living Expressive Eyes
-              <g>
-                {/* Left Eye */}
-                <ellipse cx="41" cy="47" rx={persona === 'child' ? "4.5" : "4"} ry={persona === 'child' ? "5.5" : "4.8"} fill="#FFFFFF" />
-                <circle cx={41 + eyeShiftX * 0.4} cy={47 + eyeShiftY * 0.4} r={persona === 'child' ? "3.2" : "2.8"} fill={persona === 'father' ? "#253D32" : "#1B2A22"} />
-                {/* Pupil Light Glint */}
-                <circle cx={40 + eyeShiftX * 0.3} cy={45 + eyeShiftY * 0.3} r="1.2" fill="#FFFFFF" />
-                <circle cx={42.5 + eyeShiftX * 0.3} cy={48 + eyeShiftY * 0.3} r="0.6" fill="#FFFFFF" />
-
-                {/* Right Eye */}
-                <ellipse cx="59" cy="47" rx={persona === 'child' ? "4.5" : "4"} ry={persona === 'child' ? "5.5" : "4.8"} fill="#FFFFFF" />
-                <circle cx={59 + eyeShiftX * 0.4} cy={47 + eyeShiftY * 0.4} r={persona === 'child' ? "3.2" : "2.8"} fill={persona === 'father' ? "#253D32" : "#1B2A22"} />
-                {/* Pupil Light Glint */}
-                <circle cx={58 + eyeShiftX * 0.3} cy={45 + eyeShiftY * 0.3} r="1.2" fill="#FFFFFF" />
-                <circle cx={60.5 + eyeShiftX * 0.3} cy={48 + eyeShiftY * 0.3} r="0.6" fill="#FFFFFF" />
-              </g>
-            )}
-
-            {/* Nose */}
-            <path
-              d={persona === 'child' ? "M 50 52 Q 51 54 49 55" : "M 50 50 Q 51.5 54 49 55"}
-              stroke={personaTheme.skinShadow}
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              fill="none"
-            />
-
-            {/* Mouth Rig with Syllabic Lip-Sync */}
-            <path
-              d={mouthPath}
-              stroke={isSpeaking ? '#873426' : '#9E5B4B'}
-              strokeWidth={isSpeaking ? "1.5" : "2.5"}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill={isSpeaking ? (visemeIndex > 0 ? '#B24536' : 'none') : 'none'}
-            />
-
-            {/* Persona Hair Styles */}
-            {persona === 'child' ? (
-              // Child's friendly hair tuft + sprouted green leaf of hope 🌱
-              <g>
-                <path
-                  d="M 28 42 C 26 28, 38 22, 50 22 C 62 22, 74 28, 72 42 C 68 34, 60 30, 50 30 C 40 30, 32 34, 28 42 Z"
-                  fill={`url(#hairGrad-${persona})`}
-                />
-                {/* Cute Sprout 🌱 on head */}
-                <g style={{ transform: isAnimatedMode ? `rotate(${Math.sin((breathTick * Math.PI) / 15) * 6}deg)` : 'none', transformOrigin: '50% 22%' }}>
-                  <path d="M 50 22 Q 47 16 43 17 Q 44 21 50 22" fill="#52B788" />
-                  <path d="M 50 22 Q 53 14 58 16 Q 56 21 50 22" fill="#74C69D" />
-                  <line x1="50" y1="22" x2="50" y2="18" stroke="#40916C" strokeWidth="1.5" strokeLinecap="round" />
-                </g>
-              </g>
-            ) : persona === 'father' ? (
-              // Father's noble distinguished styled hair + wise beard line
-              <g>
-                <path
-                  d="M 27 44 C 26 26, 38 20, 50 20 C 62 20, 74 26, 73 44 C 70 32, 60 26, 50 26 C 40 26, 30 32, 27 44 Z"
-                  fill={`url(#hairGrad-${persona})`}
-                />
-                {/* Sideburns */}
-                <path d="M 29 42 L 29 52 Q 31 52 32 46 Z" fill={`url(#hairGrad-${persona})`} />
-                <path d="M 71 42 L 71 52 Q 69 52 68 46 Z" fill={`url(#hairGrad-${persona})`} />
-                {/* Neat dignified goatee / beard contour */}
-                <path d="M 46 68 Q 50 71 54 68" stroke={personaTheme.hairColor} strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.6" />
-              </g>
-            ) : (
-              // Adult's balanced, serene modern botanical hair
-              <g>
-                <path
-                  d="M 28 42 C 26 28, 38 22, 50 22 C 62 22, 74 28, 72 42 C 67 33, 58 28, 50 28 C 42 28, 33 33, 28 42 Z"
-                  fill={`url(#hairGrad-${persona})`}
-                />
-                {/* Graceful soft lock */}
-                <path d="M 33 33 Q 42 36 46 40" stroke={personaTheme.hairHighlight} strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.7" />
-              </g>
-            )}
-          </g>
-
-          {/* Listening Pulsing Audio Rings inside SVG */}
-          {isListening && (
-            <circle cx="50" cy="50" r="47" stroke="#10B981" strokeWidth="2.5" fill="none" opacity="0.5" className="animate-ping" />
-          )}
-        </svg>
-
-        {/* Listening / Speaking Live Atmosphere Overlay */}
+        {/* Floating Atmospheric Particles */}
         {isAnimatedMode && (
-          <div 
-            className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${
-              isListening ? 'bg-emerald-500/10' :
-              isSpeaking ? 'bg-[#355C4A]/10' :
-              effectiveExpression === 'empathy' ? 'bg-rose-500/10' :
-              effectiveExpression === 'thinking' ? 'bg-amber-500/10' :
-              effectiveExpression === 'encouraging' ? 'bg-amber-400/10' :
-              'bg-transparent'
-            }`}
-          />
+          <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+            {currentTheme === 'sakura' && (
+              <div className="absolute top-2 left-2 text-rose-300/80 text-[10px] animate-pulse">🌸</div>
+            )}
+            {currentTheme === 'ghibli' && (
+              <div className="absolute top-2 right-2 text-emerald-400/80 text-[10px] animate-bounce">🍃</div>
+            )}
+            {currentTheme === 'starlight' && (
+              <div className="absolute top-2 left-3 text-amber-300/90 text-[10px] animate-pulse">✨</div>
+            )}
+            {currentTheme === 'ocean' && (
+              <div className="absolute bottom-2 right-2 text-cyan-300/80 text-[10px] animate-pulse">🫧</div>
+            )}
+          </div>
+        )}
+
+        {/* Listening Pulsing Audio Rings */}
+        {isListening && (
+          <div className="absolute inset-0 rounded-full border-4 border-emerald-400 animate-ping opacity-75 pointer-events-none" />
+        )}
+
+        {/* Speaking Soft Aura Glow */}
+        {isSpeaking && isAnimatedMode && (
+          <div className="absolute inset-0 bg-emerald-500/15 pointer-events-none transition-opacity" />
         )}
       </div>
 
@@ -539,17 +479,17 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
               <Volume2 className="w-3.5 h-3.5 text-[#355C4A] dark:text-emerald-400" />
               <span className="text-[#355C4A] dark:text-emerald-300">يتحدث معك الآن...</span>
             </>
-          ) : effectiveExpression === 'thinking' ? (
+          ) : expression === 'thinking' ? (
             <>
               <span className="w-2 h-2 rounded-full bg-amber-500 animate-bounce" />
               <span className="text-amber-700 dark:text-amber-400">يتأمل ويفكر معك...</span>
             </>
-          ) : effectiveExpression === 'empathy' ? (
+          ) : expression === 'empathy' ? (
             <>
               <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/20" />
               <span className="text-rose-700 dark:text-rose-300">يشعر بك ويحتضن مشاعرك</span>
             </>
-          ) : effectiveExpression === 'encouraging' ? (
+          ) : expression === 'encouraging' ? (
             <>
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span className="text-[#355C4A] dark:text-emerald-300">يشجعك ويساند خطواتك</span>
@@ -557,24 +497,58 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
           ) : (
             <>
               <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-              <span className="text-[#52645B] dark:text-stone-300">حاضر معك في رحلتك</span>
+              <span className="text-[#52645B] dark:text-stone-300">
+                {isCustomUserPhotoActive ? 'مرآتك الشخصية نشطة' : 'حاضر معك في رحلتك'}
+              </span>
             </>
           )}
         </div>
       )}
 
-      {/* Persona Switch / Animation Mode Controls */}
-      {(size === 'lg' || size === 'xl') && onTogglePersona && (
-        <div className="mt-2 flex items-center gap-2 text-[11px] text-[#52645B] dark:text-stone-400">
+      {/* Bottom Controls Bar: Persona + Personal Photo + Reassurance + Themes */}
+      {(size === 'lg' || size === 'xl') && (
+        <div className="mt-2.5 flex items-center flex-wrap justify-center gap-1.5 text-[11px] text-[#52645B] dark:text-stone-400">
+          
+          {/* Persona Switcher */}
+          {onTogglePersona && (
+            <button
+              onClick={onTogglePersona}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAF7F0] dark:bg-stone-800 hover:bg-[#E8DDCC]/50 dark:hover:bg-stone-700 border border-[#E8DDCC] dark:border-stone-700 transition-colors cursor-pointer font-medium"
+              title="تبديل الجانب النفسي (الراشد / الطفل / الأب)"
+            >
+              <RefreshCw className="w-3 h-3 text-[#355C4A] dark:text-emerald-400" />
+              <span>{personaMeta.badge}</span>
+            </button>
+          )}
+
+          {/* Quick Reassurance Tap Button */}
           <button
-            onClick={onTogglePersona}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAF7F0] dark:bg-stone-800 hover:bg-[#E8DDCC]/50 dark:hover:bg-stone-700 border border-[#E8DDCC] dark:border-stone-700 transition-colors cursor-pointer"
-            title="تبديل الجانب النفسي (الراشد / الطفل / الأب)"
+            onClick={handleAvatarTouch}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900/50 transition-colors cursor-pointer font-medium"
+            title="الحصول على كلمة تطمين فورية"
           >
-            <RefreshCw className="w-3 h-3 text-[#355C4A] dark:text-emerald-400" />
-            <span>{personaTheme.badge}</span>
+            <Heart className="w-3 h-3 text-rose-500 fill-rose-500/30" />
+            <span>لمسة طمأنينة</span>
           </button>
 
+          {/* My Personal Photo Button */}
+          <button
+            onClick={() => {
+              setUploadFeedback(null);
+              setShowPhotoModal(true);
+            }}
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg border transition-colors cursor-pointer font-medium ${
+              isCustomUserPhotoActive
+                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
+                : 'bg-[#FAF7F0] dark:bg-stone-800 hover:bg-emerald-50 text-stone-700 dark:text-stone-300 border-[#E8DDCC] dark:border-stone-700'
+            }`}
+            title="رفع أو إدارة صورتك الشخصية"
+          >
+            <Camera className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+            <span>صورتي الشخصية</span>
+          </button>
+
+          {/* Animation Toggle */}
           {allowAnimationToggle && (
             <button
               onClick={handleToggleAnimated}
@@ -588,6 +562,208 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
               <span>{isAnimatedMode ? 'حركة حية' : 'ثابت'}</span>
             </button>
           )}
+
+          {/* Atmosphere Theme Selector Toggle */}
+          {allowCustomization && (
+            <button
+              onClick={() => setShowThemeModal(prev => !prev)}
+              className="flex items-center gap-1 px-2 py-1 rounded-lg border bg-[#FAF7F0] dark:bg-stone-800 hover:bg-amber-50 text-stone-700 dark:text-stone-300 border-[#E8DDCC] dark:border-stone-700 transition-colors cursor-pointer"
+              title="تخصيص هالة الأجواء النفسية"
+            >
+              <Palette className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+              <span>هالة الأجواء</span>
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* 9. Modal for "صورتي الشخصية" (Upload, Preview, Change, Delete, Privacy Notice) */}
+      {showPhotoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md bg-white dark:bg-[#1C2621] rounded-3xl p-6 shadow-2xl border border-stone-200 dark:border-stone-700 text-right space-y-5">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-stone-800">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
+                  <Camera className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-stone-900 dark:text-stone-100">
+                    صورتي الشخصية في «رفيقي»
+                  </h3>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400">
+                    استخدم صورتك كمرآة رقمية للتأمل الذاتي
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowPhotoModal(false)}
+                className="p-1.5 rounded-xl text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Privacy Guarantee Box */}
+            <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-xs text-emerald-900 dark:text-emerald-200 space-y-1">
+              <div className="flex items-center gap-1.5 font-bold">
+                <Lock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>خصوصيتك محمية 100%</span>
+              </div>
+              <p className="text-[11px] leading-relaxed text-emerald-800 dark:text-emerald-300">
+                صورتك تُعالج وتُحفظ محلياً داخل متصفح جهازك فقط. لن يتم رفعها أو إرسالها إلى أي خادم خارجي على الإطلاق دون موافقتك الصريحة.
+              </p>
+            </div>
+
+            {/* Preview Section */}
+            <div className="flex flex-col items-center justify-center py-2">
+              <div className="relative w-28 h-28 rounded-full overflow-hidden ring-4 ring-emerald-500/40 shadow-lg bg-stone-100 dark:bg-stone-800">
+                <img
+                  src={localUserPhoto || personaMeta.src}
+                  alt="معاينة الصورة"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className="mt-2 text-xs font-bold text-stone-700 dark:text-stone-300">
+                {localUserPhoto 
+                  ? (useUserPhoto ? 'صورتك الشخصية نشطة حالياً 🪞' : 'صورتك محفوظة ولكن غير مفعلة')
+                  : 'تُعرض حالياً الصورة الواقعية للشخصية'}
+              </span>
+            </div>
+
+            {/* Feedback message */}
+            {uploadFeedback && (
+              <div className="p-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs text-center">
+                {uploadFeedback}
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="space-y-2.5">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="hidden"
+              />
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full py-2.5 px-4 rounded-xl bg-[#355C4A] hover:bg-[#2A493B] text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Upload className="w-4 h-4" />
+                <span>{localUserPhoto ? 'تغيير الصورة الشخصية' : 'رفع صورة من جهازي'}</span>
+              </button>
+
+              {localUserPhoto && (
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleToggleUseUserPhoto(!useUserPhoto)}
+                    className={`py-2 px-3 rounded-xl border text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+                      useUserPhoto 
+                        ? 'bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300'
+                        : 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300'
+                    }`}
+                  >
+                    <span>{useUserPhoto ? 'التبديل للشخصية الواقعية' : 'تفعيل صورتي الشخصية'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleDeleteUserPhoto}
+                    className="py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900 text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>حذف صورتي</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="pt-2 border-t border-stone-100 dark:border-stone-800 flex justify-end">
+              <button
+                onClick={() => setShowPhotoModal(false)}
+                className="px-4 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-xs text-stone-700 dark:text-stone-300 transition-colors font-medium"
+              >
+                إغلاق
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 10. Modal for Atmosphere Aura Theme */}
+      {showThemeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="relative w-full max-w-sm bg-white dark:bg-[#1C2621] rounded-3xl p-5 shadow-2xl border border-stone-200 dark:border-stone-700 text-right space-y-4">
+            
+            <div className="flex items-center justify-between pb-2 border-b border-stone-100 dark:border-stone-800">
+              <span className="font-bold text-xs text-stone-800 dark:text-stone-100 flex items-center gap-1.5">
+                <Palette className="w-4 h-4 text-amber-500" />
+                <span>هالة الأجواء النفسية</span>
+              </span>
+              <button 
+                onClick={() => setShowThemeModal(false)}
+                className="p-1 rounded-md text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Themes Grid */}
+            <div className="space-y-1.5">
+              <div className="text-[10px] font-bold text-stone-500 dark:text-stone-400">
+                اختر طابع الهالة المحيطة:
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {THEME_OPTIONS.map(themeItem => {
+                  const isSelected = currentTheme === themeItem.id;
+                  return (
+                    <button
+                      key={themeItem.id}
+                      onClick={() => handleSelectTheme(themeItem.id)}
+                      className={`p-2.5 rounded-2xl border text-right transition-all flex flex-col gap-1 text-[11px] cursor-pointer ${
+                        isSelected
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500 text-emerald-900 dark:text-emerald-300 font-bold shadow-xs'
+                          : 'bg-stone-50 dark:bg-stone-800/60 border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-100'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-base">{themeItem.icon}</span>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600" />}
+                      </div>
+                      <span className="font-bold">{themeItem.label}</span>
+                      <span className="text-[9px] text-stone-500 dark:text-stone-400 line-clamp-1">
+                        {themeItem.desc}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Footer with Reset */}
+            <div className="pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-[11px]">
+              <button
+                onClick={handleResetDefaults}
+                className="flex items-center gap-1 px-2.5 py-1 rounded text-stone-500 hover:text-rose-600 dark:text-stone-400 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+              >
+                <RefreshCw className="w-3 h-3" />
+                <span>استعادة الافتراضي</span>
+              </button>
+              <button
+                onClick={() => setShowThemeModal(false)}
+                className="px-3 py-1 rounded-lg bg-emerald-600 text-white font-bold"
+              >
+                تم
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-export type CompanionPersona = 'adult' | 'child' | 'father';
+export type CompanionPersona = 'adult' | 'child' | 'father' | 'my_photo';
 
 export type CompanionExpression = 
   | 'welcome' 
@@ -30,9 +30,17 @@ export interface CompanionMessage {
   audioPlayed?: boolean;
 }
 
+// Deprecated anime themes preserved as optional for backward compatibility
+export type AnimeTheme = 'ghibli' | 'sakura' | 'starlight' | 'ocean';
+export type AnimeAccessory = 'none' | 'sprout' | 'sakura' | 'crescent' | 'glasses';
+
 export interface CompanionUserSettings {
   persona: CompanionPersona;
   isAnimated: boolean;
   isVoiceAutoPlay: boolean;
   hasSeenIntroduction: boolean;
+  customPhoto?: string | null;
+  animeTheme?: AnimeTheme;
+  animeAccessory?: AnimeAccessory;
 }
+

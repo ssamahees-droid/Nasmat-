@@ -24,7 +24,7 @@ import { voiceService } from '../services/voiceService';
 import { CompanionPersona, CompanionMessage, CompanionUserSettings, CompanionAction } from '../types/companion';
 
 interface CompanionHeroSectionProps {
-  theme?: 'dark' | 'light';
+  theme?: 'dark' | 'light' | 'system';
   onOpenFullCompanion: () => void;
   onOpenModalByName: (modalName: string, extraData?: any) => void;
   onNavigate: (route: string) => void;
@@ -38,7 +38,10 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
   onNavigate,
   onOpenAudioModal
 }) => {
-  const isDark = theme === 'dark';
+  const effectiveTheme = theme === 'system'
+    ? (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    : (theme || 'dark');
+  const isDark = effectiveTheme === 'dark';
 
   // Load user settings and chat history from engine
   const [settings, setSettings] = useState<CompanionUserSettings>(() => CompanionEngine.getSettings());
@@ -112,6 +115,14 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
     const updated = { ...settings, isAnimated: !settings.isAnimated };
     setSettings(updated);
     CompanionEngine.saveSettings(updated);
+  };
+
+  // Toggle through personas: adult -> child -> father -> adult
+  const handleTogglePersona = () => {
+    const nextPersona: CompanionPersona = 
+      settings.persona === 'adult' ? 'child' :
+      settings.persona === 'child' ? 'father' : 'adult';
+    handleSelectPersona(nextPersona);
   };
 
   // Toggle voice auto-play
@@ -375,20 +386,38 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
               size="lg"
               isAnimated={settings.isAnimated}
               onToggleAnimation={handleToggleAnimation}
-              allowAnimationToggle={false}
+              allowAnimationToggle={true}
+              onTogglePersona={handleTogglePersona}
+              theme={settings.animeTheme}
+              accessory={settings.animeAccessory}
+              onThemeChange={(newTheme) => {
+                const updated = { ...settings, animeTheme: newTheme };
+                setSettings(updated);
+                CompanionEngine.saveSettings(updated);
+              }}
+              onAccessoryChange={(newAcc) => {
+                const updated = { ...settings, animeAccessory: newAcc };
+                setSettings(updated);
+                CompanionEngine.saveSettings(updated);
+              }}
             />
           </div>
 
           <div className="text-center space-y-1">
             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
-              {settings.persona === 'child' ? '🌱 طفلي الداخلي' : settings.persona === 'father' ? '🛡️ الأب الداخلي' : '🌿 الراشد المتزن'}
+              {settings.persona === 'child' ? '🌱 طفلي الداخلي' : settings.persona === 'father' ? '🛡️ الأب الداخلي' : settings.persona === 'my_photo' ? '🪞 صورتي الشخصية' : '🌿 الراشد المتزن'}
             </span>
-            <p className="text-[11px] text-stone-400 max-w-[190px]">
+            <p className="text-[11px] text-stone-400 max-w-[200px]">
               {settings.persona === 'child' 
                 ? 'مرآة لطفولتك وأمانك العاطفي' 
                 : settings.persona === 'father'
                 ? 'مرآة لحكمتك وحمايتك لنفسك'
+                : settings.persona === 'my_photo'
+                ? 'مرآة ذاتية لتأمل نفسك الصادقة'
                 : 'مرآة لواقعك كشخص بالغ اليوم'}
+            </p>
+            <p className="text-[10px] text-emerald-400/80 font-medium pt-0.5">
+              ✨ انقر على الشخصية للمسة طمأنينة وتفاعل
             </p>
           </div>
         </div>
@@ -402,7 +431,7 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
               <span>اختر الجانب النفسي الذي تريد أن ترى نفسك من خلاله اليوم:</span>
             </label>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
               {/* Option 1: الراشد */}
               <button
                 onClick={() => handleSelectPersona('adult')}
@@ -469,6 +498,29 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
                 </div>
                 <p className="text-[10px] text-stone-300 leading-relaxed">
                   حكمة وحزم حنون لوقف جلد الذات وتوفير أمان وحماية راسخة.
+                </p>
+              </button>
+
+              {/* Option 4: صورتي الشخصية */}
+              <button
+                onClick={() => handleSelectPersona('my_photo')}
+                className={`p-3 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
+                  settings.persona === 'my_photo'
+                    ? 'bg-linear-to-r from-teal-950/80 to-[#1b3430]/80 border-teal-400/60 shadow-md ring-2 ring-teal-500/25'
+                    : 'bg-black/20 hover:bg-black/30 border-white/10 text-stone-300'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-white">
+                    <Camera className="w-4 h-4 text-teal-400" />
+                    <span>صورتي الشخصية 🪞</span>
+                  </div>
+                  {settings.persona === 'my_photo' && (
+                    <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+                  )}
+                </div>
+                <p className="text-[10px] text-stone-300 leading-relaxed">
+                  مرآتك الذاتية الخاصة للتأمل الصادق ومحادثة نفسك برحمة واعتزاز.
                 </p>
               </button>
             </div>

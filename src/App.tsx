@@ -141,18 +141,53 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Theme state: Variation 1 (Dark Zen Obsidian) vs Warm Light
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    return (localStorage.getItem('nesmat_theme') as 'dark' | 'light') || 'dark';
+  // Theme state: light, dark, system
+  const [theme, setTheme] = useState<'dark' | 'light' | 'system'>(() => {
+    return (localStorage.getItem('nesmat_theme') as 'dark' | 'light' | 'system') || 'light';
+  });
+
+  // Font size state: normal, large, extralarge
+  const [fontSize, setFontSize] = useState<'normal' | 'large' | 'extralarge'>(() => {
+    return (localStorage.getItem('nesmat_fontsize') as 'normal' | 'large' | 'extralarge') || 'normal';
   });
 
   const handleToggleTheme = () => {
-    setTheme(prev => {
-      const next = prev === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('nesmat_theme', next);
-      return next;
-    });
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
+
+  useEffect(() => {
+    const applyTheme = (t: 'dark' | 'light' | 'system') => {
+      localStorage.setItem('nesmat_theme', t);
+      let effectiveTheme: 'dark' | 'light' = 'light';
+      if (t === 'system') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        effectiveTheme = prefersDark ? 'dark' : 'light';
+      } else {
+        effectiveTheme = t;
+      }
+
+      if (effectiveTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+    };
+
+    applyTheme(theme);
+
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const listener = () => applyTheme('system');
+      mediaQuery.addEventListener('change', listener);
+      return () => mediaQuery.removeEventListener('change', listener);
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('nesmat_fontsize', fontSize);
+    document.documentElement.classList.remove('font-normal', 'font-large', 'font-extralarge');
+    document.documentElement.classList.add(`font-${fontSize}`);
+  }, [fontSize]);
 
   // Background Anonymous-First Authentication & Pilot Sync (Zero UI change)
   useEffect(() => {
@@ -563,6 +598,10 @@ export default function App() {
             onNavigate={handleNavigate}
             onOpenContent={handleOpenContent}
             onRestartOnboarding={handleRestartOnboarding}
+            theme={theme}
+            setTheme={setTheme}
+            fontSize={fontSize}
+            setFontSize={setFontSize}
           />
         )}
 

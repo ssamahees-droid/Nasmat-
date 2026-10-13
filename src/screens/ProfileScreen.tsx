@@ -26,17 +26,25 @@ interface ProfileScreenProps {
   onNavigate: (tab: string) => void;
   onOpenContent: (contentId: string) => void;
   onRestartOnboarding: () => void;
+  theme: 'dark' | 'light' | 'system';
+  setTheme: (t: 'dark' | 'light' | 'system') => void;
+  fontSize: 'normal' | 'large' | 'extralarge';
+  setFontSize: (f: 'normal' | 'large' | 'extralarge') => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onNavigate,
   onOpenContent,
-  onRestartOnboarding
+  onRestartOnboarding,
+  theme,
+  setTheme,
+  fontSize,
+  setFontSize
 }) => {
   const [user, setUser] = useState<User>(storage.getUser());
   const [prefs, setPrefs] = useState<UserPreferences>(storage.getPreferences());
   const [activeModal, setActiveModal] = useState<
-    'privacy' | 'about' | 'faq' | 'saved' | 'notifications' | 'edit_profile' | null
+    'privacy' | 'about' | 'faq' | 'saved' | 'notifications' | 'edit_profile' | 'appearance' | null
   >(null);
   const [exportNotice, setExportNotice] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
@@ -210,6 +218,27 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
               <div className="text-[11px] text-[#7D8F85]">
                 تذكيرات هادئة دون لوم أو ضغط
+              </div>
+            </div>
+          </div>
+          <ChevronLeft className="w-4 h-4 text-[#7D8F85]" />
+        </button>
+
+        {/* إعدادات المظهر وإمكانية القراءة */}
+        <button
+          onClick={() => setActiveModal('appearance')}
+          className="w-full p-4 flex items-center justify-between hover:bg-white transition-colors group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-violet-100/60 text-violet-800 flex items-center justify-center">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div className="text-right">
+              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#355C4A]">
+                إعدادات المظهر وإمكانية القراءة
+              </div>
+              <div className="text-[11px] text-[#7D8F85]">
+                الوضع الفاتح والداكن، وحجم الخط
               </div>
             </div>
           </div>
@@ -602,6 +631,126 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 className="w-full py-2.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
               >
                 إغلاق
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Appearance & Readability */}
+      {activeModal === 'appearance' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 max-w-md w-full space-y-5 text-right">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+              <h3 className="font-bold text-base text-[#26332D]">إعدادات المظهر وإمكانية القراءة</h3>
+              <button onClick={() => setActiveModal(null)} className="text-stone-500 hover:text-stone-800 text-sm">✕</button>
+            </div>
+
+            {/* Theme Section */}
+            <div className="space-y-2.5">
+              <label className="block text-xs font-bold text-[#26332D]">المظهر العام:</label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setTheme('light')}
+                  className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
+                    theme === 'light'
+                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                  }`}
+                >
+                  <span className="text-base">☀️</span>
+                  <span>الوضع الفاتح</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTheme('dark')}
+                  className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
+                    theme === 'dark'
+                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                  }`}
+                >
+                  <span className="text-base">🌙</span>
+                  <span>الوضع الداكن</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTheme('system')}
+                  className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
+                    theme === 'system'
+                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                  }`}
+                >
+                  <span className="text-base">⚙️</span>
+                  <span>حسب الجهاز</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Font Size Section */}
+            <div className="space-y-2.5">
+              <label className="block text-xs font-bold text-[#26332D]">حجم الخط وإمكانية القراءة:</label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFontSize('normal')}
+                  className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
+                    fontSize === 'normal'
+                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                  }`}
+                >
+                  <span className="text-sm font-normal">عادي</span>
+                  <span className="text-[10px] opacity-80">16px</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setFontSize('large')}
+                  className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
+                    fontSize === 'large'
+                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                  }`}
+                >
+                  <span className="text-base font-semibold">كبير</span>
+                  <span className="text-[10px] opacity-80">18px</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setFontSize('extralarge')}
+                  className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
+                    fontSize === 'extralarge'
+                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                  }`}
+                >
+                  <span className="text-lg font-bold">كبير جداً</span>
+                  <span className="text-[10px] opacity-80">20px</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Live Preview Sample */}
+            <div className="p-3.5 bg-white rounded-2xl border border-[#E8DDCC] space-y-1">
+              <div className="text-[11px] text-stone-500 font-semibold">معاينة نصية فورية:</div>
+              <p className="text-xs text-[#26332D] leading-relaxed">
+                «هذا النص يوضح شكل الخط والمظهر المختار في تطبيق نسمة حياة لتجربة مريحة وآمنة.»
+              </p>
+            </div>
+
+            <div className="pt-3 border-t border-[#E8DDCC]">
+              <button
+                type="button"
+                onClick={() => setActiveModal(null)}
+                className="w-full py-2.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
+              >
+                حفظ وإغلاق
               </button>
             </div>
           </div>

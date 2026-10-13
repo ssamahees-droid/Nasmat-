@@ -30,7 +30,7 @@ interface NavbarProps {
   onOpenNotifications: () => void;
   onOpenSafetyModal: () => void;
   onOpenCompanion?: () => void;
-  theme?: 'dark' | 'light';
+  theme?: 'dark' | 'light' | 'system';
   onToggleTheme?: () => void;
 }
 

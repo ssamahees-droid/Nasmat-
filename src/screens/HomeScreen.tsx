@@ -65,7 +65,7 @@ interface HomeScreenProps {
   onOpenFeker?: () => void;
   onOpenDiscoveryQuiz: () => void;
   onOpenCompanion?: () => void;
-  theme?: 'dark' | 'light';
+  theme?: 'dark' | 'light' | 'system';
 }
 
 const MOOD_OPTIONS: { id: MoodValue; label: string; emoji: string; tip: string }[] = [

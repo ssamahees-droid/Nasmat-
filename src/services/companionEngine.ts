@@ -45,7 +45,9 @@ export const DEFAULT_COMPANION_SETTINGS: CompanionUserSettings = {
   persona: 'adult',
   isAnimated: true,
   isVoiceAutoPlay: false,
-  hasSeenIntroduction: false
+  hasSeenIntroduction: false,
+  animeTheme: 'ghibli',
+  animeAccessory: 'sprout'
 };
 
 export interface PersonaDefinition {
@@ -95,6 +97,18 @@ export const COMPANION_PERSONAS: Record<CompanionPersona, PersonaDefinition> = {
     systemInstruction: `أنت «الأب الداخلي الحكيم والداعم» للمستخدم (أنا الداعم والحامي لنفسي).
 نبرتك: حكيمة، راسخة، دافئة بحزم حنون، مشجعة، تضع حدوداً صحية وتمنح الأمان الداخلي.
 هدفك: إيقاف جلد الذات والنقد القاسي، وتوفير مظلة حماية وثقة تمكن المستخدم من تجاوز الصعاب بثقة وروية.`
+  },
+  my_photo: {
+    id: 'my_photo',
+    title: 'صورتي الشخصية',
+    subtitle: 'مرآتي الذاتية الصادقة',
+    icon: '🪞',
+    description: 'مساحة التأمل الذاتي المباشر وحوار النفس بصدق ورحمة مع نسختك الخاصة.',
+    voicePitch: 1.0,
+    voiceRate: 0.95,
+    systemInstruction: `أنت «المرآة الذاتية الواعية» للمستخدم (أنا أحاور نفسي بصدق واحتواء).
+نبرتك: صادقة، متقبلة، دافئة، واقعية، خالية من الأحكام والتوقعات الخارجية.
+هدفك: مساعدة المستخدم على رؤية نفسه بإنصاف، والاحتفاء بجهوده، واحتواء مشاعره دون أقنعة أو ضغوط.`
   }
 };
 

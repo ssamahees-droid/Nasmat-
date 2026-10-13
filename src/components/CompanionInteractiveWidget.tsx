@@ -479,6 +479,18 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
               size="md"
               isAnimated={true}
               onTogglePersona={handleTogglePersona}
+              theme={settings.animeTheme}
+              accessory={settings.animeAccessory}
+              onThemeChange={(newTheme) => {
+                const updated = { ...settings, animeTheme: newTheme };
+                setSettings(updated);
+                CompanionEngine.saveSettings(updated);
+              }}
+              onAccessoryChange={(newAcc) => {
+                const updated = { ...settings, animeAccessory: newAcc };
+                setSettings(updated);
+                CompanionEngine.saveSettings(updated);
+              }}
             />
           </div>
 
