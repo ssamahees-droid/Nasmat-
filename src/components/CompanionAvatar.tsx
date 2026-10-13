@@ -65,6 +65,14 @@ export const PERSONA_REALISTIC_PORTRAITS: Record<CompanionPersona, {
     badge: '🛡️ الأب الداخلي',
     subtitle: 'حكمة، وقار، وحزم حنون يحمي حدودك',
     ringColor: 'ring-blue-500/50 dark:ring-blue-400/40'
+  },
+  my_photo: {
+    src: '/src/assets/images/companion_adult_portrait_1791644375469.jpg',
+    alt: 'صورتي الشخصية أو رفيقي المخصص',
+    label: 'صورتي الشخصية',
+    badge: '👤 صورتي الشخصية',
+    subtitle: 'رفيقك الخاص المميز',
+    ringColor: 'ring-emerald-500/50 dark:ring-emerald-400/40'
   }
 };
 
@@ -96,6 +104,11 @@ export const REASSURANCE_WHISPERS: Record<CompanionPersona, string[]> = {
     'اطمئن، ظهرك محمي وإرادتك راسخة.. أكمل طريقك بجبين مرفوع 🦅',
     'لكل عاصفة نهاية مؤكدة، وثباتك الواعي الآن هو رأس مالك غداً ⚓',
     'أنت قادر على حماية حدودك النفسية ورسم مسارك بكرامة واطمئنان 🏔️'
+  ],
+  my_photo: [
+    'أنا هنا معك في كل لحظة، نتقدم بخطوات واثقة وثابتة نحو السلام الداخلي 💫',
+    'كل تحدٍ تجتازه يصنع منك نسخة أكثر حكمة وسلاماً 🌿',
+    'كن لطيفاً مع نفسك اليوم، فأنت تستحق كل خير واطمئنان 🤍'
   ]
 };
 
@@ -329,7 +342,8 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
       const personaLabels: Record<CompanionPersona, string> = {
         child: 'الطفل الداخلي',
         adult: 'الراشد المتزن',
-        father: 'الأب الداخلي'
+        father: 'الأب الداخلي',
+        my_photo: 'صورتي الشخصية'
       };
       storage.addThoughtPost({
         title: `همسة طمأنينة من ${personaLabels[persona]} ✨`,
