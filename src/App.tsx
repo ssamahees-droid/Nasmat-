@@ -80,6 +80,8 @@ import { JourneyScreen } from './screens/JourneyScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { AdminDashboardScreen } from './screens/AdminDashboardScreen';
 import { FekerAppScreen } from './screens/FekerAppScreen';
+import { ListenToYourselfScreen } from './screens/ListenToYourselfScreen';
+import { WeeklySessionScreen } from './screens/WeeklySessionScreen';
 
 const VALID_TABS: Record<string, string> = {
   '': 'home',
@@ -97,7 +99,11 @@ const VALID_TABS: Record<string, string> = {
   'feker': 'feker',
   'admin': 'admin',
   'breathe': 'breathe',
-  'assessment': 'assessment'
+  'assessment': 'assessment',
+  'listen-to-yourself': 'listen-to-yourself',
+  'listen': 'listen-to-yourself',
+  'weekly-session': 'weekly-session',
+  'weekly': 'weekly-session'
 };
 
 function getRouteFromLocation(): { tab: string; isExplicitDeepLink: boolean } {
@@ -130,11 +136,12 @@ export default function App() {
   const [selectedContentId, setSelectedContentId] = useState<string>('c1');
 
   const handleNavigate = (tab: string, pushHistory: boolean = true) => {
-    setCurrentTab(tab);
+    const resolvedTab = tab === 'listen' ? 'listen-to-yourself' : tab === 'weekly' ? 'weekly-session' : tab;
+    setCurrentTab(resolvedTab);
     if (pushHistory && typeof window !== 'undefined') {
-      const targetUrl = tab === 'home' ? '/' : `/${tab}`;
+      const targetUrl = resolvedTab === 'home' ? '/' : `/${resolvedTab}`;
       if (window.location.pathname !== targetUrl) {
-        window.history.pushState({ tab }, '', targetUrl);
+        window.history.pushState({ tab: resolvedTab }, '', targetUrl);
       }
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -176,8 +183,10 @@ export default function App() {
 
       if (effectiveTheme === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.classList.add('dark');
       } else {
         document.documentElement.removeAttribute('data-theme');
+        document.documentElement.classList.remove('dark');
       }
     };
 
@@ -458,10 +467,10 @@ export default function App() {
 
   // 3. Main Application Flow
   return (
-    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${
+    <div className={`min-h-screen flex flex-col font-cairo transition-colors duration-300 ${
       theme === 'dark' 
-        ? 'bg-[#0b0f0d] text-[#e8ede9] selection:bg-emerald-500 selection:text-black' 
-        : 'bg-[#f7f9f6] text-[#1a2920] selection:bg-emerald-400 selection:text-black'
+        ? 'bg-[#0D1914] text-[#F7F3E9] selection:bg-[#A9C5A0] selection:text-[#0D1914]' 
+        : 'bg-[#F7F3E9] text-[#13251E] selection:bg-[#A9C5A0] selection:text-[#174C3C]'
     }`}>
       
       {/* Top Navbar */}
@@ -602,6 +611,14 @@ export default function App() {
             onOpenConflictWithoutWar={() => setIsConflictWithoutWarOpen(true)}
             onOpenHealingJourney={() => setIsHealingJourneyOpen(true)}
           />
+        )}
+
+        {currentTab === 'listen-to-yourself' && (
+          <ListenToYourselfScreen onNavigate={handleNavigate} />
+        )}
+
+        {currentTab === 'weekly-session' && (
+          <WeeklySessionScreen onNavigate={handleNavigate} />
         )}
 
         {currentTab === 'content-detail' && (

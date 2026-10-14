@@ -46,7 +46,7 @@ export const SpecialistGuideModal: React.FC<SpecialistGuideModalProps> = ({
       return {
         title: 'البدء مع أخصائي نفسي (Psychologist / Therapist)',
         desc: 'الأخصائي النفسي خيار ممتاز للبدء في جلسات استكشاف المشاعر وتعديل أنماط التفكير وتفريغ ضغوط العلاقات دون أدوية.',
-        color: 'bg-[#8FAF9A]/20 border-[#8FAF9A]/50 text-[#26332D]'
+        color: 'bg-[#A9C5A0]/20 border-[#A9C5A0]/50 text-[#26332D]'
       };
     }
   };
@@ -57,10 +57,10 @@ export const SpecialistGuideModal: React.FC<SpecialistGuideModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-2xl bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">🩺</span>
             <div>
@@ -81,12 +81,12 @@ export const SpecialistGuideModal: React.FC<SpecialistGuideModalProps> = ({
         </div>
 
         {/* Tab switch */}
-        <div className="flex items-center gap-1.5 bg-[#E8DDCC]/40 p-1 rounded-2xl shrink-0 mt-3 text-xs">
+        <div className="flex items-center gap-1.5 bg-[#E6E8D8]/40 p-1 rounded-2xl shrink-0 mt-3 text-xs">
           <button
             onClick={() => setActiveTab('comparison')}
             className={`flex-1 py-2 px-3 rounded-xl font-bold transition-all text-center ${
               activeTab === 'comparison'
-                ? 'bg-white text-[#355C4A] shadow-xs'
+                ? 'bg-white text-[#174C3C] shadow-xs'
                 : 'text-[#52645B] hover:text-[#26332D]'
             }`}
           >
@@ -96,7 +96,7 @@ export const SpecialistGuideModal: React.FC<SpecialistGuideModalProps> = ({
             onClick={() => setActiveTab('when_to_seek')}
             className={`flex-1 py-2 px-3 rounded-xl font-bold transition-all text-center ${
               activeTab === 'when_to_seek'
-                ? 'bg-white text-[#355C4A] shadow-xs'
+                ? 'bg-white text-[#174C3C] shadow-xs'
                 : 'text-[#52645B] hover:text-[#26332D]'
             }`}
           >
@@ -106,7 +106,7 @@ export const SpecialistGuideModal: React.FC<SpecialistGuideModalProps> = ({
             onClick={() => setActiveTab('quiz')}
             className={`flex-1 py-2 px-3 rounded-xl font-bold transition-all text-center ${
               activeTab === 'quiz'
-                ? 'bg-white text-[#355C4A] shadow-xs'
+                ? 'bg-white text-[#174C3C] shadow-xs'
                 : 'text-[#52645B] hover:text-[#26332D]'
             }`}
           >
@@ -120,8 +120,8 @@ export const SpecialistGuideModal: React.FC<SpecialistGuideModalProps> = ({
             <div className="space-y-4 animate-fade-in">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* Psychologist Card */}
-                <div className="p-4 bg-white border border-[#8FAF9A]/60 rounded-2xl space-y-2">
-                  <div className="flex items-center gap-2 text-[#355C4A]">
+                <div className="p-4 bg-white border border-[#A9C5A0]/60 rounded-2xl space-y-2">
+                  <div className="flex items-center gap-2 text-[#174C3C]">
                     <UserCheck className="w-5 h-5" />
                     <h3 className="font-extrabold text-sm">الأخصائي النفسي (Psychologist)</h3>
                   </div>
@@ -158,7 +158,7 @@ export const SpecialistGuideModal: React.FC<SpecialistGuideModalProps> = ({
                 </p>
               </div>
 
-              <div className="p-3.5 bg-white border border-[#E8DDCC] rounded-2xl flex items-center justify-between text-xs">
+              <div className="p-3.5 bg-white border border-[#E6E8D8] rounded-2xl flex items-center justify-between text-xs">
                 <div>
                   <span className="font-bold text-[#26332D] block">هل تحتاج استشارة توجيهية؟</span>
                   <span className="text-[#7D8F85] text-[11px]">يمكنك إرسال طلب في قسم «محتاج أتكلم»</span>
@@ -168,7 +168,7 @@ export const SpecialistGuideModal: React.FC<SpecialistGuideModalProps> = ({
                     onClose();
                     onNavigateToSupport();
                   }}
-                  className="px-3 py-1.5 bg-[#355C4A] hover:bg-[#264235] text-white font-bold rounded-xl text-xs transition-colors"
+                  className="px-3 py-1.5 bg-[#174C3C] hover:bg-[#264235] text-white font-bold rounded-xl text-xs transition-colors"
                 >
                   طلب توجيه
                 </button>
@@ -196,8 +196,8 @@ export const SpecialistGuideModal: React.FC<SpecialistGuideModalProps> = ({
                   'تشعر أن محاولاتك الذاتية وحدها لم تعد كافية.',
                   'أو ببساطة تشعر بحاجة لشخص متخصص يفهم ما تمر به بإنصات آمن.'
                 ].map((sign, idx) => (
-                  <div key={idx} className="p-3 bg-white border border-[#E8DDCC] rounded-xl flex items-start gap-2 text-[#35453E]">
-                    <CheckCircle2 className="w-4 h-4 text-[#355C4A] shrink-0 mt-0.5" />
+                  <div key={idx} className="p-3 bg-white border border-[#E6E8D8] rounded-xl flex items-start gap-2 text-[#35453E]">
+                    <CheckCircle2 className="w-4 h-4 text-[#174C3C] shrink-0 mt-0.5" />
                     <span>{sign}</span>
                   </div>
                 ))}
@@ -249,13 +249,13 @@ export const SpecialistGuideModal: React.FC<SpecialistGuideModalProps> = ({
                       onClick={() => toggleConcern(item.id)}
                       className={`w-full p-3 rounded-xl border text-right text-xs transition-all flex items-center justify-between ${
                         isChecked
-                          ? 'bg-[#355C4A] text-white border-[#355C4A] font-bold'
-                          : 'bg-white hover:bg-stone-50 text-[#26332D] border-[#E8DDCC]'
+                          ? 'bg-[#174C3C] text-white border-[#174C3C] font-bold'
+                          : 'bg-white hover:bg-stone-50 text-[#26332D] border-[#E6E8D8]'
                       }`}
                     >
                       <span>{item.label}</span>
                       <span className={`w-4 h-4 rounded-md border flex items-center justify-center text-[10px] ${
-                        isChecked ? 'bg-white text-[#355C4A] border-white' : 'border-stone-300'
+                        isChecked ? 'bg-white text-[#174C3C] border-white' : 'border-stone-300'
                       }`}>
                         {isChecked && '✓'}
                       </span>

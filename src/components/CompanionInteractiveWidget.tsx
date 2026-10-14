@@ -311,7 +311,7 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
       >
         <button
           onClick={() => handleChangeWidgetMode('docked')}
-          className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#1C2822]/90 hover:bg-[#25382F] text-[#FAF7F0] border border-emerald-500/40 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer text-xs font-bold"
+          className="flex items-center gap-2 px-3 py-2 rounded-full bg-[#1C2822]/90 hover:bg-[#25382F] text-[#F7F3E9] border border-emerald-500/40 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer text-xs font-bold"
           title="إظهار شخصية نسمة حياة"
         >
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -358,23 +358,23 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
           </div>
 
           {/* Interactive Speech Bubble */}
-          <div className="bg-white/95 dark:bg-[#1C2822]/95 backdrop-blur-md p-3 rounded-2xl rounded-bl-xs border border-[#E8DDCC] dark:border-stone-700 shadow-xl shadow-black/10 text-right space-y-2 max-w-[240px] sm:max-w-[270px]">
+          <div className="bg-white/95 dark:bg-[#1C2822]/95 backdrop-blur-md p-3 rounded-2xl rounded-bl-xs border border-[#E6E8D8] dark:border-stone-700 shadow-xl shadow-black/10 text-right space-y-2 max-w-[240px] sm:max-w-[270px]">
             {/* Header info */}
-            <div className="flex items-center justify-between gap-1 text-[11px] text-[#52645B] dark:text-stone-300 border-b border-[#E8DDCC]/60 dark:border-stone-700/60 pb-1.5">
-              <span className="font-bold text-[#355C4A] dark:text-emerald-400">
+            <div className="flex items-center justify-between gap-1 text-[11px] text-[#52645B] dark:text-stone-300 border-b border-[#E6E8D8]/60 dark:border-stone-700/60 pb-1.5">
+              <span className="font-bold text-[#174C3C] dark:text-emerald-400">
                 شخصية نسمة حياة
               </span>
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={handleSpeakCurrent}
-                  className="p-1 rounded-md hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 hover:text-[#355C4A] dark:hover:text-emerald-300 transition-colors cursor-pointer"
+                  className="p-1 rounded-md hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 hover:text-[#174C3C] dark:hover:text-emerald-300 transition-colors cursor-pointer"
                   title={isSpeaking ? 'إيقاف الصوت' : 'استمع بصوت الشخصية'}
                 >
                   {isSpeaking ? <VolumeX className="w-3.5 h-3.5 text-rose-500" /> : <Volume2 className="w-3.5 h-3.5" />}
                 </button>
                 <button
                   onClick={() => handleChangeWidgetMode('card')}
-                  className="p-1 rounded-md hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 hover:text-[#355C4A] dark:hover:text-emerald-300 transition-colors cursor-pointer"
+                  className="p-1 rounded-md hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 hover:text-[#174C3C] dark:hover:text-emerald-300 transition-colors cursor-pointer"
                   title="توسيع للوحة التفاعل"
                 >
                   <ChevronUp className="w-3.5 h-3.5" />
@@ -391,7 +391,7 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
             <div className="flex items-center justify-between gap-1.5 pt-1">
               <button
                 onClick={() => handleChangeWidgetMode('card')}
-                className="text-[11px] font-bold text-[#355C4A] dark:text-emerald-300 hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-[11px] font-bold text-[#174C3C] dark:text-emerald-300 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <MessageCircle className="w-3 h-3" />
                 <span>تفاعل وتحدث</span>
@@ -414,11 +414,11 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
   // 3. CARD MODE: Comprehensive Floating Companion Card (Responsive, non-modal, interactive)
   return (
     <div 
-      className="fixed bottom-20 lg:bottom-6 left-4 lg:left-6 z-40 select-none font-cairo w-[320px] sm:w-[380px] max-w-[calc(100vw-2rem)] bg-white dark:bg-[#1A2520] border-2 border-[#355C4A]/30 dark:border-emerald-500/30 rounded-3xl shadow-2xl shadow-black/25 backdrop-blur-xl overflow-hidden transition-all duration-300 animate-scale-up"
+      className="fixed bottom-20 lg:bottom-6 left-4 lg:left-6 z-40 select-none font-cairo w-[320px] sm:w-[380px] max-w-[calc(100vw-2rem)] bg-white dark:bg-[#1A2520] border-2 border-[#174C3C]/30 dark:border-emerald-500/30 rounded-3xl shadow-2xl shadow-black/25 backdrop-blur-xl overflow-hidden transition-all duration-300 animate-scale-up"
       dir="rtl"
     >
       {/* Top Header Bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#355C4A] to-[#254234] text-white">
+      <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#174C3C] to-[#254234] text-white">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
           <span className="text-xs font-black tracking-wide">شخصية نسمة حياة</span>
@@ -495,7 +495,7 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
           </div>
 
           {/* Character Speech Bubble */}
-          <div className="flex-1 bg-[#FAF7F0] dark:bg-[#121A16] p-3 rounded-2xl border border-[#E8DDCC] dark:border-stone-700 text-right space-y-2">
+          <div className="flex-1 bg-[#F7F3E9] dark:bg-[#121A16] p-3 rounded-2xl border border-[#E6E8D8] dark:border-stone-700 text-right space-y-2">
             <div className="flex items-center justify-between text-[11px] text-[#52645B] dark:text-stone-400">
               <span className="font-semibold text-emerald-700 dark:text-emerald-400">
                 {isThinking ? 'يفكر ويتأمل معك...' : isSpeaking ? 'يتحدث معك الآن...' : 'حاضر معك...'}
@@ -520,7 +520,7 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
         <div className="flex flex-wrap items-center gap-1.5 pt-1">
           <button
             onClick={() => handleSendQuery('حاسس بضغط وتوتر ومحتاج أهدى')}
-            className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-[#355C4A] dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 text-[11px] font-medium transition-colors cursor-pointer"
+            className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-[#174C3C] dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 text-[11px] font-medium transition-colors cursor-pointer"
           >
             🌬️ حاسس بتوتر
           </button>
@@ -539,7 +539,7 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
         </div>
 
         {/* Quick Input Bar with Mic & Send */}
-        <div className="flex items-center gap-2 pt-1 border-t border-[#E8DDCC]/70 dark:border-stone-700/70">
+        <div className="flex items-center gap-2 pt-1 border-t border-[#E6E8D8]/70 dark:border-stone-700/70">
           <button
             onClick={handleToggleMic}
             className={`p-2 rounded-xl transition-all cursor-pointer ${
@@ -562,13 +562,13 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
               }
             }}
             placeholder="اكتب لشخصية نسمة حياة..."
-            className="flex-1 px-3 py-2 text-xs rounded-xl bg-stone-50 dark:bg-[#121A16] border border-[#E8DDCC] dark:border-stone-700 text-[#26332D] dark:text-[#EDE8DF] focus:outline-hidden focus:border-[#355C4A] dark:focus:border-emerald-500"
+            className="flex-1 px-3 py-2 text-xs rounded-xl bg-stone-50 dark:bg-[#121A16] border border-[#E6E8D8] dark:border-stone-700 text-[#26332D] dark:text-[#EDE8DF] focus:outline-hidden focus:border-[#174C3C] dark:focus:border-emerald-500"
           />
 
           <button
             onClick={() => handleSendQuery()}
             disabled={!inputText.trim() || isThinking}
-            className="p-2 rounded-xl bg-[#355C4A] hover:bg-[#2A493B] disabled:opacity-40 text-white transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-[#174C3C] hover:bg-[#2A493B] disabled:opacity-40 text-white transition-colors cursor-pointer"
             title="إرسال"
           >
             <Send className="w-4 h-4" />

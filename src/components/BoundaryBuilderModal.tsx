@@ -78,10 +78,10 @@ export const BoundaryBuilderModal: React.FC<BoundaryBuilderModalProps> = ({ isOp
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-xl bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">🛡️</span>
             <div>
@@ -117,8 +117,8 @@ export const BoundaryBuilderModal: React.FC<BoundaryBuilderModalProps> = ({ isOp
                   onClick={() => setSelectedScenario(sc)}
                   className={`p-2.5 rounded-xl border text-right text-xs transition-all ${
                     selectedScenario.id === sc.id
-                      ? 'bg-[#355C4A] text-white border-[#355C4A] font-bold shadow-2xs'
-                      : 'bg-white hover:bg-stone-50 text-[#26332D] border-[#E8DDCC]'
+                      ? 'bg-[#174C3C] text-white border-[#174C3C] font-bold shadow-2xs'
+                      : 'bg-white hover:bg-stone-50 text-[#26332D] border-[#E6E8D8]'
                   }`}
                 >
                   {sc.category}
@@ -128,7 +128,7 @@ export const BoundaryBuilderModal: React.FC<BoundaryBuilderModalProps> = ({ isOp
           </div>
 
           {/* Scenario Details */}
-          <div className="p-4 bg-white border border-[#E8DDCC] rounded-2xl space-y-3">
+          <div className="p-4 bg-white border border-[#E6E8D8] rounded-2xl space-y-3">
             <div className="text-xs text-[#52645B] leading-relaxed">
               <strong className="text-[#26332D]">الموقف:</strong> {selectedScenario.situation}
             </div>
@@ -158,8 +158,8 @@ export const BoundaryBuilderModal: React.FC<BoundaryBuilderModalProps> = ({ isOp
           </div>
 
           {/* Custom Formula Builder */}
-          <div className="p-4 bg-[#FAF7F0] border border-[#8FAF9A]/50 rounded-2xl space-y-2.5">
-            <div className="text-xs font-bold text-[#355C4A]">
+          <div className="p-4 bg-[#F7F3E9] border border-[#A9C5A0]/50 rounded-2xl space-y-2.5">
+            <div className="text-xs font-bold text-[#174C3C]">
               🛠️ اصنع صيغة حدود خاصة بك الآن:
             </div>
             <p className="text-[11px] text-[#52645B]">
@@ -172,19 +172,19 @@ export const BoundaryBuilderModal: React.FC<BoundaryBuilderModalProps> = ({ isOp
                 value={customNeed}
                 onChange={(e) => setCustomNeed(e.target.value)}
                 placeholder="اكتب ما تحتاجه (مثال: راحة ساعتين، تأجيل القرار للغد، إنهاء عمل عاجل...)"
-                className="flex-1 p-2.5 bg-white border border-[#E8DDCC] rounded-xl text-xs text-[#26332D] outline-none"
+                className="flex-1 p-2.5 bg-white border border-[#E6E8D8] rounded-xl text-xs text-[#26332D] outline-none"
               />
               <button
                 onClick={handleGenerateCustom}
                 disabled={!customNeed.trim()}
-                className="py-2.5 px-4 bg-[#355C4A] hover:bg-[#264235] disabled:opacity-50 text-white font-bold text-xs rounded-xl transition-colors"
+                className="py-2.5 px-4 bg-[#174C3C] hover:bg-[#264235] disabled:opacity-50 text-white font-bold text-xs rounded-xl transition-colors"
               >
                 تركيب الجملة
               </button>
             </div>
 
             {customResponse && (
-              <div className="p-3 bg-white border border-[#8FAF9A] rounded-xl flex items-center justify-between text-xs animate-fade-in">
+              <div className="p-3 bg-white border border-[#A9C5A0] rounded-xl flex items-center justify-between text-xs animate-fade-in">
                 <span className="font-extrabold text-[#26332D]">{customResponse}</span>
                 <button
                   onClick={() => handleCopy(customResponse)}

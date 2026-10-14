@@ -26,10 +26,10 @@ export const PsychologicalERModal: React.FC<PsychologicalERModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-2xl bg-[#FAF7F2] border border-[#E5DACB] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E5DACB] shrink-0">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E6E8D8] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-[#3A5A40]/10 text-[#3A5A40] flex items-center justify-center text-2xl shadow-inner">
               🚨
@@ -69,7 +69,7 @@ export const PsychologicalERModal: React.FC<PsychologicalERModalProps> = ({
                 className={`p-2.5 rounded-2xl border text-right transition-all flex items-center gap-2 ${
                   selectedScenarioId === sc.id
                     ? 'bg-[#3A5A40] text-white border-[#3A5A40] font-bold shadow-sm'
-                    : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E5DACB]'
+                    : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E6E8D8]'
                 }`}
               >
                 <span className="text-lg">{sc.emoji}</span>
@@ -82,7 +82,7 @@ export const PsychologicalERModal: React.FC<PsychologicalERModalProps> = ({
         {/* Active Scenario Content */}
         <div className="overflow-y-auto py-2 space-y-4 flex-1">
           {/* Scenario Overview */}
-          <div className="p-4 bg-white border border-[#E5DACB] rounded-2xl shadow-xs space-y-1.5">
+          <div className="p-4 bg-white border border-[#E6E8D8] rounded-2xl shadow-xs space-y-1.5">
             <div className="flex items-center gap-2">
               <span className="text-xl">{currentScenario.emoji}</span>
               <h3 className="font-black text-sm text-[#283618]">

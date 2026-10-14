@@ -38,7 +38,7 @@ export const ContentDetailScreen: React.FC<ContentDetailScreenProps> = ({
         <h2 className="text-lg font-bold text-[#26332D]">المحتوى غير موجود أو تم نقله</h2>
         <button
           onClick={onBack}
-          className="py-2 px-4 bg-[#355C4A] text-white text-xs font-semibold rounded-xl"
+          className="py-2 px-4 bg-[#174C3C] text-white text-xs font-semibold rounded-xl"
         >
           العودة للمكتبة
         </button>
@@ -78,32 +78,32 @@ export const ContentDetailScreen: React.FC<ContentDetailScreenProps> = ({
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 text-xs font-bold text-[#355C4A] hover:underline"
+          className="flex items-center gap-1.5 text-xs font-bold text-[#174C3C] hover:underline"
         >
           <ArrowRight className="w-4 h-4" />
           <span>العودة للمكتبة</span>
         </button>
 
         {/* Font size toggle for accessibility (Section 29) */}
-        <div className="flex items-center gap-1 bg-[#FAF7F0] border border-[#E8DDCC] p-1 rounded-xl text-xs">
+        <div className="flex items-center gap-1 bg-[#F7F3E9] border border-[#E6E8D8] p-1 rounded-xl text-xs">
           <span className="text-[10px] text-[#52645B] px-1 flex items-center gap-1">
             <Type className="w-3.5 h-3.5" />
           </span>
           <button
             onClick={() => setFontSize('normal')}
-            className={`px-2 py-0.5 rounded-lg ${fontSize === 'normal' ? 'bg-[#355C4A] text-white' : 'text-[#52645B]'}`}
+            className={`px-2 py-0.5 rounded-lg ${fontSize === 'normal' ? 'bg-[#174C3C] text-white' : 'text-[#52645B]'}`}
           >
             عادي
           </button>
           <button
             onClick={() => setFontSize('large')}
-            className={`px-2 py-0.5 rounded-lg ${fontSize === 'large' ? 'bg-[#355C4A] text-white' : 'text-[#52645B]'}`}
+            className={`px-2 py-0.5 rounded-lg ${fontSize === 'large' ? 'bg-[#174C3C] text-white' : 'text-[#52645B]'}`}
           >
             كبير
           </button>
           <button
             onClick={() => setFontSize('xlarge')}
-            className={`px-2 py-0.5 rounded-lg ${fontSize === 'xlarge' ? 'bg-[#355C4A] text-white' : 'text-[#52645B]'}`}
+            className={`px-2 py-0.5 rounded-lg ${fontSize === 'xlarge' ? 'bg-[#174C3C] text-white' : 'text-[#52645B]'}`}
           >
             أكبر
           </button>
@@ -111,9 +111,9 @@ export const ContentDetailScreen: React.FC<ContentDetailScreenProps> = ({
       </div>
 
       {/* Article Header */}
-      <header className="space-y-3 border-b border-[#E8DDCC] pb-5">
+      <header className="space-y-3 border-b border-[#E6E8D8] pb-5">
         <div className="flex items-center gap-2 text-xs text-[#52645B]">
-          <span className="font-bold text-[#355C4A]">{item.subCategory || item.category}</span>
+          <span className="font-bold text-[#174C3C]">{item.subCategory || item.category}</span>
           <span aria-hidden="true">·</span>
           <span className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5" />
@@ -132,11 +132,11 @@ export const ContentDetailScreen: React.FC<ContentDetailScreenProps> = ({
         {/* Metadata of Author & Clinical Reviewer (Section 8 Spec) */}
         <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-[#52645B]">
           <div className="flex items-center gap-1.5">
-            <UserCheck className="w-3.5 h-3.5 text-[#8FAF9A]" />
+            <UserCheck className="w-3.5 h-3.5 text-[#A9C5A0]" />
             <span>إعداد: <strong>{item.author}</strong></span>
           </div>
           <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#355C4A]" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#174C3C]" />
             <span>مراجعة متخصصة: <strong>{item.reviewer}</strong></span>
           </div>
         </div>
@@ -149,7 +149,7 @@ export const ContentDetailScreen: React.FC<ContentDetailScreenProps> = ({
           className={`py-3 px-3 rounded-2xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors ${
             isFav
               ? 'bg-rose-50 text-rose-700 border-rose-300'
-              : 'bg-[#FAF7F0] text-[#35453E] border-[#E8DDCC] hover:bg-white'
+              : 'bg-[#F7F3E9] text-[#35453E] border-[#E6E8D8] hover:bg-white'
           }`}
         >
           <Bookmark className={`w-4 h-4 ${isFav ? 'fill-current' : ''}`} />
@@ -158,7 +158,7 @@ export const ContentDetailScreen: React.FC<ContentDetailScreenProps> = ({
 
         <button
           onClick={() => onOpenAudioModal(item.title, item.subCategory || item.category, 6)}
-          className="py-3 px-3 bg-[#FAF7F0] hover:bg-white text-[#355C4A] border border-[#E8DDCC] rounded-2xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+          className="py-3 px-3 bg-[#F7F3E9] hover:bg-white text-[#174C3C] border border-[#E6E8D8] rounded-2xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
         >
           <Volume2 className="w-4 h-4" />
           <span>استمع للمحتوى</span>
@@ -166,7 +166,7 @@ export const ContentDetailScreen: React.FC<ContentDetailScreenProps> = ({
 
         <button
           onClick={handleShare}
-          className="py-3 px-3 bg-[#FAF7F0] hover:bg-white text-[#35453E] border border-[#E8DDCC] rounded-2xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+          className="py-3 px-3 bg-[#F7F3E9] hover:bg-white text-[#35453E] border border-[#E6E8D8] rounded-2xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
         >
           {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
           <span>{copiedLink ? 'تم نسخ الرابط' : 'مشاركة'}</span>
@@ -174,7 +174,7 @@ export const ContentDetailScreen: React.FC<ContentDetailScreenProps> = ({
 
         <button
           onClick={onNavigateToSupport}
-          className="py-3 px-3 bg-[#8FAF9A]/20 hover:bg-[#8FAF9A]/30 text-[#355C4A] border border-[#8FAF9A]/40 rounded-2xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
+          className="py-3 px-3 bg-[#A9C5A0]/20 hover:bg-[#A9C5A0]/30 text-[#174C3C] border border-[#A9C5A0]/40 rounded-2xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
         >
           <MessageCircle className="w-4 h-4" />
           <span>محتاج أتكلم</span>
@@ -182,11 +182,11 @@ export const ContentDetailScreen: React.FC<ContentDetailScreenProps> = ({
       </div>
 
       {/* Main Body Content */}
-      <article className={`bg-white/80 border border-[#E8DDCC] rounded-3xl p-6 sm:p-8 space-y-4 text-[#26332D] shadow-xs ${fontSizeClasses[fontSize]}`}>
+      <article className={`bg-white/80 border border-[#E6E8D8] rounded-3xl p-6 sm:p-8 space-y-4 text-[#26332D] shadow-xs ${fontSizeClasses[fontSize]}`}>
         {item.body.split('\n\n').map((paragraph, idx) => {
           if (paragraph.startsWith('### ')) {
             return (
-              <h2 key={idx} className="text-xl font-bold text-[#355C4A] pt-3 pb-1 border-b border-[#E8DDCC]/60">
+              <h2 key={idx} className="text-xl font-bold text-[#174C3C] pt-3 pb-1 border-b border-[#E6E8D8]/60">
                 {paragraph.replace('### ', '')}
               </h2>
             );
@@ -220,8 +220,8 @@ export const ContentDetailScreen: React.FC<ContentDetailScreenProps> = ({
       </article>
 
       {/* Strict Ethical Guidelines & Disclaimer Notice (Section 8 & 28 Spec) */}
-      <div className="p-4 bg-[#FAF7F0] border border-[#E8DDCC] rounded-2xl space-y-2 text-xs text-[#52645B]">
-        <div className="flex items-center gap-2 font-bold text-[#355C4A]">
+      <div className="p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-2xl space-y-2 text-xs text-[#52645B]">
+        <div className="flex items-center gap-2 font-bold text-[#174C3C]">
           <ShieldCheck className="w-4 h-4" />
           <span>محددات المحتوى وأمان الاستخدام:</span>
         </div>

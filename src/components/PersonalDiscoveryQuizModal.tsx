@@ -272,10 +272,10 @@ export const PersonalDiscoveryQuizModal: React.FC<PersonalDiscoveryQuizModalProp
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-2xl bg-[#FAF7F2] border border-[#E5DACB] rounded-3xl p-5 sm:p-7 shadow-[0_12px_45px_-10px_rgba(58,90,64,0.3)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_12px_45px_-10px_rgba(58,90,64,0.3)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-[#E5DACB] shrink-0">
+        <div className="flex items-center justify-between pb-3.5 border-b border-[#E6E8D8] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center text-2xl shadow-inner animate-pulse">
               🧭
@@ -313,7 +313,7 @@ export const PersonalDiscoveryQuizModal: React.FC<PersonalDiscoveryQuizModalProp
                 <span className="font-mono">{Math.round(((currentStep + 1) / totalQuestions) * 100)}%</span>
               </div>
               
-              <div className="w-full bg-[#E5DACB]/50 h-2 rounded-full overflow-hidden">
+              <div className="w-full bg-[#E6E8D8]/50 h-2 rounded-full overflow-hidden">
                 <div 
                   className="bg-[#3A5A40] h-full transition-all duration-300"
                   style={{ width: `${((currentStep + 1) / totalQuestions) * 100}%` }}
@@ -321,7 +321,7 @@ export const PersonalDiscoveryQuizModal: React.FC<PersonalDiscoveryQuizModalProp
               </div>
 
               {/* Question Card */}
-              <div className="p-5 bg-white border border-[#E5DACB] rounded-3xl shadow-2xs space-y-2">
+              <div className="p-5 bg-white border border-[#E6E8D8] rounded-3xl shadow-2xs space-y-2">
                 <h3 className="text-base sm:text-lg font-black text-[#283618] leading-relaxed">
                   {currentQ.question}
                 </h3>
@@ -336,7 +336,7 @@ export const PersonalDiscoveryQuizModal: React.FC<PersonalDiscoveryQuizModalProp
                   <button
                     key={idx}
                     onClick={() => handleSelectOption(opt.category, opt.score)}
-                    className="w-full p-4 rounded-2xl border border-[#E5DACB] hover:border-[#3A5A40] bg-white hover:bg-[#F2ECE3] text-right transition-all flex items-center justify-between group shadow-2xs active:scale-[0.99]"
+                    className="w-full p-4 rounded-2xl border border-[#E6E8D8] hover:border-[#3A5A40] bg-white hover:bg-[#F2ECE3] text-right transition-all flex items-center justify-between group shadow-2xs active:scale-[0.99]"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-2xl group-hover:scale-110 transition-transform">
@@ -367,8 +367,8 @@ export const PersonalDiscoveryQuizModal: React.FC<PersonalDiscoveryQuizModalProp
             /* RESULTS VIEW */
             <div className="space-y-5 animate-fade-in">
               {/* Primary Result Banner */}
-              <div className="p-6 bg-gradient-to-b from-white via-[#FAF7F2] to-white border-2 border-[#3A5A40]/40 rounded-3xl shadow-sm space-y-4">
-                <div className="flex items-center justify-between border-b border-[#E5DACB] pb-3">
+              <div className="p-6 bg-gradient-to-b from-white via-[#F7F3E9] to-white border-2 border-[#3A5A40]/40 rounded-3xl shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b border-[#E6E8D8] pb-3">
                   <div className="flex items-center gap-3">
                     <span className="text-4xl">{currentResult.emoji}</span>
                     <div>
@@ -392,7 +392,7 @@ export const PersonalDiscoveryQuizModal: React.FC<PersonalDiscoveryQuizModalProp
               </div>
 
               {/* 3 Practical Action Steps */}
-              <div className="p-5 bg-white border border-[#E5DACB] rounded-3xl space-y-3 shadow-2xs">
+              <div className="p-5 bg-white border border-[#E6E8D8] rounded-3xl space-y-3 shadow-2xs">
                 <h4 className="font-black text-sm text-[#283618] flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-[#DDA15E]" />
                   <span>خطواتك العلاجية الموصى بها اليوم:</span>
@@ -418,7 +418,7 @@ export const PersonalDiscoveryQuizModal: React.FC<PersonalDiscoveryQuizModalProp
                   {currentResult.recommendedTools.map((tool) => (
                     <div 
                       key={tool.id}
-                      className="p-3.5 bg-white border border-[#E5DACB] hover:border-[#3A5A40] rounded-2xl text-right transition-all group flex flex-col justify-between shadow-2xs"
+                      className="p-3.5 bg-white border border-[#E6E8D8] hover:border-[#3A5A40] rounded-2xl text-right transition-all group flex flex-col justify-between shadow-2xs"
                     >
                       <div>
                         <span className="text-2xl block mb-1 group-hover:scale-105 transition-transform">{tool.emoji}</span>
@@ -434,7 +434,7 @@ export const PersonalDiscoveryQuizModal: React.FC<PersonalDiscoveryQuizModalProp
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                 <button
                   onClick={handleRestart}
-                  className="py-2.5 px-4 bg-white hover:bg-stone-50 border border-[#E5DACB] text-[#283618] font-bold text-xs rounded-2xl transition-colors flex items-center gap-1.5"
+                  className="py-2.5 px-4 bg-white hover:bg-stone-50 border border-[#E6E8D8] text-[#283618] font-bold text-xs rounded-2xl transition-colors flex items-center gap-1.5"
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span>إعادة الاختبار</span>

@@ -22,6 +22,7 @@ import { CompanionAvatar, CompanionExpression, CompanionVisualStyle } from './Co
 import { CompanionEngine } from '../services/companionEngine';
 import { voiceService } from '../services/voiceService';
 import { chimeService } from '../services/chimeService';
+import { TextAudioPlayer } from './TextAudioPlayer';
 import { CompanionPersona, CompanionMessage, CompanionUserSettings, CompanionAction } from '../types/companion';
 
 interface CompanionHeroSectionProps {
@@ -179,31 +180,21 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
   const handleEmpathyMoodClick = (mood: 'anxious' | 'sad' | 'exhausted' | 'peaceful') => {
     chimeService.playReassuranceChime();
 
-    let targetPersona: CompanionPersona = settings.persona;
     let text = '';
     let expression: CompanionExpression = 'empathy';
 
     if (mood === 'anxious') {
-      targetPersona = 'adult';
       expression = 'empathy';
       text = 'أشعر بما يثقل صدرك الآن.. خذ نفساً عميقاً، ضع قدميك على الأرض، وتذكر أن الأفكار المتسارعة ليست حقائق قاطعة. أنت في أمان هنا، والضغط سينقضي خطوة بخطوة 🌿';
     } else if (mood === 'sad') {
-      targetPersona = 'child';
       expression = 'listening';
       text = 'من حق قلبك أن يشعر بالحزن دون لوم أو خجل.. حزنك تعبير عن قيمة ما مررت به. لست وحدك، وأنا هنا بجانبك أحتضن مشاعرك بكل دفء وأمان 🤍';
     } else if (mood === 'exhausted') {
-      targetPersona = 'father';
       expression = 'thinking';
       text = 'طاقتك أمانة غالية.. توقف عن الركض، وأعطِ لنفسك إذناً بالراحة الآن دون تأنيب ضمير. ما لا يكتمل اليوم سينتظر غداً بحكمة وثبات، وأنت تستحق أن تهدأ 🛡️';
     } else if (mood === 'peaceful') {
       expression = 'encouraging';
       text = 'يا لجمال هذه السكينة في روحك! احفظ هذا النور الداخلي واجعله مرساة ترجع إليها كلما عصفت الحياة. استمتع بكل ثانية من هذا الهدوء ✨';
-    }
-
-    if (targetPersona !== settings.persona) {
-      const updated = { ...settings, persona: targetPersona };
-      setSettings(updated);
-      CompanionEngine.saveSettings(updated);
     }
 
     setCurrentExpression(expression);
@@ -353,7 +344,7 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
     >
       {/* Decorative ambient background glow */}
       <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#355C4A]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#174C3C]/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Toast Notification */}
       {toastMessage && (
@@ -440,7 +431,6 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
               isAnimated={settings.isAnimated}
               onToggleAnimation={handleToggleAnimation}
               allowAnimationToggle={true}
-              onTogglePersona={handleTogglePersona}
               theme={settings.animeTheme}
               accessory={settings.animeAccessory}
               onThemeChange={(newTheme) => {
@@ -458,14 +448,10 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
 
           <div className="text-center space-y-1">
             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">
-              {settings.persona === 'child' ? '🌱 طفلي الداخلي' : settings.persona === 'father' ? '🛡️ الأب الداخلي' : '🌿 الراشد المتزن'}
+              🤍 رفيقي — المرشد المرافق
             </span>
             <p className="text-[11px] text-stone-400 max-w-[200px]">
-              {settings.persona === 'child' 
-                ? 'مرآة لطفولتك وأمانك العاطفي' 
-                : settings.persona === 'father'
-                ? 'مرآة لحكمتك وحمايتك لنفسك'
-                : 'مرآة لواقعك كشخص بالغ اليوم'}
+              حضور دافئ ومساندة هادئة لسلامك الداخلي
             </p>
             <p className="text-[10px] text-emerald-400/80 font-medium pt-0.5">
               ✨ انقر على الشخصية للمسة طمأنينة وتفاعل
@@ -473,83 +459,62 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
           </div>
         </div>
 
-        {/* Left Column: Mirror Selector & Conversation Stream */}
+        {/* Left Column: Companion Identity & Conversation Stream */}
         <div className="md:col-span-8 lg:col-span-9 space-y-4">
           
-          {/* 1. Mirror Perspective Selector (الاختيار بين الشخصيات الثلاث) */}
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-bold text-stone-300 flex items-center gap-1.5">
-              <span>اختر الجانب النفسي الذي تريد أن ترى نفسك من خلاله اليوم:</span>
-            </label>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              {/* Option 1: الراشد */}
+          {/* 1. Companion Welcome & Support Quick Starters */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-bold text-stone-300 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                <span>فضفض أو ابدأ حواراً مع رفيقي الآن:</span>
+              </label>
               <button
-                onClick={() => handleSelectPersona('adult')}
-                className={`p-3 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
-                  settings.persona === 'adult'
-                    ? 'bg-linear-to-r from-emerald-950/80 to-[#1e342a]/80 border-emerald-400/60 shadow-md ring-2 ring-emerald-500/25'
-                    : 'bg-black/20 hover:bg-black/30 border-white/10 text-stone-300'
-                }`}
+                type="button"
+                onClick={() => onNavigate('listen')}
+                className="text-[10px] text-emerald-300/80 hover:text-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
+                title="الانتقال إلى مساحة اسمع نفسك"
               >
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-white">
-                    <User className="w-4 h-4 text-emerald-400" />
-                    <span>الراشد 🌿</span>
-                  </div>
-                  {settings.persona === 'adult' && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  )}
+                <span>المنظورات الداخلية الثلاثة في «اسمع نفسك»</span>
+                <ArrowLeft className="w-3 h-3 text-emerald-400" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => handleSendMessage('حاسس بضغط وتشتت ومحتاج أهدى شوية')}
+                className="p-2.5 rounded-xl border border-white/10 bg-black/25 hover:bg-emerald-950/40 hover:border-emerald-500/40 text-right transition-all cursor-pointer group"
+              >
+                <div className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors flex items-center gap-1.5">
+                  <span>🍃</span>
+                  <span>حاسس بضغط ومحتاج أهدى</span>
                 </div>
-                <p className="text-[10px] text-stone-300 leading-relaxed">
-                  حوار متزن لفهم واقعك الحالي وضغوطك واتخاذ خطوات واقعية.
-                </p>
+                <p className="text-[10px] text-stone-400 mt-1">تفريغ التوتر واستعادة الهدوء خطوة بخطوة</p>
               </button>
 
-              {/* Option 2: طفلي الداخلي */}
               <button
-                onClick={() => handleSelectPersona('child')}
-                className={`p-3 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
-                  settings.persona === 'child'
-                    ? 'bg-linear-to-r from-emerald-950/80 to-[#1e342a]/80 border-emerald-400/60 shadow-md ring-2 ring-emerald-500/25'
-                    : 'bg-black/20 hover:bg-black/30 border-white/10 text-stone-300'
-                }`}
+                type="button"
+                onClick={() => handleSendMessage('عايز أفرغ أفكاري ومشاعري بدون أحكام')}
+                className="p-2.5 rounded-xl border border-white/10 bg-black/25 hover:bg-emerald-950/40 hover:border-emerald-500/40 text-right transition-all cursor-pointer group"
               >
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-white">
-                    <Heart className="w-4 h-4 text-rose-400" />
-                    <span>الطفل الداخلي 🌱</span>
-                  </div>
-                  {settings.persona === 'child' && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  )}
+                <div className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors flex items-center gap-1.5">
+                  <span>🤍</span>
+                  <span>فضفضة حرة وآمنة</span>
                 </div>
-                <p className="text-[10px] text-stone-300 leading-relaxed">
-                  حوار لطيف للتعبير عن الخوف والاحتياج العاطفي بأمان وحب.
-                </p>
+                <p className="text-[10px] text-stone-400 mt-1">مساحة إنصات حنونة واحتواء بلا عتاب</p>
               </button>
 
-              {/* Option 3: الأب الداخلي */}
               <button
-                onClick={() => handleSelectPersona('father')}
-                className={`p-3 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
-                  settings.persona === 'father'
-                    ? 'bg-linear-to-r from-emerald-950/80 to-[#1e342a]/80 border-emerald-400/60 shadow-md ring-2 ring-emerald-500/25'
-                    : 'bg-black/20 hover:bg-black/30 border-white/10 text-stone-300'
-                }`}
+                type="button"
+                onClick={() => handleSendMessage('محتاج أرتب أولوياتي وأعرف خطوتي القادمة')}
+                className="p-2.5 rounded-xl border border-white/10 bg-black/25 hover:bg-emerald-950/40 hover:border-emerald-500/40 text-right transition-all cursor-pointer group"
               >
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-white">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                    <span>الأب الداخلي 🛡️</span>
-                  </div>
-                  {settings.persona === 'father' && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  )}
+                <div className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors flex items-center gap-1.5">
+                  <span>🧭</span>
+                  <span>ترتيب أفكاري والخطوة القادمة</span>
                 </div>
-                <p className="text-[10px] text-stone-300 leading-relaxed">
-                  حكمة وحزم حنون لوقف جلد الذات وتوفير أمان وحماية راسخة.
-                </p>
+                <p className="text-[10px] text-stone-400 mt-1">وضوح واقعي وتوجيه هادئ ومريح</p>
               </button>
             </div>
           </div>
@@ -619,20 +584,12 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
               </div>
 
               {lastCompanionMessage && (
-                <button
-                  onClick={() => handleSpeakMessage(lastCompanionMessage)}
-                  className={`p-1.5 rounded-lg text-xs flex items-center gap-1 transition-colors cursor-pointer ${
-                    activeSpeakingMsgId === lastCompanionMessage.id && isSpeaking
-                      ? 'bg-emerald-500 text-stone-950 font-bold'
-                      : 'bg-white/5 hover:bg-white/10 text-stone-300'
-                  }`}
-                  title={activeSpeakingMsgId === lastCompanionMessage.id && isSpeaking ? 'إيقاف الصوت' : 'استماع صوتي'}
-                >
-                  <Volume2 className="w-3.5 h-3.5" />
-                  <span className="text-[10px]">
-                    {activeSpeakingMsgId === lastCompanionMessage.id && isSpeaking ? 'إيقاف' : 'استماع'}
-                  </span>
-                </button>
+                <TextAudioPlayer
+                  text={lastCompanionMessage.text}
+                  id={lastCompanionMessage.id}
+                  variant="inline"
+                  label="اسمع الرد"
+                />
               )}
             </div>
 
@@ -790,7 +747,7 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
             <button
               onClick={() => handleSendMessage()}
               disabled={!inputText.trim() || isThinking}
-              className="px-4 py-2.5 rounded-xl bg-[#355C4A] hover:bg-[#2A493B] disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0 active:scale-95"
+              className="px-4 py-2.5 rounded-xl bg-[#174C3C] hover:bg-[#2A493B] disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer shrink-0 active:scale-95"
             >
               <Send className="w-3.5 h-3.5 rotate-180" />
               <span className="hidden sm:inline">إرسال</span>

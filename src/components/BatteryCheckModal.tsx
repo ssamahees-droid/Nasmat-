@@ -71,10 +71,10 @@ export const BatteryCheckModal: React.FC<BatteryCheckModalProps> = ({ isOpen, on
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-lg bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">🔋</span>
             <div>
@@ -106,7 +106,7 @@ export const BatteryCheckModal: React.FC<BatteryCheckModalProps> = ({ isOpen, on
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
                 const isSelected = batteryLevel === num;
                 // Color scaling
-                let activeColor = 'bg-[#355C4A] text-white border-[#355C4A] shadow-xs scale-105';
+                let activeColor = 'bg-[#174C3C] text-white border-[#174C3C] shadow-xs scale-105';
                 if (num <= 3) {
                   activeColor = 'bg-rose-700 text-white border-rose-700 shadow-xs scale-105';
                 } else if (num <= 6) {
@@ -120,7 +120,7 @@ export const BatteryCheckModal: React.FC<BatteryCheckModalProps> = ({ isOpen, on
                     className={`py-3 rounded-2xl border font-mono font-bold text-sm transition-all text-center ${
                       isSelected
                         ? activeColor
-                        : 'bg-white hover:bg-stone-100 text-[#26332D] border-[#E8DDCC]'
+                        : 'bg-white hover:bg-stone-100 text-[#26332D] border-[#E6E8D8]'
                     }`}
                   >
                     {num}
@@ -162,7 +162,7 @@ export const BatteryCheckModal: React.FC<BatteryCheckModalProps> = ({ isOpen, on
                     value={drainedBy}
                     onChange={(e) => setDrainedBy(e.target.value)}
                     placeholder="مثال: نقاش طويل، ضغط شغل متواصل، قلة نوم..."
-                    className="w-full p-3 bg-white border border-[#E8DDCC] focus:border-[#355C4A] focus:ring-1 focus:ring-[#355C4A] rounded-2xl text-xs text-[#26332D] outline-none"
+                    className="w-full p-3 bg-white border border-[#E6E8D8] focus:border-[#174C3C] focus:ring-1 focus:ring-[#174C3C] rounded-2xl text-xs text-[#26332D] outline-none"
                   />
                 </div>
 
@@ -175,7 +175,7 @@ export const BatteryCheckModal: React.FC<BatteryCheckModalProps> = ({ isOpen, on
                     value={boostBy}
                     onChange={(e) => setBoostBy(e.target.value)}
                     placeholder="مثال: رشفة ماء بارد، ركعتين هدوء، الابتعاد عن الشاشة ربع ساعة..."
-                    className="w-full p-3 bg-white border border-[#E8DDCC] focus:border-[#355C4A] focus:ring-1 focus:ring-[#355C4A] rounded-2xl text-xs text-[#26332D] outline-none"
+                    className="w-full p-3 bg-white border border-[#E6E8D8] focus:border-[#174C3C] focus:ring-1 focus:ring-[#174C3C] rounded-2xl text-xs text-[#26332D] outline-none"
                   />
                 </div>
               </div>
@@ -184,7 +184,7 @@ export const BatteryCheckModal: React.FC<BatteryCheckModalProps> = ({ isOpen, on
               <div className="pt-2 flex items-center gap-2">
                 <button
                   onClick={handleSaveToNotes}
-                  className="flex-1 py-3 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                  className="flex-1 py-3 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl transition-colors flex items-center justify-center gap-1.5 shadow-xs"
                 >
                   <Check className="w-4 h-4" />
                   <span>{savedSuccess ? 'تم الحفظ في رحلتي بنجاح ✓' : 'حفظ في سجل رحلتي'}</span>
@@ -192,7 +192,7 @@ export const BatteryCheckModal: React.FC<BatteryCheckModalProps> = ({ isOpen, on
 
                 <button
                   onClick={handleReset}
-                  className="p-3 bg-white hover:bg-stone-100 text-stone-600 border border-[#E8DDCC] rounded-2xl text-xs"
+                  className="p-3 bg-white hover:bg-stone-100 text-stone-600 border border-[#E6E8D8] rounded-2xl text-xs"
                   title="إعادة الفحص"
                 >
                   <RotateCcw className="w-4 h-4" />

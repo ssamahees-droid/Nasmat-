@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, ShieldAlert, Phone, HeartHandshake } from 'lucide-react';
+import { TextAudioPlayer } from './TextAudioPlayer';
 
 interface EmergencyHelpModalProps {
   isOpen: boolean;
@@ -15,9 +16,9 @@ export const EmergencyHelpModal: React.FC<EmergencyHelpModalProps> = ({ isOpen, 
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-lg bg-[#FAF7F0] border border-amber-300 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden text-right">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-amber-300 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden text-right">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
               <ShieldAlert className="w-5 h-5 text-amber-700" />
@@ -31,19 +32,27 @@ export const EmergencyHelpModal: React.FC<EmergencyHelpModalProps> = ({ isOpen, 
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 text-stone-500 hover:text-stone-800 rounded-full hover:bg-stone-200/50"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <TextAudioPlayer
+              text="تنبيه أمان ودعم عاجل. نسمة حياة محتوى تثقيفي وتمارين للمساعدة الذاتية، وليست بديلاً عن الطبيب أو المعالج النفسي. إذا كنت في خطر فوري أو تراودك أفكار لإيذاء نفسك أو شخص آخر، أرجوك لا تعتمد على التطبيق وحده. تواصل فوراً مع شخص مقرب تثق به، أو اتصل بخدمات الطوارئ الطبية على رقم 123، أو خط الأمانة العامة للصحة النفسية على رقم 16328 أو 08008880700 ولا تبق وحدك مع الخطر."
+              id="emergency_modal_audio"
+              variant="compact"
+              label="استمع للإرشادات"
+            />
+            <button
+              onClick={onClose}
+              className="p-1.5 text-stone-500 hover:text-stone-800 rounded-full hover:bg-stone-200/50"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Core Message (Section 11) */}
         <div className="my-5 space-y-4 text-xs sm:text-sm text-[#35453E] leading-relaxed">
           <div className="p-4 bg-white rounded-2xl border border-amber-200/70 space-y-2">
             <div className="font-bold text-[#26332D] flex items-center gap-2">
-              <HeartHandshake className="w-4 h-4 text-[#355C4A]" />
+              <HeartHandshake className="w-4 h-4 text-[#174C3C]" />
               <span>تنبيه أمان أساسي:</span>
             </div>
             <p className="text-xs text-[#52645B] leading-relaxed">
@@ -60,17 +69,17 @@ export const EmergencyHelpModal: React.FC<EmergencyHelpModalProps> = ({ isOpen, 
 
           {/* Quick Helplines */}
           <div className="space-y-2 pt-1">
-            <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-[#E8DDCC]">
+            <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-[#E6E8D8]">
               <div>
                 <div className="font-bold text-xs text-[#26332D]">خط الأمانة العامة للصحة النفسية (مصر)</div>
                 <div className="text-[10px] text-[#52645B]">دعم نفسي ومجاني</div>
               </div>
-              <a href="tel:16328" className="px-3 py-1.5 bg-[#355C4A] text-white font-mono font-bold text-xs rounded-xl">
+              <a href="tel:16328" className="px-3 py-1.5 bg-[#174C3C] text-white font-mono font-bold text-xs rounded-xl">
                 16328
               </a>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-[#E8DDCC]">
+            <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-[#E6E8D8]">
               <div>
                 <div className="font-bold text-xs text-[#26332D]">الخط الساخن الوطني المجاني</div>
                 <div className="text-[10px] text-[#52645B]">متاح على مدار الساعة</div>
@@ -80,7 +89,7 @@ export const EmergencyHelpModal: React.FC<EmergencyHelpModalProps> = ({ isOpen, 
               </a>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-[#E8DDCC]">
+            <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-[#E6E8D8]">
               <div>
                 <div className="font-bold text-xs text-red-900">طوارئ الإسعاف</div>
                 <div className="text-[10px] text-red-700">للحالات الحرجة والتدخل الفوري</div>
@@ -93,10 +102,10 @@ export const EmergencyHelpModal: React.FC<EmergencyHelpModalProps> = ({ isOpen, 
         </div>
 
         {/* Footer */}
-        <div className="pt-2 border-t border-[#E8DDCC]">
+        <div className="pt-2 border-t border-[#E6E8D8]">
           <button
             onClick={onClose}
-            className="w-full py-3 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl transition-colors"
+            className="w-full py-3 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl transition-colors"
           >
             تفهّمت الرسالة وسأطلب الرعاية اللازمة 🤍
           </button>

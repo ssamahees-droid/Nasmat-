@@ -126,9 +126,9 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-md bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 shadow-2xl overflow-hidden text-right">
+      <div className="relative w-full max-w-md bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 shadow-2xl overflow-hidden text-right">
         {/* Close Button */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70">
           <div className="text-xs text-[#52645B] font-medium">
             مشغل الجلسات الصوتية · {category}
           </div>
@@ -146,10 +146,10 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
 
         {/* Visual Pulse / Art */}
         <div className="relative flex flex-col items-center justify-center my-4 py-3">
-          <div className={`w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tr from-[#8FAF9A]/30 to-[#355C4A]/20 flex items-center justify-center transition-transform duration-1000 ${isPlaying ? 'scale-105 shadow-lg shadow-[#8FAF9A]/20' : 'scale-100'}`}>
-            <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#8FAF9A]/40 flex items-center justify-center transition-all ${isPlaying ? 'animate-breathe' : ''}`}>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#355C4A] text-white flex items-center justify-center shadow-md">
-                <Heart className="w-6 h-6 text-[#E8DDCC]" />
+          <div className={`w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tr from-[#A9C5A0]/30 to-[#174C3C]/20 flex items-center justify-center transition-transform duration-1000 ${isPlaying ? 'scale-105 shadow-lg shadow-[#A9C5A0]/20' : 'scale-100'}`}>
+            <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#A9C5A0]/40 flex items-center justify-center transition-all ${isPlaying ? 'animate-breathe' : ''}`}>
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#174C3C] text-white flex items-center justify-center shadow-md">
+                <Heart className="w-6 h-6 text-[#E6E8D8]" />
               </div>
             </div>
           </div>
@@ -168,7 +168,7 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
         <div className="mb-4">
           <div className="text-xs text-[#52645B] mb-2 font-medium flex items-center justify-between">
             <span>اختر صوت الطبيعة المرافق:</span>
-            <span className="text-[11px] text-[#355C4A] font-bold">تسجيلات حقيقية دون موسيقى</span>
+            <span className="text-[11px] text-[#174C3C] font-bold">تسجيلات حقيقية دون موسيقى</span>
           </div>
           <div className="grid grid-cols-4 gap-1.5 p-1 bg-stone-200/50 rounded-xl">
             {AVAILABLE_NATURE_TRACKS.map(item => (
@@ -177,7 +177,7 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
                 onClick={() => handleSoundModeChange(item.id)}
                 className={`py-1.5 px-1 text-xs font-medium rounded-lg transition-colors flex items-center justify-center gap-1 ${
                   soundMode === item.id 
-                    ? 'bg-[#355C4A] text-white shadow-xs' 
+                    ? 'bg-[#174C3C] text-white shadow-xs' 
                     : 'text-[#35453E] hover:text-[#26332D]'
                 }`}
                 title={item.label}
@@ -191,7 +191,7 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
           {/* Attribution badge */}
           {currentTrackMeta && (
             <div className="mt-2 text-[10px] text-[#7D8F85] flex items-center gap-1 justify-center">
-              <Info className="w-3 h-3 text-[#355C4A]" />
+              <Info className="w-3 h-3 text-[#174C3C]" />
               <span>المصدر: {currentTrackMeta.attribution} ({currentTrackMeta.license})</span>
             </div>
           )}
@@ -205,7 +205,7 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
             max={totalSeconds}
             value={secondsElapsed}
             onChange={(e) => setSecondsElapsed(Number(e.target.value))}
-            className="w-full accent-[#355C4A] cursor-pointer"
+            className="w-full accent-[#174C3C] cursor-pointer"
           />
           <div className="flex justify-between text-xs font-mono text-[#52645B]">
             <span>{formatTime(secondsElapsed)}</span>
@@ -214,7 +214,7 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
         </div>
 
         {/* Controls: Play/Pause, Rewind, Volume */}
-        <div className="flex items-center justify-between gap-4 pt-2 border-t border-[#E8DDCC]/70">
+        <div className="flex items-center justify-between gap-4 pt-2 border-t border-[#E6E8D8]/70">
           <button
             onClick={handleResetSession}
             className="p-2.5 text-[#52645B] hover:text-[#26332D] hover:bg-stone-200/40 rounded-xl transition-colors"
@@ -225,7 +225,7 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
 
           <button
             onClick={handleTogglePlay}
-            className="w-14 h-14 rounded-2xl bg-[#355C4A] hover:bg-[#264235] text-white flex items-center justify-center shadow-lg shadow-[#355C4A]/25 transition-transform active:scale-95 cursor-pointer"
+            className="w-14 h-14 rounded-2xl bg-[#174C3C] hover:bg-[#264235] text-white flex items-center justify-center shadow-lg shadow-[#174C3C]/25 transition-transform active:scale-95 cursor-pointer"
             aria-label={isPlaying ? 'إيقاف مؤقت' : 'تشغيل'}
           >
             {isPlaying ? <Pause className="w-7 h-7" /> : <Play className="w-7 h-7 translate-x-0.5" />}
@@ -246,7 +246,7 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
               step="0.05"
               value={isMuted ? 0 : volume}
               onChange={(e) => handleVolumeChange(Number(e.target.value))}
-              className="w-16 accent-[#355C4A] cursor-pointer"
+              className="w-16 accent-[#174C3C] cursor-pointer"
             />
           </div>
         </div>
@@ -256,7 +256,7 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
           <div className="mt-3 pt-2">
             <button
               onClick={handleCompleteSession}
-              className="w-full py-2.5 text-xs font-medium text-[#355C4A] hover:bg-[#8FAF9A]/15 border border-[#8FAF9A]/30 rounded-xl transition-colors cursor-pointer"
+              className="w-full py-2.5 text-xs font-medium text-[#174C3C] hover:bg-[#A9C5A0]/15 border border-[#A9C5A0]/30 rounded-xl transition-colors cursor-pointer"
             >
               إنهاء الجلسة وتسجيل الشعور الآن
             </button>
@@ -265,7 +265,7 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
 
         {/* Post-Session Check-in */}
         {showPostCheckin && (
-          <div className="mt-4 p-4 bg-white/90 border border-[#8FAF9A]/40 rounded-2xl animate-fade-in space-y-3">
+          <div className="mt-4 p-4 bg-white/90 border border-[#A9C5A0]/40 rounded-2xl animate-fade-in space-y-3">
             <div className="text-center">
               <div className="text-sm font-bold text-[#26332D]">إيه إحساسك دلوقتي؟</div>
               <div className="text-[11px] text-[#52645B] mt-0.5">هذه ليست نتيجة طبية</div>
@@ -282,8 +282,8 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
                   onClick={() => setSelectedFeeling(opt.mood as 'better' | 'same' | 'tired')}
                   className={`py-2 px-2 text-xs font-medium rounded-xl border text-center transition-all cursor-pointer ${
                     selectedFeeling === opt.mood
-                      ? 'bg-[#355C4A] text-white border-[#355C4A]'
-                      : 'bg-[#FAF7F0] text-[#26332D] border-[#E8DDCC] hover:bg-[#E8DDCC]/40'
+                      ? 'bg-[#174C3C] text-white border-[#174C3C]'
+                      : 'bg-[#F7F3E9] text-[#26332D] border-[#E6E8D8] hover:bg-[#E6E8D8]/40'
                   }`}
                 >
                   {opt.label}
@@ -299,7 +299,7 @@ export const AudioPlayerModal: React.FC<AudioPlayerModalProps> = ({
                   }
                   onClose();
                 }}
-                className="w-full py-2.5 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                className="w-full py-2.5 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 حفظ وإنهاء

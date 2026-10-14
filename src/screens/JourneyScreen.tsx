@@ -137,7 +137,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#26332D]">
           رحلتي 🌱
         </h1>
-        <p className="text-sm font-semibold text-[#355C4A]">
+        <p className="text-sm font-semibold text-[#174C3C]">
           «خطوة صغيرة كل يوم ممكن تعمل فرقاً»
         </p>
       </div>
@@ -146,7 +146,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
       {onOpenPersonalPlan && (
         <section 
           onClick={onOpenPersonalPlan}
-          className="cursor-pointer bg-gradient-to-r from-emerald-50 via-white to-[#FAF7F0] border border-[#8FAF9A]/60 rounded-3xl p-4 sm:p-5 shadow-xs hover:border-[#355C4A] transition-all flex items-center justify-between group"
+          className="cursor-pointer bg-gradient-to-r from-emerald-50 via-white to-[#F7F3E9] border border-[#A9C5A0]/60 rounded-3xl p-4 sm:p-5 shadow-xs hover:border-[#174C3C] transition-all flex items-center justify-between group"
         >
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
@@ -168,7 +168,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
               </p>
             </div>
           </div>
-          <span className="text-xs font-bold text-[#355C4A] group-hover:-translate-x-1 transition-transform">
+          <span className="text-xs font-bold text-[#174C3C] group-hover:-translate-x-1 transition-transform">
             فتح الخطة 👈
           </span>
         </section>
@@ -179,7 +179,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
         {onOpenThoughtJournal && (
           <div
             onClick={onOpenThoughtJournal}
-            className="cursor-pointer p-3.5 bg-white hover:bg-[#FAF7F2] border border-[#E5DACB] hover:border-[#3A5A40] rounded-2xl transition-all shadow-2xs flex items-center justify-between group"
+            className="cursor-pointer p-3.5 bg-white hover:bg-[#F7F3E9] border border-[#E6E8D8] hover:border-[#3A5A40] rounded-2xl transition-all shadow-2xs flex items-center justify-between group"
           >
             <div className="flex items-center gap-2.5">
               <span className="text-xl group-hover:scale-105 transition-transform">✍️</span>
@@ -195,7 +195,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
         {onOpenMindfulnessStudio && (
           <div
             onClick={onOpenMindfulnessStudio}
-            className="cursor-pointer p-3.5 bg-white hover:bg-[#FAF7F2] border border-[#E5DACB] hover:border-[#3A5A40] rounded-2xl transition-all shadow-2xs flex items-center justify-between group"
+            className="cursor-pointer p-3.5 bg-white hover:bg-[#F7F3E9] border border-[#E6E8D8] hover:border-[#3A5A40] rounded-2xl transition-all shadow-2xs flex items-center justify-between group"
           >
             <div className="flex items-center gap-2.5">
               <span className="text-xl group-hover:scale-105 transition-transform">🧘</span>
@@ -210,11 +210,11 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
       </div>
 
       {/* Wellness Habits & Weekly Consistency Tracker */}
-      <section className="bg-gradient-to-br from-[#FAF7F0] via-white to-emerald-50/40 border border-[#E8DDCC] rounded-3xl p-5 shadow-xs space-y-4">
+      <section className="bg-gradient-to-br from-[#F7F3E9] via-white to-emerald-50/40 border border-[#E6E8D8] rounded-3xl p-5 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <h2 className="text-base font-bold text-[#26332D] flex items-center gap-2">
-              <Check className="w-5 h-5 text-[#355C4A]" />
+              <Check className="w-5 h-5 text-[#174C3C]" />
               <span>عادات الصحة النفسية اليومية</span>
             </h2>
             <p className="text-xs text-[#52645B]">
@@ -224,7 +224,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
           {!isAddingHabit && (
             <button
               onClick={() => setIsAddingHabit(true)}
-              className="py-1.5 px-3 bg-[#355C4A] text-white text-xs font-bold rounded-xl flex items-center gap-1 hover:bg-[#264235] transition-colors shadow-2xs"
+              className="py-1.5 px-3 bg-[#174C3C] text-white text-xs font-bold rounded-xl flex items-center gap-1 hover:bg-[#264235] transition-colors shadow-2xs"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>إضافة عادة</span>
@@ -234,14 +234,14 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
 
         {/* Add Habit Form */}
         {isAddingHabit && (
-          <form onSubmit={handleSaveHabit} className="p-4 bg-white border border-[#355C4A]/40 rounded-2xl space-y-3 animate-fade-in shadow-xs">
+          <form onSubmit={handleSaveHabit} className="p-4 bg-white border border-[#174C3C]/40 rounded-2xl space-y-3 animate-fade-in shadow-xs">
             <input
               type="text"
               value={newHabitTitle}
               onChange={(e) => setNewHabitTitle(e.target.value)}
               placeholder="مثال: تمرين التنفس العميق، المشي 10 دقائق، شرب الماء بوعي..."
               required
-              className="w-full p-3 text-xs bg-[#FAF7F0] border border-[#E8DDCC] rounded-xl focus:outline-hidden focus:bg-white text-[#26332D]"
+              className="w-full p-3 text-xs bg-[#F7F3E9] border border-[#E6E8D8] rounded-xl focus:outline-hidden focus:bg-white text-[#26332D]"
             />
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs text-[#52645B]">
@@ -249,7 +249,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
                 <select
                   value={newHabitCategory}
                   onChange={(e) => setNewHabitCategory(e.target.value as HabitCategory)}
-                  className="p-1.5 text-xs bg-[#FAF7F0] border border-[#E8DDCC] rounded-xl text-[#26332D]"
+                  className="p-1.5 text-xs bg-[#F7F3E9] border border-[#E6E8D8] rounded-xl text-[#26332D]"
                 >
                   <option value="mindfulness">يقظة واسترخاء 🧘</option>
                   <option value="physical">صحة جسدية 💧</option>
@@ -268,7 +268,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="py-1.5 px-4 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
+                  className="py-1.5 px-4 bg-[#174C3C] text-white text-xs font-bold rounded-xl"
                 >
                   حفظ العادة
                 </button>
@@ -278,7 +278,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
         )}
 
         {habits.length === 0 ? (
-          <div className="p-6 bg-white/70 border border-[#E8DDCC] rounded-2xl text-center text-xs text-[#7D8F85]">
+          <div className="p-6 bg-white/70 border border-[#E6E8D8] rounded-2xl text-center text-xs text-[#7D8F85]">
             لم تقم بإضافة أي عادات بعد. أضف عادتك الأولى لتبدأ تتبع رحلتك اليومية.
           </div>
         ) : (
@@ -293,14 +293,14 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
                 habit.category === 'social' ? '🌱' : '☀️';
 
               return (
-                <div key={habit.id} className="p-4 bg-white/90 border border-[#E8DDCC] rounded-2xl space-y-3 shadow-2xs hover:border-[#355C4A]/50 transition-all">
+                <div key={habit.id} className="p-4 bg-white/90 border border-[#E6E8D8] rounded-2xl space-y-3 shadow-2xs hover:border-[#174C3C]/50 transition-all">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <span className="text-xl">{habitIcon}</span>
                       <div>
                         <h3 className="font-bold text-xs text-[#26332D]">{habit.title}</h3>
                         <span className="text-[10px] text-[#52645B] font-medium">
-                          إنجاز هذا الأسبوع: <strong className="text-[#355C4A]">{weeklyCompletedCount}</strong> من 7 أيام
+                          إنجاز هذا الأسبوع: <strong className="text-[#174C3C]">{weeklyCompletedCount}</strong> من 7 أيام
                         </span>
                       </div>
                     </div>
@@ -314,7 +314,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
                   </div>
 
                   {/* 7-Day Consistency Visualization & Toggle Grid */}
-                  <div className="pt-2 border-t border-[#E8DDCC]/60">
+                  <div className="pt-2 border-t border-[#E6E8D8]/60">
                     <div className="text-[11px] text-[#52645B] mb-2 font-medium">متابعة الأيام الـ 7 الأخيرة (اضغط لتحديد اليوم):</div>
                     <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
                       {weekDays.map(day => {
@@ -327,9 +327,9 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
                             onClick={() => handleToggleHabit(habit.id, day.dateStr)}
                             className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${
                               isDone
-                                ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-xs'
-                                : 'bg-[#FAF7F0] text-[#52645B] border-[#E8DDCC] hover:border-[#355C4A]'
-                            } ${isToday && !isDone ? 'ring-2 ring-[#355C4A]/40' : ''}`}
+                                ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-xs'
+                                : 'bg-[#F7F3E9] text-[#52645B] border-[#E6E8D8] hover:border-[#174C3C]'
+                            } ${isToday && !isDone ? 'ring-2 ring-[#174C3C]/40' : ''}`}
                             title={`${day.dateStr}: ${isDone ? 'مكتملة (اضغط للإلغاء)' : 'غير مكتملة (اضغط للإنجاز)'}`}
                           >
                             <span className="text-[10px] font-bold">{day.dayLabel}</span>
@@ -350,18 +350,18 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
       </section>
 
       {/* Descriptive Statistics Card (Page 19) */}
-      <section className="bg-gradient-to-r from-[#FAF7F0] to-[#EFEAE0] border border-[#E8DDCC] rounded-3xl p-5 shadow-xs space-y-3">
+      <section className="bg-gradient-to-r from-[#F7F3E9] to-[#EFEAE0] border border-[#E6E8D8] rounded-3xl p-5 shadow-xs space-y-3">
         <div className="flex items-center justify-between text-xs text-[#52645B]">
           <span className="font-bold text-[#26332D] flex items-center gap-1.5">
-            <BarChart2 className="w-4 h-4 text-[#355C4A]" />
+            <BarChart2 className="w-4 h-4 text-[#174C3C]" />
             <span>نشاطك ومتابعتك</span>
           </span>
           <span className="text-[11px] text-[#7D8F85]">إحصائيات وصفية دون أحكام</span>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <div className="p-3 bg-white/80 rounded-2xl border border-[#E8DDCC] text-center">
-            <div className="font-mono text-xl font-extrabold text-[#355C4A]">
+          <div className="p-3 bg-white/80 rounded-2xl border border-[#E6E8D8] text-center">
+            <div className="font-mono text-xl font-extrabold text-[#174C3C]">
               {daysRecordedCount}
             </div>
             <div className="text-[11px] text-[#52645B] mt-0.5 font-medium">
@@ -369,8 +369,8 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
             </div>
           </div>
 
-          <div className="p-3 bg-white/80 rounded-2xl border border-[#E8DDCC] text-center">
-            <div className="font-mono text-xl font-extrabold text-[#355C4A]">
+          <div className="p-3 bg-white/80 rounded-2xl border border-[#E6E8D8] text-center">
+            <div className="font-mono text-xl font-extrabold text-[#174C3C]">
               {notesCount}
             </div>
             <div className="text-[11px] text-[#52645B] mt-0.5 font-medium">
@@ -378,8 +378,8 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
             </div>
           </div>
 
-          <div className="p-3 bg-white/80 rounded-2xl border border-[#E8DDCC] text-center">
-            <div className="font-mono text-xl font-extrabold text-[#355C4A]">
+          <div className="p-3 bg-white/80 rounded-2xl border border-[#E6E8D8] text-center">
+            <div className="font-mono text-xl font-extrabold text-[#174C3C]">
               {assessmentsCount}
             </div>
             <div className="text-[11px] text-[#52645B] mt-0.5 font-medium">
@@ -390,13 +390,13 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
 
         {/* Visual Mood Flow Wave */}
         {checkins.length > 0 && (
-          <div className="p-4 bg-white/80 rounded-2xl border border-[#E8DDCC] space-y-2">
+          <div className="p-4 bg-white/80 rounded-2xl border border-[#E6E8D8] space-y-2">
             <div className="flex items-center justify-between text-xs text-[#52645B]">
               <span className="font-bold text-[#26332D]">موجة انسياب المشاعر (التسجيلات الأخيرة):</span>
               <span className="text-[10px] text-[#7D8F85]">كل شعور له قيمته</span>
             </div>
             
-            <div className="flex items-end justify-between gap-2 pt-4 pb-2 px-2 h-20 border-b border-[#E8DDCC]">
+            <div className="flex items-end justify-between gap-2 pt-4 pb-2 px-2 h-20 border-b border-[#E6E8D8]">
               {checkins.slice(0, 7).reverse().map((chk, idx) => {
                 const heightPercent = 
                   chk.moodValue === 'good' ? 95 :
@@ -409,7 +409,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
                   <div key={chk.id || idx} className="flex-1 flex flex-col items-center gap-1 group relative">
                     <span className="text-xs transition-transform group-hover:scale-125">{moodEmoji}</span>
                     <div 
-                      className="w-full max-w-[28px] rounded-t-lg bg-gradient-to-t from-[#8FAF9A] to-[#355C4A] transition-all duration-500 opacity-80 group-hover:opacity-100"
+                      className="w-full max-w-[28px] rounded-t-lg bg-gradient-to-t from-[#A9C5A0] to-[#174C3C] transition-all duration-500 opacity-80 group-hover:opacity-100"
                       style={{ height: `${heightPercent}%` }}
                     />
                     <span className="text-[9px] font-mono text-[#7D8F85] mt-1 truncate">
@@ -431,14 +431,14 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-[#26332D] flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-[#355C4A]" />
+            <Calendar className="w-4 h-4 text-[#174C3C]" />
             <span>سجل الأيام (Daily Check-in)</span>
           </h2>
           <span className="text-xs text-[#7D8F85]">يمكنك حذف أي يوم</span>
         </div>
 
         {checkins.length === 0 ? (
-          <div className="p-6 bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl text-center text-xs text-[#7D8F85]">
+          <div className="p-6 bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl text-center text-xs text-[#7D8F85]">
             لم تقم بتسجيل حالتك بعد. يمكنك الضغط على أحد أوجه المشاعر في الشاشة الرئيسية.
           </div>
         ) : (
@@ -455,13 +455,13 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
               return (
                 <div
                   key={chk.id}
-                  className="p-3.5 bg-[#FAF7F0] border border-[#E8DDCC] rounded-2xl flex items-center justify-between gap-3 hover:bg-white transition-all"
+                  className="p-3.5 bg-[#F7F3E9] border border-[#E6E8D8] rounded-2xl flex items-center justify-between gap-3 hover:bg-white transition-all"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{moodInfo.emoji}</span>
                     <div>
                       <div className="font-bold text-xs text-[#26332D]">
-                        {formattedDate} — <span className="text-[#355C4A]">{moodInfo.label}</span>
+                        {formattedDate} — <span className="text-[#174C3C]">{moodInfo.label}</span>
                       </div>
                       {chk.optionalNote && (
                         <p className="text-[11px] text-[#52645B] mt-0.5 line-clamp-1">
@@ -490,13 +490,13 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-[#26332D] flex items-center gap-2">
-            <Edit3 className="w-4 h-4 text-[#355C4A]" />
+            <Edit3 className="w-4 h-4 text-[#174C3C]" />
             <span>ملاحظاتي الخاصة</span>
           </h2>
           {!isAddingNote && (
             <button
               onClick={() => setIsAddingNote(true)}
-              className="py-1 px-3 bg-[#355C4A] text-white text-xs font-bold rounded-xl flex items-center gap-1 hover:bg-[#264235] transition-colors"
+              className="py-1 px-3 bg-[#174C3C] text-white text-xs font-bold rounded-xl flex items-center gap-1 hover:bg-[#264235] transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>إضافة ملاحظة</span>
@@ -506,14 +506,14 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
 
         {/* Note editor form */}
         {isAddingNote && (
-          <form onSubmit={handleSaveNote} className="p-4 bg-white border border-[#355C4A]/40 rounded-2xl space-y-3 animate-fade-in shadow-xs">
+          <form onSubmit={handleSaveNote} className="p-4 bg-white border border-[#174C3C]/40 rounded-2xl space-y-3 animate-fade-in shadow-xs">
             <textarea
               rows={3}
               value={newNoteText}
               onChange={(e) => setNewNoteText(e.target.value)}
               placeholder="اكتب ما يدور في خاطرك اليوم، فكرة لاحظتها، أو إنجاز صغير تشكر نفسك عليه..."
               required
-              className="w-full p-3 text-xs bg-[#FAF7F0] border border-[#E8DDCC] rounded-xl focus:outline-hidden focus:bg-white"
+              className="w-full p-3 text-xs bg-[#F7F3E9] border border-[#E6E8D8] rounded-xl focus:outline-hidden focus:bg-white"
             />
             
             <div className="flex items-center justify-between">
@@ -525,7 +525,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
                     key={m}
                     onClick={() => setSelectedNoteMood(selectedNoteMood === m ? undefined : m)}
                     className={`p-1 text-base rounded-lg border ${
-                      selectedNoteMood === m ? 'border-[#355C4A] bg-[#8FAF9A]/20' : 'border-[#E8DDCC]'
+                      selectedNoteMood === m ? 'border-[#174C3C] bg-[#A9C5A0]/20' : 'border-[#E6E8D8]'
                     }`}
                   >
                     {MOOD_MAP[m].emoji}
@@ -543,7 +543,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="py-1.5 px-4 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
+                  className="py-1.5 px-4 bg-[#174C3C] text-white text-xs font-bold rounded-xl"
                 >
                   حفظ
                 </button>
@@ -553,7 +553,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
         )}
 
         {notes.length === 0 ? (
-          <div className="p-6 bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl text-center text-xs text-[#7D8F85]">
+          <div className="p-6 bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl text-center text-xs text-[#7D8F85]">
             لا توجد ملاحظات مسجلة بعد. استخدم الملاحظات كدفتر يوميات خفيف لتدوين خواطرك.
           </div>
         ) : (
@@ -561,7 +561,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
             {notes.map(note => (
               <div
                 key={note.id}
-                className="p-4 bg-[#FAF7F0] border border-[#E8DDCC] rounded-2xl space-y-2 hover:bg-white transition-all"
+                className="p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-2xl space-y-2 hover:bg-white transition-all"
               >
                 <div className="flex items-center justify-between text-[11px] text-[#52645B]">
                   <span className="font-mono">{new Date(note.date).toLocaleDateString('ar-EG')}</span>
@@ -591,19 +591,19 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-[#26332D] flex items-center gap-2">
-            <ClipboardCheck className="w-4 h-4 text-[#355C4A]" />
+            <ClipboardCheck className="w-4 h-4 text-[#174C3C]" />
             <span>التقييمات السابقة</span>
           </h2>
           <button
             onClick={onOpenAssessment}
-            className="text-xs font-bold text-[#355C4A] hover:underline"
+            className="text-xs font-bold text-[#174C3C] hover:underline"
           >
             إجراء تقييم جديد
           </button>
         </div>
 
         {assessments.length === 0 ? (
-          <div className="p-6 bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl text-center text-xs text-[#7D8F85]">
+          <div className="p-6 bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl text-center text-xs text-[#7D8F85]">
             لم تقم بإجراء أي تقييم ذاتي بعد.
           </div>
         ) : (
@@ -611,7 +611,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
             {assessments.map(item => (
               <div
                 key={item.id}
-                className="p-4 bg-[#FAF7F0] border border-[#E8DDCC] rounded-2xl space-y-2 hover:bg-white transition-all"
+                className="p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-2xl space-y-2 hover:bg-white transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -623,7 +623,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 bg-white border border-[#E8DDCC] rounded-lg">
+                    <span className="font-mono text-xs font-bold px-2 py-0.5 bg-white border border-[#E6E8D8] rounded-lg">
                       {item.score} / {item.maxScore}
                     </span>
                     <button
@@ -636,7 +636,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
                   </div>
                 </div>
 
-                <div className="text-xs font-semibold text-[#355C4A]">
+                <div className="text-xs font-semibold text-[#174C3C]">
                   {item.resultTitle}
                 </div>
 
@@ -648,7 +648,7 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
                   <span>* لا يمثل هذا التقييم تشخيصاً طبياً.</span>
                   <button
                     onClick={onNavigateToContent}
-                    className="text-[#355C4A] hover:underline font-bold"
+                    className="text-[#174C3C] hover:underline font-bold"
                   >
                     استكشف المحتوى المناسب ←
                   </button>

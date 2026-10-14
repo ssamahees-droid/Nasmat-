@@ -118,12 +118,12 @@ export const EmotionCompassModal: React.FC<EmotionCompassModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-lg bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 shadow-2xl text-right max-h-[85vh] overflow-y-auto">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 shadow-2xl text-right max-h-[85vh] overflow-y-auto">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-[#8FAF9A]/20 text-[#355C4A] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-[#A9C5A0]/20 text-[#174C3C] flex items-center justify-center">
               <Compass className="w-4 h-4" />
             </div>
             <div>
@@ -141,13 +141,13 @@ export const EmotionCompassModal: React.FC<EmotionCompassModalProps> = ({
           <div className="my-5 space-y-4 animate-fade-in">
             <button
               onClick={() => setSelectedNuance(null)}
-              className="text-xs font-bold text-[#355C4A] hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-[#174C3C] hover:underline flex items-center gap-1"
             >
               <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
               <span>العودة لخيارات البوصلة</span>
             </button>
 
-            <div className="p-4 bg-white rounded-2xl border border-[#8FAF9A]/50 space-y-2">
+            <div className="p-4 bg-white rounded-2xl border border-[#A9C5A0]/50 space-y-2">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🌸</span>
                 <h3 className="font-bold text-base text-[#26332D]">{selectedNuance.name}</h3>
@@ -158,9 +158,9 @@ export const EmotionCompassModal: React.FC<EmotionCompassModalProps> = ({
             </div>
 
             {/* Validation */}
-            <div className="p-4 bg-[#8FAF9A]/15 border border-[#8FAF9A]/30 rounded-2xl space-y-1 text-xs text-[#35453E] leading-relaxed">
-              <div className="font-bold text-[#355C4A] flex items-center gap-1.5">
-                <Heart className="w-3.5 h-3.5 text-[#355C4A]" />
+            <div className="p-4 bg-[#A9C5A0]/15 border border-[#A9C5A0]/30 rounded-2xl space-y-1 text-xs text-[#35453E] leading-relaxed">
+              <div className="font-bold text-[#174C3C] flex items-center gap-1.5">
+                <Heart className="w-3.5 h-3.5 text-[#174C3C]" />
                 <span>احتواء الشعور دون لوم:</span>
               </div>
               <p>{selectedNuance.validation}</p>
@@ -175,7 +175,7 @@ export const EmotionCompassModal: React.FC<EmotionCompassModalProps> = ({
             <div className="pt-2 flex gap-2">
               <button
                 onClick={handleSaveToJourney}
-                className="flex-1 py-3 px-4 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+                className="flex-1 py-3 px-4 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
               >
                 {savedSuccess ? (
                   <>
@@ -208,7 +208,7 @@ export const EmotionCompassModal: React.FC<EmotionCompassModalProps> = ({
                       <button
                         key={nuance.name}
                         onClick={() => setSelectedNuance(nuance)}
-                        className="py-1.5 px-3 bg-white/90 hover:bg-[#355C4A] hover:text-white border border-[#E8DDCC] rounded-xl text-xs font-medium transition-all text-[#26332D] shadow-2xs"
+                        className="py-1.5 px-3 bg-white/90 hover:bg-[#174C3C] hover:text-white border border-[#E6E8D8] rounded-xl text-xs font-medium transition-all text-[#26332D] shadow-2xs"
                       >
                         {nuance.name}
                       </button>

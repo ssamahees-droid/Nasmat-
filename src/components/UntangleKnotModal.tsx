@@ -58,10 +58,10 @@ export const UntangleKnotModal: React.FC<UntangleKnotModalProps> = ({ isOpen, on
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-lg bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">🧩</span>
             <div>
@@ -95,7 +95,7 @@ export const UntangleKnotModal: React.FC<UntangleKnotModalProps> = ({ isOpen, on
                 value={bigThought}
                 onChange={(e) => setBigThought(e.target.value)}
                 placeholder="مثال: حياتي كلها بايظة، ومش عارف ألحق أي حاجة..."
-                className="w-full p-3.5 bg-white border border-[#E8DDCC] focus:border-[#355C4A] focus:ring-1 focus:ring-[#355C4A] rounded-2xl text-xs sm:text-sm text-[#26332D] outline-none resize-none leading-relaxed"
+                className="w-full p-3.5 bg-white border border-[#E6E8D8] focus:border-[#174C3C] focus:ring-1 focus:ring-[#174C3C] rounded-2xl text-xs sm:text-sm text-[#26332D] outline-none resize-none leading-relaxed"
               />
 
               <div className="flex items-center gap-1.5 text-[11px] text-[#7D8F85]">
@@ -106,7 +106,7 @@ export const UntangleKnotModal: React.FC<UntangleKnotModalProps> = ({ isOpen, on
               <button
                 type="submit"
                 disabled={!bigThought.trim()}
-                className="w-full py-3 bg-[#355C4A] hover:bg-[#264235] disabled:opacity-50 text-white text-xs font-bold rounded-2xl transition-colors shadow-xs"
+                className="w-full py-3 bg-[#174C3C] hover:bg-[#264235] disabled:opacity-50 text-white text-xs font-bold rounded-2xl transition-colors shadow-xs"
               >
                 خلينا نصغرها ونفككها 👈
               </button>
@@ -116,18 +116,18 @@ export const UntangleKnotModal: React.FC<UntangleKnotModalProps> = ({ isOpen, on
           {/* Step 2: "خلينا نصغرها" - Select Domain */}
           {currentStep === 2 && (
             <div className="space-y-4 animate-fade-in">
-              <div className="p-3 bg-white rounded-2xl border border-[#E8DDCC] text-xs text-[#52645B] flex items-center justify-between">
+              <div className="p-3 bg-white rounded-2xl border border-[#E6E8D8] text-xs text-[#52645B] flex items-center justify-between">
                 <span>الجملة: «{bigThought}»</span>
                 <button
                   onClick={() => setCurrentStep(1)}
-                  className="text-[#355C4A] font-bold text-[11px] hover:underline"
+                  className="text-[#174C3C] font-bold text-[11px] hover:underline"
                 >
                   تعديل
                 </button>
               </div>
 
               <div className="space-y-1">
-                <div className="text-sm font-extrabold text-[#355C4A]">
+                <div className="text-sm font-extrabold text-[#174C3C]">
                   خلينا نصغرها.. 🌱
                 </div>
                 <p className="text-xs text-[#26332D] font-bold">
@@ -140,10 +140,10 @@ export const UntangleKnotModal: React.FC<UntangleKnotModalProps> = ({ isOpen, on
                   <button
                     key={dom.id}
                     onClick={() => handleDomainSelect(dom)}
-                    className="p-3.5 bg-white hover:bg-[#FAF7F0] border border-[#E8DDCC] hover:border-[#355C4A] rounded-2xl text-right transition-all flex items-center gap-2.5 group active:scale-98"
+                    className="p-3.5 bg-white hover:bg-[#F7F3E9] border border-[#E6E8D8] hover:border-[#174C3C] rounded-2xl text-right transition-all flex items-center gap-2.5 group active:scale-98"
                   >
                     <span className="text-2xl shrink-0">{dom.emoji}</span>
-                    <span className="text-xs font-bold text-[#26332D] group-hover:text-[#355C4A] transition-colors">
+                    <span className="text-xs font-bold text-[#26332D] group-hover:text-[#174C3C] transition-colors">
                       {dom.title}
                     </span>
                   </button>
@@ -155,8 +155,8 @@ export const UntangleKnotModal: React.FC<UntangleKnotModalProps> = ({ isOpen, on
           {/* Step 3: Define 15-minute micro action */}
           {currentStep === 3 && selectedDomain && (
             <div className="space-y-4 animate-fade-in">
-              <div className="p-3 bg-[#8FAF9A]/15 border border-[#8FAF9A]/30 rounded-2xl space-y-1">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#355C4A]">
+              <div className="p-3 bg-[#A9C5A0]/15 border border-[#A9C5A0]/30 rounded-2xl space-y-1">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#174C3C]">
                   <span>{selectedDomain.emoji}</span>
                   <span>المجال المستهدف: {selectedDomain.title}</span>
                 </div>
@@ -175,7 +175,7 @@ export const UntangleKnotModal: React.FC<UntangleKnotModalProps> = ({ isOpen, on
                   value={microAction}
                   onChange={(e) => setMicroAction(e.target.value)}
                   placeholder="مثال: هفتح الملف وأكتب سطرين فقط، أو هتصل أسأل عن معلومة..."
-                  className="w-full p-3 bg-white border border-[#E8DDCC] focus:border-[#355C4A] focus:ring-1 focus:ring-[#355C4A] rounded-2xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
+                  className="w-full p-3 bg-white border border-[#E6E8D8] focus:border-[#174C3C] focus:ring-1 focus:ring-[#174C3C] rounded-2xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
                 />
 
                 {/* Micro Examples */}
@@ -187,7 +187,7 @@ export const UntangleKnotModal: React.FC<UntangleKnotModalProps> = ({ isOpen, on
                         key={i}
                         type="button"
                         onClick={() => setMicroAction(ex)}
-                        className="px-2.5 py-1 bg-white hover:bg-stone-100 text-[11px] text-[#355C4A] border border-[#E8DDCC] rounded-xl transition-colors"
+                        className="px-2.5 py-1 bg-white hover:bg-stone-100 text-[11px] text-[#174C3C] border border-[#E6E8D8] rounded-xl transition-colors"
                       >
                         {ex}
                       </button>
@@ -200,7 +200,7 @@ export const UntangleKnotModal: React.FC<UntangleKnotModalProps> = ({ isOpen, on
                 <button
                   onClick={handleSaveKnot}
                   disabled={!microAction.trim()}
-                  className="flex-1 py-3 bg-[#355C4A] hover:bg-[#264235] disabled:opacity-50 text-white text-xs font-bold rounded-2xl transition-colors shadow-xs flex items-center justify-center gap-1.5"
+                  className="flex-1 py-3 bg-[#174C3C] hover:bg-[#264235] disabled:opacity-50 text-white text-xs font-bold rounded-2xl transition-colors shadow-xs flex items-center justify-center gap-1.5"
                 >
                   <Check className="w-4 h-4" />
                   <span>اعتماد هذه الخطوة وحفظها</span>
@@ -208,7 +208,7 @@ export const UntangleKnotModal: React.FC<UntangleKnotModalProps> = ({ isOpen, on
 
                 <button
                   onClick={() => setCurrentStep(2)}
-                  className="p-3 bg-white hover:bg-stone-100 text-stone-600 border border-[#E8DDCC] rounded-2xl text-xs"
+                  className="p-3 bg-white hover:bg-stone-100 text-stone-600 border border-[#E6E8D8] rounded-2xl text-xs"
                 >
                   رجوع
                 </button>

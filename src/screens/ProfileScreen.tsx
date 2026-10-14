@@ -124,9 +124,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
     <div className="pb-28 pt-4 px-4 sm:px-6 max-w-2xl mx-auto space-y-6 text-right">
       
       {/* Profile Header */}
-      <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-6 flex items-center justify-between shadow-xs">
+      <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-6 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#355C4A] text-white flex items-center justify-center font-bold text-xl shadow-xs overflow-hidden">
+          <div className="w-14 h-14 rounded-2xl bg-[#174C3C] text-white flex items-center justify-center font-bold text-xl shadow-xs overflow-hidden">
             {user.avatarUrl ? (
               <img src={user.avatarUrl} alt="صورة البروفيل" className="w-full h-full object-cover" />
             ) : (
@@ -140,8 +140,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <p className="text-xs text-[#52645B] font-mono mt-0.5">
               {user.emailOrPhone}
             </p>
-            <div className="mt-1 inline-flex items-center gap-1.5 text-[11px] text-[#355C4A] font-medium">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#8FAF9A]" />
+            <div className="mt-1 inline-flex items-center gap-1.5 text-[11px] text-[#174C3C] font-medium">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#A9C5A0]" />
               <span>حساب نشط ومحمي</span>
             </div>
           </div>
@@ -149,14 +149,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
         <button
           onClick={() => setActiveModal('edit_profile')}
-          className="py-1.5 px-3 bg-white hover:bg-stone-100 text-[#355C4A] border border-[#E8DDCC] rounded-xl text-xs font-semibold transition-colors"
+          className="py-1.5 px-3 bg-white hover:bg-stone-100 text-[#174C3C] border border-[#E6E8D8] rounded-xl text-xs font-semibold transition-colors"
         >
           تعديل
         </button>
       </div>
 
       {/* Profile Menu Items (According to Spec page 20) */}
-      <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl overflow-hidden shadow-xs divide-y divide-[#E8DDCC]/70">
+      <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl overflow-hidden shadow-xs divide-y divide-[#E6E8D8]/70">
         
         {/* 1. رحلتي */}
         <button
@@ -168,7 +168,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <Sparkles className="w-4 h-4" />
             </div>
             <div className="text-right">
-              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#355C4A]">
+              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#174C3C]">
                 رحلتي
               </div>
               <div className="text-[11px] text-[#7D8F85]">
@@ -189,7 +189,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <MessageCircle className="w-4 h-4" />
             </div>
             <div className="text-right">
-              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#355C4A]">
+              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#174C3C]">
                 طلبات الدعم
               </div>
               <div className="text-[11px] text-[#7D8F85]">
@@ -210,7 +210,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <Bookmark className="w-4 h-4" />
             </div>
             <div className="text-right">
-              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#355C4A]">
+              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#174C3C]">
                 المحفوظات
               </div>
               <div className="text-[11px] text-[#7D8F85]">
@@ -231,7 +231,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <Bell className="w-4 h-4" />
             </div>
             <div className="text-right">
-              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#355C4A]">
+              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#174C3C]">
                 الإشعارات
               </div>
               <div className="text-[11px] text-[#7D8F85]">
@@ -252,7 +252,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <Sparkles className="w-4 h-4" />
             </div>
             <div className="text-right">
-              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#355C4A]">
+              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#174C3C]">
                 إعدادات المظهر وإمكانية القراءة
               </div>
               <div className="text-[11px] text-[#7D8F85]">
@@ -273,7 +273,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div className="text-right">
-              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#355C4A]">
+              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#174C3C]">
                 الخصوصية والبيانات
               </div>
               <div className="text-[11px] text-[#7D8F85]">
@@ -294,7 +294,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <Info className="w-4 h-4" />
             </div>
             <div className="text-right">
-              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#355C4A]">
+              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#174C3C]">
                 عن نسمة حياة
               </div>
               <div className="text-[11px] text-[#7D8F85]">
@@ -315,7 +315,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <HelpCircle className="w-4 h-4" />
             </div>
             <div className="text-right">
-              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#355C4A]">
+              <div className="text-sm font-bold text-[#26332D] group-hover:text-[#174C3C]">
                 المساعدة (FAQ / Help)
               </div>
               <div className="text-[11px] text-[#7D8F85]">
@@ -328,12 +328,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       </div>
 
       {/* Onboarding choices review */}
-      <div className="p-5 bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl space-y-3">
+      <div className="p-5 bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl space-y-3">
         <div className="flex items-center justify-between">
           <span className="font-bold text-xs text-[#26332D]">اختياراتك في شاشة التعارف:</span>
           <button
             onClick={onRestartOnboarding}
-            className="text-xs font-semibold text-[#355C4A] hover:underline flex items-center gap-1"
+            className="text-xs font-semibold text-[#174C3C] hover:underline flex items-center gap-1"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>إعادة ضبط التعارف</span>
@@ -341,7 +341,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         </div>
         <div className="flex flex-wrap gap-1.5">
           {prefs.onboardingChoices.map(c => (
-            <span key={c} className="text-xs px-2.5 py-1 bg-white border border-[#E8DDCC] rounded-xl text-[#35453E]">
+            <span key={c} className="text-xs px-2.5 py-1 bg-white border border-[#E6E8D8] rounded-xl text-[#35453E]">
               {c}
             </span>
           ))}
@@ -349,13 +349,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       </div>
 
       {/* Data Export & Privacy Actions (Section 23, 24, 28) */}
-      <div className="p-5 bg-white/80 border border-[#E8DDCC] rounded-3xl space-y-4">
+      <div className="p-5 bg-white/80 border border-[#E6E8D8] rounded-3xl space-y-4">
         <div className="text-xs font-bold text-[#26332D]">إدارة البيانات والامتثال:</div>
         
         <div className="flex flex-col sm:flex-row gap-2.5">
           <button
             onClick={handleExportData}
-            className="flex-1 py-3 px-3 bg-[#FAF7F0] hover:bg-stone-100 border border-[#E8DDCC] rounded-xl text-xs font-semibold text-[#355C4A] flex items-center justify-center gap-2 transition-colors"
+            className="flex-1 py-3 px-3 bg-[#F7F3E9] hover:bg-stone-100 border border-[#E6E8D8] rounded-xl text-xs font-semibold text-[#174C3C] flex items-center justify-center gap-2 transition-colors"
           >
             <Download className="w-4 h-4" />
             <span>تصدير بياناتي (JSON)</span>
@@ -404,8 +404,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Modal: Privacy Policy (Section 24 Specifications) */}
       {activeModal === 'privacy' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto space-y-4 text-right">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+          <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto space-y-4 text-right">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
               <h3 className="font-bold text-base text-[#26332D]">الخصوصية وسرية البيانات داخل التطبيق</h3>
               <button onClick={() => setActiveModal(null)} className="text-stone-500 hover:text-stone-800 text-sm">✕</button>
             </div>
@@ -425,10 +425,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
             </div>
 
-            <div className="pt-3 border-t border-[#E8DDCC]">
+            <div className="pt-3 border-t border-[#E6E8D8]">
               <button
                 onClick={() => setActiveModal(null)}
-                className="w-full py-2.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
+                className="w-full py-2.5 bg-[#174C3C] text-white text-xs font-bold rounded-xl"
               >
                 إغلاق
               </button>
@@ -440,8 +440,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Modal: Notifications (Section 26) */}
       {activeModal === 'notifications' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 max-w-md w-full space-y-4 text-right">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+          <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 max-w-md w-full space-y-4 text-right">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
               <h3 className="font-bold text-base text-[#26332D]">إعدادات الإشعارات</h3>
               <button onClick={() => setActiveModal(null)} className="text-stone-500 hover:text-stone-800 text-sm">✕</button>
             </div>
@@ -451,7 +451,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </p>
 
             <div className="space-y-3 pt-2">
-              <div className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-[#E8DDCC]">
+              <div className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-[#E6E8D8]">
                 <div>
                   <div className="text-xs font-bold text-[#26332D]">تذكير الهدوء اليومي 🌿</div>
                   <div className="text-[11px] text-[#52645B]">«حابب تاخد دقيقتين لنفسك النهارده؟»</div>
@@ -460,11 +460,11 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   type="checkbox"
                   checked={prefs.notificationPreferences.dailyReminder}
                   onChange={handleToggleDailyReminder}
-                  className="w-4 h-4 accent-[#355C4A]"
+                  className="w-4 h-4 accent-[#174C3C]"
                 />
               </div>
 
-              <div className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-[#E8DDCC]">
+              <div className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-[#E6E8D8]">
                 <div>
                   <div className="text-xs font-bold text-[#26332D]">محتوى جديد قد يهمك 📖</div>
                   <div className="text-[11px] text-[#52645B]">إشعار عند نشر مقالات وتمارين جديدة</div>
@@ -473,15 +473,15 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   type="checkbox"
                   checked={prefs.notificationPreferences.newContent}
                   onChange={handleToggleNewContent}
-                  className="w-4 h-4 accent-[#355C4A]"
+                  className="w-4 h-4 accent-[#174C3C]"
                 />
               </div>
             </div>
 
-            <div className="pt-3 border-t border-[#E8DDCC]">
+            <div className="pt-3 border-t border-[#E6E8D8]">
               <button
                 onClick={() => setActiveModal(null)}
-                className="w-full py-2.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
+                className="w-full py-2.5 bg-[#174C3C] text-white text-xs font-bold rounded-xl"
               >
                 حفظ الإعدادات
               </button>
@@ -493,8 +493,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Modal: Saved Content (المحفوظات) */}
       {activeModal === 'saved' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto space-y-4 text-right">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+          <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto space-y-4 text-right">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
               <h3 className="font-bold text-base text-[#26332D]">المحتوى المحفوظ ({savedItems.length})</h3>
               <button onClick={() => setActiveModal(null)} className="text-stone-500 hover:text-stone-800 text-sm">✕</button>
             </div>
@@ -512,10 +512,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                       setActiveModal(null);
                       onOpenContent(item.id);
                     }}
-                    className="p-3.5 bg-white hover:bg-stone-50 border border-[#E8DDCC] rounded-2xl cursor-pointer transition-colors"
+                    className="p-3.5 bg-white hover:bg-stone-50 border border-[#E6E8D8] rounded-2xl cursor-pointer transition-colors"
                   >
                     <div className="flex items-center justify-between text-[11px] text-[#52645B] mb-1">
-                      <span className="font-bold text-[#355C4A]">{item.subCategory || item.category}</span>
+                      <span className="font-bold text-[#174C3C]">{item.subCategory || item.category}</span>
                       <span>{item.duration}</span>
                     </div>
                     <h4 className="font-bold text-xs text-[#26332D]">{item.title}</h4>
@@ -524,10 +524,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
             )}
 
-            <div className="pt-3 border-t border-[#E8DDCC]">
+            <div className="pt-3 border-t border-[#E6E8D8]">
               <button
                 onClick={() => setActiveModal(null)}
-                className="w-full py-2.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
+                className="w-full py-2.5 bg-[#174C3C] text-white text-xs font-bold rounded-xl"
               >
                 إغلاق
               </button>
@@ -539,8 +539,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Modal: Edit Profile */}
       {activeModal === 'edit_profile' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <form onSubmit={handleSaveProfile} className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 max-w-md w-full space-y-4 text-right">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+          <form onSubmit={handleSaveProfile} className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 max-w-md w-full space-y-4 text-right">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
               <h3 className="font-bold text-base text-[#26332D]">تعديل بيانات الحساب</h3>
               <button type="button" onClick={() => setActiveModal(null)} className="text-stone-500 hover:text-stone-800 text-sm">✕</button>
             </div>
@@ -548,7 +548,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <div className="space-y-4">
               {/* Avatar Preview & Upload */}
               <div className="flex flex-col items-center gap-2">
-                <div className="w-20 h-20 rounded-2xl bg-[#355C4A] text-white flex items-center justify-center font-bold text-2xl shadow-sm overflow-hidden border-2 border-[#E8DDCC]">
+                <div className="w-20 h-20 rounded-2xl bg-[#174C3C] text-white flex items-center justify-center font-bold text-2xl shadow-sm overflow-hidden border-2 border-[#E6E8D8]">
                   {tempAvatar ? (
                     <img src={tempAvatar} alt="معاينة البروفيل" className="w-full h-full object-cover" />
                   ) : (
@@ -556,14 +556,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   )}
                 </div>
                 <div className="flex flex-col items-center gap-1">
-                  <label className="cursor-pointer py-1.5 px-3 bg-white hover:bg-stone-100 text-[#355C4A] border border-[#E8DDCC] rounded-xl text-xs font-semibold transition-colors inline-flex items-center gap-1.5">
+                  <label className="cursor-pointer py-1.5 px-3 bg-white hover:bg-stone-100 text-[#174C3C] border border-[#E6E8D8] rounded-xl text-xs font-semibold transition-colors inline-flex items-center gap-1.5">
                     <span>اختر صورة بروفيل جديدة</span>
                     <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                   </label>
                   <button
                     type="button"
                     onClick={() => setTempAvatar('/logo.jpg')}
-                    className="text-[11px] text-[#355C4A] hover:underline"
+                    className="text-[11px] text-[#174C3C] hover:underline"
                   >
                     استخدام شعار نسمة حياة 🌿
                   </button>
@@ -576,7 +576,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   type="text"
                   value={tempName}
                   onChange={(e) => setTempName(e.target.value)}
-                  className="w-full p-3 bg-white border border-[#E8DDCC] rounded-xl text-xs"
+                  className="w-full p-3 bg-white border border-[#E6E8D8] rounded-xl text-xs"
                 />
               </div>
 
@@ -586,22 +586,22 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   type="text"
                   value={tempContact}
                   onChange={(e) => setTempContact(e.target.value)}
-                  className="w-full p-3 bg-white border border-[#E8DDCC] rounded-xl text-xs"
+                  className="w-full p-3 bg-white border border-[#E6E8D8] rounded-xl text-xs"
                 />
               </div>
             </div>
 
-            <div className="pt-3 border-t border-[#E8DDCC] flex gap-2">
+            <div className="pt-3 border-t border-[#E6E8D8] flex gap-2">
               <button
                 type="submit"
-                className="flex-1 py-2.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
+                className="flex-1 py-2.5 bg-[#174C3C] text-white text-xs font-bold rounded-xl"
               >
                 حفظ التعديلات
               </button>
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="py-2.5 px-4 bg-white text-stone-600 border border-[#E8DDCC] text-xs font-semibold rounded-xl"
+                className="py-2.5 px-4 bg-white text-stone-600 border border-[#E6E8D8] text-xs font-semibold rounded-xl"
               >
                 إلغاء
               </button>
@@ -613,33 +613,33 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Modal: FAQ / Help */}
       {activeModal === 'faq' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto space-y-4 text-right">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+          <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 max-w-lg w-full max-h-[85vh] overflow-y-auto space-y-4 text-right">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
               <h3 className="font-bold text-base text-[#26332D]">الأسئلة الشائعة والمساعدة (FAQ)</h3>
               <button onClick={() => setActiveModal(null)} className="text-stone-500 hover:text-stone-800 text-sm">✕</button>
             </div>
 
             <div className="space-y-3 text-xs text-[#35453E] leading-relaxed">
-              <div className="p-3 bg-white rounded-xl border border-[#E8DDCC] space-y-1">
+              <div className="p-3 bg-white rounded-xl border border-[#E6E8D8] space-y-1">
                 <div className="font-bold text-[#26332D]">هل يقدم تطبيق نسمة حياة تشخيصاً طبياً؟</div>
                 <p className="text-[#52645B]">كلا، التطبيق للتوعية والاستكشاف الذاتي الآمن فقط، وليس بديلاً عن الطبيب النفسي أو المرشد المعتمد.</p>
               </div>
 
-              <div className="p-3 bg-white rounded-xl border border-[#E8DDCC] space-y-1">
+              <div className="p-3 bg-white rounded-xl border border-[#E6E8D8] space-y-1">
                 <div className="font-bold text-[#26332D]">هل يمكنني حذف بياناتي وملاحظاتي في أي وقت؟</div>
                 <p className="text-[#52645B]">نعم بكل سهولة، من خلال زر «طلب حذف بياناتي» في شاشة حسابي، يتم محو كل السجلات فوراً.</p>
               </div>
 
-              <div className="p-3 bg-white rounded-xl border border-[#E8DDCC] space-y-1">
+              <div className="p-3 bg-white rounded-xl border border-[#E6E8D8] space-y-1">
                 <div className="font-bold text-[#26332D]">كيف يمكنني طلب التحدث مع مختص؟</div>
                 <p className="text-[#52645B]">من خلال قسم «محتاج أتكلم»، يمكنك إرسال رسالتك وسيتواصل معك الفريق بحسب آلية الدعم المتاحة.</p>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-[#E8DDCC]">
+            <div className="pt-3 border-t border-[#E6E8D8]">
               <button
                 onClick={() => setActiveModal(null)}
-                className="w-full py-2.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
+                className="w-full py-2.5 bg-[#174C3C] text-white text-xs font-bold rounded-xl"
               >
                 إغلاق
               </button>
@@ -651,8 +651,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Modal: About */}
       {activeModal === 'about' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 max-w-md w-full space-y-4 text-right">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+          <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 max-w-md w-full space-y-4 text-right">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
               <h3 className="font-bold text-base text-[#26332D]">عن تطبيق نسمة حياة</h3>
               <button onClick={() => setActiveModal(null)} className="text-stone-500 hover:text-stone-800 text-sm">✕</button>
             </div>
@@ -661,16 +661,16 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <p>
                 <strong>«نسمة حياة» (Nesmat Hayat)</strong> منصة نفسية عربية تسعى لنشر الوعي الصحي النفسي وتقديم مساحة هادئة للاسترخاء والفهم الذاتي بعيداً عن التعقيد والوصمة.
               </p>
-              <div className="p-3 bg-white rounded-xl border border-[#E8DDCC]">
+              <div className="p-3 bg-white rounded-xl border border-[#E6E8D8]">
                 <strong>الهدف الأساسي:</strong>
                 <p className="mt-1 text-[#52645B]">التوعية + الاستكشاف + الدعم + التوجيه إلى الخطوة المناسبة.</p>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-[#E8DDCC]">
+            <div className="pt-3 border-t border-[#E6E8D8]">
               <button
                 onClick={() => setActiveModal(null)}
-                className="w-full py-2.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
+                className="w-full py-2.5 bg-[#174C3C] text-white text-xs font-bold rounded-xl"
               >
                 إغلاق
               </button>
@@ -682,8 +682,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       {/* Modal: Appearance & Readability */}
       {activeModal === 'appearance' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 max-w-md w-full space-y-5 text-right">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+          <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 max-w-md w-full space-y-5 text-right">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
               <h3 className="font-bold text-base text-[#26332D]">إعدادات المظهر وإمكانية القراءة</h3>
               <button onClick={() => setActiveModal(null)} className="text-stone-500 hover:text-stone-800 text-sm">✕</button>
             </div>
@@ -697,8 +697,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   onClick={() => setTheme('light')}
                   className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                     theme === 'light'
-                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
-                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                      ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E6E8D8] hover:bg-stone-50'
                   }`}
                 >
                   <span className="text-base">☀️</span>
@@ -710,8 +710,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   onClick={() => setTheme('dark')}
                   className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                     theme === 'dark'
-                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
-                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                      ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E6E8D8] hover:bg-stone-50'
                   }`}
                 >
                   <span className="text-base">🌙</span>
@@ -723,8 +723,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   onClick={() => setTheme('system')}
                   className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                     theme === 'system'
-                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
-                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                      ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E6E8D8] hover:bg-stone-50'
                   }`}
                 >
                   <span className="text-base">⚙️</span>
@@ -742,8 +742,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   onClick={() => setFontSize('normal')}
                   className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                     fontSize === 'normal'
-                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
-                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                      ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E6E8D8] hover:bg-stone-50'
                   }`}
                 >
                   <span className="text-sm font-normal">عادي</span>
@@ -755,8 +755,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   onClick={() => setFontSize('large')}
                   className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                     fontSize === 'large'
-                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
-                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                      ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E6E8D8] hover:bg-stone-50'
                   }`}
                 >
                   <span className="text-base font-semibold">كبير</span>
@@ -768,8 +768,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   onClick={() => setFontSize('extralarge')}
                   className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                     fontSize === 'extralarge'
-                      ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-sm'
-                      : 'bg-white text-stone-700 border-[#E8DDCC] hover:bg-stone-50'
+                      ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-sm'
+                      : 'bg-white text-stone-700 border-[#E6E8D8] hover:bg-stone-50'
                   }`}
                 >
                   <span className="text-lg font-bold">كبير جداً</span>
@@ -779,18 +779,18 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </div>
 
             {/* Live Preview Sample */}
-            <div className="p-3.5 bg-white rounded-2xl border border-[#E8DDCC] space-y-1">
+            <div className="p-3.5 bg-white rounded-2xl border border-[#E6E8D8] space-y-1">
               <div className="text-[11px] text-stone-500 font-semibold">معاينة نصية فورية:</div>
               <p className="text-xs text-[#26332D] leading-relaxed">
                 «هذا النص يوضح شكل الخط والمظهر المختار في تطبيق نسمة حياة لتجربة مريحة وآمنة.»
               </p>
             </div>
 
-            <div className="pt-3 border-t border-[#E8DDCC]">
+            <div className="pt-3 border-t border-[#E6E8D8]">
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="w-full py-2.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl"
+                className="w-full py-2.5 bg-[#174C3C] text-white text-xs font-bold rounded-xl"
               >
                 حفظ وإغلاق
               </button>

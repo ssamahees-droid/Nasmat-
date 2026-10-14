@@ -138,7 +138,7 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#26332D]">
           خد نفس ... 🍃
         </h1>
-        <p className="text-base font-bold text-[#355C4A]">
+        <p className="text-base font-bold text-[#174C3C]">
           مش لازم تحل كل حاجة دلوقتي.
         </p>
       </div>
@@ -153,13 +153,13 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
               onClick={() => setSelectedSession(sess)}
               className={`p-3 rounded-2xl border text-right transition-all flex flex-col justify-between min-h-[90px] ${
                 isSelected
-                  ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-xs'
-                  : 'bg-[#FAF7F0] text-[#26332D] border-[#E8DDCC] hover:bg-white'
+                  ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-xs'
+                  : 'bg-[#F7F3E9] text-[#26332D] border-[#E6E8D8] hover:bg-white'
               }`}
             >
               <div className="flex items-center justify-between w-full">
                 <span className="text-lg">{sess.icon}</span>
-                <span className={`text-[11px] font-mono ${isSelected ? 'text-[#E8DDCC]' : 'text-[#7D8F85]'}`}>
+                <span className={`text-[11px] font-mono ${isSelected ? 'text-[#E6E8D8]' : 'text-[#7D8F85]'}`}>
                   {sess.durationMinutes} دقائق
                 </span>
               </div>
@@ -172,7 +172,7 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
       </div>
 
       {/* Main Breathing Orb Stage */}
-      <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 sm:p-10 flex flex-col items-center justify-center relative overflow-hidden shadow-xs">
+      <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 sm:p-10 flex flex-col items-center justify-center relative overflow-hidden shadow-xs">
         
         {/* Background Ambient Ripple Art */}
         <div className="absolute inset-0 opacity-15 pointer-events-none">
@@ -187,12 +187,12 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
         {/* Breathing Orb */}
         <div className="relative z-10 w-52 h-52 sm:w-60 sm:h-60 flex items-center justify-center my-4">
           {/* Outer ring */}
-          <div className={`absolute inset-0 rounded-full border-2 border-[#8FAF9A]/30 ${isActive ? 'animate-ping opacity-25' : ''}`} />
+          <div className={`absolute inset-0 rounded-full border-2 border-[#A9C5A0]/30 ${isActive ? 'animate-ping opacity-25' : ''}`} />
           
           {/* Dynamic pulsing circle */}
-          <div className={`w-44 h-44 sm:w-52 sm:h-52 rounded-full bg-gradient-to-tr from-[#8FAF9A]/40 to-[#355C4A]/30 backdrop-blur-xs flex items-center justify-center shadow-lg shadow-[#8FAF9A]/20 ${getOrbScale()}`}>
-            <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-[#FAF7F0]/90 border border-white/60 flex flex-col items-center justify-center text-center p-3">
-              <span className="text-xs font-bold text-[#355C4A] mb-1">
+          <div className={`w-44 h-44 sm:w-52 sm:h-52 rounded-full bg-gradient-to-tr from-[#A9C5A0]/40 to-[#174C3C]/30 backdrop-blur-xs flex items-center justify-center shadow-lg shadow-[#A9C5A0]/20 ${getOrbScale()}`}>
+            <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-[#F7F3E9]/90 border border-white/60 flex flex-col items-center justify-center text-center p-3">
+              <span className="text-xs font-bold text-[#174C3C] mb-1">
                 {isActive ? currentInstruction.label : 'جاهز للتنفس'}
               </span>
               <span className="font-mono text-3xl font-extrabold text-[#26332D]">
@@ -232,7 +232,7 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
                 if (isActive) ambientSound.playAmbient(snd.id, 0.4);
               }}
               className={`py-1 px-2.5 text-[11px] font-medium rounded-lg transition-colors cursor-pointer ${
-                soundMode === snd.id ? 'bg-[#355C4A] text-white shadow-2xs' : 'text-[#52645B] hover:text-[#26332D]'
+                soundMode === snd.id ? 'bg-[#174C3C] text-white shadow-2xs' : 'text-[#52645B] hover:text-[#26332D]'
               }`}
             >
               {snd.label}
@@ -249,7 +249,7 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
               setCyclesCompleted(0);
               setPhaseSecondsLeft(selectedSession.instructions[0].seconds);
             }}
-            className="p-3 text-[#52645B] hover:text-[#26332D] bg-white border border-[#E8DDCC] rounded-2xl transition-colors"
+            className="p-3 text-[#52645B] hover:text-[#26332D] bg-white border border-[#E6E8D8] rounded-2xl transition-colors"
             title="إعادة ضبط"
           >
             <RotateCcw className="w-5 h-5" />
@@ -257,7 +257,7 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
 
           <button
             onClick={handleToggleActive}
-            className="w-16 h-16 rounded-2xl bg-[#355C4A] hover:bg-[#264235] text-white flex items-center justify-center shadow-lg shadow-[#355C4A]/25 transition-transform active:scale-95"
+            className="w-16 h-16 rounded-2xl bg-[#174C3C] hover:bg-[#264235] text-white flex items-center justify-center shadow-lg shadow-[#174C3C]/25 transition-transform active:scale-95"
             aria-label={isActive ? 'إيقاف مؤقت' : 'بدء التمرين'}
           >
             {isActive ? <Pause className="w-7 h-7" /> : <Play className="w-7 h-7 translate-x-0.5" />}
@@ -268,7 +268,7 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
             className={`p-3 rounded-2xl border transition-colors ${
               chimeEnabled 
                 ? 'bg-amber-100/80 border-amber-300 text-amber-900' 
-                : 'bg-white border-[#E8DDCC] text-stone-400'
+                : 'bg-white border-[#E6E8D8] text-stone-400'
             }`}
             title={chimeEnabled ? 'صوت جرس الانتقال مفعل' : 'صوت جرس الانتقال معطل'}
           >
@@ -277,14 +277,14 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
         </div>
 
         {cyclesCompleted > 0 && (
-          <div className="relative z-10 mt-3 inline-flex items-center gap-1.5 px-3 py-1 bg-white/80 rounded-full border border-[#E8DDCC] text-xs font-mono text-[#355C4A]">
+          <div className="relative z-10 mt-3 inline-flex items-center gap-1.5 px-3 py-1 bg-white/80 rounded-full border border-[#E6E8D8] text-xs font-mono text-[#174C3C]">
             <span>أكملت {cyclesCompleted} دورات تنفس كاملة 🌿</span>
           </div>
         )}
 
         {/* Post Activity Feeling (Section 17 from Spec) */}
         {showPostFeedback && (
-          <div className="mt-6 w-full max-w-sm p-4 bg-white/95 border border-[#8FAF9A]/50 rounded-2xl animate-fade-in text-center space-y-3 relative z-20">
+          <div className="mt-6 w-full max-w-sm p-4 bg-white/95 border border-[#A9C5A0]/50 rounded-2xl animate-fade-in text-center space-y-3 relative z-20">
             <div>
               <div className="font-bold text-sm text-[#26332D]">إيه إحساسك دلوقتي؟</div>
               <div className="text-[11px] text-[#7D8F85]">هذه ليست نتيجة طبية</div>
@@ -301,8 +301,8 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
                   onClick={() => handlePostFeelingSelect(opt.val)}
                   className={`p-2 rounded-xl text-xs border font-medium transition-all ${
                     postFeeling === opt.val
-                      ? 'bg-[#355C4A] text-white border-[#355C4A]'
-                      : 'bg-[#FAF7F0] border-[#E8DDCC] text-[#26332D] hover:bg-stone-100'
+                      ? 'bg-[#174C3C] text-white border-[#174C3C]'
+                      : 'bg-[#F7F3E9] border-[#E6E8D8] text-[#26332D] hover:bg-stone-100'
                   }`}
                 >
                   {opt.label}
@@ -321,8 +321,8 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = () => {
       </div>
 
       {/* Gentle reassurance */}
-      <div className="p-4 bg-white/70 border border-[#E8DDCC] rounded-2xl text-xs text-[#52645B] leading-relaxed flex items-start gap-2.5">
-        <Sparkles className="w-4 h-4 text-[#8FAF9A] shrink-0 mt-0.5" />
+      <div className="p-4 bg-white/70 border border-[#E6E8D8] rounded-2xl text-xs text-[#52645B] leading-relaxed flex items-start gap-2.5">
+        <Sparkles className="w-4 h-4 text-[#A9C5A0] shrink-0 mt-0.5" />
         <div>
           التنفس البطيء ينشط الجهاز العصبي اللاودي (العصب الحائر)، مما يساعد جسمك ودماغك على خفض هرمونات التوتر طبيعياً دون مجهود.
         </div>

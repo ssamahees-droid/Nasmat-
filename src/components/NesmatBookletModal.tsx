@@ -59,10 +59,10 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-2xl bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">📖</span>
             <div>
@@ -77,7 +77,7 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setShowChapterList(prev => !prev)}
-              className="py-1 px-3 bg-white hover:bg-stone-100 text-[#355C4A] border border-[#E8DDCC] text-xs font-bold rounded-xl transition-colors"
+              className="py-1 px-3 bg-white hover:bg-stone-100 text-[#174C3C] border border-[#E6E8D8] text-xs font-bold rounded-xl transition-colors"
             >
               {showChapterList ? 'إغلاق الفهرس' : 'فهرس الفصول 📑'}
             </button>
@@ -96,7 +96,7 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
             /* Chapters Index List */
             <div className="space-y-3 animate-fade-in">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#355C4A]">فصول الكتيب الـ 12:</span>
+                <span className="text-xs font-bold text-[#174C3C]">فصول الكتيب الـ 12:</span>
                 <span className="text-[11px] text-[#7D8F85]">اضغط على أي فصل للقراءة الفورية</span>
               </div>
 
@@ -110,8 +110,8 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
                     }}
                     className={`p-3 rounded-2xl border text-right transition-all flex items-start gap-2.5 ${
                       currentChapterIndex === idx
-                        ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-xs'
-                        : 'bg-white hover:bg-stone-50 text-[#26332D] border-[#E8DDCC]'
+                        ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-xs'
+                        : 'bg-white hover:bg-stone-50 text-[#26332D] border-[#E6E8D8]'
                     }`}
                   >
                     <span className="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
@@ -126,7 +126,7 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
               </div>
 
               {/* Special Personal Plan Card */}
-              <div className="p-4 bg-gradient-to-r from-emerald-100 to-[#FAF7F0] border border-emerald-300 rounded-2xl flex items-center justify-between">
+              <div className="p-4 bg-gradient-to-r from-emerald-100 to-[#F7F3E9] border border-emerald-300 rounded-2xl flex items-center justify-between">
                 <div>
                   <h4 className="font-extrabold text-xs sm:text-sm text-emerald-950">
                     خطة نسمة حياة الخاصة بي (صفحتان للملء الذاتي)
@@ -140,7 +140,7 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
                     setShowChapterList(false);
                     onOpenPersonalPlan();
                   }}
-                  className="px-3.5 py-2 bg-[#355C4A] text-white font-bold text-xs rounded-xl shadow-xs hover:bg-[#264235] transition-colors"
+                  className="px-3.5 py-2 bg-[#174C3C] text-white font-bold text-xs rounded-xl shadow-xs hover:bg-[#264235] transition-colors"
                 >
                   فتح خطتي
                 </button>
@@ -150,9 +150,9 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
             /* Chapter Reading View */
             <div className="space-y-4 animate-fade-in">
               {/* Chapter Meta */}
-              <div className="p-4 bg-white border border-[#E8DDCC] rounded-3xl space-y-1.5 shadow-2xs">
+              <div className="p-4 bg-white border border-[#E6E8D8] rounded-3xl space-y-1.5 shadow-2xs">
                 <div className="flex items-center justify-between text-xs text-[#7D8F85]">
-                  <span className="font-bold text-[#355C4A]">الفصل {currentChapter.chapterNumber} من {BOOKLET_CHAPTERS.length}</span>
+                  <span className="font-bold text-[#174C3C]">الفصل {currentChapter.chapterNumber} من {BOOKLET_CHAPTERS.length}</span>
                   <span className="text-[11px]">كتيب نسمة حياة</span>
                 </div>
                 <h3 className="text-base sm:text-xl font-black text-[#26332D]">
@@ -164,7 +164,7 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
               </div>
 
               {/* Chapter Paragraphs */}
-              <div className="p-5 bg-white border border-[#E8DDCC] rounded-3xl space-y-3.5 shadow-xs">
+              <div className="p-5 bg-white border border-[#E6E8D8] rounded-3xl space-y-3.5 shadow-xs">
                 {currentChapter.content.map((p, pIdx) => (
                   <p key={pIdx} className="text-xs sm:text-sm text-[#26332D] leading-relaxed font-medium">
                     {p}
@@ -173,8 +173,8 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
 
                 {/* Key Quote Callout */}
                 {currentChapter.keyQuote && (
-                  <div className="p-4 bg-[#8FAF9A]/15 border-r-4 border-[#355C4A] rounded-2xl space-y-1 mt-4">
-                    <span className="text-[10px] font-bold text-[#355C4A] block">رسالة للتأمل</span>
+                  <div className="p-4 bg-[#A9C5A0]/15 border-r-4 border-[#174C3C] rounded-2xl space-y-1 mt-4">
+                    <span className="text-[10px] font-bold text-[#174C3C] block">رسالة للتأمل</span>
                     <blockquote className="text-xs sm:text-sm font-extrabold text-[#26332D] leading-relaxed">
                       {currentChapter.keyQuote}
                     </blockquote>
@@ -183,7 +183,7 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
 
                 {/* Reflection Question */}
                 {currentChapter.reflectionQuestion && (
-                  <div className="p-3 bg-[#FAF7F0] border border-[#E8DDCC] rounded-xl text-xs text-[#52645B] leading-relaxed">
+                  <div className="p-3 bg-[#F7F3E9] border border-[#E6E8D8] rounded-xl text-xs text-[#52645B] leading-relaxed">
                     🤔 <strong>وقفة مع النفس:</strong> {currentChapter.reflectionQuestion}
                   </div>
                 )}
@@ -195,7 +195,7 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
                       onClick={() => handleAction(currentChapter.actionTool)}
                       className="w-full py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-950 font-bold text-xs rounded-xl transition-colors flex items-center justify-center gap-1.5"
                     >
-                      <Sparkles className="w-4 h-4 text-[#355C4A]" />
+                      <Sparkles className="w-4 h-4 text-[#174C3C]" />
                       <span>تطبيق التمرين العملي المرتبط بهذا الفصل الآن</span>
                     </button>
                   </div>
@@ -207,7 +207,7 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
                 <button
                   disabled={currentChapterIndex === 0}
                   onClick={handlePrev}
-                  className="py-2.5 px-4 bg-white hover:bg-stone-100 disabled:opacity-40 border border-[#E8DDCC] text-xs font-bold text-[#26332D] rounded-2xl flex items-center gap-1.5 transition-colors"
+                  className="py-2.5 px-4 bg-white hover:bg-stone-100 disabled:opacity-40 border border-[#E6E8D8] text-xs font-bold text-[#26332D] rounded-2xl flex items-center gap-1.5 transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                   <span>الفصل السابق</span>
@@ -215,7 +215,7 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
 
                 <button
                   onClick={() => setShowChapterList(true)}
-                  className="py-2.5 px-3 bg-[#FAF7F0] hover:bg-stone-100 border border-[#E8DDCC] text-xs text-[#52645B] rounded-2xl font-bold"
+                  className="py-2.5 px-3 bg-[#F7F3E9] hover:bg-stone-100 border border-[#E6E8D8] text-xs text-[#52645B] rounded-2xl font-bold"
                 >
                   الفهرس
                 </button>
@@ -223,7 +223,7 @@ export const NesmatBookletModal: React.FC<NesmatBookletModalProps> = ({
                 <button
                   disabled={currentChapterIndex === BOOKLET_CHAPTERS.length - 1}
                   onClick={handleNext}
-                  className="py-2.5 px-4 bg-[#355C4A] hover:bg-[#264235] disabled:opacity-40 text-white text-xs font-bold rounded-2xl flex items-center gap-1.5 transition-colors shadow-xs"
+                  className="py-2.5 px-4 bg-[#174C3C] hover:bg-[#264235] disabled:opacity-40 text-white text-xs font-bold rounded-2xl flex items-center gap-1.5 transition-colors shadow-xs"
                 >
                   <span>الفصل التالي</span>
                   <ChevronLeft className="w-4 h-4" />

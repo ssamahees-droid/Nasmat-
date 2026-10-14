@@ -93,13 +93,13 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#26332D]">
           محتاج أتكلم؟ 💬
         </h1>
-        <p className="text-base font-bold text-[#355C4A]">
+        <p className="text-base font-bold text-[#174C3C]">
           مش لازم تعرف تقول كل حاجة. ابدأ بس من اللي حاسس بيه.
         </p>
       </div>
 
       {/* Tabs: New Request vs My Previous Tickets */}
-      <div className="flex items-center gap-2 p-1 bg-[#FAF7F0] border border-[#E8DDCC] rounded-2xl">
+      <div className="flex items-center gap-2 p-1 bg-[#F7F3E9] border border-[#E6E8D8] rounded-2xl">
         <button
           onClick={() => {
             setActiveTab('new_request');
@@ -107,7 +107,7 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
           }}
           className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${
             activeTab === 'new_request'
-              ? 'bg-[#355C4A] text-white shadow-xs'
+              ? 'bg-[#174C3C] text-white shadow-xs'
               : 'text-[#52645B] hover:text-[#26332D]'
           }`}
         >
@@ -117,13 +117,13 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
           onClick={() => setActiveTab('my_tickets')}
           className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
             activeTab === 'my_tickets'
-              ? 'bg-[#355C4A] text-white shadow-xs'
+              ? 'bg-[#174C3C] text-white shadow-xs'
               : 'text-[#52645B] hover:text-[#26332D]'
           }`}
         >
           <span>متابعة طلباتي</span>
           {myTickets.length > 0 && (
-            <span className="w-5 h-5 rounded-full bg-[#8FAF9A]/30 text-[#355C4A] text-[10px] font-bold flex items-center justify-center">
+            <span className="w-5 h-5 rounded-full bg-[#A9C5A0]/30 text-[#174C3C] text-[10px] font-bold flex items-center justify-center">
               {myTickets.length}
             </span>
           )}
@@ -135,7 +135,7 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
         <>
           {submittedRequest ? (
             /* Success confirmation card with Ticket ID */
-            <div className="bg-[#FAF7F0] border border-[#8FAF9A]/50 rounded-3xl p-6 sm:p-8 space-y-5 animate-fade-in shadow-xs text-right">
+            <div className="bg-[#F7F3E9] border border-[#A9C5A0]/50 rounded-3xl p-6 sm:p-8 space-y-5 animate-fade-in shadow-xs text-right">
               <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto">
                 <CheckCircle className="w-7 h-7" />
               </div>
@@ -147,13 +147,13 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
                 <p className="text-xs text-[#52645B]">
                   رقم طلب المساعدة الخاص بك:
                 </p>
-                <div className="inline-block font-mono text-2xl font-bold text-[#355C4A] px-4 py-1 bg-white rounded-xl border border-[#E8DDCC] mt-2">
+                <div className="inline-block font-mono text-2xl font-bold text-[#174C3C] px-4 py-1 bg-white rounded-xl border border-[#E6E8D8] mt-2">
                   {submittedRequest.id}
                 </div>
               </div>
 
               {/* Status Badge */}
-              <div className="p-4 bg-white/80 rounded-2xl border border-[#E8DDCC] space-y-2 text-xs text-[#52645B] leading-relaxed">
+              <div className="p-4 bg-white/80 rounded-2xl border border-[#E6E8D8] space-y-2 text-xs text-[#52645B] leading-relaxed">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-[#26332D]">حالة الطلب الآن:</span>
                   <span className={`px-2.5 py-1 rounded-lg font-bold ${STATUS_LABELS[submittedRequest.status].color}`}>
@@ -166,20 +166,20 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
               </div>
 
               {/* Proposed Policy Statement (Section 13) */}
-              <div className="p-3 bg-[#8FAF9A]/15 border border-[#8FAF9A]/30 rounded-2xl text-[11px] text-[#355C4A] leading-relaxed">
+              <div className="p-3 bg-[#A9C5A0]/15 border border-[#A9C5A0]/30 rounded-2xl text-[11px] text-[#174C3C] leading-relaxed">
                 «سيتم التعامل مع طلبك وفق آلية الدعم المتاحة حالياً وسياسة الخصوصية الخاصة بنسمة حياة».
               </div>
 
               <div className="pt-2 flex gap-3">
                 <button
                   onClick={() => setActiveTab('my_tickets')}
-                  className="flex-1 py-3 px-4 bg-[#355C4A] text-white font-bold text-xs rounded-xl hover:bg-[#264235] transition-colors"
+                  className="flex-1 py-3 px-4 bg-[#174C3C] text-white font-bold text-xs rounded-xl hover:bg-[#264235] transition-colors"
                 >
                   عرض في قائمة طلباتي
                 </button>
                 <button
                   onClick={() => setSubmittedRequest(null)}
-                  className="py-3 px-4 bg-white border border-[#E8DDCC] text-[#52645B] text-xs font-semibold rounded-xl hover:bg-stone-50"
+                  className="py-3 px-4 bg-white border border-[#E6E8D8] text-[#52645B] text-xs font-semibold rounded-xl hover:bg-stone-50"
                 >
                   كتابة طلب آخر
                 </button>
@@ -187,7 +187,7 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
             </div>
           ) : (
             /* Support Request Form */
-            <form onSubmit={handleSubmit} className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-7 space-y-6 shadow-xs text-right">
+            <form onSubmit={handleSubmit} className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 space-y-6 shadow-xs text-right">
               
               {/* Question: ماذا تحتاج؟ */}
               <div className="space-y-2.5">
@@ -204,15 +204,15 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
                         onClick={() => setSelectedType(need.id)}
                         className={`p-3.5 rounded-2xl border text-right transition-all flex items-start gap-3 min-h-[58px] ${
                           isSelected
-                            ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-xs'
-                            : 'bg-white/80 text-[#26332D] border-[#E8DDCC] hover:bg-white'
+                            ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-xs'
+                            : 'bg-white/80 text-[#26332D] border-[#E6E8D8] hover:bg-white'
                         }`}
                       >
                         <span className="text-xl shrink-0 mt-0.5">{need.icon}</span>
                         <div>
                           <div className="font-bold text-xs">{need.label}</div>
                           <div className={`text-[11px] mt-0.5 leading-snug ${
-                            isSelected ? 'text-[#E8DDCC]' : 'text-[#7D8F85]'
+                            isSelected ? 'text-[#E6E8D8]' : 'text-[#7D8F85]'
                           }`}>
                             {need.desc}
                           </div>
@@ -242,7 +242,7 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
                   placeholder="احكيلنا براحتك... ما الذي يشغل بالك أو تشعر به مؤخراً؟"
                   required
                   className={`w-full p-4 bg-white/90 border rounded-2xl text-sm text-[#26332D] placeholder-[#7D8F85] focus:outline-hidden focus:bg-white transition-all ${
-                    isOverWordLimit ? 'border-rose-400 focus:border-rose-500' : 'border-[#E8DDCC] focus:border-[#355C4A]'
+                    isOverWordLimit ? 'border-rose-400 focus:border-rose-500' : 'border-[#E6E8D8] focus:border-[#174C3C]'
                   }`}
                 />
                 {isOverWordLimit && (
@@ -253,7 +253,7 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
               </div>
 
               {/* Minimal Contact Info (Section 18 Spec) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-[#E8DDCC]/70">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-[#E6E8D8]/70">
                 <div className="space-y-1">
                   <label className="block text-xs font-semibold text-[#52645B]">
                     الاسم أو الاسم المستعار (اختياري)
@@ -263,7 +263,7 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="مثال: أحمد"
-                    className="w-full py-2.5 px-3.5 bg-white border border-[#E8DDCC] rounded-xl text-xs focus:outline-hidden focus:border-[#355C4A]"
+                    className="w-full py-2.5 px-3.5 bg-white border border-[#E6E8D8] rounded-xl text-xs focus:outline-hidden focus:border-[#174C3C]"
                   />
                 </div>
                 <div className="space-y-1">
@@ -276,14 +276,14 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
                     onChange={(e) => setContact(e.target.value)}
                     placeholder="name@example.com أو 01xxxxxxxxx"
                     required
-                    className="w-full py-2.5 px-3.5 bg-white border border-[#E8DDCC] rounded-xl text-xs focus:outline-hidden focus:border-[#355C4A]"
+                    className="w-full py-2.5 px-3.5 bg-white border border-[#E6E8D8] rounded-xl text-xs focus:outline-hidden focus:border-[#174C3C]"
                   />
                 </div>
               </div>
 
               {/* Crucial Ethical Policy Statement (Section 13 & 16) */}
-              <div className="p-3.5 bg-white/70 border border-[#E8DDCC] rounded-2xl space-y-2 text-xs text-[#52645B] leading-relaxed">
-                <div className="flex items-center gap-1.5 font-bold text-[#355C4A]">
+              <div className="p-3.5 bg-white/70 border border-[#E6E8D8] rounded-2xl space-y-2 text-xs text-[#52645B] leading-relaxed">
+                <div className="flex items-center gap-1.5 font-bold text-[#174C3C]">
                   <ShieldCheck className="w-4 h-4" />
                   <span>مبدأ الأمانة والشفافية:</span>
                 </div>
@@ -299,7 +299,7 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
               <button
                 type="submit"
                 disabled={isSubmitting || !message.trim() || isOverWordLimit}
-                className="w-full py-4 px-6 bg-[#355C4A] hover:bg-[#264235] disabled:opacity-50 text-white font-bold text-sm rounded-2xl shadow-md shadow-[#355C4A]/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                className="w-full py-4 px-6 bg-[#174C3C] hover:bg-[#264235] disabled:opacity-50 text-white font-bold text-sm rounded-2xl shadow-md shadow-[#174C3C]/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
               >
                 <Send className="w-4 h-4 ml-1" />
                 <span>{isSubmitting ? 'جارٍ الإرسال...' : 'إرسال طلب المساعدة'}</span>
@@ -313,7 +313,7 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
       {activeTab === 'my_tickets' && (
         <div className="space-y-3 animate-fade-in">
           {myTickets.length === 0 ? (
-            <div className="p-10 text-center bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl space-y-3">
+            <div className="p-10 text-center bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl space-y-3">
               <FileText className="w-8 h-8 text-[#7D8F85] mx-auto" />
               <h3 className="font-bold text-sm text-[#26332D]">لا توجد طلبات سابقة</h3>
               <p className="text-xs text-[#52645B]">
@@ -321,7 +321,7 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
               </p>
               <button
                 onClick={() => setActiveTab('new_request')}
-                className="py-2 px-4 bg-[#355C4A] text-white text-xs font-semibold rounded-xl"
+                className="py-2 px-4 bg-[#174C3C] text-white text-xs font-semibold rounded-xl"
               >
                 كتابة طلب دعم جديد
               </button>
@@ -333,14 +333,14 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
               return (
                 <div
                   key={req.id}
-                  className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 space-y-3 transition-all text-right"
+                  className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 space-y-3 transition-all text-right"
                 >
                   <div 
                     onClick={() => setExpandedRequestId(isExpanded ? null : req.id)}
                     className="flex items-center justify-between cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="font-mono text-base font-bold text-[#355C4A]">
+                      <span className="font-mono text-base font-bold text-[#174C3C]">
                         {req.id}
                       </span>
                       <span className={`px-2 py-0.5 text-xs font-bold rounded-lg ${statusCfg.color}`}>
@@ -359,18 +359,18 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
                   </p>
 
                   {isExpanded && (
-                    <div className="pt-3 border-t border-[#E8DDCC] space-y-3 animate-fade-in">
+                    <div className="pt-3 border-t border-[#E6E8D8] space-y-3 animate-fade-in">
                       <div className="text-xs text-[#52645B] space-y-1">
                         <div><strong>نوع الطلب:</strong> {NEED_TYPES.find(n => n.id === req.requestType)?.label || req.requestType}</div>
                         <div><strong>نص الرسالة كاملاً:</strong></div>
-                        <div className="p-3 bg-white rounded-xl border border-[#E8DDCC] text-[#26332D]">
+                        <div className="p-3 bg-white rounded-xl border border-[#E6E8D8] text-[#26332D]">
                           {req.message}
                         </div>
                       </div>
 
                       {/* Messages thread */}
                       <div className="space-y-2 pt-2">
-                        <div className="text-xs font-bold text-[#355C4A]">ردود وتحديثات الفريق:</div>
+                        <div className="text-xs font-bold text-[#174C3C]">ردود وتحديثات الفريق:</div>
                         {req.messages.length === 0 ? (
                           <div className="p-3 bg-white/60 rounded-xl text-xs text-[#7D8F85]">
                             طلبك مسجل وقيد المتابعة مع الفريق المختص.

@@ -30,10 +30,10 @@ export const NotificationsModal: React.FC<NotificationsModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto space-y-4 text-right shadow-2xl">
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+      <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto space-y-4 text-right shadow-2xl">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
           <div className="flex items-center gap-2">
-            <Bell className="w-5 h-5 text-[#355C4A]" />
+            <Bell className="w-5 h-5 text-[#174C3C]" />
             <h3 className="font-bold text-base text-[#26332D]">الإشعارات والتذكيرات</h3>
           </div>
           <button onClick={onClose} className="p-1 text-stone-500 hover:text-stone-800">
@@ -52,8 +52,8 @@ export const NotificationsModal: React.FC<NotificationsModalProps> = ({
               onClick={() => handleMarkRead(item.id)}
               className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
                 item.read 
-                  ? 'bg-white/60 border-[#E8DDCC] text-stone-700' 
-                  : 'bg-white border-[#8FAF9A]/60 shadow-xs'
+                  ? 'bg-white/60 border-[#E6E8D8] text-stone-700' 
+                  : 'bg-white border-[#A9C5A0]/60 shadow-xs'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
@@ -70,7 +70,7 @@ export const NotificationsModal: React.FC<NotificationsModalProps> = ({
                 {item.body}
               </p>
 
-              <div className="mt-2.5 pt-2 border-t border-[#E8DDCC]/50 flex items-center justify-between text-[11px]">
+              <div className="mt-2.5 pt-2 border-t border-[#E6E8D8]/50 flex items-center justify-between text-[11px]">
                 {item.type === 'reminder' && onNavigateToBreathe && (
                   <button
                     onClick={(e) => {
@@ -78,7 +78,7 @@ export const NotificationsModal: React.FC<NotificationsModalProps> = ({
                       onClose();
                       onNavigateToBreathe();
                     }}
-                    className="text-[#355C4A] font-bold hover:underline"
+                    className="text-[#174C3C] font-bold hover:underline"
                   >
                     بدء التمرين الآن ←
                   </button>
@@ -90,7 +90,7 @@ export const NotificationsModal: React.FC<NotificationsModalProps> = ({
                       onClose();
                       onNavigateToContent();
                     }}
-                    className="text-[#355C4A] font-bold hover:underline"
+                    className="text-[#174C3C] font-bold hover:underline"
                   >
                     تصفح المحتوى ←
                   </button>
@@ -103,10 +103,10 @@ export const NotificationsModal: React.FC<NotificationsModalProps> = ({
           ))}
         </div>
 
-        <div className="pt-2 border-t border-[#E8DDCC]">
+        <div className="pt-2 border-t border-[#E6E8D8]">
           <button
             onClick={onClose}
-            className="w-full py-2.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl hover:bg-[#264235] transition-colors"
+            className="w-full py-2.5 bg-[#174C3C] text-white text-xs font-bold rounded-xl hover:bg-[#264235] transition-colors"
           >
             إغلاق
           </button>

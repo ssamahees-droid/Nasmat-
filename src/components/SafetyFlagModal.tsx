@@ -16,9 +16,9 @@ export const SafetyFlagModal: React.FC<SafetyFlagModalProps> = ({ isOpen, onClos
       aria-modal="true"
       aria-labelledby="safety-title"
     >
-      <div className="relative w-full max-w-lg bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden">
         {/* Soft reassuring header */}
-        <div className="flex items-start justify-between pb-4 border-b border-[#E8DDCC]">
+        <div className="flex items-start justify-between pb-4 border-b border-[#E6E8D8]">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-800 shrink-0">
               <ShieldAlert className="w-6 h-6" />
@@ -47,9 +47,9 @@ export const SafetyFlagModal: React.FC<SafetyFlagModalProps> = ({ isOpen, onClos
             إجابتك أو طلبك يشير إلى أنك قد تمر بلحظات ثقيلة جداً أو تفكير مجهد ومؤلم. نريد أن نؤكد لك أنك لست وحدك، وأن مشاعرك تستحق الرعاية الحقيقية.
           </p>
           
-          <div className="p-4 bg-white/80 rounded-2xl border border-[#E8DDCC] space-y-2">
-            <div className="flex items-center gap-2 font-semibold text-[#355C4A]">
-              <HeartHandshake className="w-4 h-4 text-[#8FAF9A]" />
+          <div className="p-4 bg-white/80 rounded-2xl border border-[#E6E8D8] space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-[#174C3C]">
+              <HeartHandshake className="w-4 h-4 text-[#A9C5A0]" />
               <span>تنبيه هام ومخلص:</span>
             </div>
             <p className="text-xs text-[#52645B] leading-normal">
@@ -59,9 +59,9 @@ export const SafetyFlagModal: React.FC<SafetyFlagModalProps> = ({ isOpen, onClos
 
           {/* Emergency Hotlines */}
           <div className="space-y-2.5">
-            <div className="flex items-center justify-between p-3.5 bg-[#8FAF9A]/15 border border-[#8FAF9A]/30 rounded-2xl">
+            <div className="flex items-center justify-between p-3.5 bg-[#A9C5A0]/15 border border-[#A9C5A0]/30 rounded-2xl">
               <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-[#355C4A]" />
+                <Phone className="w-5 h-5 text-[#174C3C]" />
                 <div>
                   <div className="font-bold text-[#26332D]">خط الأمانة العامة للصحة النفسية (مصر)</div>
                   <div className="text-xs text-[#52645B]">متاح مجاناً للمشورة والدعم النفسي العاجل</div>
@@ -69,13 +69,13 @@ export const SafetyFlagModal: React.FC<SafetyFlagModalProps> = ({ isOpen, onClos
               </div>
               <a
                 href="tel:16328"
-                className="px-3.5 py-1.5 bg-[#355C4A] text-white font-mono text-sm font-bold rounded-xl hover:bg-[#264235] transition-colors"
+                className="px-3.5 py-1.5 bg-[#174C3C] text-white font-mono text-sm font-bold rounded-xl hover:bg-[#264235] transition-colors"
               >
                 16328
               </a>
             </div>
 
-            <div className="flex items-center justify-between p-3.5 bg-[#FAF3E0] border border-[#E8DDCC] rounded-2xl">
+            <div className="flex items-center justify-between p-3.5 bg-[#FAF3E0] border border-[#E6E8D8] rounded-2xl">
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-[#8C6D46]" />
                 <div>
@@ -110,16 +110,16 @@ export const SafetyFlagModal: React.FC<SafetyFlagModalProps> = ({ isOpen, onClos
         </div>
 
         {/* Actions */}
-        <div className="pt-3 border-t border-[#E8DDCC] flex flex-col sm:flex-row gap-2.5">
+        <div className="pt-3 border-t border-[#E6E8D8] flex flex-col sm:flex-row gap-2.5">
           <button
             onClick={onClose}
-            className="flex-1 py-3 px-4 bg-[#355C4A] hover:bg-[#264235] text-white font-medium text-sm rounded-xl transition-colors shadow-sm"
+            className="flex-1 py-3 px-4 bg-[#174C3C] hover:bg-[#264235] text-white font-medium text-sm rounded-xl transition-colors shadow-sm"
           >
             تفهّمت الرسالة وسأطلب الدعم 🤍
           </button>
           <button
             onClick={onClose}
-            className="py-3 px-4 bg-white hover:bg-stone-100 text-[#355C4A] border border-[#E8DDCC] font-medium text-sm rounded-xl transition-colors"
+            className="py-3 px-4 bg-white hover:bg-stone-100 text-[#174C3C] border border-[#E6E8D8] font-medium text-sm rounded-xl transition-colors"
           >
             العودة للتطبيق
           </button>

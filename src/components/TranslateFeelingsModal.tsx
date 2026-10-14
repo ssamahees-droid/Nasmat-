@@ -3,6 +3,7 @@ import { X, MessageSquare, Check, Sparkles, RotateCcw, Heart } from 'lucide-reac
 import { TRANSLATE_FEELINGS_PROBABILITIES } from '../data/newPhaseData';
 import { storage } from '../services/storage';
 import { TakeawayResultCard } from './TakeawayResultCard';
+import { TextAudioPlayer } from './TextAudioPlayer';
 
 interface TranslateFeelingsModalProps {
   isOpen: boolean;
@@ -56,10 +57,10 @@ export const TranslateFeelingsModal: React.FC<TranslateFeelingsModalProps> = ({ 
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-lg bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">🗣️</span>
             <div>
@@ -91,7 +92,7 @@ export const TranslateFeelingsModal: React.FC<TranslateFeelingsModalProps> = ({ 
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder="اكتب الجملة هنا، مثلاً: أنا مش طايق حد..."
-              className="w-full p-3.5 bg-white border border-[#E8DDCC] focus:border-[#355C4A] focus:ring-1 focus:ring-[#355C4A] rounded-2xl text-xs sm:text-sm text-[#26332D] outline-none resize-none leading-relaxed"
+              className="w-full p-3.5 bg-white border border-[#E6E8D8] focus:border-[#174C3C] focus:ring-1 focus:ring-[#174C3C] rounded-2xl text-xs sm:text-sm text-[#26332D] outline-none resize-none leading-relaxed"
             />
 
             {/* Quick Suggestions Chips */}
@@ -104,7 +105,7 @@ export const TranslateFeelingsModal: React.FC<TranslateFeelingsModalProps> = ({ 
                       key={idx}
                       type="button"
                       onClick={() => setInputText(ph)}
-                      className="px-2.5 py-1 bg-white hover:bg-stone-100 text-[11px] text-[#52645B] border border-[#E8DDCC] rounded-xl transition-colors"
+                      className="px-2.5 py-1 bg-white hover:bg-stone-100 text-[11px] text-[#52645B] border border-[#E6E8D8] rounded-xl transition-colors"
                     >
                       {ph}
                     </button>
@@ -118,7 +119,7 @@ export const TranslateFeelingsModal: React.FC<TranslateFeelingsModalProps> = ({ 
                 type="button"
                 disabled={!inputText.trim()}
                 onClick={() => setHasSubmitted(true)}
-                className="w-full mt-2 py-3 bg-[#355C4A] hover:bg-[#264235] disabled:opacity-50 text-white text-xs font-bold rounded-2xl transition-colors shadow-xs"
+                className="w-full mt-2 py-3 bg-[#174C3C] hover:bg-[#264235] disabled:opacity-50 text-white text-xs font-bold rounded-2xl transition-colors shadow-xs"
               >
                 تفكيك وترجمة ما وراء الجملة 🔍
               </button>
@@ -128,9 +129,17 @@ export const TranslateFeelingsModal: React.FC<TranslateFeelingsModalProps> = ({ 
           {/* Step 2: Probabilities */}
           {hasSubmitted && (
             <div className="space-y-4 animate-fade-in pt-2">
-              <div className="p-3.5 bg-[#8FAF9A]/15 border border-[#8FAF9A]/30 rounded-2xl">
-                <div className="text-xs font-bold text-[#355C4A] mb-1">
-                  🌿 ممكن يكون وراها:
+              <div className="p-3.5 bg-[#A9C5A0]/15 border border-[#A9C5A0]/30 rounded-2xl">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="text-xs font-bold text-[#174C3C]">
+                    🌿 ممكن يكون وراها:
+                  </div>
+                  <TextAudioPlayer
+                    text="الجمل القاسية والانفعالية غالباً قناع يحمي احتياجاً أو ألماً داخلياً لم يُعترف به بعد."
+                    id="translate_feelings_insight_audio"
+                    variant="inline"
+                    label="اسمع الفهم"
+                  />
                 </div>
                 <p className="text-[11px] text-[#52645B] leading-relaxed">
                   الجمل القاسية والانفعالية غالباً قناع يحمي احتياجاً أو ألماً داخلياً لم يُعترف به بعد.
@@ -151,12 +160,12 @@ export const TranslateFeelingsModal: React.FC<TranslateFeelingsModalProps> = ({ 
                         onClick={() => handleToggleProbability(prob)}
                         className={`w-full p-3 rounded-2xl border text-right transition-all flex items-start gap-2.5 ${
                           isSelected
-                            ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-xs'
-                            : 'bg-white hover:bg-stone-50 text-[#26332D] border-[#E8DDCC]'
+                            ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-xs'
+                            : 'bg-white hover:bg-stone-50 text-[#26332D] border-[#E6E8D8]'
                         }`}
                       >
                         <span className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 mt-0.5 border text-xs ${
-                          isSelected ? 'bg-white text-[#355C4A] border-white' : 'border-stone-300'
+                          isSelected ? 'bg-white text-[#174C3C] border-white' : 'border-stone-300'
                         }`}>
                           {isSelected && '✓'}
                         </span>
@@ -174,7 +183,7 @@ export const TranslateFeelingsModal: React.FC<TranslateFeelingsModalProps> = ({ 
                 <button
                   onClick={handleSaveReflection}
                   disabled={selectedProbabilities.length === 0}
-                  className="flex-1 py-3 bg-[#355C4A] hover:bg-[#264235] disabled:opacity-50 text-white text-xs font-bold rounded-2xl transition-colors flex items-center justify-center gap-1.5 shadow-xs"
+                  className="flex-1 py-3 bg-[#174C3C] hover:bg-[#264235] disabled:opacity-50 text-white text-xs font-bold rounded-2xl transition-colors flex items-center justify-center gap-1.5 shadow-xs"
                 >
                   <Check className="w-4 h-4" />
                   <span>{savedSuccess ? 'تم الحفظ في رحلتي بنجاح ✓' : 'حفظ الفهم الذاتي في رحلتي'}</span>
@@ -182,7 +191,7 @@ export const TranslateFeelingsModal: React.FC<TranslateFeelingsModalProps> = ({ 
 
                 <button
                   onClick={handleReset}
-                  className="p-3 bg-white hover:bg-stone-100 text-stone-600 border border-[#E8DDCC] rounded-2xl text-xs"
+                  className="p-3 bg-white hover:bg-stone-100 text-stone-600 border border-[#E6E8D8] rounded-2xl text-xs"
                   title="تجربة جملة أخرى"
                 >
                   <RotateCcw className="w-4 h-4" />

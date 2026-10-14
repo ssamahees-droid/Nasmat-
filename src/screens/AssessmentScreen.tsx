@@ -244,7 +244,7 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#26332D]">
             قيّم حالتك 📝
           </h1>
-          <p className="text-base font-bold text-[#355C4A]">
+          <p className="text-base font-bold text-[#174C3C]">
             خد خطوة لفهم نفسك
           </p>
           <p className="text-xs text-[#52645B]">
@@ -253,7 +253,7 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
         </div>
 
         {/* Option 1: Initial Check (التقييم المبدئي) */}
-        <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-6 transition-all hover:border-[#8FAF9A] hover:shadow-md space-y-4">
+        <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-6 transition-all hover:border-[#A9C5A0] hover:shadow-md space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
@@ -266,18 +266,18 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
                 أسئلة قصيرة تساعدك تلاحظ حالتك النفسية وطاقتك ونومك بشكل عام دون تعقيد.
               </p>
             </div>
-            <span className="text-xs font-semibold px-2.5 py-1 bg-[#8FAF9A]/20 text-[#355C4A] rounded-xl shrink-0">
+            <span className="text-xs font-semibold px-2.5 py-1 bg-[#A9C5A0]/20 text-[#174C3C] rounded-xl shrink-0">
               8 أسئلة
             </span>
           </div>
 
-          <div className="p-3 bg-white/70 rounded-2xl border border-[#E8DDCC] text-xs text-[#7D8F85]">
+          <div className="p-3 bg-white/70 rounded-2xl border border-[#E6E8D8] text-xs text-[#7D8F85]">
             * ملاحظة هامة: هذا التقييم <strong>ليس تشخيصاً طبياً</strong> وهو مصمم لزيادة الوعي الذاتي فقط.
           </div>
 
           <button
             onClick={handleStartInitial}
-            className="w-full py-3.5 px-4 bg-[#355C4A] hover:bg-[#264235] text-white font-bold text-sm rounded-2xl shadow-xs transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-4 bg-[#174C3C] hover:bg-[#264235] text-white font-bold text-sm rounded-2xl shadow-xs transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
           >
             <span>بدء التقييم المبدئي</span>
             <ArrowLeft className="w-4 h-4 mr-1" />
@@ -285,7 +285,7 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
         </div>
 
         {/* Option 2: PHQ-9 (فحص أعراض الاكتئاب) */}
-        <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-6 transition-all hover:border-[#8FAF9A] hover:shadow-md space-y-4">
+        <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-6 transition-all hover:border-[#A9C5A0] hover:shadow-md space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
@@ -303,13 +303,13 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
             </span>
           </div>
 
-          <div className="p-3 bg-white/70 rounded-2xl border border-[#E8DDCC] text-xs text-[#7D8F85]">
+          <div className="p-3 bg-white/70 rounded-2xl border border-[#E6E8D8] text-xs text-[#7D8F85]">
             * ملاحظة: الفحص ليس تشخيصاً، والنتيجة تحتاج إلى تفسير مناسب ولا تغني عن التقييم المتخصص.
           </div>
 
           <button
             onClick={handleStartPHQ9}
-            className="w-full py-3.5 px-4 bg-[#FAF7F0] hover:bg-[#E8DDCC]/50 text-[#355C4A] border border-[#355C4A]/40 font-bold text-sm rounded-2xl transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-4 bg-[#F7F3E9] hover:bg-[#E6E8D8]/50 text-[#174C3C] border border-[#174C3C]/40 font-bold text-sm rounded-2xl transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
           >
             <span>بدء فحص PHQ-9</span>
             <ArrowLeft className="w-4 h-4 mr-1" />
@@ -334,7 +334,7 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
 
     return (
       <div className="pb-24 pt-4 px-4 sm:px-6 max-w-2xl mx-auto space-y-6 animate-fade-in">
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
           <button
             onClick={() => setActiveMode('picker')}
             className="text-xs font-bold text-[#52645B] hover:text-[#26332D] flex items-center gap-1"
@@ -342,23 +342,23 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
             <ArrowRight className="w-4 h-4" />
             <span>إلغاء التقييم</span>
           </button>
-          <span className="text-xs font-semibold text-[#355C4A]">
+          <span className="text-xs font-semibold text-[#174C3C]">
             سؤال {currentQuestionIndex + 1} من {INITIAL_CHECK_QUESTIONS.length}
           </span>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-[#E8DDCC]/50 h-2 rounded-full overflow-hidden">
+        <div className="w-full bg-[#E6E8D8]/50 h-2 rounded-full overflow-hidden">
           <div 
-            className="bg-[#355C4A] h-full transition-all duration-300"
+            className="bg-[#174C3C] h-full transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
 
         {/* Question Box */}
-        <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 sm:p-8 space-y-5">
+        <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 sm:p-8 space-y-5">
           <div className="space-y-1">
-            <span className="text-xs font-bold text-[#355C4A]">محور {q.label}</span>
+            <span className="text-xs font-bold text-[#174C3C]">محور {q.label}</span>
             <h2 className="text-lg sm:text-xl font-bold text-[#26332D] leading-snug">
               {q.text}
             </h2>
@@ -369,7 +369,7 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
               <button
                 key={i}
                 onClick={() => handleAnswerInitial(q.id, opt.val)}
-                className="w-full p-4 bg-white/90 hover:bg-[#355C4A] hover:text-white border border-[#E8DDCC] rounded-2xl text-right transition-all text-sm font-medium leading-relaxed flex items-center justify-between group active:scale-[0.99]"
+                className="w-full p-4 bg-white/90 hover:bg-[#174C3C] hover:text-white border border-[#E6E8D8] rounded-2xl text-right transition-all text-sm font-medium leading-relaxed flex items-center justify-between group active:scale-[0.99]"
               >
                 <span>{opt.text}</span>
                 <span className="w-6 h-6 rounded-full border border-[#D5CEBE] group-hover:border-white flex items-center justify-center text-xs opacity-60">
@@ -391,7 +391,7 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
 
     return (
       <div className="pb-24 pt-4 px-4 sm:px-6 max-w-2xl mx-auto space-y-6 animate-fade-in">
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
           <button
             onClick={() => setActiveMode('picker')}
             className="text-xs font-bold text-[#52645B] hover:text-[#26332D] flex items-center gap-1"
@@ -399,25 +399,25 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
             <ArrowRight className="w-4 h-4" />
             <span>إلغاء الفحص</span>
           </button>
-          <span className="text-xs font-semibold text-[#355C4A]">
+          <span className="text-xs font-semibold text-[#174C3C]">
             سؤال {currentQuestionIndex + 1} من {PHQ9_QUESTIONS.length}
           </span>
         </div>
 
         {/* Progress */}
-        <div className="w-full bg-[#E8DDCC]/50 h-2 rounded-full overflow-hidden">
+        <div className="w-full bg-[#E6E8D8]/50 h-2 rounded-full overflow-hidden">
           <div 
-            className="bg-[#355C4A] h-full transition-all duration-300"
+            className="bg-[#174C3C] h-full transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
 
         {/* Question Box */}
         <div className={`border rounded-3xl p-6 sm:p-8 space-y-5 ${
-          isCrisisQuestion ? 'bg-amber-50/60 border-amber-200' : 'bg-[#FAF7F0] border-[#E8DDCC]'
+          isCrisisQuestion ? 'bg-amber-50/60 border-amber-200' : 'bg-[#F7F3E9] border-[#E6E8D8]'
         }`}>
           <div className="space-y-1">
-            <span className="text-xs font-bold text-[#355C4A]">
+            <span className="text-xs font-bold text-[#174C3C]">
               خلال الأسبوعين الماضيين، كم مرة شعرت بـ:
             </span>
             <h2 className="text-lg sm:text-xl font-bold text-[#26332D] leading-snug">
@@ -430,7 +430,7 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
               <button
                 key={opt.val}
                 onClick={() => handleAnswerPHQ9(currentQuestionIndex, opt.val)}
-                className="w-full p-4 bg-white/90 hover:bg-[#355C4A] hover:text-white border border-[#E8DDCC] rounded-2xl text-right transition-all text-sm font-medium leading-relaxed flex items-center justify-between group active:scale-[0.99]"
+                className="w-full p-4 bg-white/90 hover:bg-[#174C3C] hover:text-white border border-[#E6E8D8] rounded-2xl text-right transition-all text-sm font-medium leading-relaxed flex items-center justify-between group active:scale-[0.99]"
               >
                 <span>{opt.text}</span>
                 <span className="w-6 h-6 rounded-full border border-[#D5CEBE] group-hover:border-white flex items-center justify-center text-xs opacity-60">
@@ -456,10 +456,10 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
       <div className="pb-24 pt-4 px-4 sm:px-6 max-w-2xl mx-auto space-y-6 animate-fade-in">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
           <button
             onClick={() => setActiveMode('picker')}
-            className="text-xs font-bold text-[#355C4A] hover:underline flex items-center gap-1"
+            className="text-xs font-bold text-[#174C3C] hover:underline flex items-center gap-1"
           >
             <RotateCcw className="w-4 h-4" />
             <span>إجراء تقييم آخر</span>
@@ -470,9 +470,9 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
         </div>
 
         {/* Result Card */}
-        <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 sm:p-8 space-y-5 shadow-xs">
+        <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 sm:p-8 space-y-5 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold px-3 py-1 bg-[#8FAF9A]/20 text-[#355C4A] rounded-xl">
+            <span className="text-xs font-bold px-3 py-1 bg-[#A9C5A0]/20 text-[#174C3C] rounded-xl">
               {latestResult.assessmentTitle}
             </span>
             <div className="text-sm font-mono font-bold text-[#26332D]">
@@ -484,13 +484,13 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
             <h2 className="text-xl font-bold text-[#26332D]">
               {latestResult.resultTitle}
             </h2>
-            <div className="p-4 bg-white/80 rounded-2xl border border-[#E8DDCC] text-sm text-[#35453E] leading-relaxed">
+            <div className="p-4 bg-white/80 rounded-2xl border border-[#E6E8D8] text-sm text-[#35453E] leading-relaxed">
               {latestResult.resultText}
             </div>
           </div>
 
           <div className="space-y-2">
-            <div className="text-xs font-bold text-[#355C4A]">الخطوة المقترحة:</div>
+            <div className="text-xs font-bold text-[#174C3C]">الخطوة المقترحة:</div>
             <p className="text-xs text-[#52645B] leading-relaxed">
               {latestResult.recommendation}
             </p>
@@ -505,7 +505,7 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
             <button
               onClick={onNavigateToContent}
-              className="flex-1 py-3.5 px-4 bg-[#355C4A] hover:bg-[#264235] text-white font-bold text-xs rounded-2xl flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+              className="flex-1 py-3.5 px-4 bg-[#174C3C] hover:bg-[#264235] text-white font-bold text-xs rounded-2xl flex items-center justify-center gap-1.5 transition-colors shadow-xs"
             >
               <BookOpen className="w-4 h-4" />
               <span>استكشف المحتوى المناسب</span>
@@ -513,7 +513,7 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
 
             <button
               onClick={onNavigateToSupport}
-              className="py-3.5 px-4 bg-white hover:bg-stone-50 text-[#355C4A] border border-[#E8DDCC] font-bold text-xs rounded-2xl flex items-center justify-center gap-1.5 transition-colors"
+              className="py-3.5 px-4 bg-white hover:bg-stone-50 text-[#174C3C] border border-[#E6E8D8] font-bold text-xs rounded-2xl flex items-center justify-center gap-1.5 transition-colors"
             >
               <span>طلب دعم أو توجيه</span>
             </button>

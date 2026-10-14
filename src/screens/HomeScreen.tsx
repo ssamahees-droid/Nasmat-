@@ -27,6 +27,7 @@ import { MoodValue, ContentItem } from '../types';
 import { storage } from '../services/storage';
 import { PWAInstallButton } from '../components/PWAInstallButton';
 import { CompanionHeroSection } from '../components/CompanionHeroSection';
+import { NesmatGuideBanner } from '../components/NesmatGuideBanner';
 
 interface HomeScreenProps {
   onNavigate: (tab: string) => void;
@@ -298,7 +299,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               {onOpenCompanion && (
                 <button
                   onClick={onOpenCompanion}
-                  className="px-4 py-2.5 bg-linear-to-r from-[#355C4A] to-[#254234] hover:from-[#2A493B] hover:to-[#1B3126] text-white text-xs font-bold rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-2 cursor-pointer border border-emerald-400/30"
+                  className="px-4 py-2.5 bg-linear-to-r from-[#174C3C] to-[#254234] hover:from-[#2A493B] hover:to-[#1B3126] text-white text-xs font-bold rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-2 cursor-pointer border border-emerald-400/30"
                 >
                   <Sparkles className="w-4 h-4 text-amber-300" />
                   <span>تحدث مع شخصية نسمة حياة 🌿</span>
@@ -327,14 +328,105 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </section>
 
-      {/* 🌿 شخصية نسمة حياة — الحضور التفاعلي المباشر */}
-      <CompanionHeroSection
-        theme={theme}
-        onOpenFullCompanion={() => onOpenCompanion && onOpenCompanion()}
-        onOpenModalByName={handleOpenModalByName}
-        onNavigate={onNavigate}
-        onOpenAudioModal={onOpenAudioModal}
+      {/* 🌿 شخصية نسمة حياة — المرشدة الدائمة */}
+      <NesmatGuideBanner 
+        theme={theme} 
+        onNavigate={onNavigate} 
+        onOpenCompanion={() => onOpenCompanion && onOpenCompanion()} 
       />
+
+
+      {/* 🧭 الركائز الثلاث الأساسية لمنصة نسمة حياة */}
+      <section className={`p-6 border rounded-3xl space-y-6 shadow-xs ${
+        isDark ? 'bg-[#14271F] border-[#A9C5A0]/20' : 'bg-white border-[#174C3C]/15 shadow-sm'
+      }`}>
+        <div className="flex items-center justify-between border-b pb-4 border-[#174C3C]/10 dark:border-[#A9C5A0]/15">
+          <div>
+            <span className="font-jetbrains text-[10px] text-[#174C3C] dark:text-[#A9C5A0] uppercase tracking-widest font-bold">CORE_PILLARS_HUB</span>
+            <h2 className="text-xl font-syne font-black mt-1 text-[#174C3C] dark:text-[#F7F3E9]">الأقسام والركائز الثلاث الأساسية</h2>
+          </div>
+          <span className="text-xs px-3 py-1 bg-[#174C3C]/10 dark:bg-[#A9C5A0]/15 text-[#174C3C] dark:text-[#A9C5A0] font-bold rounded-full border border-[#174C3C]/20 dark:border-[#A9C5A0]/30">
+            منظومة متكاملة
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Pillar 1: Refiqi */}
+          <div 
+            onClick={() => onOpenCompanion && onOpenCompanion()}
+            className={`p-5 rounded-2xl border transition-all cursor-pointer group flex flex-col justify-between ${
+              isDark ? 'bg-[#193127] border-[#A9C5A0]/20 hover:border-[#A9C5A0]' : 'bg-[#E6E8D8]/40 border-[#174C3C]/15 hover:border-[#174C3C] shadow-xs'
+            }`}
+          >
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-[#174C3C]/10 dark:bg-[#A9C5A0]/20 text-[#174C3C] dark:text-[#A9C5A0] flex items-center justify-center font-bold mb-3 border border-[#174C3C]/20 dark:border-[#A9C5A0]/30">
+                🌿
+              </div>
+              <span className="font-jetbrains text-[10px] text-[#174C3C] dark:text-[#A9C5A0] uppercase font-bold">القسم الأول</span>
+              <h3 className="font-syne font-black text-lg mt-1 mb-2 text-[#174C3C] dark:text-[#F7F3E9] group-hover:text-[#174C3C] dark:group-hover:text-[#A9C5A0] transition-colors">
+                رفيقي — المرشد المرافق
+              </h3>
+              <p className="text-xs text-[#13251E]/70 dark:text-[#F7F3E9]/70 leading-relaxed">
+                مساعدك الدافئ للدعم النفسي والتنظيم العاطفي ومرافقتك في مواقف الحياة اليومية على مدار الساعة.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-[#174C3C]/10 dark:border-[#A9C5A0]/15 flex items-center justify-between text-xs font-bold text-[#174C3C] dark:text-[#A9C5A0]">
+              <span>فتح رفيقي الآن</span>
+              <span>←</span>
+            </div>
+          </div>
+
+          {/* Pillar 2: Listen To Yourself */}
+          <div 
+            onClick={() => onNavigate('listen-to-yourself')}
+            className={`p-5 rounded-2xl border transition-all cursor-pointer group flex flex-col justify-between ${
+              isDark ? 'bg-[#193127] border-[#A9C5A0]/20 hover:border-[#A9C5A0]' : 'bg-[#E6E8D8]/40 border-[#174C3C]/15 hover:border-[#174C3C] shadow-xs'
+            }`}
+          >
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-[#A9C5A0]/25 text-[#174C3C] dark:text-[#A9C5A0] flex items-center justify-center font-bold mb-3 border border-[#A9C5A0]/35">
+                🧠
+              </div>
+              <span className="font-jetbrains text-[10px] text-[#174C3C] dark:text-[#A9C5A0] uppercase font-bold">القسم الثاني</span>
+              <h3 className="font-syne font-black text-lg mt-1 mb-2 text-[#174C3C] dark:text-[#F7F3E9] group-hover:text-[#174C3C] dark:group-hover:text-[#A9C5A0] transition-colors">
+                اسمع نفسك — الطفل والراشد والأب
+              </h3>
+              <p className="text-xs text-[#13251E]/70 dark:text-[#F7F3E9]/70 leading-relaxed">
+                ثلاثة أصوات داخلية متوازنة لفهم مشاعرك، تنظيم أفكارك، وتقديم الاحتواء والحكمة غير الحُكمية.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-[#174C3C]/10 dark:border-[#A9C5A0]/15 flex items-center justify-between text-xs font-bold text-[#174C3C] dark:text-[#A9C5A0]">
+              <span>استكشف المنظورات</span>
+              <span>←</span>
+            </div>
+          </div>
+
+          {/* Pillar 3: Weekly Session */}
+          <div 
+            onClick={() => onNavigate('weekly-session')}
+            className={`p-5 rounded-2xl border transition-all cursor-pointer group flex flex-col justify-between ${
+              isDark ? 'bg-[#193127] border-[#D5A65A]/30 hover:border-[#D5A65A]' : 'bg-[#F7F3E9] border-[#D5A65A]/35 hover:border-[#D5A65A] shadow-xs'
+            }`}
+          >
+            <div>
+              <div className="w-10 h-10 rounded-xl bg-[#D5A65A]/20 text-[#D5A65A] flex items-center justify-center font-bold mb-3 border border-[#D5A65A]/35">
+                📅
+              </div>
+              <span className="font-jetbrains text-[10px] text-[#D5A65A] uppercase font-bold">القسم الثالث</span>
+              <h3 className="font-syne font-black text-lg mt-1 mb-2 text-[#174C3C] dark:text-[#F7F3E9] group-hover:text-[#D5A65A] transition-colors">
+                الجلسة النفسية الأسبوعية — خزائن النفس
+              </h3>
+              <p className="text-xs text-[#13251E]/70 dark:text-[#F7F3E9]/70 leading-relaxed">
+                رحلة تفاعلية متكيفة عبر ٧ خزائن نفسية لاكتشاف الذات وبناء خطوة عملية أسبوعية مع دعم صوتي مسموع.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-[#D5A65A]/20 flex items-center justify-between text-xs font-bold text-[#D5A65A]">
+              <span>بدء جلسة هذا الأسبوع</span>
+              <span>←</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* 2. Emotional Mood Check-in & Daily Oasis: ركن الاطمئنان اليومي */}
       <section className={`p-5 sm:p-6 border rounded-3xl space-y-4 shadow-md transition-all ${

@@ -144,12 +144,12 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-lg bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-6 shadow-2xl text-right overflow-y-auto max-h-[92vh]">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-6 shadow-2xl text-right overflow-y-auto max-h-[92vh]">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-[#8FAF9A]/20 text-[#355C4A] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-[#A9C5A0]/20 text-[#174C3C] flex items-center justify-center">
               <Sliders className="w-4 h-4" />
             </div>
             <div>
@@ -172,28 +172,28 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button
               onClick={() => handleApplyPreset('rain_stream')}
-              className="p-2 bg-white/80 hover:bg-white border border-[#E8DDCC] rounded-xl text-center transition-all hover:border-[#8FAF9A] cursor-pointer"
+              className="p-2 bg-white/80 hover:bg-white border border-[#E6E8D8] rounded-xl text-center transition-all hover:border-[#A9C5A0] cursor-pointer"
             >
               <div className="text-sm">🌧️💧</div>
               <div className="text-[11px] font-bold text-[#26332D] mt-0.5">مطر وجدول ماء</div>
             </button>
             <button
               onClick={() => handleApplyPreset('ocean_breeze')}
-              className="p-2 bg-white/80 hover:bg-white border border-[#E8DDCC] rounded-xl text-center transition-all hover:border-[#8FAF9A] cursor-pointer"
+              className="p-2 bg-white/80 hover:bg-white border border-[#E6E8D8] rounded-xl text-center transition-all hover:border-[#A9C5A0] cursor-pointer"
             >
               <div className="text-sm">🌊🍃</div>
               <div className="text-[11px] font-bold text-[#26332D] mt-0.5">أمواج الشاطئ</div>
             </button>
             <button
               onClick={() => handleApplyPreset('forest_birds')}
-              className="p-2 bg-white/80 hover:bg-white border border-[#E8DDCC] rounded-xl text-center transition-all hover:border-[#8FAF9A] cursor-pointer"
+              className="p-2 bg-white/80 hover:bg-white border border-[#E6E8D8] rounded-xl text-center transition-all hover:border-[#A9C5A0] cursor-pointer"
             >
               <div className="text-sm">🌲🐦</div>
               <div className="text-[11px] font-bold text-[#26332D] mt-0.5">غابة وعصافير</div>
             </button>
             <button
               onClick={() => handleApplyPreset('cozy_fire')}
-              className="p-2 bg-white/80 hover:bg-white border border-[#E8DDCC] rounded-xl text-center transition-all hover:border-[#8FAF9A] cursor-pointer"
+              className="p-2 bg-white/80 hover:bg-white border border-[#E6E8D8] rounded-xl text-center transition-all hover:border-[#A9C5A0] cursor-pointer"
             >
               <div className="text-sm">🔥☕</div>
               <div className="text-[11px] font-bold text-[#26332D] mt-0.5">دفء ونار هادئة</div>
@@ -202,7 +202,7 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
         </div>
 
         {/* Mixer Sliders */}
-        <div className="space-y-3 my-3 bg-white/70 p-3.5 sm:p-4 rounded-2xl border border-[#E8DDCC]">
+        <div className="space-y-3 my-3 bg-white/70 p-3.5 sm:p-4 rounded-2xl border border-[#E6E8D8]">
           
           {/* Waves */}
           <div className="space-y-1">
@@ -220,7 +220,7 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
               step="0.05"
               value={channels.waves}
               onChange={(e) => handleChannelChange('waves', Number(e.target.value))}
-              className="w-full accent-[#355C4A] cursor-pointer"
+              className="w-full accent-[#174C3C] cursor-pointer"
             />
           </div>
 
@@ -240,7 +240,7 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
               step="0.05"
               value={channels.rain}
               onChange={(e) => handleChannelChange('rain', Number(e.target.value))}
-              className="w-full accent-[#355C4A] cursor-pointer"
+              className="w-full accent-[#174C3C] cursor-pointer"
             />
           </div>
 
@@ -260,7 +260,7 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
               step="0.05"
               value={channels.stream}
               onChange={(e) => handleChannelChange('stream', Number(e.target.value))}
-              className="w-full accent-[#355C4A] cursor-pointer"
+              className="w-full accent-[#174C3C] cursor-pointer"
             />
           </div>
 
@@ -280,7 +280,7 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
               step="0.05"
               value={channels.birds}
               onChange={(e) => handleChannelChange('birds', Number(e.target.value))}
-              className="w-full accent-[#355C4A] cursor-pointer"
+              className="w-full accent-[#174C3C] cursor-pointer"
             />
           </div>
 
@@ -300,7 +300,7 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
               step="0.05"
               value={channels.forest}
               onChange={(e) => handleChannelChange('forest', Number(e.target.value))}
-              className="w-full accent-[#355C4A] cursor-pointer"
+              className="w-full accent-[#174C3C] cursor-pointer"
             />
           </div>
 
@@ -320,7 +320,7 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
               step="0.05"
               value={channels.breeze}
               onChange={(e) => handleChannelChange('breeze', Number(e.target.value))}
-              className="w-full accent-[#355C4A] cursor-pointer"
+              className="w-full accent-[#174C3C] cursor-pointer"
             />
           </div>
 
@@ -340,20 +340,20 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
               step="0.05"
               value={channels.fire}
               onChange={(e) => handleChannelChange('fire', Number(e.target.value))}
-              className="w-full accent-[#355C4A] cursor-pointer"
+              className="w-full accent-[#174C3C] cursor-pointer"
             />
           </div>
         </div>
 
         {/* Chime Trigger */}
-        <div className="flex items-center justify-between p-3 bg-stone-100/80 rounded-xl mb-3 border border-[#E8DDCC]/60">
+        <div className="flex items-center justify-between p-3 bg-stone-100/80 rounded-xl mb-3 border border-[#E6E8D8]/60">
           <span className="text-xs text-[#35453E] font-medium flex items-center gap-1.5">
-            <BellRing className="w-3.5 h-3.5 text-[#355C4A]" />
+            <BellRing className="w-3.5 h-3.5 text-[#174C3C]" />
             <span>رنين وعاء السكينة الحقيقي (لحظة وعي):</span>
           </span>
           <button
             onClick={handlePlayChime}
-            className="py-1 px-3 bg-white border border-[#E8DDCC] hover:bg-[#FAF7F0] text-xs font-bold text-[#355C4A] rounded-lg shadow-2xs cursor-pointer"
+            className="py-1 px-3 bg-white border border-[#E6E8D8] hover:bg-[#F7F3E9] text-xs font-bold text-[#174C3C] rounded-lg shadow-2xs cursor-pointer"
           >
             دق الجرس 🔔
           </button>
@@ -372,8 +372,8 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
                 onClick={() => handleSetTimer(m)}
                 className={`py-1 px-2.5 rounded-lg text-[11px] font-mono cursor-pointer ${
                   activeTimerMinutes === m
-                    ? 'bg-[#355C4A] text-white'
-                    : 'bg-white border border-[#E8DDCC] text-stone-600'
+                    ? 'bg-[#174C3C] text-white'
+                    : 'bg-white border border-[#E6E8D8] text-stone-600'
                 }`}
               >
                 {m} د
@@ -383,7 +383,7 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
         </div>
 
         {/* Footer controls */}
-        <div className="pt-2 border-t border-[#E8DDCC] flex gap-2">
+        <div className="pt-2 border-t border-[#E6E8D8] flex gap-2">
           {isAnyPlaying && (
             <button
               onClick={handleMuteAll}
@@ -396,7 +396,7 @@ export const SoundscapeStudio: React.FC<SoundscapeStudioProps> = ({ isOpen, onCl
 
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer text-center"
+            className="flex-1 py-2.5 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer text-center"
           >
             {isAnyPlaying ? 'متابعة التصفح مع الصوت في الخلفية 🌿' : 'إغلاق الاستوديو'}
           </button>

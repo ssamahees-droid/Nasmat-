@@ -717,7 +717,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
 
       {/* Living State Badge (Only shown on md, lg, xl sizes) */}
       {(size === 'md' || size === 'lg' || size === 'xl') && (
-        <div className="mt-2.5 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 dark:bg-[#1A231F]/95 border border-[#E8DDCC] dark:border-stone-700 shadow-xs text-xs font-bold text-[#26332D] dark:text-[#E8DDCC] backdrop-blur-xs transition-all">
+        <div className="mt-2.5 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 dark:bg-[#1A231F]/95 border border-[#E6E8D8] dark:border-stone-700 shadow-xs text-xs font-bold text-[#26332D] dark:text-[#E6E8D8] backdrop-blur-xs transition-all">
           {isListening ? (
             <>
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
@@ -726,9 +726,9 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
             </>
           ) : isSpeaking ? (
             <>
-              <span className="w-2 h-2 rounded-full bg-[#355C4A] animate-pulse" />
-              <Volume2 className="w-3.5 h-3.5 text-[#355C4A] dark:text-emerald-400" />
-              <span className="text-[#355C4A] dark:text-emerald-300">يتحدث معك الآن...</span>
+              <span className="w-2 h-2 rounded-full bg-[#174C3C] animate-pulse" />
+              <Volume2 className="w-3.5 h-3.5 text-[#174C3C] dark:text-emerald-400" />
+              <span className="text-[#174C3C] dark:text-emerald-300">يتحدث معك الآن...</span>
             </>
           ) : expression === 'thinking' ? (
             <>
@@ -743,7 +743,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
           ) : expression === 'encouraging' ? (
             <>
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span className="text-[#355C4A] dark:text-emerald-300">يشجعك ويساند خطواتك</span>
+              <span className="text-[#174C3C] dark:text-emerald-300">يشجعك ويساند خطواتك</span>
             </>
           ) : (
             <>
@@ -809,10 +809,10 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
           {onTogglePersona && (
             <button
               onClick={onTogglePersona}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAF7F0] dark:bg-stone-800 hover:bg-[#E8DDCC]/50 dark:hover:bg-stone-700 border border-[#E8DDCC] dark:border-stone-700 transition-colors cursor-pointer font-medium"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F7F3E9] dark:bg-stone-800 hover:bg-[#E6E8D8]/50 dark:hover:bg-stone-700 border border-[#E6E8D8] dark:border-stone-700 transition-colors cursor-pointer font-medium"
               title="تبديل الجانب النفسي (الراشد / الطفل / الأب)"
             >
-              <RefreshCw className="w-3 h-3 text-[#355C4A] dark:text-emerald-400" />
+              <RefreshCw className="w-3 h-3 text-[#174C3C] dark:text-emerald-400" />
               <span>{personaMeta.badge}</span>
             </button>
           )}
@@ -833,7 +833,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
             className={`flex items-center gap-1 px-2 py-1 rounded-lg border transition-all cursor-pointer font-medium ${
               isBreathingSync 
                 ? 'bg-teal-600 text-white border-teal-500 shadow-md shadow-teal-500/25 animate-pulse' 
-                : 'bg-[#FAF7F0] dark:bg-stone-800 text-teal-800 dark:text-teal-300 border-[#E8DDCC] dark:border-stone-700 hover:bg-teal-50 dark:hover:bg-stone-700'
+                : 'bg-[#F7F3E9] dark:bg-stone-800 text-teal-800 dark:text-teal-300 border-[#E6E8D8] dark:border-stone-700 hover:bg-teal-50 dark:hover:bg-stone-700'
             }`}
             title="جلسة تنفس واسترخاء متزامن مع رفيقي"
           >
@@ -860,7 +860,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
           {allowCustomization && (
             <button
               onClick={() => setShowThemeModal(true)}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg border bg-[#FAF7F0] dark:bg-stone-800 hover:bg-amber-50 text-stone-700 dark:text-stone-300 border-[#E8DDCC] dark:border-stone-700 transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-2 py-1 rounded-lg border bg-[#F7F3E9] dark:bg-stone-800 hover:bg-amber-50 text-stone-700 dark:text-stone-300 border-[#E6E8D8] dark:border-stone-700 transition-colors cursor-pointer"
               title="تخصيص هالة الأجواء والزينة"
             >
               <Palette className="w-3 h-3 text-amber-600 dark:text-amber-400" />
@@ -887,7 +887,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
               setUploadFeedback(null);
               setShowPhotoModal(true);
             }}
-            className="p-1 rounded-lg border bg-[#FAF7F0] dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-emerald-50 border-[#E8DDCC] dark:border-stone-700 transition-colors cursor-pointer"
+            className="p-1 rounded-lg border bg-[#F7F3E9] dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-emerald-50 border-[#E6E8D8] dark:border-stone-700 transition-colors cursor-pointer"
             title="إدارة صورتي الشخصية"
           >
             <Camera className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -977,7 +977,7 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full py-2.5 px-4 rounded-xl bg-[#355C4A] hover:bg-[#2A493B] text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-xl bg-[#174C3C] hover:bg-[#2A493B] text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Upload className="w-4 h-4" />
                 <span>{localUserPhoto ? 'تغيير الصورة الشخصية' : 'رفع صورة من جهازي'}</span>

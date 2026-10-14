@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Sparkles, X, Heart, Share2, Volume2, Bookmark, Check } from 'lucide-react';
 import { ambientSound } from '../utils/audioSynth';
 import { storage } from '../services/storage';
+import { TextAudioPlayer } from './TextAudioPlayer';
 
 interface DailyWisdomModalProps {
   isOpen: boolean;
@@ -65,12 +66,12 @@ export const DailyWisdomModal: React.FC<DailyWisdomModalProps> = ({ isOpen, onCl
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-md bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 shadow-2xl text-right overflow-hidden">
+      <div className="relative w-full max-w-md bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 shadow-2xl text-right overflow-hidden">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-[#8FAF9A]/20 text-[#355C4A] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-[#A9C5A0]/20 text-[#174C3C] flex items-center justify-center">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
@@ -84,21 +85,29 @@ export const DailyWisdomModal: React.FC<DailyWisdomModalProps> = ({ isOpen, onCl
         </div>
 
         {/* Artistic Card View */}
-        <div className="my-6 p-6 sm:p-8 bg-gradient-to-tr from-[#FAF7F0] via-white to-[#EFEAE0] rounded-3xl border border-[#8FAF9A]/40 shadow-sm relative overflow-hidden text-center">
-          <div className="text-3xl mb-3 text-[#355C4A]">🌿</div>
+        <div className="my-6 p-6 sm:p-8 bg-gradient-to-tr from-[#F7F3E9] via-white to-[#EFEAE0] rounded-3xl border border-[#A9C5A0]/40 shadow-sm relative overflow-hidden text-center space-y-3">
+          <div className="text-3xl text-[#174C3C]">🌿</div>
           <blockquote className="text-sm sm:text-base font-medium text-[#26332D] leading-loose italic">
             {currentCard.quote}
           </blockquote>
-          <div className="mt-4 pt-3 border-t border-[#E8DDCC]/50 text-xs font-bold text-[#355C4A]">
+          <div className="pt-2 border-t border-[#E6E8D8]/50 text-xs font-bold text-[#174C3C]">
             — {currentCard.author}
+          </div>
+          <div className="pt-2 flex justify-center">
+            <TextAudioPlayer
+              text={currentCard.quote}
+              id={`daily_wisdom_${currentCard.id}`}
+              variant="compact"
+              label="اسمع الحكمة"
+            />
           </div>
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#E8DDCC]">
+        <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#E6E8D8]">
           <button
             onClick={handlePlayChime}
-            className="p-2.5 text-[#355C4A] hover:bg-[#8FAF9A]/20 rounded-xl transition-colors flex items-center gap-1.5 text-xs font-medium"
+            className="p-2.5 text-[#174C3C] hover:bg-[#A9C5A0]/20 rounded-xl transition-colors flex items-center gap-1.5 text-xs font-medium"
             title="رنّة الصفاء"
           >
             <Volume2 className="w-4 h-4" />
@@ -115,7 +124,7 @@ export const DailyWisdomModal: React.FC<DailyWisdomModalProps> = ({ isOpen, onCl
 
           <button
             onClick={handleSaveToNotes}
-            className="p-2.5 text-[#52645B] hover:text-[#355C4A] hover:bg-stone-200/50 rounded-xl transition-colors flex items-center gap-1.5 text-xs"
+            className="p-2.5 text-[#52645B] hover:text-[#174C3C] hover:bg-stone-200/50 rounded-xl transition-colors flex items-center gap-1.5 text-xs"
           >
             {isSaved ? <Check className="w-4 h-4 text-emerald-600" /> : <Bookmark className="w-4 h-4" />}
             <span>{isSaved ? 'تم الحفظ في رحلتي' : 'حفظ'}</span>
@@ -123,7 +132,7 @@ export const DailyWisdomModal: React.FC<DailyWisdomModalProps> = ({ isOpen, onCl
 
           <button
             onClick={handleNext}
-            className="py-2 px-3 bg-[#355C4A] text-white font-bold text-xs rounded-xl hover:bg-[#264235] transition-colors"
+            className="py-2 px-3 bg-[#174C3C] text-white font-bold text-xs rounded-xl hover:bg-[#264235] transition-colors"
           >
             بطاقة أخرى ←
           </button>

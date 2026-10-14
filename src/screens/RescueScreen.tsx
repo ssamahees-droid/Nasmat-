@@ -55,7 +55,7 @@ export const RescueScreen: React.FC<RescueScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#070b09] text-[#e8f2ec] pb-24 font-sans selection:bg-[#355C4A]/40" dir="rtl">
+    <div className="min-h-screen bg-[#070b09] text-[#e8f2ec] pb-24 font-sans selection:bg-[#174C3C]/40" dir="rtl">
       {/* Top Banner / Breadcrumb */}
       <div className="border-b border-[#1b2f25]/80 bg-[#0c1410]/80 backdrop-blur-md sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">

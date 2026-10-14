@@ -32,10 +32,10 @@ export const ConflictWithoutWarModal: React.FC<ConflictWithoutWarModalProps> = (
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-2xl bg-[#FAF7F2] border border-[#E5DACB] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E5DACB] shrink-0">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E6E8D8] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-[#3A5A40]/10 text-[#3A5A40] flex items-center justify-center text-2xl shadow-inner">
               🤝
@@ -71,7 +71,7 @@ export const ConflictWithoutWarModal: React.FC<ConflictWithoutWarModalProps> = (
               className={`flex-1 p-2.5 rounded-2xl border text-xs font-bold transition-all text-center ${
                 selectedScenarioIndex === idx
                   ? 'bg-[#3A5A40] text-white border-[#3A5A40] shadow-xs'
-                  : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E5DACB]'
+                  : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E6E8D8]'
               }`}
             >
               {sc.topic}
@@ -82,7 +82,7 @@ export const ConflictWithoutWarModal: React.FC<ConflictWithoutWarModalProps> = (
         {/* Content Body */}
         <div className="overflow-y-auto py-2 space-y-4 flex-1">
           {/* Situation Card */}
-          <div className="p-4 bg-white border border-[#E5DACB] rounded-2xl shadow-xs space-y-1">
+          <div className="p-4 bg-white border border-[#E6E8D8] rounded-2xl shadow-xs space-y-1">
             <span className="text-[11px] font-bold text-[#3A5A40]">المشكلة محل النقاش:</span>
             <p className="text-xs text-[#283618] leading-relaxed font-medium">
               {currentScenario.situation}
@@ -98,7 +98,7 @@ export const ConflictWithoutWarModal: React.FC<ConflictWithoutWarModalProps> = (
                 className={`p-3 rounded-2xl border text-xs font-bold transition-all flex flex-col items-center gap-1 ${
                   selectedMethod === 'attack'
                     ? 'bg-rose-700 text-white border-rose-700 shadow-sm'
-                    : 'bg-white hover:bg-rose-50 text-rose-800 border-[#E5DACB]'
+                    : 'bg-white hover:bg-rose-50 text-rose-800 border-[#E6E8D8]'
                 }`}
               >
                 <span>❌ أسلوب الهجوم</span>
@@ -110,7 +110,7 @@ export const ConflictWithoutWarModal: React.FC<ConflictWithoutWarModalProps> = (
                 className={`p-3 rounded-2xl border text-xs font-bold transition-all flex flex-col items-center gap-1 ${
                   selectedMethod === 'withdraw'
                     ? 'bg-amber-700 text-white border-amber-700 shadow-sm'
-                    : 'bg-white hover:bg-amber-50 text-amber-800 border-[#E5DACB]'
+                    : 'bg-white hover:bg-amber-50 text-amber-800 border-[#E6E8D8]'
                 }`}
               >
                 <span>❌ أسلوب الانسحاب</span>
@@ -122,7 +122,7 @@ export const ConflictWithoutWarModal: React.FC<ConflictWithoutWarModalProps> = (
                 className={`p-3 rounded-2xl border text-xs font-bold transition-all flex flex-col items-center gap-1 ${
                   selectedMethod === 'healthy'
                     ? 'bg-[#3A5A40] text-white border-[#3A5A40] shadow-sm'
-                    : 'bg-white hover:bg-emerald-50 text-emerald-800 border-[#E5DACB]'
+                    : 'bg-white hover:bg-emerald-50 text-emerald-800 border-[#E6E8D8]'
                 }`}
               >
                 <span>✅ حوار صحي</span>

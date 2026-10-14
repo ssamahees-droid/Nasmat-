@@ -174,7 +174,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
     <div className="pb-28 pt-4 px-4 sm:px-6 max-w-5xl mx-auto space-y-6 text-right">
       
       {/* Top Banner with Role Switcher & Back to User View */}
-      <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+      <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-xl">⚙️</span>
@@ -189,8 +189,8 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
           {/* Active Role Selector */}
-          <div className="flex items-center gap-1.5 bg-white border border-[#E8DDCC] px-2.5 py-1.5 rounded-xl text-xs font-semibold text-[#355C4A]">
-            <ShieldCheck className="w-4 h-4 text-[#8FAF9A]" />
+          <div className="flex items-center gap-1.5 bg-white border border-[#E6E8D8] px-2.5 py-1.5 rounded-xl text-xs font-semibold text-[#174C3C]">
+            <ShieldCheck className="w-4 h-4 text-[#A9C5A0]" />
             <select
               value={currentRole}
               onChange={(e) => onRoleChange(e.target.value as UserRole)}
@@ -206,7 +206,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
 
           <button
             onClick={onNavigateToUserApp}
-            className="py-1.5 px-3 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-xl transition-colors whitespace-nowrap"
+            className="py-1.5 px-3 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-xl transition-colors whitespace-nowrap"
           >
             تصفح كتطبيق المستخدم ←
           </button>
@@ -214,11 +214,11 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#E8DDCC] pb-2 text-xs font-bold">
+      <div className="flex items-center gap-2 border-b border-[#E6E8D8] pb-2 text-xs font-bold">
         <button
           onClick={() => setActiveTab('overview')}
           className={`py-2 px-3.5 rounded-xl transition-colors ${
-            activeTab === 'overview' ? 'bg-[#355C4A] text-white' : 'text-[#52645B] hover:bg-stone-200/50'
+            activeTab === 'overview' ? 'bg-[#174C3C] text-white' : 'text-[#52645B] hover:bg-stone-200/50'
           }`}
         >
           نظرة عامة والإحصائيات
@@ -228,7 +228,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
           <button
             onClick={() => setActiveTab('content')}
             className={`py-2 px-3.5 rounded-xl transition-colors ${
-              activeTab === 'content' ? 'bg-[#355C4A] text-white' : 'text-[#52645B] hover:bg-stone-200/50'
+              activeTab === 'content' ? 'bg-[#174C3C] text-white' : 'text-[#52645B] hover:bg-stone-200/50'
             }`}
           >
             إدارة المحتوى والمراجعة ({contentList.length})
@@ -239,7 +239,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
           <button
             onClick={() => setActiveTab('support')}
             className={`py-2 px-3.5 rounded-xl transition-colors ${
-              activeTab === 'support' ? 'bg-[#355C4A] text-white' : 'text-[#52645B] hover:bg-stone-200/50'
+              activeTab === 'support' ? 'bg-[#174C3C] text-white' : 'text-[#52645B] hover:bg-stone-200/50'
             }`}
           >
             طلبات الدعم ({openSupportCount} مفتوحة)
@@ -250,7 +250,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
           <button
             onClick={() => setActiveTab('audit')}
             className={`py-2 px-3.5 rounded-xl transition-colors ${
-              activeTab === 'audit' ? 'bg-[#355C4A] text-white' : 'text-[#52645B] hover:bg-stone-200/50'
+              activeTab === 'audit' ? 'bg-[#174C3C] text-white' : 'text-[#52645B] hover:bg-stone-200/50'
             }`}
           >
             سجل العمليات (Audit Logs)
@@ -262,28 +262,28 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
       {activeTab === 'overview' && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-4 bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl">
+            <div className="p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl">
               <div className="text-xs text-[#52645B]">المحتوى المنشور</div>
-              <div className="text-2xl font-extrabold font-mono text-[#355C4A] mt-1">
+              <div className="text-2xl font-extrabold font-mono text-[#174C3C] mt-1">
                 {publishedContentCount}
               </div>
             </div>
 
-            <div className="p-4 bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl">
+            <div className="p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl">
               <div className="text-xs text-[#52645B]">المحتوى قيد المراجعة</div>
               <div className="text-2xl font-extrabold font-mono text-amber-700 mt-1">
                 {inReviewContentCount}
               </div>
             </div>
 
-            <div className="p-4 bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl">
+            <div className="p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl">
               <div className="text-xs text-[#52645B]">طلبات الدعم المفتوحة</div>
               <div className="text-2xl font-extrabold font-mono text-sky-700 mt-1">
                 {openSupportCount}
               </div>
             </div>
 
-            <div className="p-4 bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl">
+            <div className="p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl">
               <div className="text-xs text-[#52645B]">الطلبات الجديدة</div>
               <div className="text-2xl font-extrabold font-mono text-rose-700 mt-1">
                 {newSupportCount}
@@ -297,7 +297,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
           </div>
 
           {/* Workflow Schema Illustration (Section 21) */}
-          <div className="p-5 bg-white/80 border border-[#E8DDCC] rounded-3xl space-y-3">
+          <div className="p-5 bg-white/80 border border-[#E6E8D8] rounded-3xl space-y-3">
             <h3 className="font-bold text-sm text-[#26332D]">
               سلسلة اعتماد المحتوى النفسي (Workflow):
             </h3>
@@ -345,7 +345,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                   });
                   setIsAddingContent(true);
                 }}
-                className="py-2 px-3.5 bg-[#355C4A] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 hover:bg-[#264235]"
+                className="py-2 px-3.5 bg-[#174C3C] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 hover:bg-[#264235]"
               >
                 <Plus className="w-4 h-4" />
                 <span>إضافة محتوى جديد</span>
@@ -355,8 +355,8 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
 
           {/* Add / Edit Form */}
           {isAddingContent && (
-            <form onSubmit={handleSaveContent} className="p-5 bg-[#FAF7F0] border border-[#355C4A]/40 rounded-3xl space-y-4 animate-fade-in shadow-xs">
-              <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+            <form onSubmit={handleSaveContent} className="p-5 bg-[#F7F3E9] border border-[#174C3C]/40 rounded-3xl space-y-4 animate-fade-in shadow-xs">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
                 <h3 className="font-bold text-sm text-[#26332D]">
                   {editingContentId ? 'تعديل المحتوى' : 'إضافة مقال أو صوت جديد'}
                 </h3>
@@ -377,7 +377,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                     required
                     value={contentForm.title}
                     onChange={(e) => setContentForm({ ...contentForm, title: e.target.value })}
-                    className="w-full p-2.5 bg-white border border-[#E8DDCC] rounded-xl text-xs"
+                    className="w-full p-2.5 bg-white border border-[#E6E8D8] rounded-xl text-xs"
                   />
                 </div>
 
@@ -386,7 +386,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                   <select
                     value={contentForm.contentType}
                     onChange={(e) => setContentForm({ ...contentForm, contentType: e.target.value as ContentType })}
-                    className="w-full p-2.5 bg-white border border-[#E8DDCC] rounded-xl text-xs"
+                    className="w-full p-2.5 bg-white border border-[#E6E8D8] rounded-xl text-xs"
                   >
                     <option value="article">مقال (Article)</option>
                     <option value="audio">صوت (Audio)</option>
@@ -402,7 +402,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                   <select
                     value={contentForm.category}
                     onChange={(e) => setContentForm({ ...contentForm, category: e.target.value })}
-                    className="w-full p-2.5 bg-white border border-[#E8DDCC] rounded-xl text-xs"
+                    className="w-full p-2.5 bg-white border border-[#E6E8D8] rounded-xl text-xs"
                   >
                     {categories.map(c => (
                       <option key={c.id} value={c.id}>{c.name}</option>
@@ -416,7 +416,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                     type="text"
                     value={contentForm.subCategory}
                     onChange={(e) => setContentForm({ ...contentForm, subCategory: e.target.value })}
-                    className="w-full p-2.5 bg-white border border-[#E8DDCC] rounded-xl text-xs"
+                    className="w-full p-2.5 bg-white border border-[#E6E8D8] rounded-xl text-xs"
                   />
                 </div>
 
@@ -426,7 +426,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                     type="text"
                     value={contentForm.duration}
                     onChange={(e) => setContentForm({ ...contentForm, duration: e.target.value })}
-                    className="w-full p-2.5 bg-white border border-[#E8DDCC] rounded-xl text-xs"
+                    className="w-full p-2.5 bg-white border border-[#E6E8D8] rounded-xl text-xs"
                   />
                 </div>
               </div>
@@ -437,7 +437,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                   rows={2}
                   value={contentForm.description}
                   onChange={(e) => setContentForm({ ...contentForm, description: e.target.value })}
-                  className="w-full p-2.5 bg-white border border-[#E8DDCC] rounded-xl text-xs"
+                  className="w-full p-2.5 bg-white border border-[#E6E8D8] rounded-xl text-xs"
                 />
               </div>
 
@@ -447,7 +447,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                   rows={5}
                   value={contentForm.body}
                   onChange={(e) => setContentForm({ ...contentForm, body: e.target.value })}
-                  className="w-full p-2.5 bg-white border border-[#E8DDCC] rounded-xl text-xs font-mono"
+                  className="w-full p-2.5 bg-white border border-[#E6E8D8] rounded-xl text-xs font-mono"
                 />
               </div>
 
@@ -458,7 +458,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                     type="text"
                     value={contentForm.author}
                     onChange={(e) => setContentForm({ ...contentForm, author: e.target.value })}
-                    className="w-full p-2.5 bg-white border border-[#E8DDCC] rounded-xl text-xs"
+                    className="w-full p-2.5 bg-white border border-[#E6E8D8] rounded-xl text-xs"
                   />
                 </div>
 
@@ -468,7 +468,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                     type="text"
                     value={contentForm.reviewer}
                     onChange={(e) => setContentForm({ ...contentForm, reviewer: e.target.value })}
-                    className="w-full p-2.5 bg-white border border-[#E8DDCC] rounded-xl text-xs"
+                    className="w-full p-2.5 bg-white border border-[#E6E8D8] rounded-xl text-xs"
                   />
                 </div>
 
@@ -477,7 +477,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                   <select
                     value={contentForm.reviewStatus}
                     onChange={(e) => setContentForm({ ...contentForm, reviewStatus: e.target.value as ReviewStatus })}
-                    className="w-full p-2.5 bg-white border border-[#E8DDCC] rounded-xl text-xs font-bold"
+                    className="w-full p-2.5 bg-white border border-[#E6E8D8] rounded-xl text-xs font-bold"
                   >
                     <option value="draft">Draft (مسودة)</option>
                     <option value="review">Review (قيد المراجعة)</option>
@@ -494,7 +494,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                   id="isSuggested"
                   checked={contentForm.isSuggested}
                   onChange={(e) => setContentForm({ ...contentForm, isSuggested: e.target.checked })}
-                  className="w-4 h-4 accent-[#355C4A]"
+                  className="w-4 h-4 accent-[#174C3C]"
                 />
                 <label htmlFor="isSuggested" className="text-xs font-bold text-[#26332D]">
                   عرض كمحتوى مقترح في الشاشة الرئيسية («ممكن يهمك 🌱»)
@@ -504,14 +504,14 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
               <div className="flex gap-2 pt-2">
                 <button
                   type="submit"
-                  className="py-2.5 px-5 bg-[#355C4A] text-white font-bold text-xs rounded-xl"
+                  className="py-2.5 px-5 bg-[#174C3C] text-white font-bold text-xs rounded-xl"
                 >
                   حفظ المحتوى
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsAddingContent(false)}
-                  className="py-2.5 px-4 bg-white border border-[#E8DDCC] text-stone-600 text-xs rounded-xl"
+                  className="py-2.5 px-4 bg-white border border-[#E6E8D8] text-stone-600 text-xs rounded-xl"
                 >
                   إلغاء
                 </button>
@@ -520,8 +520,8 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
           )}
 
           {/* Content List Table */}
-          <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl overflow-hidden shadow-xs">
-            <div className="divide-y divide-[#E8DDCC]/70">
+          <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl overflow-hidden shadow-xs">
+            <div className="divide-y divide-[#E6E8D8]/70">
               {contentList.map(item => (
                 <div key={item.id} className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:bg-white transition-colors">
                   <div className="space-y-1">
@@ -535,7 +535,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                         {item.reviewStatus}
                       </span>
                       {item.isSuggested && (
-                        <span className="text-[10px] px-2 py-0.5 bg-[#8FAF9A]/20 text-[#355C4A] rounded-lg">
+                        <span className="text-[10px] px-2 py-0.5 bg-[#A9C5A0]/20 text-[#174C3C] rounded-lg">
                           مقترح
                         </span>
                       )}
@@ -564,7 +564,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                     {canManageContent && item.reviewStatus === 'approved' && (
                       <button
                         onClick={() => handleWorkflowTransition(item.id, 'published')}
-                        className="py-1 px-2.5 bg-[#355C4A] hover:bg-[#264235] text-white text-[11px] font-bold rounded-lg"
+                        className="py-1 px-2.5 bg-[#174C3C] hover:bg-[#264235] text-white text-[11px] font-bold rounded-lg"
                       >
                         نشر الآن
                       </button>
@@ -574,7 +574,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                       <>
                         <button
                           onClick={() => handleEditContent(item)}
-                          className="p-1.5 text-stone-500 hover:text-[#355C4A]"
+                          className="p-1.5 text-stone-500 hover:text-[#174C3C]"
                           title="تعديل"
                         >
                           <Edit className="w-4 h-4" />
@@ -612,11 +612,11 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
             {filteredTickets.map(ticket => (
               <div
                 key={ticket.id}
-                className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 space-y-3 shadow-xs hover:bg-white transition-colors"
+                className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 space-y-3 shadow-xs hover:bg-white transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-base font-bold text-[#355C4A]">
+                    <span className="font-mono text-base font-bold text-[#174C3C]">
                       {ticket.id}
                     </span>
                     <span className="text-xs font-bold text-[#26332D]">
@@ -632,7 +632,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                     <select
                       value={ticket.status}
                       onChange={(e) => handleUpdateTicketStatus(ticket.id, e.target.value as SupportStatus)}
-                      className="text-xs font-bold p-1 bg-white border border-[#E8DDCC] rounded-lg"
+                      className="text-xs font-bold p-1 bg-white border border-[#E6E8D8] rounded-lg"
                     >
                       <option value="new">جديد</option>
                       <option value="received">تم الاستلام</option>
@@ -644,20 +644,20 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
 
                     <button
                       onClick={() => setActiveTicket(activeTicket?.id === ticket.id ? null : ticket)}
-                      className="py-1 px-3 bg-[#355C4A] text-white text-xs font-bold rounded-lg"
+                      className="py-1 px-3 bg-[#174C3C] text-white text-xs font-bold rounded-lg"
                     >
                       {activeTicket?.id === ticket.id ? 'إخفاء' : 'الرد والمتابعة'}
                     </button>
                   </div>
                 </div>
 
-                <p className="text-xs text-[#35453E] p-3 bg-white/80 rounded-2xl border border-[#E8DDCC] leading-relaxed">
+                <p className="text-xs text-[#35453E] p-3 bg-white/80 rounded-2xl border border-[#E6E8D8] leading-relaxed">
                   {ticket.message}
                 </p>
 
                 {/* Expanded Reply Box */}
                 {activeTicket?.id === ticket.id && (
-                  <div className="pt-3 border-t border-[#E8DDCC] space-y-3 animate-fade-in">
+                  <div className="pt-3 border-t border-[#E6E8D8] space-y-3 animate-fade-in">
                     {/* Previous messages */}
                     <div className="space-y-2">
                       <div className="text-xs font-bold text-[#52645B]">سجل المراسلات:</div>
@@ -684,11 +684,11 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
                         onChange={(e) => setTicketReplyText(e.target.value)}
                         placeholder="اكتب ردك أو التوجيه المناسب للمستخدم هنا بعناية وهدوء..."
                         required
-                        className="w-full p-3 bg-white border border-[#E8DDCC] rounded-xl text-xs"
+                        className="w-full p-3 bg-white border border-[#E6E8D8] rounded-xl text-xs"
                       />
                       <button
                         type="submit"
-                        className="py-2 px-4 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-xl flex items-center gap-1.5"
+                        className="py-2 px-4 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-xl flex items-center gap-1.5"
                       >
                         <Send className="w-3.5 h-3.5" />
                         <span>إرسال الرد للمستخدم</span>
@@ -714,7 +714,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({
             </span>
           </div>
 
-          <div className="bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl overflow-hidden shadow-xs divide-y divide-[#E8DDCC]/70">
+          <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl overflow-hidden shadow-xs divide-y divide-[#E6E8D8]/70">
             {auditLogs.length === 0 ? (
               <div className="p-6 text-center text-xs text-[#7D8F85]">
                 لا توجد سجلات بعد. سيتم تسجيل كل إجراء يقوم به المشرفون هنا.

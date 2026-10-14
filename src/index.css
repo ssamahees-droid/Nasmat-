@@ -1,25 +1,118 @@
 @import "tailwindcss";
 
-:root {
-  --bg: #F2EFEB;
-  --ink: #111113;
-  --accent: #E36E4D;
-  --ink-faint: rgba(17, 17, 19, 0.08);
-  --surface: #FFFFFF;
-  --surface-hover: #F8F6F2;
-  --border: #111113;
-  --ink-dim: rgba(17, 17, 19, 0.65);
+@theme {
+  --color-nesma-cream: #F7F3E9;
+  --color-nesma-deep: #174C3C;
+  --color-nesma-deep-hover: #123C30;
+  --color-nesma-sage: #A9C5A0;
+  --color-nesma-sage-dark: #3E6353;
+  --color-nesma-gold: #D5A65A;
+  --color-nesma-gold-dark: #A77A2C;
+  --color-nesma-coral: #D98F83;
+  --color-nesma-coral-dark: #B56559;
+  --color-nesma-mist: #E6E8D8;
+  --color-nesma-charcoal: #13251E;
 }
 
-[data-theme='dark'] {
-  --bg: #121214;
-  --ink: #F2EFEB;
-  --accent: #FF7E5B;
-  --ink-faint: rgba(242, 239, 235, 0.08);
-  --surface: #18181C;
-  --surface-hover: #222228;
-  --border: rgba(242, 239, 235, 0.3);
-  --ink-dim: rgba(242, 239, 235, 0.65);
+:root {
+  /* Official Palette Tokens (Nesmat Hayat) */
+  --bg-nesma-cream: #F7F3E9;
+  --bg-nesma-mist: #E6E8D8;
+  --color-nesma-deep: #174C3C;
+  --color-nesma-sage: #A9C5A0;
+  --color-nesma-gold: #D5A65A;
+  --color-nesma-coral: #D98F83;
+  --color-nesma-mist: #E6E8D8;
+  --color-nesma-charcoal: #13251E;
+
+  /* Semantic Theme Mappings for Light Mode */
+  --bg: #F7F3E9;
+  --bg-secondary: #E6E8D8;
+  --surface: #FFFFFF;
+  --surface-alt: #E6E8D8;
+  --surface-card: #FFFFFF;
+  --surface-hover: #F0EDE2;
+  --ink: #13251E;
+  --ink-dim: #263830;
+  --ink-faint: rgba(23, 76, 60, 0.08);
+  --primary: #174C3C;
+  --primary-hover: #123C30;
+  --secondary: #A9C5A0;
+  --accent: #174C3C;
+  --gold: #D5A65A;
+  --coral: #D98F83;
+  --mist: #E6E8D8;
+  --border: rgba(23, 76, 60, 0.15);
+  --border-strong: #174C3C;
+  --shadow-soft: 0 4px 20px -2px rgba(23, 76, 60, 0.06);
+  --shadow-card: 0 8px 30px -4px rgba(23, 76, 60, 0.09);
+
+  /* Centralized Status Colors (Light Mode) */
+  --status-success-bg: rgba(23, 76, 60, 0.1);
+  --status-success-text: #174C3C;
+  --status-success-border: rgba(23, 76, 60, 0.25);
+
+  --status-warning-bg: rgba(213, 166, 90, 0.15);
+  --status-warning-text: #8C6219;
+  --status-warning-border: rgba(213, 166, 90, 0.35);
+
+  --status-error-bg: rgba(217, 143, 131, 0.15);
+  --status-error-text: #A04436;
+  --status-error-border: rgba(217, 143, 131, 0.35);
+
+  --status-info-bg: rgba(169, 197, 160, 0.18);
+  --status-info-text: #174C3C;
+  --status-info-border: rgba(169, 197, 160, 0.4);
+}
+
+[data-theme='dark'], .dark {
+  /* Semantic Theme Mappings for Dark Mode (Deep Forest & Soothing Night) */
+  --bg-nesma-cream: #0D1914;
+  --bg-nesma-mist: #12241D;
+  --color-nesma-deep: #A9C5A0;
+  --color-nesma-sage: #A9C5A0;
+  --color-nesma-gold: #E2B66C;
+  --color-nesma-coral: #E2998E;
+  --color-nesma-mist: #1B342A;
+  --color-nesma-charcoal: #F7F3E9;
+
+  --bg: #0D1914;
+  --bg-secondary: #12241D;
+  --surface: #14271F;
+  --surface-alt: #1B342A;
+  --surface-card: #14271F;
+  --surface-hover: #1E3A2E;
+  --ink: #F7F3E9;
+  --ink-dim: #D5DFD7;
+  --ink-faint: rgba(169, 197, 160, 0.12);
+  --primary: #A9C5A0;
+  --primary-hover: #BFD9B6;
+  --secondary: #26493B;
+  --accent: #A9C5A0;
+  --gold: #E2B66C;
+  --coral: #E2998E;
+  --mist: #1B342A;
+  --border: rgba(169, 197, 160, 0.2);
+  --border-strong: #A9C5A0;
+  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+  --shadow-card: 0 8px 30px -4px rgba(0, 0, 0, 0.6);
+
+  /* Centralized Status Colors (Dark Mode) */
+  --status-success-bg: rgba(169, 197, 160, 0.15);
+  --status-success-text: #A9C5A0;
+  --status-success-border: rgba(169, 197, 160, 0.3);
+
+  --status-warning-bg: rgba(226, 182, 108, 0.18);
+  --status-warning-text: #F3CA85;
+  --status-warning-border: rgba(226, 182, 108, 0.35);
+
+  --status-error-bg: rgba(226, 153, 142, 0.18);
+  --status-error-text: #F8B3A8;
+  --status-error-border: rgba(226, 153, 142, 0.35);
+
+  --status-info-bg: rgba(169, 197, 160, 0.18);
+  --status-info-text: #A9C5A0;
+  --status-info-border: rgba(169, 197, 160, 0.35);
 }
 
 @layer base {
@@ -46,15 +139,16 @@
     overflow-x: hidden;
     background-color: var(--bg);
     color: var(--ink);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   ::selection {
-    background: var(--accent);
-    color: #ffffff;
+    background: var(--color-nesma-sage);
+    color: var(--color-nesma-deep);
   }
 }
 
-/* Variation 6 Distinctive Typography Utilities */
+/* Typography Utilities */
 .font-cairo {
   font-family: 'Cairo', sans-serif;
 }
@@ -67,83 +161,71 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Variation 6 Interactive Grid and Cards */
-.variation6-dot-grid {
+/* Soothing Organic Patterns */
+.nesma-dot-grid {
   background-image: radial-gradient(circle, var(--ink-faint) 1.25px, transparent 1.25px);
   background-size: 32px 32px;
 }
 
+/* Backwards-compatible utility aliases updated to new palette */
 .stat-card {
-  background: var(--bg);
-  border: 1.5px solid var(--ink);
-  box-shadow: 6px 6px 0 var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  border-radius: 1.25rem;
   padding: 1.75rem;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 8px 8px 0 var(--ink);
+  box-shadow: var(--shadow-card);
+  border-color: var(--primary);
 }
 
 .emergency-banner {
-  background: var(--accent);
+  background: var(--color-nesma-coral);
   color: white;
-  padding: 1.75rem;
-  border: 1.5px solid var(--ink);
-  box-shadow: 6px 6px 0 var(--ink);
+  padding: 1.5rem;
+  border: 1px solid rgba(217, 143, 131, 0.5);
+  box-shadow: var(--shadow-soft);
+  border-radius: 1.25rem;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
 }
 
 .emergency-banner:hover {
   transform: translateY(-2px);
-  box-shadow: 8px 8px 0 var(--ink);
+  box-shadow: var(--shadow-card);
 }
 
+/* Modern Pill Button (Clean, Non-brutalist) */
 .btn-pill {
-  background-color: var(--ink);
-  color: var(--bg);
-  padding: 1rem 2.5rem;
+  background-color: var(--color-nesma-deep);
+  color: #F7F3E9;
+  padding: 0.75rem 2rem;
   border-radius: 9999px;
-  border: 2px solid var(--ink);
+  border: 1px solid transparent;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 14px -2px rgba(23, 76, 60, 0.3);
+}
+
+[data-theme='dark'] .btn-pill, .dark .btn-pill {
+  background-color: var(--color-nesma-sage);
+  color: #0D1914;
 }
 
 .btn-pill:hover {
-  background-color: transparent;
-  color: var(--ink);
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 .btn-pill:active {
-  transform: translate(2px, 2px);
-}
-
-.btn-circle {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  border: 1.5px solid var(--ink);
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 0.825rem;
-  line-height: 1.2;
-  cursor: pointer;
-  font-weight: 700;
-  background: transparent;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.btn-circle:hover {
-  background: var(--ink);
-  color: var(--bg);
+  transform: translateY(1px);
 }
 
 .emoji-grid {
@@ -166,45 +248,211 @@
   align-items: center;
   justify-content: center;
   font-size: 1.85rem;
-  border: 1.5px solid var(--ink);
-  background: #ffffff;
-  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-[data-theme='dark'] .emoji-box {
-  background: #1e1e24;
-}
-
 .emoji-box:hover {
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 4px 4px 0 var(--ink);
+  box-shadow: var(--shadow-soft);
+  border-color: var(--primary);
 }
 
 .emoji-box:active,
 .emoji-box.active {
-  transform: translate(2px, 2px);
-  background: var(--accent);
+  transform: translateY(1px);
+  background: var(--color-nesma-deep);
   color: white;
-  box-shadow: none;
+  border-color: var(--color-nesma-deep);
 }
 
-/* Editorial Brutalist Cards */
-.variation6-card {
+[data-theme='dark'] .emoji-box:active,
+[data-theme='dark'] .emoji-box.active,
+.dark .emoji-box:active,
+.dark .emoji-box.active {
+  background: var(--color-nesma-sage);
+  color: #0D1914;
+}
+
+/* Modern Card */
+.variation6-card,
+.nesma-card {
   background: var(--surface);
-  border: 1.5px solid var(--ink);
-  box-shadow: 4px 4px 0 var(--ink);
-  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  border-radius: 1.25rem;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.variation6-card:hover {
+.variation6-card:hover,
+.nesma-card:hover {
   transform: translateY(-2px);
-  box-shadow: 6px 6px 0 var(--ink);
+  box-shadow: var(--shadow-card);
+  border-color: var(--primary);
 }
 
-/* Calming Organic Scrollbar */
+/* Centralized Standard Buttons */
+.btn-nesma-primary {
+  background-color: var(--color-nesma-deep);
+  color: #F7F3E9;
+  border-radius: 1rem;
+  padding: 0.65rem 1.4rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px -2px rgba(23, 76, 60, 0.25);
+  border: 1px solid transparent;
+}
+.btn-nesma-primary:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px -2px rgba(23, 76, 60, 0.35);
+}
+.btn-nesma-primary:active {
+  transform: translateY(1px);
+}
+.btn-nesma-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+[data-theme='dark'] .btn-nesma-primary,
+.dark .btn-nesma-primary {
+  background-color: var(--color-nesma-sage);
+  color: #0D1914;
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.5);
+}
+
+.btn-nesma-secondary {
+  background-color: var(--bg-secondary);
+  color: var(--primary);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 0.65rem 1.4rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+.btn-nesma-secondary:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--primary);
+}
+
+.btn-nesma-gold {
+  background-color: var(--color-nesma-gold);
+  color: #13251E;
+  border-radius: 1rem;
+  padding: 0.65rem 1.4rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px -2px rgba(213, 166, 90, 0.3);
+}
+.btn-nesma-gold:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.btn-nesma-coral {
+  background-color: var(--color-nesma-coral);
+  color: #13251E;
+  border-radius: 1rem;
+  padding: 0.65rem 1.4rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px -2px rgba(217, 143, 131, 0.3);
+}
+.btn-nesma-coral:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+/* Centralized Form Controls */
+.nesma-input {
+  background-color: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 0.875rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.nesma-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(23, 76, 60, 0.12);
+}
+[data-theme='dark'] .nesma-input:focus,
+.dark .nesma-input:focus {
+  box-shadow: 0 0 0 3px rgba(169, 197, 160, 0.18);
+}
+
+/* Status Badges */
+.badge-nesma-success {
+  background-color: var(--status-success-bg);
+  color: var(--status-success-text);
+  border: 1px solid var(--status-success-border);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.badge-nesma-warning {
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning-text);
+  border: 1px solid var(--status-warning-border);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.badge-nesma-error {
+  background-color: var(--status-error-bg);
+  color: var(--status-error-text);
+  border: 1px solid var(--status-error-border);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.badge-nesma-info {
+  background-color: var(--status-info-bg);
+  color: var(--status-info-text);
+  border: 1px solid var(--status-info-border);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Calming Nature Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -213,11 +461,14 @@
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--ink);
+  background: var(--color-nesma-sage);
   border-radius: 9999px;
   border: 2px solid var(--bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
+  background: var(--color-nesma-deep);
 }
-
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover,
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-nesma-gold);
+}

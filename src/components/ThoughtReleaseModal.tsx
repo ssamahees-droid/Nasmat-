@@ -41,12 +41,12 @@ export const ThoughtReleaseModal: React.FC<ThoughtReleaseModalProps> = ({ isOpen
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-lg bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden text-right">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden text-right">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-[#8FAF9A]/20 text-[#355C4A] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-[#A9C5A0]/20 text-[#174C3C] flex items-center justify-center">
               <Wind className="w-4 h-4" />
             </div>
             <div>
@@ -77,7 +77,7 @@ export const ThoughtReleaseModal: React.FC<ThoughtReleaseModalProps> = ({ isOpen
                 ? '-translate-y-36 opacity-0 scale-150'
                 : 'scale-200 opacity-0'
             }`}>
-              <div className="p-4 bg-white/90 backdrop-blur-sm border border-[#8FAF9A]/60 rounded-3xl shadow-xl max-w-xs mx-auto text-xs text-[#26332D] font-medium leading-relaxed">
+              <div className="p-4 bg-white/90 backdrop-blur-sm border border-[#A9C5A0]/60 rounded-3xl shadow-xl max-w-xs mx-auto text-xs text-[#26332D] font-medium leading-relaxed">
                 <div className="text-2xl mb-1">
                   {metaphor === 'stream' ? '🍃' : metaphor === 'cloud' ? '☁️' : '🫧'}
                 </div>
@@ -95,7 +95,7 @@ export const ThoughtReleaseModal: React.FC<ThoughtReleaseModalProps> = ({ isOpen
           /* Finished State */
           <div className="py-8 text-center space-y-4 animate-fade-in">
             <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto shadow-sm">
-              <Sparkles className="w-8 h-8 text-[#355C4A]" />
+              <Sparkles className="w-8 h-8 text-[#174C3C]" />
             </div>
 
             <div className="space-y-1">
@@ -107,21 +107,21 @@ export const ThoughtReleaseModal: React.FC<ThoughtReleaseModalProps> = ({ isOpen
               </p>
             </div>
 
-            <div className="p-3 bg-white/80 rounded-2xl border border-[#E8DDCC] text-[11px] text-[#7D8F85]">
+            <div className="p-3 bg-white/80 rounded-2xl border border-[#E6E8D8] text-[11px] text-[#7D8F85]">
               * لم يتم حفظ أي كلمة كتبتها احتراماً لخصوصيتك وسريتك التامة.
             </div>
 
             <div className="pt-3 flex gap-2">
               <button
                 onClick={handleReset}
-                className="flex-1 py-3 px-4 bg-[#FAF7F0] hover:bg-stone-100 border border-[#E8DDCC] text-[#355C4A] text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+                className="flex-1 py-3 px-4 bg-[#F7F3E9] hover:bg-stone-100 border border-[#E6E8D8] text-[#174C3C] text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>تحرير فكرة أخرى</span>
               </button>
               <button
                 onClick={onClose}
-                className="flex-1 py-3 px-4 bg-[#355C4A] text-white text-xs font-bold rounded-xl hover:bg-[#264235] transition-colors"
+                className="flex-1 py-3 px-4 bg-[#174C3C] text-white text-xs font-bold rounded-xl hover:bg-[#264235] transition-colors"
               >
                 العودة للتطبيق
               </button>
@@ -140,7 +140,7 @@ export const ThoughtReleaseModal: React.FC<ThoughtReleaseModalProps> = ({ isOpen
                 onChange={(e) => setThought(e.target.value)}
                 placeholder="مثال: قلقان من مقابلة العمل.. أو حاسس إني مقصر ومستنزف..."
                 required
-                className="w-full p-3.5 bg-white border border-[#E8DDCC] rounded-2xl text-xs text-[#26332D] placeholder-[#7D8F85] focus:outline-hidden focus:border-[#355C4A]"
+                className="w-full p-3.5 bg-white border border-[#E6E8D8] rounded-2xl text-xs text-[#26332D] placeholder-[#7D8F85] focus:outline-hidden focus:border-[#174C3C]"
               />
               <p className="text-[10px] text-[#7D8F85]">
                 🔒 هذه الخانة آمنة ومؤقتة؛ الكلمات تذوب فوراً ولا تُحفظ في أي مكان.
@@ -164,13 +164,13 @@ export const ThoughtReleaseModal: React.FC<ThoughtReleaseModalProps> = ({ isOpen
                     onClick={() => setMetaphor(item.id as typeof metaphor)}
                     className={`p-2.5 rounded-2xl border text-center transition-all ${
                       metaphor === item.id
-                        ? 'bg-[#355C4A] text-white border-[#355C4A] shadow-xs'
-                        : 'bg-white/80 text-[#26332D] border-[#E8DDCC] hover:bg-white'
+                        ? 'bg-[#174C3C] text-white border-[#174C3C] shadow-xs'
+                        : 'bg-white/80 text-[#26332D] border-[#E6E8D8] hover:bg-white'
                     }`}
                   >
                     <div className="text-xl mb-0.5">{item.icon}</div>
                     <div className="text-xs font-bold">{item.title}</div>
-                    <div className={`text-[10px] ${metaphor === item.id ? 'text-[#E8DDCC]' : 'text-[#7D8F85]'}`}>
+                    <div className={`text-[10px] ${metaphor === item.id ? 'text-[#E6E8D8]' : 'text-[#7D8F85]'}`}>
                       {item.desc}
                     </div>
                   </button>
@@ -181,7 +181,7 @@ export const ThoughtReleaseModal: React.FC<ThoughtReleaseModalProps> = ({ isOpen
             <button
               type="submit"
               disabled={!thought.trim()}
-              className="w-full py-3.5 px-4 bg-[#355C4A] hover:bg-[#264235] disabled:opacity-50 text-white font-bold text-xs rounded-2xl shadow-md shadow-[#355C4A]/20 transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 px-4 bg-[#174C3C] hover:bg-[#264235] disabled:opacity-50 text-white font-bold text-xs rounded-2xl shadow-md shadow-[#174C3C]/20 transition-all flex items-center justify-center gap-2"
             >
               <Wind className="w-4 h-4" />
               <span>إطلاق الفكرة والتحرر منها الآن</span>

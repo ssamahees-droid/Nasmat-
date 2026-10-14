@@ -79,10 +79,10 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-2xl bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">📑</span>
             <div>
@@ -97,7 +97,7 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
           <div className="flex items-center gap-2">
             <button
               onClick={() => setViewMode(prev => prev === 'edit' ? 'card' : 'edit')}
-              className="py-1 px-3 bg-white hover:bg-stone-100 text-[#355C4A] border border-[#E8DDCC] text-xs font-bold rounded-xl transition-colors"
+              className="py-1 px-3 bg-white hover:bg-stone-100 text-[#174C3C] border border-[#E6E8D8] text-xs font-bold rounded-xl transition-colors"
             >
               {viewMode === 'edit' ? 'معاينة كارت الخطة 📋' : 'تعديل الخطة ✏️'}
             </button>
@@ -128,7 +128,7 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
                   value={plan.deteriorationSigns}
                   onChange={(e) => handleChange('deteriorationSigns', e.target.value)}
                   placeholder="مثال: أنعزل عن الناس، يضطرب نومي، أنفعل بسرعة، أهمل أكلي، تتسارع أفكاري..."
-                  className="w-full p-3 bg-white border border-[#E8DDCC] focus:border-[#355C4A] focus:ring-1 focus:ring-[#355C4A] rounded-2xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
+                  className="w-full p-3 bg-white border border-[#E6E8D8] focus:border-[#174C3C] focus:ring-1 focus:ring-[#174C3C] rounded-2xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
                 />
               </div>
 
@@ -142,7 +142,7 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
                   value={plan.majorDrains}
                   onChange={(e) => handleChange('majorDrains', e.target.value)}
                   placeholder="مثال: نقاشات المقارنة، العمل المتواصل دون راحة، قلة النوم، محاولة إرضاء الجميع..."
-                  className="w-full p-3 bg-white border border-[#E8DDCC] focus:border-[#355C4A] focus:ring-1 focus:ring-[#355C4A] rounded-2xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
+                  className="w-full p-3 bg-white border border-[#E6E8D8] focus:border-[#174C3C] focus:ring-1 focus:ring-[#174C3C] rounded-2xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
                 />
               </div>
 
@@ -156,7 +156,7 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
                   value={plan.helpfulThings}
                   onChange={(e) => handleChange('helpfulThings', e.target.value)}
                   placeholder="مثال: المشي في الهواء، الصلاة والهدوء، أخذ حمام دافئ، تمارين التنفس، الاستماع لأصوات مهدئة..."
-                  className="w-full p-3 bg-white border border-[#E8DDCC] focus:border-[#355C4A] focus:ring-1 focus:ring-[#355C4A] rounded-2xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
+                  className="w-full p-3 bg-white border border-[#E6E8D8] focus:border-[#174C3C] focus:ring-1 focus:ring-[#174C3C] rounded-2xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
                 />
               </div>
 
@@ -170,7 +170,7 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
                   value={plan.trustedPerson}
                   onChange={(e) => handleChange('trustedPerson', e.target.value)}
                   placeholder="اسم الشخص أو صلته (مثال: أختي، صديقي فلان، والدتي...)"
-                  className="w-full p-3 bg-white border border-[#E8DDCC] focus:border-[#355C4A] focus:ring-1 focus:ring-[#355C4A] rounded-2xl text-xs text-[#26332D] outline-none"
+                  className="w-full p-3 bg-white border border-[#E6E8D8] focus:border-[#174C3C] focus:ring-1 focus:ring-[#174C3C] rounded-2xl text-xs text-[#26332D] outline-none"
                 />
               </div>
 
@@ -184,7 +184,7 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
                   value={plan.specialistOrHelpline}
                   onChange={(e) => handleChange('specialistOrHelpline', e.target.value)}
                   placeholder="اسم طبيب أو عيادة أو الخط الساخن (16328)"
-                  className="w-full p-3 bg-white border border-[#E8DDCC] focus:border-[#355C4A] focus:ring-1 focus:ring-[#355C4A] rounded-2xl text-xs text-[#26332D] outline-none"
+                  className="w-full p-3 bg-white border border-[#E6E8D8] focus:border-[#174C3C] focus:ring-1 focus:ring-[#174C3C] rounded-2xl text-xs text-[#26332D] outline-none"
                 />
               </div>
 
@@ -198,14 +198,14 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
                   value={plan.crisisStep}
                   onChange={(e) => handleChange('crisisStep', e.target.value)}
                   placeholder="مثال: سأتصل فوراً بـ (فلان) أو سأتوجه فوراً للمستشفى أو أتصل بخط الدعم النفسي 16328 ولن أبقى وحدي..."
-                  className="w-full p-3 bg-white border border-[#E8DDCC] focus:border-[#355C4A] focus:ring-1 focus:ring-[#355C4A] rounded-2xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
+                  className="w-full p-3 bg-white border border-[#E6E8D8] focus:border-[#174C3C] focus:ring-1 focus:ring-[#174C3C] rounded-2xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
                 />
               </div>
 
               <div className="pt-2 flex items-center gap-2.5">
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-3 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl transition-colors shadow-xs flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl transition-colors shadow-xs flex items-center justify-center gap-2"
                 >
                   <Check className="w-4 h-4" />
                   <span>{savedSuccess ? 'تم حفظ الخطة بنجاح ✓' : 'حفظ الخطة في رحلتي الآمنة'}</span>
@@ -215,8 +215,8 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
           ) : (
             /* Summary Card View */
             <div className="space-y-4 animate-fade-in">
-              <div className="p-5 sm:p-6 bg-white border-2 border-[#8FAF9A]/60 rounded-3xl space-y-4 shadow-sm text-right">
-                <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]">
+              <div className="p-5 sm:p-6 bg-white border-2 border-[#A9C5A0]/60 rounded-3xl space-y-4 shadow-sm text-right">
+                <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">🌱</span>
                     <div>
@@ -230,7 +230,7 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
                   </div>
                   <button
                     onClick={handleDownloadPlan}
-                    className="p-2 bg-[#FAF7F0] hover:bg-stone-100 text-[#355C4A] rounded-xl border border-[#E8DDCC] text-xs flex items-center gap-1 font-bold"
+                    className="p-2 bg-[#F7F3E9] hover:bg-stone-100 text-[#174C3C] rounded-xl border border-[#E6E8D8] text-xs flex items-center gap-1 font-bold"
                     title="تنزيل الخطة كملف نصي"
                   >
                     <Download className="w-4 h-4" />
@@ -239,28 +239,28 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3 bg-[#FAF7F0] rounded-xl border border-[#E8DDCC]/70 space-y-1">
-                    <span className="font-bold text-[#355C4A] block">1. علامات التدهور المبكرة:</span>
+                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
+                    <span className="font-bold text-[#174C3C] block">1. علامات التدهور المبكرة:</span>
                     <p className="text-[#35453E] leading-relaxed">{plan.deteriorationSigns || 'لم تُسجل بعد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#FAF7F0] rounded-xl border border-[#E8DDCC]/70 space-y-1">
+                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
                     <span className="font-bold text-rose-800 block">2. أكبر المستنزفات:</span>
                     <p className="text-[#35453E] leading-relaxed">{plan.majorDrains || 'لم تُسجل بعد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#FAF7F0] rounded-xl border border-[#E8DDCC]/70 space-y-1">
+                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
                     <span className="font-bold text-emerald-800 block">3. أشياء تساعدني عادةً:</span>
                     <p className="text-[#35453E] leading-relaxed">{plan.helpfulThings || 'لم تُسجل بعد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#FAF7F0] rounded-xl border border-[#E8DDCC]/70 space-y-1">
+                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
                     <span className="font-bold text-sky-800 block">4. شخصي الآمن:</span>
                     <p className="text-[#35453E] leading-relaxed font-bold">{plan.trustedPerson || 'لم يُحدد بعد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#FAF7F0] rounded-xl border border-[#E8DDCC]/70 space-y-1 sm:col-span-2">
-                    <span className="font-bold text-[#355C4A] block">5. المختص أو جهة المساعدة:</span>
+                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1 sm:col-span-2">
+                    <span className="font-bold text-[#174C3C] block">5. المختص أو جهة المساعدة:</span>
                     <p className="text-[#35453E] leading-relaxed">{plan.specialistOrHelpline}</p>
                   </div>
 
@@ -270,7 +270,7 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
                   </div>
                 </div>
 
-                <div className="pt-2 text-center text-xs text-[#52645B] italic border-t border-[#E8DDCC]/60">
+                <div className="pt-2 text-center text-xs text-[#52645B] italic border-t border-[#E6E8D8]/60">
                   «طلب المساعدة ليس هزيمة.. أحياناً يكون أول خطوة في طريق العودة إلى الحياة»
                 </div>
               </div>
@@ -278,7 +278,7 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
               <div className="flex gap-2">
                 <button
                   onClick={() => setViewMode('edit')}
-                  className="flex-1 py-3 bg-[#FAF7F0] hover:bg-stone-100 text-[#355C4A] border border-[#E8DDCC] text-xs font-bold rounded-2xl flex items-center justify-center gap-1.5 transition-colors"
+                  className="flex-1 py-3 bg-[#F7F3E9] hover:bg-stone-100 text-[#174C3C] border border-[#E6E8D8] text-xs font-bold rounded-2xl flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <RefreshCw className="w-4 h-4" />
                   <span>تعديل البنود</span>
@@ -286,7 +286,7 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
 
                 <button
                   onClick={onClose}
-                  className="flex-1 py-3 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl transition-colors shadow-xs"
+                  className="flex-1 py-3 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl transition-colors shadow-xs"
                 >
                   العودة للتطبيق 🤍
                 </button>

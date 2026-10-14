@@ -102,10 +102,10 @@ export const HealingJourneyModal: React.FC<HealingJourneyModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-2xl bg-[#FAF7F2] border border-[#E5DACB] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E5DACB] shrink-0">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E6E8D8] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-[#3A5A40]/10 text-[#3A5A40] flex items-center justify-center text-2xl shadow-inner">
               🌱
@@ -141,7 +141,7 @@ export const HealingJourneyModal: React.FC<HealingJourneyModalProps> = ({
                 <span className="font-bold text-[#3A5A40]">الخطوة {currentStep} من 5</span>
                 <span className="text-[11px]">مراحل فك قيد التجربة</span>
               </div>
-              <div className="w-full bg-[#E5DACB] h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-[#E6E8D8] h-1.5 rounded-full overflow-hidden">
                 <div 
                   className="bg-[#3A5A40] h-full transition-all duration-300 rounded-full"
                   style={{ width: `${(currentStep / 5) * 100}%` }}
@@ -149,7 +149,7 @@ export const HealingJourneyModal: React.FC<HealingJourneyModalProps> = ({
               </div>
 
               {/* Step Card */}
-              <div className="p-5 bg-white border border-[#E5DACB] rounded-3xl space-y-3 shadow-xs">
+              <div className="p-5 bg-white border border-[#E6E8D8] rounded-3xl space-y-3 shadow-xs">
                 <h3 className="text-base font-black text-[#283618]">
                   {currentStepData.title}
                 </h3>
@@ -162,10 +162,10 @@ export const HealingJourneyModal: React.FC<HealingJourneyModalProps> = ({
                   value={answers[currentStepData.field]}
                   onChange={(e) => setAnswers(prev => ({ ...prev, [currentStepData.field]: e.target.value }))}
                   placeholder={currentStepData.placeholder}
-                  className="w-full p-3.5 bg-[#FAF7F2] border border-[#E5DACB] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none resize-none leading-relaxed"
+                  className="w-full p-3.5 bg-[#F7F3E9] border border-[#E6E8D8] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none resize-none leading-relaxed"
                 />
 
-                <div className="p-3 bg-[#E9DFD4]/50 border border-[#E5DACB] rounded-xl text-[11px] text-[#58645C] leading-relaxed">
+                <div className="p-3 bg-[#E9DFD4]/50 border border-[#E6E8D8] rounded-xl text-[11px] text-[#58645C] leading-relaxed">
                   💡 {currentStepData.hint}
                 </div>
               </div>
@@ -175,7 +175,7 @@ export const HealingJourneyModal: React.FC<HealingJourneyModalProps> = ({
                 <button
                   disabled={currentStep === 1}
                   onClick={handlePrev}
-                  className="py-2.5 px-4 bg-white hover:bg-stone-50 disabled:opacity-40 text-[#283618] border border-[#E5DACB] text-xs font-bold rounded-2xl flex items-center gap-1.5 transition-colors"
+                  className="py-2.5 px-4 bg-white hover:bg-stone-50 disabled:opacity-40 text-[#283618] border border-[#E6E8D8] text-xs font-bold rounded-2xl flex items-center gap-1.5 transition-colors"
                 >
                   <ArrowRight className="w-4 h-4" />
                   <span>السابق</span>
@@ -194,7 +194,7 @@ export const HealingJourneyModal: React.FC<HealingJourneyModalProps> = ({
             /* Summary Report */
             <div className="space-y-4 animate-fade-in">
               <div className="p-5 bg-white border-2 border-[#588157]/60 rounded-3xl space-y-4 shadow-sm text-right">
-                <div className="flex items-center justify-between pb-3 border-b border-[#E5DACB]">
+                <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">🌱</span>
                     <div>
@@ -212,17 +212,17 @@ export const HealingJourneyModal: React.FC<HealingJourneyModalProps> = ({
                 </div>
 
                 <div className="space-y-2.5 text-xs">
-                  <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#E5DACB]">
+                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]">
                     <span className="font-bold text-[#3A5A40] block">1. ما الذي حدث:</span>
                     <p className="text-[#283618] mt-0.5">{answers.whatHappened || 'لم يُحدد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#E5DACB]">
+                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]">
                     <span className="font-bold text-amber-900 block">2. الأثر الذي تركه:</span>
                     <p className="text-[#283618] mt-0.5">{answers.impactOnMe || 'لم يُحدد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#E5DACB]">
+                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]">
                     <span className="font-bold text-rose-900 block">3. ما زلت أحمله وأحتاج لتركه:</span>
                     <p className="text-[#283618] mt-0.5">{answers.stillCarrying || 'لم يُحدد'}</p>
                   </div>
@@ -242,7 +242,7 @@ export const HealingJourneyModal: React.FC<HealingJourneyModalProps> = ({
               <div className="flex gap-2">
                 <button
                   onClick={handleReset}
-                  className="flex-1 py-3 bg-[#FAF7F2] hover:bg-stone-100 text-[#3A5A40] border border-[#E5DACB] text-xs font-bold rounded-2xl flex items-center justify-center gap-1.5 transition-colors"
+                  className="flex-1 py-3 bg-[#F7F3E9] hover:bg-stone-100 text-[#3A5A40] border border-[#E6E8D8] text-xs font-bold rounded-2xl flex items-center justify-center gap-1.5 transition-colors"
                 >
                   <RefreshCw className="w-4 h-4" />
                   <span>تفكيك تجربة أخرى</span>

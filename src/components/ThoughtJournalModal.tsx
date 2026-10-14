@@ -137,10 +137,10 @@ ${post.content}
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-3xl bg-[#FAF7F2] border border-[#E5DACB] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-3xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E5DACB] shrink-0">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E6E8D8] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-[#3A5A40]/10 text-[#3A5A40] flex items-center justify-center text-2xl shadow-inner">
               ✍️
@@ -165,7 +165,7 @@ ${post.content}
               className={`py-1.5 px-3.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                 activeTab === 'new'
                   ? 'bg-[#3A5A40] text-white shadow-xs'
-                  : 'bg-white hover:bg-[#F2ECE3] text-[#3A5A40] border border-[#E5DACB]'
+                  : 'bg-white hover:bg-[#F2ECE3] text-[#3A5A40] border border-[#E6E8D8]'
               }`}
             >
               {activeTab === 'new' ? (
@@ -216,7 +216,7 @@ ${post.content}
                       className={`text-[11px] p-2 rounded-xl border text-right transition-all leading-snug ${
                         selectedPrompt === pr
                           ? 'bg-[#3A5A40] text-white border-[#3A5A40] font-bold'
-                          : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E5DACB]'
+                          : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E6E8D8]'
                       }`}
                     >
                       {pr}
@@ -240,7 +240,7 @@ ${post.content}
                         className={`p-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                           isSelected
                             ? 'bg-[#3A5A40] text-white border-[#3A5A40] shadow-xs'
-                            : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E5DACB]'
+                            : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E6E8D8]'
                         }`}
                       >
                         <span>{info.emoji}</span>
@@ -262,7 +262,7 @@ ${post.content}
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
                     placeholder="مثال: وقفة مع الصوت الداخلي الناقد..."
-                    className="w-full p-3 bg-white border border-[#E5DACB] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none"
+                    className="w-full p-3 bg-white border border-[#E6E8D8] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none"
                   />
                 </div>
 
@@ -275,13 +275,13 @@ ${post.content}
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
                     placeholder="اكتب أفكارك بحرية تامة وبدون تصحيح أو خجل... ماذا تشعر؟ وماذا يقترح عقلك؟"
-                    className="w-full p-3.5 bg-white border border-[#E5DACB] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none resize-none leading-relaxed"
+                    className="w-full p-3.5 bg-white border border-[#E6E8D8] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none resize-none leading-relaxed"
                   />
                 </div>
               </div>
 
               {/* Mood Associated */}
-              <div className="flex items-center justify-between p-3 bg-white border border-[#E5DACB] rounded-2xl">
+              <div className="flex items-center justify-between p-3 bg-white border border-[#E6E8D8] rounded-2xl">
                 <span className="text-xs font-bold text-[#283618]">شحنة المشاعر أثناء الكتابة:</span>
                 <div className="flex gap-2">
                   {(['good', 'fair', 'confused', 'not_good', 'exhausted'] as MoodValue[]).map((m) => (
@@ -320,7 +320,7 @@ ${post.content}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="ابحث في الخواطر والتدوينات..."
-                    className="w-full py-2.5 pr-10 pl-3 bg-white border border-[#E5DACB] rounded-2xl text-xs text-[#283618] outline-none"
+                    className="w-full py-2.5 pr-10 pl-3 bg-white border border-[#E6E8D8] rounded-2xl text-xs text-[#283618] outline-none"
                   />
                   <Search className="w-4 h-4 text-stone-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
                 </div>
@@ -331,7 +331,7 @@ ${post.content}
                     className={`py-2 px-3 rounded-xl text-xs font-bold shrink-0 transition-all ${
                       selectedCategoryFilter === 'all'
                         ? 'bg-[#3A5A40] text-white shadow-2xs'
-                        : 'bg-white hover:bg-stone-50 text-[#58645C] border border-[#E5DACB]'
+                        : 'bg-white hover:bg-stone-50 text-[#58645C] border border-[#E6E8D8]'
                     }`}
                   >
                     الكل ({posts.length})
@@ -343,7 +343,7 @@ ${post.content}
                       className={`py-2 px-3 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1 ${
                         selectedCategoryFilter === cat
                           ? 'bg-[#3A5A40] text-white shadow-2xs'
-                          : 'bg-white hover:bg-stone-50 text-[#58645C] border border-[#E5DACB]'
+                          : 'bg-white hover:bg-stone-50 text-[#58645C] border border-[#E6E8D8]'
                       }`}
                     >
                       <span>{CATEGORY_MAP[cat].emoji}</span>
@@ -356,7 +356,7 @@ ${post.content}
               {/* Posts Stream */}
               <div className="space-y-3.5">
                 {filteredPosts.length === 0 ? (
-                  <div className="p-8 bg-white border border-[#E5DACB] rounded-3xl text-center space-y-2">
+                  <div className="p-8 bg-white border border-[#E6E8D8] rounded-3xl text-center space-y-2">
                     <span className="text-3xl">🍃</span>
                     <h3 className="font-bold text-sm text-[#283618]">لا توجد خواطر مسجلة في هذا القسم</h3>
                     <p className="text-xs text-[#58645C]">ابدأ بكتابة أول فكرة أو تأمل واعي لتهدئة ذهنك.</p>
@@ -373,7 +373,7 @@ ${post.content}
                     return (
                       <div
                         key={post.id}
-                        className="p-5 bg-white border border-[#E5DACB] hover:border-[#3A5A40] rounded-3xl transition-all shadow-xs space-y-3 text-right group"
+                        className="p-5 bg-white border border-[#E6E8D8] hover:border-[#3A5A40] rounded-3xl transition-all shadow-xs space-y-3 text-right group"
                       >
                         {/* Meta Top */}
                         <div className="flex items-center justify-between gap-2">

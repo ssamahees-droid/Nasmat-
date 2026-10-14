@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, ArrowRight, CheckCircle2, Sparkles, BookOpen, Wind, Compass } from 'lucide-react';
 import { RESCUE_KIT_PLANS, RescuePlan } from '../data/newPhaseData';
 import { TakeawayResultCard } from './TakeawayResultCard';
+import { TextAudioPlayer } from './TextAudioPlayer';
 
 interface RescueKitModalProps {
   isOpen: boolean;
@@ -41,10 +42,10 @@ export const RescueKitModal: React.FC<RescueKitModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-xl bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">🎒</span>
             <div>
@@ -71,13 +72,13 @@ export const RescueKitModal: React.FC<RescueKitModalProps> = ({
             <div className="space-y-4 animate-fade-in">
               <button
                 onClick={() => setSelectedPlan(null)}
-                className="text-xs font-bold text-[#355C4A] hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-[#174C3C] hover:underline flex items-center gap-1"
               >
                 <ArrowRight className="w-3.5 h-3.5" />
                 <span>العودة لخيارات الشنطة</span>
               </button>
 
-              <div className="p-4 bg-white rounded-2xl border border-[#8FAF9A]/50 flex items-center gap-3">
+              <div className="p-4 bg-white rounded-2xl border border-[#A9C5A0]/50 flex items-center gap-3">
                 <span className="text-3xl">{selectedPlan.emoji}</span>
                 <div>
                   <h3 className="font-extrabold text-base text-[#26332D]">
@@ -91,18 +92,26 @@ export const RescueKitModal: React.FC<RescueKitModalProps> = ({
 
               {/* Steps List */}
               <div className="space-y-3">
-                <div className="text-xs font-bold text-[#355C4A] flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>خطوات الإنقاذ السريعة ({selectedPlan.steps.length} خطوات):</span>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-xs font-bold text-[#174C3C] flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>خطوات الإنقاذ السريعة ({selectedPlan.steps.length} خطوات):</span>
+                  </div>
+                  <TextAudioPlayer
+                    text={`${selectedPlan.title}. ${selectedPlan.steps.map(s => `${s.title}: ${s.action}`).join('. ')}`}
+                    id={`rescue_${selectedPlan.id}`}
+                    variant="compact"
+                    label="اسمع الخطوات"
+                  />
                 </div>
 
                 {selectedPlan.steps.map((step) => (
                   <div 
                     key={step.number}
-                    className="p-3.5 bg-white rounded-2xl border border-[#E8DDCC] space-y-1.5"
+                    className="p-3.5 bg-white rounded-2xl border border-[#E6E8D8] space-y-1.5"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full bg-[#355C4A] text-white text-xs font-bold flex items-center justify-center shrink-0">
+                      <span className="w-6 h-6 rounded-full bg-[#174C3C] text-white text-xs font-bold flex items-center justify-center shrink-0">
                         {step.number}
                       </span>
                       <h4 className="font-bold text-xs sm:text-sm text-[#26332D]">
@@ -121,7 +130,7 @@ export const RescueKitModal: React.FC<RescueKitModalProps> = ({
 
               {/* Optional related quick action */}
               {selectedPlan.relatedArticleId && (
-                <div className="p-3 bg-[#8FAF9A]/15 border border-[#8FAF9A]/30 rounded-2xl flex items-center justify-between">
+                <div className="p-3 bg-[#A9C5A0]/15 border border-[#A9C5A0]/30 rounded-2xl flex items-center justify-between">
                   <div className="text-xs text-[#26332D]">
                     <span className="font-bold">مقال داعم:</span> اقرأ بالتفصيل عن هذا الموضوع
                   </div>
@@ -130,7 +139,7 @@ export const RescueKitModal: React.FC<RescueKitModalProps> = ({
                       onClose();
                       onOpenContent(selectedPlan.relatedArticleId!);
                     }}
-                    className="px-3 py-1.5 bg-white text-[#355C4A] font-bold text-xs rounded-xl border border-[#8FAF9A]/40 flex items-center gap-1 hover:bg-[#355C4A] hover:text-white transition-colors"
+                    className="px-3 py-1.5 bg-white text-[#174C3C] font-bold text-xs rounded-xl border border-[#A9C5A0]/40 flex items-center gap-1 hover:bg-[#174C3C] hover:text-white transition-colors"
                   >
                     <BookOpen className="w-3.5 h-3.5" />
                     <span>فتح المقال</span>
@@ -162,11 +171,11 @@ export const RescueKitModal: React.FC<RescueKitModalProps> = ({
                   <button
                     key={plan.id}
                     onClick={() => setSelectedPlan(plan)}
-                    className="p-3.5 bg-white hover:bg-[#FAF7F0] border border-[#E8DDCC] hover:border-[#355C4A] rounded-2xl text-right transition-all group flex items-start gap-3 shadow-2xs hover:shadow-xs active:scale-[0.99]"
+                    className="p-3.5 bg-white hover:bg-[#F7F3E9] border border-[#E6E8D8] hover:border-[#174C3C] rounded-2xl text-right transition-all group flex items-start gap-3 shadow-2xs hover:shadow-xs active:scale-[0.99]"
                   >
                     <span className="text-2xl shrink-0 mt-0.5">{plan.emoji}</span>
                     <div className="flex-1">
-                      <div className="font-extrabold text-xs sm:text-sm text-[#26332D] group-hover:text-[#355C4A] transition-colors">
+                      <div className="font-extrabold text-xs sm:text-sm text-[#26332D] group-hover:text-[#174C3C] transition-colors">
                         {plan.title}
                       </div>
                       <div className="text-[11px] text-[#7D8F85] mt-0.5 line-clamp-1">

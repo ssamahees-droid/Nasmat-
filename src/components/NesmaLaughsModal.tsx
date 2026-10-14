@@ -29,10 +29,10 @@ export const NesmaLaughsModal: React.FC<NesmaLaughsModalProps> = ({ isOpen, onCl
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-lg bg-[#FAF7F0] border border-amber-200 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-amber-200 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">😂</span>
             <div>
@@ -60,7 +60,7 @@ export const NesmaLaughsModal: React.FC<NesmaLaughsModalProps> = ({ isOpen, onCl
           </div>
 
           {/* Situation Card */}
-          <div className="p-5 bg-white border border-[#E8DDCC] rounded-3xl space-y-3 text-right shadow-2xs">
+          <div className="p-5 bg-white border border-[#E6E8D8] rounded-3xl space-y-3 text-right shadow-2xs">
             <div className="text-3xl text-center">{currentItem.memeEmoji}</div>
             
             <div className="text-xs sm:text-sm text-[#26332D] whitespace-pre-line leading-relaxed font-medium">
@@ -73,8 +73,8 @@ export const NesmaLaughsModal: React.FC<NesmaLaughsModalProps> = ({ isOpen, onCl
           </div>
 
           {/* Psychology Fact Behind the Joke */}
-          <div className="p-4 bg-[#8FAF9A]/15 border border-[#8FAF9A]/30 rounded-2xl space-y-1">
-            <div className="text-xs font-bold text-[#355C4A] flex items-center gap-1.5">
+          <div className="p-4 bg-[#A9C5A0]/15 border border-[#A9C5A0]/30 rounded-2xl space-y-1">
+            <div className="text-xs font-bold text-[#174C3C] flex items-center gap-1.5">
               <span>🧠</span>
               <span>الحقيقة النفسية وراء الموقف:</span>
             </div>
@@ -87,7 +87,7 @@ export const NesmaLaughsModal: React.FC<NesmaLaughsModalProps> = ({ isOpen, onCl
           <div className="flex items-center justify-between gap-2 pt-1">
             <button
               onClick={handlePrev}
-              className="py-2.5 px-4 bg-white hover:bg-stone-100 border border-[#E8DDCC] text-xs font-bold text-[#26332D] rounded-2xl flex items-center gap-1.5 transition-colors"
+              className="py-2.5 px-4 bg-white hover:bg-stone-100 border border-[#E6E8D8] text-xs font-bold text-[#26332D] rounded-2xl flex items-center gap-1.5 transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
               <span>السابق</span>
@@ -95,7 +95,7 @@ export const NesmaLaughsModal: React.FC<NesmaLaughsModalProps> = ({ isOpen, onCl
 
             <button
               onClick={handleNext}
-              className="flex-1 py-2.5 px-4 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+              className="flex-1 py-2.5 px-4 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl flex items-center justify-center gap-1.5 transition-colors shadow-xs"
             >
               <span>موقف تاني مضحك</span>
               <ChevronLeft className="w-4 h-4" />

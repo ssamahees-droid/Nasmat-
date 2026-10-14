@@ -211,10 +211,10 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-3xl bg-[#FAF7F2] border border-[#E5DACB] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-3xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E5DACB] shrink-0">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E6E8D8] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-[#3A5A40]/10 text-[#3A5A40] flex items-center justify-center text-2xl shadow-inner">
               🧘
@@ -259,7 +259,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
               className={`py-2 px-3.5 rounded-2xl border text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 ${
                 activeExercise === tab.id
                   ? 'bg-[#3A5A40] text-white border-[#3A5A40] shadow-xs'
-                  : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E5DACB]'
+                  : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E6E8D8]'
               }`}
             >
               <span>{tab.emoji}</span>
@@ -273,7 +273,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
           {/* 1. Grounding 5-4-3-2-1 */}
           {activeExercise === 'grounding_54321' && (
             <div className="space-y-4 animate-fade-in">
-              <div className="p-4 bg-white border border-[#E5DACB] rounded-3xl shadow-xs space-y-3">
+              <div className="p-4 bg-white border border-[#E6E8D8] rounded-3xl shadow-xs space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {GROUNDING_CONFIG[groundingStep - 1].icon}
@@ -291,7 +291,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
                 </p>
 
                 {/* Progress bar */}
-                <div className="w-full bg-[#E5DACB] h-1.5 rounded-full overflow-hidden">
+                <div className="w-full bg-[#E6E8D8] h-1.5 rounded-full overflow-hidden">
                   <div 
                     className="bg-[#3A5A40] h-full transition-all duration-300 rounded-full"
                     style={{ width: `${(groundingStep / 5) * 100}%` }}
@@ -305,7 +305,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
                     value={groundingInput}
                     onChange={(e) => setGroundingInput(e.target.value)}
                     placeholder={GROUNDING_CONFIG[groundingStep - 1].placeholder}
-                    className="flex-1 p-3 bg-[#FAF7F2] border border-[#E5DACB] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none font-medium"
+                    className="flex-1 p-3 bg-[#F7F3E9] border border-[#E6E8D8] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none font-medium"
                   />
                   <button
                     type="submit"
@@ -392,7 +392,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
                   value={floatingThought}
                   onChange={(e) => setFloatingThought(e.target.value)}
                   placeholder="ما الفكرة التي تشغل بالك الآن؟ (مثال: خايف من بكرة، فلان زعلان مني...)"
-                  className="flex-1 p-3 bg-white border border-[#E5DACB] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none"
+                  className="flex-1 p-3 bg-white border border-[#E6E8D8] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none"
                 />
                 <button
                   type="submit"
@@ -409,8 +409,8 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
           {/* 3. Body Scan Meditation */}
           {activeExercise === 'body_scan' && (
             <div className="space-y-4 animate-fade-in">
-              <div className="p-5 bg-white border border-[#E5DACB] rounded-3xl shadow-xs space-y-4 text-center">
-                <div className="flex items-center justify-between text-xs text-[#58645C] border-b border-[#E5DACB] pb-2">
+              <div className="p-5 bg-white border border-[#E6E8D8] rounded-3xl shadow-xs space-y-4 text-center">
+                <div className="flex items-center justify-between text-xs text-[#58645C] border-b border-[#E6E8D8] pb-2">
                   <span className="font-bold text-[#3A5A40]">منطقة التركيز: {BODY_PARTS[bodyScanStep].part}</span>
                   <span>{bodyScanStep + 1} من {BODY_PARTS.length}</span>
                 </div>
@@ -432,7 +432,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
                   <button
                     disabled={bodyScanStep === 0}
                     onClick={() => setBodyScanStep(prev => Math.max(0, prev - 1))}
-                    className="p-2.5 bg-[#FAF7F2] hover:bg-stone-100 disabled:opacity-40 rounded-xl border border-[#E5DACB] text-xs font-bold"
+                    className="p-2.5 bg-[#F7F3E9] hover:bg-stone-100 disabled:opacity-40 rounded-xl border border-[#E6E8D8] text-xs font-bold"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -457,7 +457,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
                   <button
                     disabled={bodyScanStep === BODY_PARTS.length - 1}
                     onClick={() => setBodyScanStep(prev => Math.min(BODY_PARTS.length - 1, prev + 1))}
-                    className="p-2.5 bg-[#FAF7F2] hover:bg-stone-100 disabled:opacity-40 rounded-xl border border-[#E5DACB] text-xs font-bold"
+                    className="p-2.5 bg-[#F7F3E9] hover:bg-stone-100 disabled:opacity-40 rounded-xl border border-[#E6E8D8] text-xs font-bold"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -469,7 +469,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
           {/* 4. Anchor Breath */}
           {activeExercise === 'anchor_breath' && (
             <div className="space-y-4 animate-fade-in text-center">
-              <div className="p-6 bg-white border border-[#E5DACB] rounded-3xl shadow-xs space-y-4">
+              <div className="p-6 bg-white border border-[#E6E8D8] rounded-3xl shadow-xs space-y-4">
                 <span className="text-xs font-bold text-[#3A5A40] bg-[#3A5A40]/10 px-3 py-1 rounded-full">
                   مرساة الحضور: تنفس واعي
                 </span>
@@ -521,13 +521,13 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
           {/* 5. Mindful Savoring */}
           {activeExercise === 'mindful_savoring' && (
             <div className="space-y-3.5 animate-fade-in">
-              <div className="p-4 bg-white border border-[#E5DACB] rounded-3xl shadow-xs space-y-3">
+              <div className="p-4 bg-white border border-[#E6E8D8] rounded-3xl shadow-xs space-y-3">
                 <h3 className="font-black text-sm text-[#283618]">
                   كيف تمارس اليقظة في روتينك اليومي؟ (التذوق والمشي)
                 </h3>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E5DACB] space-y-1.5">
+                  <div className="p-3.5 bg-[#F7F3E9] rounded-2xl border border-[#E6E8D8] space-y-1.5">
                     <span className="font-bold text-[#3A5A40] flex items-center gap-1.5">
                       <Coffee className="w-4 h-4" />
                       <span>تناول طعام أو شراب بوعي (Mindful Eating):</span>
@@ -537,7 +537,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
                     </p>
                   </div>
 
-                  <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E5DACB] space-y-1.5">
+                  <div className="p-3.5 bg-[#F7F3E9] rounded-2xl border border-[#E6E8D8] space-y-1.5">
                     <span className="font-bold text-[#3A5A40] flex items-center gap-1.5">
                       <Compass className="w-4 h-4" />
                       <span>المشي الواعي (Mindful Walking):</span>

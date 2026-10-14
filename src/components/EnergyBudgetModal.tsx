@@ -63,10 +63,10 @@ export const EnergyBudgetModal: React.FC<EnergyBudgetModalProps> = ({ isOpen, on
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-xl bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">⚖️</span>
             <div>
@@ -109,7 +109,7 @@ export const EnergyBudgetModal: React.FC<EnergyBudgetModalProps> = ({ isOpen, on
                     value={d}
                     onChange={(e) => handleDrainChange(i, e.target.value)}
                     placeholder={`مستنزف ${i + 1} (مثال: محادثات متوترة، عمل إضافي، قلة نوم...)`}
-                    className="flex-1 p-2.5 bg-white border border-[#E8DDCC] focus:border-rose-400 rounded-xl text-xs text-[#26332D] outline-none"
+                    className="flex-1 p-2.5 bg-white border border-[#E6E8D8] focus:border-rose-400 rounded-xl text-xs text-[#26332D] outline-none"
                   />
                 </div>
               ))}
@@ -133,7 +133,7 @@ export const EnergyBudgetModal: React.FC<EnergyBudgetModalProps> = ({ isOpen, on
                     value={r}
                     onChange={(e) => handleRechargerChange(i, e.target.value)}
                     placeholder={`معوّض ${i + 1} (مثال: مشي هادئ، نوم كافي، قراءة ممتعة...)`}
-                    className="flex-1 p-2.5 bg-white border border-[#E8DDCC] focus:border-emerald-500 rounded-xl text-xs text-[#26332D] outline-none"
+                    className="flex-1 p-2.5 bg-white border border-[#E6E8D8] focus:border-emerald-500 rounded-xl text-xs text-[#26332D] outline-none"
                   />
                 </div>
               ))}
@@ -141,7 +141,7 @@ export const EnergyBudgetModal: React.FC<EnergyBudgetModalProps> = ({ isOpen, on
           </div>
 
           {/* Part 3: The Critical Question */}
-          <div className="p-4 bg-white border-2 border-[#8FAF9A]/60 rounded-2xl space-y-2">
+          <div className="p-4 bg-white border-2 border-[#A9C5A0]/60 rounded-2xl space-y-2">
             <label className="block text-xs font-extrabold text-[#26332D]">
               السؤال المهم: ما الشيء الذي يمكنني تقليله هذا الأسبوع؟
             </label>
@@ -150,7 +150,7 @@ export const EnergyBudgetModal: React.FC<EnergyBudgetModalProps> = ({ isOpen, on
               value={reduceThisWeek}
               onChange={(e) => setReduceThisWeek(e.target.value)}
               placeholder="اكتب التزاماً واحداً محدداً تنوي تقليله أو الاعتذار عنه هذا الأسبوع..."
-              className="w-full p-3 bg-[#FAF7F0] border border-[#E8DDCC] focus:border-[#355C4A] rounded-xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
+              className="w-full p-3 bg-[#F7F3E9] border border-[#E6E8D8] focus:border-[#174C3C] rounded-xl text-xs text-[#26332D] outline-none resize-none leading-relaxed"
             />
           </div>
 
@@ -158,7 +158,7 @@ export const EnergyBudgetModal: React.FC<EnergyBudgetModalProps> = ({ isOpen, on
           <div className="flex items-center gap-2 pt-1">
             <button
               onClick={handleSave}
-              className="flex-1 py-3 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl transition-colors shadow-xs flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-2xl transition-colors shadow-xs flex items-center justify-center gap-2"
             >
               <Check className="w-4 h-4" />
               <span>{savedSuccess ? 'تم حفظ ميزانية الطاقة بنجاح ✓' : 'حفظ الميزانية والالتزام بها'}</span>
@@ -166,7 +166,7 @@ export const EnergyBudgetModal: React.FC<EnergyBudgetModalProps> = ({ isOpen, on
 
             <button
               onClick={handleReset}
-              className="p-3 bg-white hover:bg-stone-100 text-stone-600 border border-[#E8DDCC] rounded-2xl text-xs"
+              className="p-3 bg-white hover:bg-stone-100 text-stone-600 border border-[#E6E8D8] rounded-2xl text-xs"
               title="إعادة تعيين"
             >
               <RotateCcw className="w-4 h-4" />

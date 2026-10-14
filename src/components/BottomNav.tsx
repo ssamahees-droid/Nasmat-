@@ -35,7 +35,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#F2EFEB]/98 dark:bg-[#121214]/98 backdrop-blur-md border-t-[1.5px] border-[#111113] dark:border-white/20 pb-safe shadow-[0_-4px_12px_rgba(17,17,19,0.08)]" dir="rtl">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#F7F3E9]/98 dark:bg-[#0D1914]/98 backdrop-blur-md border-t border-[#174C3C]/15 dark:border-[#A9C5A0]/15 pb-safe shadow-[0_-4px_16px_rgba(23,76,60,0.06)]" dir="rtl">
       <div className={`max-w-md mx-auto grid ${isAdmin ? 'grid-cols-7' : 'grid-cols-6'} items-center h-16 px-1 font-cairo`}>
         
         {navItems.map((item) => {
@@ -52,7 +52,9 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className={`flex flex-col items-center justify-center min-h-[44px] py-1 transition-all cursor-pointer ${
-                isActive ? 'text-[#E36E4D] font-black' : 'text-[#111113]/70 dark:text-[#F2EFEB]/70 hover:text-[#111113]'
+                isActive 
+                  ? 'text-[#174C3C] dark:text-[#A9C5A0] font-black' 
+                  : 'text-[#13251E]/65 dark:text-[#F7F3E9]/65 hover:text-[#174C3C] dark:hover:text-[#A9C5A0]'
               }`}
               aria-label={item.label}
             >
@@ -61,7 +63,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                 {item.label}
               </span>
               {isActive && (
-                <span className="w-1.5 h-1.5 rounded-full bg-[#E36E4D] mt-0.5 shadow-xs" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#174C3C] dark:bg-[#A9C5A0] mt-0.5 shadow-2xs" />
               )}
             </button>
           );
@@ -75,14 +77,16 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             className={`flex flex-col items-center justify-center min-h-[44px] py-1 transition-all cursor-pointer ${
-              currentTab === 'admin' ? 'text-[#E36E4D] font-black' : 'text-[#111113]/70 dark:text-[#F2EFEB]/70'
+              currentTab === 'admin' 
+                ? 'text-[#174C3C] dark:text-[#A9C5A0] font-black' 
+                : 'text-[#13251E]/65 dark:text-[#F7F3E9]/65 hover:text-[#174C3C]'
             }`}
             aria-label="الإدارة"
           >
             <LayoutDashboard className="w-4 h-4" />
             <span className="text-[10px] mt-0.5">الإدارة</span>
             {currentTab === 'admin' && (
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E36E4D] mt-0.5" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#174C3C] dark:bg-[#A9C5A0] mt-0.5" />
             )}
           </button>
         )}

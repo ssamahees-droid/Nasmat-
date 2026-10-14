@@ -131,10 +131,10 @@ export const WorkshopsHubModal: React.FC<WorkshopsHubModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-3xl bg-[#FAF7F2] border border-[#E5DACB] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-3xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#E5DACB] shrink-0">
+        <div className="flex items-center justify-between pb-4 border-b border-[#E6E8D8] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-[#3A5A40]/10 text-[#3A5A40] flex items-center justify-center text-2xl shadow-inner">
               🛠️
@@ -167,7 +167,7 @@ export const WorkshopsHubModal: React.FC<WorkshopsHubModalProps> = ({
             {workshopsList.map((ws) => (
               <div
                 key={ws.id}
-                className="p-4 bg-white border border-[#E5DACB] hover:border-[#3A5A40] rounded-2xl transition-all shadow-xs hover:shadow-md flex flex-col justify-between group"
+                className="p-4 bg-white border border-[#E6E8D8] hover:border-[#3A5A40] rounded-2xl transition-all shadow-xs hover:shadow-md flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-1.5">
@@ -183,13 +183,13 @@ export const WorkshopsHubModal: React.FC<WorkshopsHubModalProps> = ({
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-[#E5DACB]/60 flex items-center justify-end">
+                <div className="mt-4 pt-3 border-t border-[#E6E8D8]/60 flex items-center justify-end">
                   <button
                     onClick={() => {
                       onClose();
                       ws.action();
                     }}
-                    className="py-1.5 px-3.5 bg-[#FAF7F2] hover:bg-[#3A5A40] text-[#3A5A40] hover:text-white border border-[#E5DACB] hover:border-[#3A5A40] text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shadow-2xs"
+                    className="py-1.5 px-3.5 bg-[#F7F3E9] hover:bg-[#3A5A40] text-[#3A5A40] hover:text-white border border-[#E6E8D8] hover:border-[#3A5A40] text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shadow-2xs"
                   >
                     <span>{ws.btnLabel}</span>
                     <ArrowLeft className="w-3.5 h-3.5" />

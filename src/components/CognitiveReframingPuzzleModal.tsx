@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { chimeService } from '../services/chimeService';
 import { storage } from '../services/storage';
+import { TextAudioPlayer } from './TextAudioPlayer';
 
 interface PuzzleChallenge {
   id: string;
@@ -417,6 +418,14 @@ export const CognitiveReframingPuzzleModal: React.FC<{
                   <p className="text-sm sm:text-base font-extrabold text-white leading-relaxed drop-shadow-md">
                     {currentPuzzle.restoredMessage}
                   </p>
+                  <div className="flex items-center justify-center pt-1">
+                    <TextAudioPlayer
+                      text={currentPuzzle.restoredMessage}
+                      id={`puzzle_reframe_${currentPuzzle.id}`}
+                      variant="inline"
+                      label="اسمع الفكرة المرممة"
+                    />
+                  </div>
                   <span className="text-[11px] text-emerald-300 block font-bold">
                     ✨ حُفظت اللوحة في معرض إنجازاتك الشخصي!
                   </span>

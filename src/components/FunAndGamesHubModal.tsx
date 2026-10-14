@@ -199,7 +199,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-3xl bg-[#FAF7F2] border border-[#E5DACB] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-3xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Floating animated smiles */}
         <div className="absolute top-12 left-10 pointer-events-none z-50 flex flex-col items-center gap-1">
@@ -211,7 +211,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-[#E5DACB] shrink-0">
+        <div className="flex items-center justify-between pb-3.5 border-b border-[#E6E8D8] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center text-2xl shadow-inner animate-pulse">
               🎈
@@ -253,7 +253,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
               className={`py-2 px-3.5 rounded-2xl border text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 ${
                 activeTab === tab.id
                   ? 'bg-[#3A5A40] text-white border-[#3A5A40] shadow-xs'
-                  : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E5DACB]'
+                  : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E6E8D8]'
               }`}
             >
               <span>{tab.emoji}</span>
@@ -286,7 +286,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
                     className={`py-1.5 px-3 rounded-xl text-xs font-bold shrink-0 transition-all ${
                       jokeFilter === f.id
                         ? 'bg-amber-800 text-white shadow-xs'
-                        : 'bg-white text-[#58645C] border border-[#E5DACB] hover:bg-stone-50'
+                        : 'bg-white text-[#58645C] border border-[#E6E8D8] hover:bg-stone-50'
                     }`}
                   >
                     {f.label}
@@ -329,7 +329,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
 
                     <button
                       onClick={handleCopyJoke}
-                      className="p-2 bg-white hover:bg-stone-100 border border-[#E5DACB] rounded-xl text-stone-600 transition-colors"
+                      className="p-2 bg-white hover:bg-stone-100 border border-[#E6E8D8] rounded-xl text-stone-600 transition-colors"
                       title="نسخ النكتة"
                     >
                       {copiedJoke ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
@@ -339,7 +339,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={handlePrevJoke}
-                      className="p-2 bg-white hover:bg-stone-100 border border-[#E5DACB] rounded-xl text-stone-600 transition-colors"
+                      className="p-2 bg-white hover:bg-stone-100 border border-[#E6E8D8] rounded-xl text-stone-600 transition-colors"
                       title="النكتة السابقة"
                     >
                       <ChevronRight className="w-4 h-4" />
@@ -356,7 +356,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
 
                     <button
                       onClick={handleNextJoke}
-                      className="p-2 bg-white hover:bg-stone-100 border border-[#E5DACB] rounded-xl text-stone-600 transition-colors"
+                      className="p-2 bg-white hover:bg-stone-100 border border-[#E6E8D8] rounded-xl text-stone-600 transition-colors"
                       title="النكتة التالية"
                     >
                       <ChevronLeft className="w-4 h-4" />
@@ -422,8 +422,8 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
           {/* TAB 3: ألغاز وفوازير للترويق */}
           {activeTab === 'riddles' && (
             <div className="space-y-4 animate-fade-in">
-              <div className="p-6 bg-white border border-[#E5DACB] rounded-3xl shadow-xs space-y-4 text-center">
-                <div className="flex items-center justify-between text-xs text-[#58645C] border-b border-[#E5DACB] pb-2">
+              <div className="p-6 bg-white border border-[#E6E8D8] rounded-3xl shadow-xs space-y-4 text-center">
+                <div className="flex items-center justify-between text-xs text-[#58645C] border-b border-[#E6E8D8] pb-2">
                   <span className="font-bold text-[#3A5A40] flex items-center gap-1">
                     <span>🧩 فزورة لتشتيت التفكير</span>
                   </span>
@@ -458,14 +458,14 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
                   </button>
                 )}
 
-                <div className="flex items-center justify-center gap-3 pt-3 border-t border-[#E5DACB]">
+                <div className="flex items-center justify-center gap-3 pt-3 border-t border-[#E6E8D8]">
                   <button
                     disabled={activeRiddleIndex === 0}
                     onClick={() => {
                       setActiveRiddleIndex(prev => prev - 1);
                       setShowRiddleAnswer(false);
                     }}
-                    className="py-2 px-4 bg-[#FAF7F2] hover:bg-stone-100 disabled:opacity-40 rounded-xl border border-[#E5DACB] text-xs font-bold"
+                    className="py-2 px-4 bg-[#F7F3E9] hover:bg-stone-100 disabled:opacity-40 rounded-xl border border-[#E6E8D8] text-xs font-bold"
                   >
                     الفزورة السابقة
                   </button>
@@ -487,7 +487,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
           {/* TAB 4: عجلة الحظ للبهجة */}
           {activeTab === 'wheel' && (
             <div className="space-y-4 animate-fade-in text-center">
-              <div className="p-6 bg-white border border-[#E5DACB] rounded-3xl shadow-xs space-y-4">
+              <div className="p-6 bg-white border border-[#E6E8D8] rounded-3xl shadow-xs space-y-4">
                 <div className="text-xs font-bold text-[#3A5A40] bg-[#3A5A40]/10 px-3 py-1 rounded-full inline-block">
                   🎡 دولاب البهجة اليومي
                 </div>
@@ -530,7 +530,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
           {/* TAB 5: تحدي الذاكرة الهادئة */}
           {activeTab === 'memory' && (
             <div className="space-y-4 animate-fade-in text-center">
-              <div className="p-4 bg-white border border-[#E5DACB] rounded-2xl flex items-center justify-between text-xs">
+              <div className="p-4 bg-white border border-[#E6E8D8] rounded-2xl flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">🃏</span>
                   <span className="font-bold text-[#283618]">طابق الأيقونات المتشابهة</span>
@@ -542,7 +542,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
               </div>
 
               {/* Memory Cards Grid */}
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 p-4 bg-[#FAF7F2] border border-[#E5DACB] rounded-3xl">
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl">
                 {cards.map((card) => (
                   <button
                     key={card.id}

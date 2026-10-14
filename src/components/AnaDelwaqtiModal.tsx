@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, ArrowRight, ShieldAlert, HeartHandshake, CheckCircle2, MessageSquare, Wind, Compass } from 'lucide-react';
 import { ANA_DELWAQTI_STATES, AnaDelwaqtiState } from '../data/newPhaseData';
 import { TakeawayResultCard } from './TakeawayResultCard';
+import { TextAudioPlayer } from './TextAudioPlayer';
 
 interface AnaDelwaqtiModalProps {
   isOpen: boolean;
@@ -67,10 +68,10 @@ export const AnaDelwaqtiModal: React.FC<AnaDelwaqtiModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-xl bg-[#FAF7F0] border border-[#E8DDCC] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
         
         {/* Top Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#E8DDCC]/70 shrink-0">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
           <div className="flex items-center gap-2">
             <span className="text-xl">🌿</span>
             <div>
@@ -108,14 +109,14 @@ export const AnaDelwaqtiModal: React.FC<AnaDelwaqtiModalProps> = ({
             <div className="space-y-4 animate-fade-in">
               <button
                 onClick={() => setSelectedState(null)}
-                className="text-xs font-bold text-[#355C4A] hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-[#174C3C] hover:underline flex items-center gap-1"
               >
                 <ArrowRight className="w-3.5 h-3.5" />
                 <span>اختيار حالة تانية</span>
               </button>
 
               {/* Title Header */}
-              <div className="p-4 bg-white rounded-2xl border border-[#8FAF9A]/50 flex items-center gap-3">
+              <div className="p-4 bg-white rounded-2xl border border-[#A9C5A0]/50 flex items-center gap-3">
                 <span className="text-3xl">{selectedState.emoji}</span>
                 <div>
                   <h3 className="font-extrabold text-base text-[#26332D]">
@@ -128,10 +129,18 @@ export const AnaDelwaqtiModal: React.FC<AnaDelwaqtiModalProps> = ({
               </div>
 
               {/* 1. 🌱 افهم */}
-              <div className="p-4 bg-[#8FAF9A]/15 border border-[#8FAF9A]/30 rounded-2xl space-y-1.5">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-[#355C4A]">
-                  <span>🌱</span>
-                  <span>افهم: {selectedState.understand.title}</span>
+              <div className="p-4 bg-[#A9C5A0]/15 border border-[#A9C5A0]/30 rounded-2xl space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#174C3C]">
+                    <span>🌱</span>
+                    <span>افهم: {selectedState.understand.title}</span>
+                  </div>
+                  <TextAudioPlayer
+                    text={`${selectedState.title}. ${selectedState.understand.text}`}
+                    id={`ana_delwaqti_${selectedState.id}`}
+                    variant="compact"
+                    label="اسمع الشرح"
+                  />
                 </div>
                 <p className="text-xs text-[#26332D] leading-relaxed">
                   {selectedState.understand.text}
@@ -139,13 +148,13 @@ export const AnaDelwaqtiModal: React.FC<AnaDelwaqtiModalProps> = ({
               </div>
 
               {/* 2. 🧩 جرّب */}
-              <div className="p-4 bg-white border border-[#E8DDCC] rounded-2xl space-y-2">
-                <div className="flex items-center justify-between text-xs text-[#355C4A] font-bold">
+              <div className="p-4 bg-white border border-[#E6E8D8] rounded-2xl space-y-2">
+                <div className="flex items-center justify-between text-xs text-[#174C3C] font-bold">
                   <span className="flex items-center gap-1.5">
                     <span>🧩</span>
                     <span>جرّب: {selectedState.tryExercise.title}</span>
                   </span>
-                  <span className="text-[10px] font-mono text-[#7D8F85] px-2 py-0.5 bg-[#FAF7F0] rounded-md">
+                  <span className="text-[10px] font-mono text-[#7D8F85] px-2 py-0.5 bg-[#F7F3E9] rounded-md">
                     {selectedState.tryExercise.duration}
                   </span>
                 </div>
@@ -157,19 +166,19 @@ export const AnaDelwaqtiModal: React.FC<AnaDelwaqtiModalProps> = ({
               </div>
 
               {/* 3. 🤝 اتكلم */}
-              <div className="p-4 bg-[#FAF7F0] border border-[#E8DDCC] rounded-2xl space-y-2.5">
+              <div className="p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-2xl space-y-2.5">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-[#26332D]">
                   <span>🤝</span>
                   <span>اتكلم: {selectedState.talk.title}</span>
                 </div>
                 
-                <div className="p-3 bg-white rounded-xl border border-[#E8DDCC] text-xs text-[#52645B] italic">
+                <div className="p-3 bg-white rounded-xl border border-[#E6E8D8] text-xs text-[#52645B] italic">
                   «{selectedState.talk.suggestedText}»
                 </div>
 
                 <button
                   onClick={() => handleActionClick(selectedState)}
-                  className="w-full py-2.5 px-4 bg-[#355C4A] hover:bg-[#264235] text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-2.5 px-4 bg-[#174C3C] hover:bg-[#264235] text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
                 >
                   <MessageSquare className="w-4 h-4" />
                   <span>{copiedMsg ? 'تم نسخ الرسالة بنجاح ✓' : selectedState.talk.actionLabel}</span>
@@ -200,14 +209,14 @@ export const AnaDelwaqtiModal: React.FC<AnaDelwaqtiModalProps> = ({
                   <button
                     key={st.id}
                     onClick={() => handleSelect(st)}
-                    className="p-3.5 bg-white/90 hover:bg-[#355C4A] hover:text-white border border-[#E8DDCC] rounded-2xl text-right transition-all group flex items-start gap-3 shadow-2xs hover:shadow-xs hover:border-[#355C4A] active:scale-[0.99]"
+                    className="p-3.5 bg-white/90 hover:bg-[#174C3C] hover:text-white border border-[#E6E8D8] rounded-2xl text-right transition-all group flex items-start gap-3 shadow-2xs hover:shadow-xs hover:border-[#174C3C] active:scale-[0.99]"
                   >
                     <span className="text-2xl shrink-0 mt-0.5">{st.emoji}</span>
                     <div>
                       <div className="font-extrabold text-sm text-[#26332D] group-hover:text-white transition-colors">
                         {st.title}
                       </div>
-                      <div className="text-[11px] text-[#7D8F85] group-hover:text-[#E8DDCC] transition-colors mt-0.5 line-clamp-1">
+                      <div className="text-[11px] text-[#7D8F85] group-hover:text-[#E6E8D8] transition-colors mt-0.5 line-clamp-1">
                         {st.shortDesc}
                       </div>
                     </div>

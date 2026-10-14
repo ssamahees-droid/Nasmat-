@@ -129,26 +129,26 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
     <section className={`space-y-6 text-right font-cairo ${className}`}>
       
       {/* Library Banner Header */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-[#F2EFEB] dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 shadow-[6px_6px_0_#111113] relative overflow-hidden">
+      <div className="p-6 sm:p-8 rounded-3xl bg-[#F7F3E9] dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 shadow-[6px_6px_0_#111113] relative overflow-hidden">
         <div className="relative z-10 space-y-2.5 max-w-2xl">
-          <div className="font-jetbrains text-[10px] sm:text-xs font-bold text-[#E36E4D] uppercase tracking-wider">
+          <div className="font-jetbrains text-[10px] sm:text-xs font-bold text-[#D98F83] uppercase tracking-wider">
             MOUBADARA_01 · PSYCHOEDUCATION_LIBRARY
           </div>
-          <h2 className="font-cairo font-black text-2xl sm:text-4xl text-[#111113] dark:text-[#F2EFEB] leading-tight">
+          <h2 className="font-cairo font-black text-2xl sm:text-4xl text-[#111113] dark:text-[#F7F3E9] leading-tight">
             مكتبة التثقيف النفسي المتكاملة 🌿
           </h2>
-          <p className="text-xs sm:text-sm text-[#111113]/80 dark:text-[#F2EFEB]/80 leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#111113]/80 dark:text-[#F7F3E9]/80 leading-relaxed">
             ٣٠ موضوعاً أصلياً وموثقاً في ٦ مسارات إنسانية؛ لشرح ما يجري بداخلك بتبسيط دقيق، وتفكيك التشوهات الفكرية، واكتساب مهارات عملية وبدائل مرنة تناسب وتيرتك دون أحكام.
           </p>
 
-          <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-jetbrains text-[#111113]/70 dark:text-[#F2EFEB]/70">
+          <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-jetbrains text-[#111113]/70 dark:text-[#F7F3E9]/70">
             <span className="flex items-center gap-1 font-bold">
-              <BookOpen className="w-3.5 h-3.5 text-[#E36E4D]" />
+              <BookOpen className="w-3.5 h-3.5 text-[#D98F83]" />
               <span>30 موضوعاً مكتملاً</span>
             </span>
             <span>·</span>
             <span className="flex items-center gap-1 font-bold">
-              <Compass className="w-3.5 h-3.5 text-[#E36E4D]" />
+              <Compass className="w-3.5 h-3.5 text-[#D98F83]" />
               <span>6 مسارات متدرجة</span>
             </span>
             <span>·</span>
@@ -170,9 +170,9 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="ابحث في موضوعات المكتبة (مثال: نوبات الهلع، الاحتراق، التفكير الكارثي، الأدوية، الحدود)..."
-            className="w-full py-3.5 pr-11 pl-10 bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-2xl text-xs sm:text-sm text-[#111113] dark:text-[#F2EFEB] placeholder-[#111113]/40 dark:placeholder-white/40 focus:outline-hidden focus:shadow-[3px_3px_0_#E36E4D] transition-all"
+            className="w-full py-3.5 pr-11 pl-10 bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-2xl text-xs sm:text-sm text-[#111113] dark:text-[#F7F3E9] placeholder-[#111113]/40 dark:placeholder-white/40 focus:outline-hidden focus:shadow-[3px_3px_0_#D98F83] transition-all"
           />
-          <Search className="w-5 h-5 text-[#E36E4D] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-5 h-5 text-[#D98F83] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
@@ -192,8 +192,8 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
             }}
             className={`px-3.5 py-2 rounded-xl border-[1.5px] font-bold whitespace-nowrap transition-all cursor-pointer ${
               selectedTrackId === 'all' && !showBookmarksOnly
-                ? 'bg-[#111113] text-white border-[#111113] shadow-[2px_2px_0_#E36E4D]'
-                : 'bg-white dark:bg-[#18181C] text-[#111113] dark:text-[#F2EFEB] border-[#111113]/20 hover:border-[#111113]'
+                ? 'bg-[#111113] text-white border-[#111113] shadow-[2px_2px_0_#D98F83]'
+                : 'bg-white dark:bg-[#18181C] text-[#111113] dark:text-[#F7F3E9] border-[#111113]/20 hover:border-[#111113]'
             }`}
           >
             جميع المسارات ({allTopics.length})
@@ -210,8 +210,8 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
                 }}
                 className={`px-3.5 py-2 rounded-xl border-[1.5px] font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
                   isSelected
-                    ? 'bg-[#111113] text-white border-[#111113] shadow-[2px_2px_0_#E36E4D]'
-                    : 'bg-white dark:bg-[#18181C] text-[#111113] dark:text-[#F2EFEB] border-[#111113]/20 hover:border-[#111113]'
+                    ? 'bg-[#111113] text-white border-[#111113] shadow-[2px_2px_0_#D98F83]'
+                    : 'bg-white dark:bg-[#18181C] text-[#111113] dark:text-[#F7F3E9] border-[#111113]/20 hover:border-[#111113]'
                 }`}
               >
                 <span>{track.icon}</span>
@@ -226,8 +226,8 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
             onClick={() => setShowBookmarksOnly(true)}
             className={`px-3.5 py-2 rounded-xl border-[1.5px] font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
               showBookmarksOnly
-                ? 'bg-[#E36E4D] text-white border-[#111113] shadow-[2px_2px_0_#111113]'
-                : 'bg-white dark:bg-[#18181C] text-[#111113] dark:text-[#F2EFEB] border-[#111113]/20 hover:border-[#111113]'
+                ? 'bg-[#D98F83] text-white border-[#111113] shadow-[2px_2px_0_#111113]'
+                : 'bg-white dark:bg-[#18181C] text-[#111113] dark:text-[#F7F3E9] border-[#111113]/20 hover:border-[#111113]'
             }`}
           >
             <Bookmark className="w-3.5 h-3.5" />
@@ -237,7 +237,7 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
 
         {/* Quick Tag Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-[11px]">
-          <span className="text-[#111113]/50 dark:text-[#F2EFEB]/50 font-bold shrink-0">وسوم سريعة:</span>
+          <span className="text-[#111113]/50 dark:text-[#F7F3E9]/50 font-bold shrink-0">وسوم سريعة:</span>
           {POPULAR_TAGS.map((tag) => {
             const isTagSelected = selectedTag === tag;
             return (
@@ -246,8 +246,8 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
                 onClick={() => setSelectedTag(isTagSelected ? 'all' : tag)}
                 className={`px-2.5 py-1 rounded-full border transition-all cursor-pointer whitespace-nowrap ${
                   isTagSelected
-                    ? 'bg-[#E36E4D] text-white border-[#111113] font-bold'
-                    : 'bg-white/80 dark:bg-[#202026] text-[#111113]/70 dark:text-[#F2EFEB]/70 border-[#111113]/15 hover:border-[#111113]'
+                    ? 'bg-[#D98F83] text-white border-[#111113] font-bold'
+                    : 'bg-white/80 dark:bg-[#202026] text-[#111113]/70 dark:text-[#F7F3E9]/70 border-[#111113]/15 hover:border-[#111113]'
                 }`}
               >
                 #{tag}
@@ -259,10 +259,10 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
       </div>
 
       {/* Topics Counter Bar */}
-      <div className="flex items-center justify-between text-xs text-[#111113]/70 dark:text-[#F2EFEB]/70 pt-2 border-t border-[#111113]/10">
+      <div className="flex items-center justify-between text-xs text-[#111113]/70 dark:text-[#F7F3E9]/70 pt-2 border-t border-[#111113]/10">
         <div>
           <span>الموضوعات المعروضة: </span>
-          <span className="font-jetbrains font-bold text-[#E36E4D]">{filteredTopics.length}</span>
+          <span className="font-jetbrains font-bold text-[#D98F83]">{filteredTopics.length}</span>
           <span> من أصل 30 موضوعاً</span>
         </div>
         {(selectedTrackId !== 'all' || selectedTag !== 'all' || searchQuery || showBookmarksOnly) && (
@@ -273,7 +273,7 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
               setSearchQuery('');
               setShowBookmarksOnly(false);
             }}
-            className="text-[#E36E4D] hover:underline font-bold cursor-pointer"
+            className="text-[#D98F83] hover:underline font-bold cursor-pointer"
           >
             إعادة تعيين الفلاتر ↺
           </button>
@@ -295,15 +295,15 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
                   
                   {/* Track kicker & Bookmark */}
                   <div className="flex items-center justify-between">
-                    <span className="font-jetbrains text-[10px] text-[#E36E4D] font-bold tracking-wider uppercase">
+                    <span className="font-jetbrains text-[10px] text-[#D98F83] font-bold tracking-wider uppercase">
                       المسار {topic.trackNumber} · الموضوع {topic.topicNumber}
                     </span>
                     <button
                       onClick={(e) => toggleBookmark(e, topic.id)}
                       className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
                         isFav 
-                          ? 'bg-[#E36E4D] text-white border-[#111113]' 
-                          : 'bg-[#F2EFEB] dark:bg-[#202026] text-[#111113]/50 border-transparent hover:border-[#111113]'
+                          ? 'bg-[#D98F83] text-white border-[#111113]' 
+                          : 'bg-[#F7F3E9] dark:bg-[#202026] text-[#111113]/50 border-transparent hover:border-[#111113]'
                       }`}
                       title={isFav ? 'محفوظ في المفضلة' : 'حفظ في المفضلة'}
                     >
@@ -312,18 +312,18 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-cairo font-bold text-base sm:text-lg text-[#111113] dark:text-[#F2EFEB] group-hover:text-[#E36E4D] transition-colors leading-snug">
+                  <h3 className="font-cairo font-bold text-base sm:text-lg text-[#111113] dark:text-[#F7F3E9] group-hover:text-[#D98F83] transition-colors leading-snug">
                     {topic.title}
                   </h3>
 
                   {/* Subtitle / Teaser */}
-                  <p className="text-xs text-[#111113]/70 dark:text-[#F2EFEB]/70 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-[#111113]/70 dark:text-[#F7F3E9]/70 line-clamp-2 leading-relaxed">
                     {topic.subtitle}
                   </p>
 
                   {/* Exercise Teaser */}
-                  <div className="p-2.5 rounded-xl bg-[#F2EFEB] dark:bg-[#202026] border border-[#111113]/10 text-[11px] text-[#111113]/80 dark:text-[#F2EFEB]/80">
-                    <span className="font-bold text-[#E36E4D]">تمرين عملي: </span>
+                  <div className="p-2.5 rounded-xl bg-[#F7F3E9] dark:bg-[#202026] border border-[#111113]/10 text-[11px] text-[#111113]/80 dark:text-[#F7F3E9]/80">
+                    <span className="font-bold text-[#D98F83]">تمرين عملي: </span>
                     <span>{topic.practicalExercise.title}</span>
                   </div>
 
@@ -331,12 +331,12 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
 
                 {/* Card Footer: Metadata & Read button */}
                 <div className="pt-4 mt-4 border-t border-[#111113]/10 flex items-center justify-between text-xs">
-                  <span className="font-jetbrains text-[11px] text-[#111113]/60 dark:text-[#F2EFEB]/60 flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-[#E36E4D]" />
+                  <span className="font-jetbrains text-[11px] text-[#111113]/60 dark:text-[#F7F3E9]/60 flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-[#D98F83]" />
                     <span>{topic.estimatedReadTimeMinutes} د قراءة</span>
                   </span>
 
-                  <span className="font-bold text-xs text-[#111113] dark:text-white group-hover:text-[#E36E4D] flex items-center gap-1 transition-colors">
+                  <span className="font-bold text-xs text-[#111113] dark:text-white group-hover:text-[#D98F83] flex items-center gap-1 transition-colors">
                     <span>قراءة الموضوع</span>
                     <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
                   </span>
@@ -350,7 +350,7 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
         <div className="p-10 rounded-2xl bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] text-center space-y-3">
           <div className="text-3xl">🔍</div>
           <h4 className="font-bold text-base">لم نعثر على موضوع يطابق بحثك</h4>
-          <p className="text-xs text-[#111113]/60 dark:text-[#F2EFEB]/60">
+          <p className="text-xs text-[#111113]/60 dark:text-[#F7F3E9]/60">
             جرب كلمات بحث أخرى أو أعد تعيين الفلاتر لتصفح موضوعات المكتبة الـ 30.
           </p>
           <button

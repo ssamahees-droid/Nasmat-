@@ -96,10 +96,10 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-3xl bg-[#FAF7F2] border border-[#E5DACB] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[94vh] flex flex-col">
+      <div className="relative w-full max-w-3xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[94vh] flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-[#E5DACB] shrink-0">
+        <div className="flex items-center justify-between pb-3.5 border-b border-[#E6E8D8] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-[#3A5A40]/10 text-[#3A5A40] flex items-center justify-center text-2xl shadow-inner">
               📖
@@ -127,7 +127,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
         </div>
 
         {/* Stepper Progress Bar */}
-        <div className="py-3 shrink-0 border-b border-[#E5DACB]/60">
+        <div className="py-3 shrink-0 border-b border-[#E6E8D8]/60">
           <div className="flex items-center justify-between gap-1 overflow-x-auto pb-1">
             {GWAYA_STAGES.map((stg, idx) => {
               const isPassed = idx < currentStageIndex;
@@ -141,7 +141,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                       ? 'bg-[#3A5A40] text-white shadow-xs'
                       : isPassed
                       ? 'bg-emerald-100/70 text-emerald-900 border border-emerald-300'
-                      : 'bg-white text-stone-400 border border-[#E5DACB]'
+                      : 'bg-white text-stone-400 border border-[#E6E8D8]'
                   }`}
                 >
                   <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] bg-white/20">
@@ -174,7 +174,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                     className={`py-2 px-3.5 rounded-2xl border text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 ${
                       activeChapter === ch.id
                         ? 'bg-[#3A5A40] text-white border-[#3A5A40] shadow-xs'
-                        : 'bg-white hover:bg-stone-50 text-[#283618] border-[#E5DACB]'
+                        : 'bg-white hover:bg-stone-50 text-[#283618] border-[#E6E8D8]'
                     }`}
                   >
                     <span>{ch.emoji}</span>
@@ -184,7 +184,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
               </div>
 
               {/* Chapter Intro Banner */}
-              <div className="p-3.5 bg-white border border-[#E5DACB] rounded-2xl flex items-center justify-between">
+              <div className="p-3.5 bg-white border border-[#E6E8D8] rounded-2xl flex items-center justify-between">
                 <div>
                   <div className="font-black text-xs text-[#283618]">{activeChapterInfo.title}</div>
                   <div className="text-[11px] text-[#58645C] mt-0.5">{activeChapterInfo.intro}</div>
@@ -208,7 +208,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                       className={`p-2.5 rounded-2xl border text-right transition-all text-xs font-bold flex items-center gap-2 ${
                         customSituation === pr.text
                           ? 'bg-[#3A5A40] text-white border-[#3A5A40] shadow-xs'
-                          : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E5DACB]'
+                          : 'bg-white hover:bg-[#F2ECE3] text-[#283618] border-[#E6E8D8]'
                       }`}
                     >
                       <span className="text-base">{pr.emoji}</span>
@@ -219,7 +219,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
               </div>
 
               {/* Custom situation textarea */}
-              <div className="p-4 bg-white border border-[#E5DACB] rounded-3xl space-y-2 shadow-xs">
+              <div className="p-4 bg-white border border-[#E6E8D8] rounded-3xl space-y-2 shadow-xs">
                 <label className="block text-xs font-bold text-[#283618]">
                   الموقف المختار (يمكنك تعديله بكلماتك):
                 </label>
@@ -227,7 +227,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                   rows={2}
                   value={customSituation}
                   onChange={(e) => setCustomSituation(e.target.value)}
-                  className="w-full p-3 bg-[#FAF7F2] border border-[#E5DACB] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none font-bold resize-none leading-relaxed"
+                  className="w-full p-3 bg-[#F7F3E9] border border-[#E6E8D8] focus:border-[#3A5A40] rounded-2xl text-xs text-[#283618] outline-none font-bold resize-none leading-relaxed"
                 />
               </div>
 
@@ -257,7 +257,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
           {/* STAGE 2: الفكرة (thought) */}
           {currentStageId === 'thought' && (
             <div className="space-y-4 animate-fade-in">
-              <div className="p-4 bg-white border border-[#E5DACB] rounded-2xl text-xs text-[#283618]">
+              <div className="p-4 bg-white border border-[#E6E8D8] rounded-2xl text-xs text-[#283618]">
                 <strong>الموقف أمامنا:</strong> «{customSituation}»
               </div>
 
@@ -272,7 +272,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                     className={`w-full p-4 rounded-2xl border text-right transition-all flex items-start gap-3 ${
                       selectedThought === 'fear'
                         ? 'bg-rose-50 border-rose-300 text-rose-950 font-bold shadow-xs'
-                        : 'bg-white hover:bg-stone-50 border-[#E5DACB] text-[#283618]'
+                        : 'bg-white hover:bg-stone-50 border-[#E6E8D8] text-[#283618]'
                     }`}
                   >
                     <span className="text-xl">⚠️</span>
@@ -287,7 +287,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                     className={`w-full p-4 rounded-2xl border text-right transition-all flex items-start gap-3 ${
                       selectedThought === 'interpretation'
                         ? 'bg-amber-50 border-amber-300 text-amber-950 font-bold shadow-xs'
-                        : 'bg-white hover:bg-stone-50 border-[#E5DACB] text-[#283618]'
+                        : 'bg-white hover:bg-stone-50 border-[#E6E8D8] text-[#283618]'
                     }`}
                   >
                     <span className="text-xl">💡</span>
@@ -302,7 +302,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                     className={`w-full p-4 rounded-2xl border text-right transition-all flex items-start gap-3 ${
                       selectedThought === 'neutral'
                         ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-bold shadow-xs'
-                        : 'bg-white hover:bg-stone-50 border-[#E5DACB] text-[#283618]'
+                        : 'bg-white hover:bg-stone-50 border-[#E6E8D8] text-[#283618]'
                     }`}
                   >
                     <span className="text-xl">🌿</span>
@@ -317,7 +317,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
               <div className="pt-2 flex items-center justify-between">
                 <button
                   onClick={handlePrevStage}
-                  className="py-2.5 px-4 bg-white border border-[#E5DACB] rounded-2xl text-xs font-bold"
+                  className="py-2.5 px-4 bg-white border border-[#E6E8D8] rounded-2xl text-xs font-bold"
                 >
                   رجوع
                 </button>
@@ -354,7 +354,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                       className={`p-3 rounded-2xl border text-xs font-bold transition-all ${
                         selectedFeeling === feel
                           ? 'bg-[#3A5A40] text-white border-[#3A5A40] shadow-sm scale-105'
-                          : 'bg-white hover:bg-stone-50 border-[#E5DACB] text-[#283618]'
+                          : 'bg-white hover:bg-stone-50 border-[#E6E8D8] text-[#283618]'
                       }`}
                     >
                       {feel}
@@ -366,7 +366,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
               <div className="pt-2 flex items-center justify-between">
                 <button
                   onClick={handlePrevStage}
-                  className="py-2.5 px-4 bg-white border border-[#E5DACB] rounded-2xl text-xs font-bold"
+                  className="py-2.5 px-4 bg-white border border-[#E6E8D8] rounded-2xl text-xs font-bold"
                 >
                   رجوع
                 </button>
@@ -384,7 +384,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
           {/* STAGE 4: الجسم (body) */}
           {currentStageId === 'body' && (
             <div className="space-y-4 animate-fade-in">
-              <div className="p-4 bg-white border border-[#E5DACB] rounded-2xl text-xs text-[#58645C] leading-relaxed">
+              <div className="p-4 bg-white border border-[#E6E8D8] rounded-2xl text-xs text-[#58645C] leading-relaxed">
                 💡 <strong>{currentPlan.bodyIntro}</strong>
               </div>
 
@@ -400,7 +400,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                       className={`w-full p-3.5 rounded-2xl border text-right transition-all flex items-center justify-between text-xs font-bold ${
                         selectedBodySignal === sig.label
                           ? 'bg-[#3A5A40] text-white border-[#3A5A40] shadow-xs'
-                          : 'bg-white hover:bg-stone-50 border-[#E5DACB] text-[#283618]'
+                          : 'bg-white hover:bg-stone-50 border-[#E6E8D8] text-[#283618]'
                       }`}
                     >
                       <span>{sig.label}</span>
@@ -413,7 +413,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
               <div className="pt-2 flex items-center justify-between">
                 <button
                   onClick={handlePrevStage}
-                  className="py-2.5 px-4 bg-white border border-[#E5DACB] rounded-2xl text-xs font-bold"
+                  className="py-2.5 px-4 bg-white border border-[#E6E8D8] rounded-2xl text-xs font-bold"
                 >
                   رجوع
                 </button>
@@ -443,7 +443,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                     className={`p-4 rounded-2xl border text-right transition-all flex flex-col justify-between min-h-[100px] ${
                       selectedNeed === nd.title
                         ? 'bg-amber-800 text-white border-amber-800 shadow-sm scale-102 font-bold'
-                        : 'bg-white hover:bg-stone-50 border-[#E5DACB] text-[#283618]'
+                        : 'bg-white hover:bg-stone-50 border-[#E6E8D8] text-[#283618]'
                     }`}
                   >
                     <div className="font-black text-sm mb-1">{nd.title} 🏮</div>
@@ -455,7 +455,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
               <div className="pt-2 flex items-center justify-between">
                 <button
                   onClick={handlePrevStage}
-                  className="py-2.5 px-4 bg-white border border-[#E5DACB] rounded-2xl text-xs font-bold"
+                  className="py-2.5 px-4 bg-white border border-[#E6E8D8] rounded-2xl text-xs font-bold"
                 >
                   رجوع
                 </button>
@@ -486,7 +486,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
               </div>
 
               {/* Practice Mini Task */}
-              <div className="p-5 bg-white border border-[#E5DACB] rounded-3xl space-y-3 shadow-xs">
+              <div className="p-5 bg-white border border-[#E6E8D8] rounded-3xl space-y-3 shadow-xs">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-[#DDA15E]" />
                   <h4 className="font-black text-sm text-[#283618]">
@@ -502,10 +502,10 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                   value={practiceAnswer}
                   onChange={(e) => setPracticeAnswer(e.target.value)}
                   placeholder="اكتب خطوتك الصغيرة هنا..."
-                  className="w-full p-3 bg-[#FAF7F2] border border-[#E5DACB] rounded-2xl text-xs text-[#283618] outline-none font-bold"
+                  className="w-full p-3 bg-[#F7F3E9] border border-[#E6E8D8] rounded-2xl text-xs text-[#283618] outline-none font-bold"
                 />
 
-                <div className="text-[11px] text-[#58645C] bg-[#FAF7F2] p-2.5 rounded-xl border border-[#E5DACB]">
+                <div className="text-[11px] text-[#58645C] bg-[#F7F3E9] p-2.5 rounded-xl border border-[#E6E8D8]">
                   💡 {currentPlan.practice.note}
                 </div>
               </div>
@@ -513,7 +513,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
               <div className="pt-2 flex items-center justify-between">
                 <button
                   onClick={handlePrevStage}
-                  className="py-2.5 px-4 bg-white border border-[#E5DACB] rounded-2xl text-xs font-bold"
+                  className="py-2.5 px-4 bg-white border border-[#E6E8D8] rounded-2xl text-xs font-bold"
                 >
                   رجوع
                 </button>
@@ -531,9 +531,9 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
           {/* STAGE 7: الختام ودفتر الرحلة (finish) */}
           {currentStageId === 'finish' && (
             <div className="space-y-4 animate-fade-in">
-              <div className="p-6 bg-gradient-to-b from-white via-[#FAF7F2] to-white border-2 border-[#3A5A40]/40 rounded-3xl shadow-sm space-y-4 text-right">
+              <div className="p-6 bg-gradient-to-b from-white via-[#F7F3E9] to-white border-2 border-[#3A5A40]/40 rounded-3xl shadow-sm space-y-4 text-right">
                 
-                <div className="flex items-center justify-between pb-3 border-b border-[#E5DACB]">
+                <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-900 flex items-center justify-center text-2xl shadow-inner">
                       🏅
@@ -554,7 +554,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
 
                 {/* 5 Journey Items */}
                 <div className="space-y-2 text-xs">
-                  <div className="p-3 bg-white rounded-xl border border-[#E5DACB] flex items-center justify-between">
+                  <div className="p-3 bg-white rounded-xl border border-[#E6E8D8] flex items-center justify-between">
                     <div>
                       <span className="text-[#58645C] block text-[10px]">٠١ الموقف الذي بدأ الحكاية:</span>
                       <strong className="text-[#283618]">{customSituation}</strong>
@@ -562,7 +562,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                     <span className="text-base">📌</span>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-[#E5DACB] flex items-center justify-between">
+                  <div className="p-3 bg-white rounded-xl border border-[#E6E8D8] flex items-center justify-between">
                     <div>
                       <span className="text-[#58645C] block text-[10px]">٠٢ الفكرة التي ظهرت:</span>
                       <strong className="text-amber-950">
@@ -572,7 +572,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                     <span className="text-base">💭</span>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-[#E5DACB] flex items-center justify-between">
+                  <div className="p-3 bg-white rounded-xl border border-[#E6E8D8] flex items-center justify-between">
                     <div>
                       <span className="text-[#58645C] block text-[10px]">٠٣ نغمة الشعور وإشارة الجسم:</span>
                       <strong className="text-sky-950">{selectedFeeling} — ({selectedBodySignal})</strong>
@@ -580,7 +580,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                     <span className="text-base">🌬️</span>
                   </div>
 
-                  <div className="p-3 bg-white rounded-xl border border-[#E5DACB] flex items-center justify-between">
+                  <div className="p-3 bg-white rounded-xl border border-[#E6E8D8] flex items-center justify-between">
                     <div>
                       <span className="text-[#58645C] block text-[10px]">٠٤ الاحتياج الحقيقي المضيء:</span>
                       <strong className="text-[#3A5A40]">{selectedNeed}</strong>
@@ -617,7 +617,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                     setCurrentStageId('fact');
                     handleSurpriseMe();
                   }}
-                  className="py-3 px-4 bg-white hover:bg-stone-50 border border-[#E5DACB] text-[#283618] font-bold text-xs rounded-2xl transition-colors flex items-center gap-1.5"
+                  className="py-3 px-4 bg-white hover:bg-stone-50 border border-[#E6E8D8] text-[#283618] font-bold text-xs rounded-2xl transition-colors flex items-center gap-1.5"
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span>تفكيك حكاية أخرى</span>
