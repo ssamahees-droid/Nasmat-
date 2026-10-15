@@ -96,11 +96,11 @@ export const FekerAppScreen: React.FC<FekerAppScreenProps> = ({
       timestamp: new Date().toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
       situation: situationText || 'موقف غير محدد',
       automaticThought: automaticThought || 'فكرة مقلقة',
-      distortionId: selectedDistortionId,
       distortionName: distortion ? distortion.arabicName : 'تشويه إدراكي',
       rationalAlternative: rationalAlternative || 'فكرة بديلة واقعية ومتوازنة',
       beliefBefore,
-      beliefAfter
+      beliefAfter,
+      moodImprovementScore: Math.max(10, beliefBefore - beliefAfter)
     };
 
     const updated = [newEntry, ...savedEntries];

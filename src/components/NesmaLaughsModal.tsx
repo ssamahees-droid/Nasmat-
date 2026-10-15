@@ -29,7 +29,7 @@ export const NesmaLaughsModal: React.FC<NesmaLaughsModalProps> = ({ isOpen, onCl
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-amber-200 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-amber-200 rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">

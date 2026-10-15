@@ -90,11 +90,11 @@ const MIRROR_REFLECTION_JOURNEYS = [
     prompt: 'أريد أن أفهم نمطاً متكرراً يزعجني في تفكيري أو ردود أفعالي لنتأمله معاً بهدوء.'
   },
   {
-    id: 'child',
-    title: 'الطفل الداخلي',
-    icon: '🌱',
-    desc: 'التواصل مع الجزء الصغير بداخلي والتعرف على احتياجاته القديمة.',
-    prompt: 'أريد أن أفتح مساحة لطفلي الداخلي لأطمئنه وأستمع لما يحتاجه.'
+    id: 'empathy',
+    title: 'مساحة احتواء وأمان',
+    icon: '🤍',
+    desc: 'مساحة دافئة للفضفضة والتعبير عن المشاعر بحرية ودون أحكام.',
+    prompt: 'أحتاج لمساحة هادئة أفرغ فيها ما يثقل صدري وأستمع لتوجيه مطمئن.'
   },
   {
     id: 'step',
@@ -476,38 +476,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
     setToastMessage('تمت إزالة العينة الصوتية الشخصية.');
   };
 
-  // Handle switching personas
-  const handleSelectPersona = (targetPersona: CompanionPersona) => {
-    if (settings.persona === targetPersona) return;
 
-    voiceService.stop();
-    setIsSpeaking(false);
-    setActiveSpeakingMsgId(null);
-
-    const updated = { ...settings, persona: targetPersona };
-    setSettings(updated);
-    CompanionEngine.saveSettings(updated);
-
-    const switchedMsg: CompanionMessage = {
-      id: `switch-${Date.now()}`,
-      sender: 'companion',
-      text: targetPersona === 'child'
-        ? 'أنا مساحة لطفلك الداخلي الآن 🌱.. مساحة دافئة للاحتواء والأمان العاطفي، دون لوم أو إحراج. طمني يا غالي، إيه أكتر حاجة قلبك محتاجها دلوقتي؟'
-        : targetPersona === 'father'
-        ? 'أنا معك الآن بوضع «الأب الداخلي الحكيم والداعم» 🛡️.. صوت الأمان والحزم الحنون والتوجيه الراسخ دون قسوة أو جلد ذات. كيف أستطيع مساندتك وحماية سلامك الداخلي اليوم؟'
-        : 'أنا معك الآن بوضع «الراشد المتزن» 🌿.. مساحة واعية لفهم واقعك الحالي، مشاعرك، ضغوطك، واحتياجاتك، لنخطو معاً خطوات واضحة وواقعية.',
-      timestamp: Date.now(),
-      expression: 'welcome'
-    };
-    const nextList = [...messages, switchedMsg];
-    setMessages(nextList);
-    CompanionEngine.saveHistory(nextList);
-    setCurrentExpression('welcome');
-
-    if (settings.isVoiceAutoPlay) {
-      handleSpeakMessage(switchedMsg);
-    }
-  };
 
   const handleToggleVoiceAutoPlay = () => {
     const updated = { ...settings, isVoiceAutoPlay: !settings.isVoiceAutoPlay };
@@ -1189,7 +1158,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                 {/* Technical Transparency Note */}
                 <div className="mt-2 p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 text-[11px] text-stone-600 dark:text-stone-400 space-y-1 leading-relaxed">
                   <div>• <strong>عينتك الصوتية:</strong> محفوظة محلياً على جهازك، ويمكنك الاستماع إليها في أي وقت للتأمل الذاتي وسماع صوتك بوضوح.</div>
-                  <div>• <strong>قراءة المحادثة صوتياً:</strong> تتم عبر محرك النطق المجاني في المتصفح (Web Speech API) بالنبرات المخصصة للشخصيات (الطفل / الراشد / الأب) مجاناً 100% ودون ادعاء استنساخ صوتك الشخصي، التزاماً بالأمانة التقنية وحماية لخطة العمل المجانية.</div>
+                  <div>• <strong>قراءة المحادثة صوتياً:</strong> تتم عبر محرك النطق المجاني في المتصفح (Web Speech API) بصوت رفيقك النفسي الذكي بنبرة واعية وداعمة مجاناً 100% ودون ادعاء استنساخ صوتك الشخصي، التزاماً بالأمانة التقنية وحماية لخطة العمل المجانية.</div>
                 </div>
               </div>
             </div>

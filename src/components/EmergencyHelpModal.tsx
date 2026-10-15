@@ -16,7 +16,7 @@ export const EmergencyHelpModal: React.FC<EmergencyHelpModalProps> = ({ isOpen, 
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-amber-300 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden text-right">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-amber-300 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden text-right">
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
           <div className="flex items-center gap-2.5">

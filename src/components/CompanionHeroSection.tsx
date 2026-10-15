@@ -77,54 +77,14 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Handle switching personas (the two mirrors of self)
-  const handleSelectPersona = (targetPersona: CompanionPersona) => {
-    if (settings.persona === targetPersona) return;
 
-    voiceService.stop();
-    setIsSpeaking(false);
-    setActiveSpeakingMsgId(null);
 
-    const updated = { ...settings, persona: targetPersona };
-    setSettings(updated);
-    CompanionEngine.saveSettings(updated);
-
-    // Provide warm transition message without wiping context
-    const switchNotice: CompanionMessage = {
-      id: `switch-${Date.now()}`,
-      sender: 'companion',
-      text: targetPersona === 'child'
-        ? 'أنا مساحة لطفلك الداخلي الآن 🌱.. مساحة دافئة للاحتواء والأمان العاطفي، دون لوم أو إحراج. طمني يا غالي، إيه أكتر حاجة قلبك محتاجها دلوقتي؟'
-        : targetPersona === 'father'
-        ? 'أنا معك الآن بوضع «الأب الداخلي الحكيم والداعم» 🛡️.. صوت الأمان والحزم الحنون والتوجيه الراسخ دون قسوة أو جلد ذات. كيف أستطيع مساندتك وحماية سلامك الداخلي اليوم؟'
-        : 'أنا معك الآن بوضع «الراشد المتزن» 🌿.. مساحة واعية لفهم واقعك الحالي، مشاعرك، ضغوطك، واحتياجاتك، لنخطو معاً خطوات واضحة وواقعية.',
-      timestamp: Date.now(),
-      expression: 'welcome'
-    };
-
-    const nextList = [...messages, switchNotice];
-    setMessages(nextList);
-    CompanionEngine.saveHistory(nextList);
-    setCurrentExpression('welcome');
-
-    if (settings.isVoiceAutoPlay) {
-      handleSpeakMessage(switchNotice);
-    }
-  };
-
-  // Toggle animation setting
+  // Toggle avatar animation
   const handleToggleAnimation = () => {
-    const updated = { ...settings, isAnimated: !settings.isAnimated };
+    const nextState = !settings.isAnimated;
+    const updated = { ...settings, isAnimated: nextState };
     setSettings(updated);
     CompanionEngine.saveSettings(updated);
-  };
-
-  // Toggle through personas: adult -> child -> father -> adult
-  const handleTogglePersona = () => {
-    const nextPersona: CompanionPersona = 
-      settings.persona === 'adult' ? 'child' :
-      settings.persona === 'child' ? 'father' : 'adult';
-    handleSelectPersona(nextPersona);
   };
 
   // Toggle voice auto-play
@@ -171,8 +131,8 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
         setCurrentExpression('welcome');
       }
     }, {
-      pitch: settings.persona === 'child' ? 1.15 : 0.98,
-      rate: settings.persona === 'child' ? 0.98 : 0.92
+      pitch: 0.98,
+      rate: 0.94
     });
   };
 
@@ -574,7 +534,7 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
             <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
-                  {settings.persona === 'child' ? '🌱 الطفل الداخلي' : settings.persona === 'father' ? '🛡️ الأب الداخلي' : '🌿 شخصية نسمة حياة'}
+                  🌿 رفيقي — مرشد نسمة حياة
                 </span>
                 {isThinking && (
                   <span className="text-[11px] text-amber-300 animate-pulse flex items-center gap-1">
@@ -679,7 +639,7 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
                       >
                         <div className="flex items-center justify-between gap-2 mb-1 text-[10px] text-stone-400">
                           <span className="font-bold">
-                            {msg.sender === 'user' ? 'أنت' : (settings.persona === 'child' ? 'الطفل الداخلي' : settings.persona === 'father' ? 'الأب الداخلي' : 'شخصية نسمة حياة')}
+                            {msg.sender === 'user' ? 'أنت' : 'رفيقي'}
                           </span>
                         </div>
                         <p className="leading-relaxed">{msg.text}</p>
@@ -723,11 +683,7 @@ export const CompanionHeroSection: React.FC<CompanionHeroSectionProps> = ({
                     handleSendMessage();
                   }
                 }}
-                placeholder={
-                  settings.persona === 'child'
-                    ? 'احكي لطفلك الداخلي أي فكرة أو شعور في قلبك...'
-                    : 'شاركني فكرة، شعور، أو ما يشغل بالك الآن...'
-                }
+                placeholder="شاركني فكرة، شعور، أو ما يشغل بالك الآن..."
                 disabled={isThinking}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-black/30 border border-white/15 focus:border-emerald-400 focus:outline-hidden text-xs sm:text-sm text-white placeholder-stone-400 transition-colors"
               />

@@ -79,7 +79,7 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-2xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
@@ -239,27 +239,27 @@ ${plan.crisisStep || 'التواصل فوراً مع شخص آمن أو الات
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
+                  <div className="p-3 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
                     <span className="font-bold text-[#174C3C] block">1. علامات التدهور المبكرة:</span>
                     <p className="text-[#35453E] leading-relaxed">{plan.deteriorationSigns || 'لم تُسجل بعد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
+                  <div className="p-3 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
                     <span className="font-bold text-rose-800 block">2. أكبر المستنزفات:</span>
                     <p className="text-[#35453E] leading-relaxed">{plan.majorDrains || 'لم تُسجل بعد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
+                  <div className="p-3 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
                     <span className="font-bold text-emerald-800 block">3. أشياء تساعدني عادةً:</span>
                     <p className="text-[#35453E] leading-relaxed">{plan.helpfulThings || 'لم تُسجل بعد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
+                  <div className="p-3 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1">
                     <span className="font-bold text-sky-800 block">4. شخصي الآمن:</span>
                     <p className="text-[#35453E] leading-relaxed font-bold">{plan.trustedPerson || 'لم يُحدد بعد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1 sm:col-span-2">
+                  <div className="p-3 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] rounded-xl border border-[#E6E8D8]/70 space-y-1 sm:col-span-2">
                     <span className="font-bold text-[#174C3C] block">5. المختص أو جهة المساعدة:</span>
                     <p className="text-[#35453E] leading-relaxed">{plan.specialistOrHelpline}</p>
                   </div>

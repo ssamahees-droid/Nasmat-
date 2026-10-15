@@ -211,7 +211,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-3xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-3xl bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[#E6E8D8] shrink-0">
@@ -527,7 +527,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
                 </h3>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3.5 bg-[#F7F3E9] rounded-2xl border border-[#E6E8D8] space-y-1.5">
+                  <div className="p-3.5 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] rounded-2xl border border-[#E6E8D8] space-y-1.5">
                     <span className="font-bold text-[#3A5A40] flex items-center gap-1.5">
                       <Coffee className="w-4 h-4" />
                       <span>تناول طعام أو شراب بوعي (Mindful Eating):</span>
@@ -537,7 +537,7 @@ export const MindfulnessStudioModal: React.FC<MindfulnessStudioModalProps> = ({ 
                     </p>
                   </div>
 
-                  <div className="p-3.5 bg-[#F7F3E9] rounded-2xl border border-[#E6E8D8] space-y-1.5">
+                  <div className="p-3.5 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] rounded-2xl border border-[#E6E8D8] space-y-1.5">
                     <span className="font-bold text-[#3A5A40] flex items-center gap-1.5">
                       <Compass className="w-4 h-4" />
                       <span>المشي الواعي (Mindful Walking):</span>

@@ -259,21 +259,21 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
     <div className="max-w-4xl mx-auto px-4 sm:px-8 py-10 animate-fadeIn font-cairo" dir="rtl">
       
       {/* Top Header Bar */}
-      <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#111113]/10 dark:border-white/10">
+      <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#13251E]/10 dark:border-white/10">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/30">
             <Key className="w-5 h-5" />
           </div>
           <div>
             <span className="font-jetbrains text-[10px] uppercase text-amber-600 dark:text-amber-400 font-bold">PILLAR_03 // الجلسة الأسبوعية</span>
-            <h1 className="text-xl sm:text-2xl font-syne font-black text-[#111113] dark:text-[#F7F3E9]">
+            <h1 className="text-xl sm:text-2xl font-syne font-black text-[#13251E] dark:text-[#F7F3E9]">
               الجلسة التفاعلية — «خزائن النفس»
             </h1>
           </div>
         </div>
         <button
           onClick={() => onNavigate('home')}
-          className="px-4 py-2 rounded-xl border border-[#111113]/20 dark:border-white/20 text-xs font-bold text-[#111113] dark:text-[#F7F3E9] hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer"
+          className="px-4 py-2 rounded-xl border border-[#13251E]/20 dark:border-white/20 text-xs font-bold text-[#13251E] dark:text-[#F7F3E9] hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer"
         >
           العودة للرئيسية
         </button>
@@ -281,7 +281,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
       {/* 1. STATE: READY / INTRODUCTION */}
       {sessionState === 'ready' && (
-        <div className="bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-3xl p-8 sm:p-12 shadow-[4px_4px_0_#111113] space-y-6 animate-fadeIn">
+        <div className="bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-3xl p-8 sm:p-12 shadow-sm space-y-6 animate-fadeIn">
           <div className="flex items-center justify-between gap-4">
             <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center border border-amber-500/30">
               <Sparkles className="w-7 h-7" />
@@ -296,20 +296,20 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
           </div>
 
           <div className="space-y-3">
-            <h2 className="text-2xl sm:text-3xl font-syne font-black text-[#111113] dark:text-[#F7F3E9]">
+            <h2 className="text-2xl sm:text-3xl font-syne font-black text-[#13251E] dark:text-[#F7F3E9]">
               مرحباً بك في «خزائن النفس» 🤍
             </h2>
-            <p className="text-sm sm:text-base text-[#111113]/80 dark:text-stone-300 leading-relaxed max-w-2xl">
+            <p className="text-sm sm:text-base text-[#13251E]/80 dark:text-stone-300 leading-relaxed max-w-2xl">
               هذه مساحتك الأسبوعية الهادئة (نحو 30 دقيقة إرشادية) لنفهم معاً مشكلة واحدة أو تحدياً واحداً بعمق، ونبني فهماً مشتركاً ونخرج بخطوة عملية واقعية للأسبوع القادم. 
               النظام لا يقدم تشخيصاً طبياً، بل يمنحك مرآة متكيفة تساعدك على اكتشاف ذاتك بكرامة كاملة.
             </p>
           </div>
-          <div className="bg-[#F8F7F4] dark:bg-[#121214] border border-[#111113]/10 dark:border-white/10 rounded-2xl p-5 space-y-3">
+          <div className="bg-[#F7F3E9] dark:bg-[#0D1914] border border-[#13251E]/10 dark:border-white/10 rounded-2xl p-5 space-y-3">
             <div className="flex items-center gap-2 text-xs font-jetbrains font-bold text-amber-600 dark:text-amber-400">
               <Shield className="w-4 h-4" />
               <span>ميثاق الخصوصية والأمان</span>
             </div>
-            <p className="text-xs text-[#111113]/70 dark:text-stone-400 leading-relaxed">
+            <p className="text-xs text-[#13251E]/70 dark:text-stone-400 leading-relaxed">
               • لا يُحفظ نص المحادثة الكامل أبداً.<br />
               • أنت تختار الخزائن التي تناسبك ولا يشترط فتحها كلها.<br />
               • الحفظ الدائم يتم فقط بموافقتك الصريحة في نهاية الجلسة.
@@ -318,7 +318,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
           <div className="pt-4 flex justify-end">
             <button
               onClick={startSession}
-              className="px-8 py-4 bg-[#111113] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#111113] font-bold text-sm rounded-xl border-[1.5px] border-[#111113] shadow-[3px_3px_0_#174C3C] hover:translate-y-[-1px] transition-all cursor-pointer font-syne flex items-center gap-2"
+              className="px-8 py-4 bg-[#13251E] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#13251E] font-bold text-sm rounded-xl border border-[#174C3C]/20 shadow-xs hover:translate-y-[-1px] transition-all cursor-pointer font-syne flex items-center gap-2"
             >
               <span>ابدأ الجلسة الأسبوعية</span>
               <ArrowLeft className="w-4 h-4" />
@@ -329,12 +329,12 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
       {/* 2. STATE: OPENING MOOD CHECK */}
       {sessionState === 'opening' && (
-        <div className="bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-[4px_4px_0_#111113] space-y-6 animate-fadeIn">
+        <div className="bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-sm space-y-6 animate-fadeIn">
           <div className="flex items-center justify-between text-xs font-jetbrains opacity-60">
             <span>المرحلة 1 من 7: الاستعداد والمزاج الداخلي</span>
             <span>~ 3 دقائق</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-syne font-black text-[#111113] dark:text-[#F7F3E9]">
+          <h2 className="text-xl sm:text-2xl font-syne font-black text-[#13251E] dark:text-[#F7F3E9]">
             كيف تستقبل نفسك اليوم؟ اختر الحالة الأقرب لداخلك الآن:
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
@@ -347,7 +347,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
               <button
                 key={opt.id}
                 onClick={() => handleOpeningNext(opt.id)}
-                className="p-4 rounded-2xl border-[1.5px] border-[#111113]/20 dark:border-white/10 hover:border-[#111113] dark:hover:border-white bg-[#F8F7F4] dark:bg-[#121214] text-right font-bold text-sm text-[#111113] dark:text-[#F7F3E9] transition-all cursor-pointer flex items-center justify-between"
+                className="p-4 rounded-2xl border border-[#174C3C]/20/20 dark:border-white/10 hover:border-[#13251E] dark:hover:border-white bg-[#F7F3E9] dark:bg-[#0D1914] text-right font-bold text-sm text-[#13251E] dark:text-[#F7F3E9] transition-all cursor-pointer flex items-center justify-between"
               >
                 <span>{opt.label}</span>
                 <ArrowLeft className="w-4 h-4 opacity-50" />
@@ -359,15 +359,15 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
       {/* 3. STATE: TOPIC SELECTION */}
       {sessionState === 'topic_selection' && (
-        <div className="bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-[4px_4px_0_#111113] space-y-6 animate-fadeIn">
+        <div className="bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-sm space-y-6 animate-fadeIn">
           <div className="flex items-center justify-between text-xs font-jetbrains opacity-60">
             <span>المرحلة 2 من 7: تحديد الموضوع الأساسي</span>
             <span>~ 4 دقائق</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-syne font-black text-[#111113] dark:text-[#F7F3E9]">
+          <h2 className="text-xl sm:text-2xl font-syne font-black text-[#13251E] dark:text-[#F7F3E9]">
             ما هو الموضوع أو المشكلة الأساسية التي تود فهمها والتعامل معها اليوم؟
           </h2>
-          <p className="text-xs text-[#111113]/75 dark:text-stone-400">
+          <p className="text-xs text-[#13251E]/75 dark:text-stone-400">
             اختر موضوعاً واحداً لنركز عليه بعمق دون تشتت:
           </p>
           <div className="space-y-3">
@@ -381,27 +381,27 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
               <button
                 key={i}
                 onClick={() => handleTopicConfirm(topic)}
-                className="w-full p-4 rounded-2xl border-[1.5px] border-[#111113]/20 dark:border-white/10 hover:border-emerald-500 bg-[#F8F7F4] dark:bg-[#121214] text-right font-bold text-sm text-[#111113] dark:text-[#F7F3E9] transition-all cursor-pointer flex items-center justify-between"
+                className="w-full p-4 rounded-2xl border border-[#174C3C]/20/20 dark:border-white/10 hover:border-emerald-500 bg-[#F7F3E9] dark:bg-[#0D1914] text-right font-bold text-sm text-[#13251E] dark:text-[#F7F3E9] transition-all cursor-pointer flex items-center justify-between"
               >
                 <span>{topic}</span>
                 <span className="text-xs font-jetbrains text-emerald-600">اختيار ←</span>
               </button>
             ))}
           </div>
-          <div className="pt-3 border-t border-[#111113]/10">
-            <label className="block text-xs font-bold mb-2 text-[#111113] dark:text-[#F7F3E9]">أو اكتب موضوعاً آخر بكلماتك:</label>
+          <div className="pt-3 border-t border-[#13251E]/10">
+            <label className="block text-xs font-bold mb-2 text-[#13251E] dark:text-[#F7F3E9]">أو اكتب موضوعاً آخر بكلماتك:</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 placeholder="اكتب الموضوع باختصار..."
                 value={customTopic}
                 onChange={(e) => setCustomTopic(e.target.value)}
-                className="flex-1 bg-[#F8F7F4] dark:bg-[#121214] border border-[#111113]/20 dark:border-white/20 rounded-xl px-4 py-3 text-sm text-[#111113] dark:text-[#F7F3E9]"
+                className="flex-1 bg-[#F7F3E9] dark:bg-[#0D1914] border border-[#13251E]/20 dark:border-white/20 rounded-xl px-4 py-3 text-sm text-[#13251E] dark:text-[#F7F3E9]"
               />
               <button
                 onClick={() => handleTopicConfirm('custom')}
                 disabled={!customTopic.trim()}
-                className="px-6 py-3 bg-[#111113] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#111113] font-bold text-sm rounded-xl cursor-pointer disabled:opacity-50"
+                className="px-6 py-3 bg-[#13251E] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#13251E] font-bold text-sm rounded-xl cursor-pointer disabled:opacity-50"
               >
                 متابعة
               </button>
@@ -412,17 +412,17 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
       {/* 4. STATE: VAULTS HUB (خزائن النفس) */}
       {sessionState === 'vaults_hub' && (
-        <div className="bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-[4px_4px_0_#111113] space-y-6 animate-fadeIn">
+        <div className="bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-sm space-y-6 animate-fadeIn">
           <div className="flex items-center justify-between text-xs font-jetbrains opacity-60">
             <span>المرحلة 3 من 7: خزائن النفس الاستكشافية</span>
             <span>اختر ما يناسبك</span>
           </div>
           <div className="space-y-2">
             <span className="text-xs font-bold text-amber-600 dark:text-amber-400">الموضوع المختار: {selectedTopic}</span>
-            <h2 className="text-xl sm:text-2xl font-syne font-black text-[#111113] dark:text-[#F7F3E9]">
+            <h2 className="text-xl sm:text-2xl font-syne font-black text-[#13251E] dark:text-[#F7F3E9]">
               استكشف الخزائن المتفرعة (اختر خزانة أو أكثر للتعمق):
             </h2>
-            <p className="text-xs text-[#111113]/75 dark:text-stone-400">
+            <p className="text-xs text-[#13251E]/75 dark:text-stone-400">
               هذه المسارات اختيارية تماماً وليست إلزامية؛ يمكنك فتح ما تحتاجه للوصول للفهم العميق:
             </p>
           </div>
@@ -435,8 +435,8 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
                 <div
                   key={vault.id}
                   onClick={() => openVault(vault.id)}
-                  className={`p-5 rounded-2xl border-[1.5px] transition-all cursor-pointer flex items-start justify-between gap-4 bg-[#F8F7F4] dark:bg-[#121214] hover:border-amber-500 group ${
-                    isExplored ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-[#111113]/20 dark:border-white/10'
+                  className={`p-5 rounded-2xl border-[1.5px] transition-all cursor-pointer flex items-start justify-between gap-4 bg-[#F7F3E9] dark:bg-[#0D1914] hover:border-amber-500 group ${
+                    isExplored ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-[#13251E]/20 dark:border-white/10'
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -445,7 +445,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-syne font-bold text-sm text-[#111113] dark:text-[#F7F3E9] group-hover:text-amber-600">
+                        <h3 className="font-syne font-bold text-sm text-[#13251E] dark:text-[#F7F3E9] group-hover:text-amber-600">
                           {vault.title}
                         </h3>
                         {isExplored && (
@@ -454,7 +454,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-[#111113]/70 dark:text-stone-400 mt-1 leading-relaxed">
+                      <p className="text-xs text-[#13251E]/70 dark:text-stone-400 mt-1 leading-relaxed">
                         {vault.subtitle}
                       </p>
                     </div>
@@ -465,14 +465,14 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
             })}
           </div>
 
-          <div className="pt-6 border-t border-[#111113]/10 flex flex-wrap items-center justify-between gap-4">
+          <div className="pt-6 border-t border-[#13251E]/10 flex flex-wrap items-center justify-between gap-4">
             <span className="text-xs text-stone-500">
               {Object.keys(exploredVaults).length > 0 ? `استكشفت ${Object.keys(exploredVaults).length} خزانة` : 'لم تستكشف أي خزانة بعد'}
             </span>
             <div className="flex items-center gap-3">
               <button
                 onClick={handleProceedToMirror}
-                className="px-8 py-3.5 bg-[#111113] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#111113] font-bold text-sm rounded-xl border-[1.5px] border-[#111113] shadow-[3px_3px_0_#174C3C] hover:translate-y-[-1px] transition-all cursor-pointer font-syne flex items-center gap-2"
+                className="px-8 py-3.5 bg-[#13251E] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#13251E] font-bold text-sm rounded-xl border border-[#174C3C]/20 shadow-xs hover:translate-y-[-1px] transition-all cursor-pointer font-syne flex items-center gap-2"
               >
                 <span>الانتقال لمرآة النفس والفهم المشترك</span>
                 <ArrowLeft className="w-4 h-4" />
@@ -484,22 +484,22 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
       {/* 5. STATE: VAULT EXPLORATION */}
       {sessionState === 'vault_exploration' && currentVaultMeta && (
-        <div className="bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-[4px_4px_0_#111113] space-y-6 animate-fadeIn">
+        <div className="bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-sm space-y-6 animate-fadeIn">
           <div className="flex items-center justify-between text-xs font-jetbrains opacity-60">
             <span>استكشاف الخزانة النشطة</span>
             <span>{currentVaultMeta.title}</span>
           </div>
 
-          <div className="flex items-center justify-between gap-3 pb-4 border-b border-[#111113]/10">
+          <div className="flex items-center justify-between gap-3 pb-4 border-b border-[#13251E]/10">
             <div className="flex items-center gap-3">
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border ${currentVaultMeta.color}`}>
                 {React.createElement(currentVaultMeta.icon, { className: 'w-6 h-6' })}
               </div>
               <div>
-                <h2 className="text-xl font-syne font-black text-[#111113] dark:text-[#F7F3E9]">
+                <h2 className="text-xl font-syne font-black text-[#13251E] dark:text-[#F7F3E9]">
                   {currentVaultMeta.title}
                 </h2>
-                <p className="text-xs text-[#111113]/70 dark:text-stone-400">
+                <p className="text-xs text-[#13251E]/70 dark:text-stone-400">
                   {currentVaultMeta.prompt}
                 </p>
               </div>
@@ -516,7 +516,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
           {/* Interactive Cards */}
           <div className="space-y-3">
-            <label className="block text-xs font-bold text-[#111113] dark:text-[#F7F3E9]">اختر البطاقات التي تنطبق عليك (يمكنك اختيار أكثر من واحدة):</label>
+            <label className="block text-xs font-bold text-[#13251E] dark:text-[#F7F3E9]">اختر البطاقات التي تنطبق عليك (يمكنك اختيار أكثر من واحدة):</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {currentVaultMeta.cards.map((card, i) => {
                 const isSelected = currentVaultCards.includes(card);
@@ -528,7 +528,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
                     className={`p-3.5 rounded-xl border text-right text-xs font-bold transition-all cursor-pointer flex items-center justify-between ${
                       isSelected 
                         ? 'border-amber-500 bg-amber-500/10 text-amber-700 dark:text-amber-300' 
-                        : 'border-[#111113]/15 dark:border-white/10 bg-[#F8F7F4] dark:bg-[#121214] text-[#111113] dark:text-[#F7F3E9]'
+                        : 'border-[#13251E]/15 dark:border-white/10 bg-[#F7F3E9] dark:bg-[#0D1914] text-[#13251E] dark:text-[#F7F3E9]'
                     }`}
                   >
                     <span>{card}</span>
@@ -543,27 +543,27 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
           {/* Free Text Input */}
           <div className="space-y-2 pt-2">
-            <label className="block text-xs font-bold text-[#111113] dark:text-[#F7F3E9]">أو أضف ملاحظاتك أو بصيرتك الخاصة حول هذه الخزانة:</label>
+            <label className="block text-xs font-bold text-[#13251E] dark:text-[#F7F3E9]">أو أضف ملاحظاتك أو بصيرتك الخاصة حول هذه الخزانة:</label>
             <textarea
               rows={3}
               value={currentVaultText}
               onChange={(e) => setCurrentVaultText(e.target.value)}
               placeholder="اكتب بكلماتك ما تلاحظه هنا..."
-              className="w-full bg-[#F8F7F4] dark:bg-[#121214] border border-[#111113]/20 dark:border-white/25 rounded-xl p-3 text-sm text-[#111113] dark:text-[#F7F3E9]"
+              className="w-full bg-[#F7F3E9] dark:bg-[#0D1914] border border-[#13251E]/20 dark:border-white/25 rounded-xl p-3 text-sm text-[#13251E] dark:text-[#F7F3E9]"
             />
           </div>
 
           <div className="pt-4 flex items-center justify-between gap-4">
             <button
               onClick={() => setSessionState('vaults_hub')}
-              className="px-5 py-3 rounded-xl border border-[#111113]/20 dark:border-white/20 text-xs font-bold text-[#111113] dark:text-[#F7F3E9] hover:bg-black/5 transition-all cursor-pointer"
+              className="px-5 py-3 rounded-xl border border-[#13251E]/20 dark:border-white/20 text-xs font-bold text-[#13251E] dark:text-[#F7F3E9] hover:bg-black/5 transition-all cursor-pointer"
             >
               العودة لقائمة الخزائن
             </button>
             <div className="flex gap-3">
               <button
                 onClick={() => saveCurrentVaultAndContinue(true)}
-                className="px-6 py-3 bg-[#111113] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#111113] font-bold text-xs rounded-xl shadow-md cursor-pointer"
+                className="px-6 py-3 bg-[#13251E] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#13251E] font-bold text-xs rounded-xl shadow-md cursor-pointer"
               >
                 حفظ والعودة للخزائن
               </button>
@@ -581,7 +581,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
       {/* 6. STATE: MIRROR OF THE PSYCHE (مرآة النفس) */}
       {sessionState === 'mirror_reflection' && (
-        <div className="bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-[4px_4px_0_#111113] space-y-6 animate-fadeIn">
+        <div className="bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-sm space-y-6 animate-fadeIn">
           <div className="flex items-center justify-between text-xs font-jetbrains opacity-60">
             <span>المرحلة 4 من 7: تقنية «مرآة النفس»</span>
             <span>انعكاس وفهم مخصص</span>
@@ -592,7 +592,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
               <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center border border-emerald-500/30">
                 <Eye className="w-6 h-6" />
               </div>
-              <h2 className="text-xl sm:text-2xl font-syne font-black text-[#111113] dark:text-[#F7F3E9]">
+              <h2 className="text-xl sm:text-2xl font-syne font-black text-[#13251E] dark:text-[#F7F3E9]">
                 مرآة النفس والتأمل المشترك
               </h2>
             </div>
@@ -607,34 +607,34 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
           />
 
           {/* Generated Reflection Box */}
-          <div className="bg-[#F8F7F4] dark:bg-[#121214] border border-[#111113]/15 dark:border-white/10 rounded-2xl p-6 space-y-4 text-right">
+          <div className="bg-[#F7F3E9] dark:bg-[#0D1914] border border-[#13251E]/15 dark:border-white/10 rounded-2xl p-6 space-y-4 text-right">
             <span className="text-xs font-jetbrains text-emerald-600 dark:text-emerald-400 font-bold block">ما فهمه النظام كفرضية قابلة للتصحيح:</span>
-            <p className="text-sm text-[#111113]/90 dark:text-stone-200 leading-relaxed font-cairo">
+            <p className="text-sm text-[#13251E]/90 dark:text-stone-200 leading-relaxed font-cairo">
               {dynamicMirrorText}
             </p>
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#111113] dark:text-[#F7F3E9]">تصحيح أو إضافة من طرفك (اختياري):</label>
+            <label className="block text-xs font-bold text-[#13251E] dark:text-[#F7F3E9]">تصحيح أو إضافة من طرفك (اختياري):</label>
             <input
               type="text"
               value={userCorrection}
               onChange={(e) => setUserCorrection(e.target.value)}
               placeholder="مثل: الجانب الأهم هو شعوري بالإرهاق وليس الخوف..."
-              className="w-full bg-[#F8F7F4] dark:bg-[#121214] border border-[#111113]/20 dark:border-white/20 rounded-xl px-4 py-3 text-sm text-[#111113] dark:text-[#F7F3E9]"
+              className="w-full bg-[#F7F3E9] dark:bg-[#0D1914] border border-[#13251E]/20 dark:border-white/20 rounded-xl px-4 py-3 text-sm text-[#13251E] dark:text-[#F7F3E9]"
             />
           </div>
 
           <div className="pt-4 flex items-center justify-between">
             <button
               onClick={() => setSessionState('vaults_hub')}
-              className="px-5 py-3 rounded-xl border border-[#111113]/20 dark:border-white/20 text-xs font-bold text-[#111113] dark:text-[#F7F3E9] hover:bg-black/5 cursor-pointer"
+              className="px-5 py-3 rounded-xl border border-[#13251E]/20 dark:border-white/20 text-xs font-bold text-[#13251E] dark:text-[#F7F3E9] hover:bg-black/5 cursor-pointer"
             >
               العودة للخزائن للاستزادة
             </button>
             <button
               onClick={handleMirrorConfirm}
-              className="px-8 py-3.5 bg-[#111113] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#111113] font-bold text-sm rounded-xl border-[1.5px] border-[#111113] shadow-[3px_3px_0_#174C3C] hover:translate-y-[-1px] transition-all cursor-pointer font-syne flex items-center gap-2"
+              className="px-8 py-3.5 bg-[#13251E] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#13251E] font-bold text-sm rounded-xl border border-[#174C3C]/20 shadow-xs hover:translate-y-[-1px] transition-all cursor-pointer font-syne flex items-center gap-2"
             >
               <span>تأكيد والانتقال للخطوة العملية</span>
               <ArrowLeft className="w-4 h-4" />
@@ -645,7 +645,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
       {/* 7. STATE: WEEKLY PLAN & ACTION STEP */}
       {sessionState === 'weekly_plan' && (
-        <form onSubmit={handlePlanSubmit} className="bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-[4px_4px_0_#111113] space-y-6 animate-fadeIn">
+        <form onSubmit={handlePlanSubmit} className="bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-sm space-y-6 animate-fadeIn">
           <div className="flex items-center justify-between text-xs font-jetbrains opacity-60">
             <span>المرحلة 5 من 7: خطوة الأسبوع العملية</span>
             <span>~ 4 دقائق</span>
@@ -653,32 +653,32 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
           <div>
             <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">الهدف الأسبوعي المستخلص</span>
-            <h2 className="text-xl font-syne font-black text-[#111113] dark:text-[#F7F3E9] mt-1">
+            <h2 className="text-xl font-syne font-black text-[#13251E] dark:text-[#F7F3E9] mt-1">
               ضع خطوة عملية صغيرة وواقعية للأسبوع القادم:
             </h2>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold mb-1 text-[#111113] dark:text-[#F7F3E9]">1. الهدف الأسبوعي المصغر (ما الذي ترغب في تحقيقه أو تخفيفه؟)</label>
+              <label className="block text-xs font-bold mb-1 text-[#13251E] dark:text-[#F7F3E9]">1. الهدف الأسبوعي المصغر (ما الذي ترغب في تحقيقه أو تخفيفه؟)</label>
               <input
                 type="text"
                 required
                 value={actionGoal}
                 onChange={(e) => setActionGoal(e.target.value)}
                 placeholder="مثل: تخفيف حدة التوتر اليومي ومنح نفسي مساحة راحة..."
-                className="w-full bg-[#F8F7F4] dark:bg-[#121214] border border-[#111113]/20 dark:border-white/25 rounded-xl p-3 text-sm text-[#111113] dark:text-[#F7F3E9]"
+                className="w-full bg-[#F7F3E9] dark:bg-[#0D1914] border border-[#13251E]/20 dark:border-white/25 rounded-xl p-3 text-sm text-[#13251E] dark:text-[#F7F3E9]"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold mb-1 text-[#111113] dark:text-[#F7F3E9]">2. الخطوة العملية المحددة (متى وأين ستقوم بها؟)</label>
+              <label className="block text-xs font-bold mb-1 text-[#13251E] dark:text-[#F7F3E9]">2. الخطوة العملية المحددة (متى وأين ستقوم بها؟)</label>
               <input
                 type="text"
                 required
                 value={actionStep}
                 onChange={(e) => setActionStep(e.target.value)}
                 placeholder="مثل: القيام بتمرين التنفس لمدة 5 دقائق كل ليلة الساعة 10 مساءً..."
-                className="w-full bg-[#F8F7F4] dark:bg-[#121214] border border-[#111113]/20 dark:border-white/25 rounded-xl p-3 text-sm text-[#111113] dark:text-[#F7F3E9]"
+                className="w-full bg-[#F7F3E9] dark:bg-[#0D1914] border border-[#13251E]/20 dark:border-white/25 rounded-xl p-3 text-sm text-[#13251E] dark:text-[#F7F3E9]"
               />
             </div>
           </div>
@@ -686,7 +686,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
           <div className="pt-4 flex justify-end">
             <button
               type="submit"
-              className="px-8 py-3.5 bg-[#111113] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#111113] font-bold text-sm rounded-xl border-[1.5px] border-[#111113] shadow-[3px_3px_0_#174C3C] hover:translate-y-[-1px] transition-all cursor-pointer font-syne flex items-center gap-2"
+              className="px-8 py-3.5 bg-[#13251E] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#13251E] font-bold text-sm rounded-xl border border-[#174C3C]/20 shadow-xs hover:translate-y-[-1px] transition-all cursor-pointer font-syne flex items-center gap-2"
             >
               <span>مراجعة الحفظ والإغلاق</span>
               <ArrowLeft className="w-4 h-4" />
@@ -697,14 +697,14 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
       {/* 8. STATE: SAVE CONSENT */}
       {sessionState === 'save_consent' && (
-        <div className="bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-[4px_4px_0_#111113] space-y-6 animate-fadeIn text-center">
+        <div className="bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-3xl p-8 sm:p-10 shadow-sm space-y-6 animate-fadeIn text-center">
           <div className="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mx-auto border border-amber-500/30">
             <Lock className="w-7 h-7" />
           </div>
-          <h2 className="text-xl sm:text-2xl font-syne font-black text-[#111113] dark:text-[#F7F3E9]">
+          <h2 className="text-xl sm:text-2xl font-syne font-black text-[#13251E] dark:text-[#F7F3E9]">
             المرحلة 6 من 7: موافقة الخصوصية وحفظ الملخص والخطوة
           </h2>
-          <p className="text-xs sm:text-sm text-[#111113]/75 dark:text-stone-400 max-w-lg mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#13251E]/75 dark:text-stone-400 max-w-lg mx-auto leading-relaxed">
             هل توافق على حفظ ملخص خزائن النفس والفهم المشترك وهدفك الأسبوعي في سجلك الشخصي على الجهاز؟ (لا يُحفظ نص المحادثة الكامل أبداً).
           </p>
 
@@ -720,14 +720,14 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <button
               onClick={() => handleFinalSave(true)}
-              className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl shadow-[3px_3px_0_#111113] transition-all cursor-pointer flex items-center gap-2"
+              className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl shadow-sm transition-all cursor-pointer flex items-center gap-2"
             >
               <Check className="w-4 h-4" />
               <span>أوافق وحفظ البيانات</span>
             </button>
             <button
               onClick={() => handleFinalSave(false)}
-              className="px-6 py-3.5 bg-white dark:bg-[#18181C] text-[#111113] dark:text-[#F7F3E9] font-bold text-sm rounded-xl border border-[#111113]/30 dark:border-white/20 hover:bg-stone-100 transition-all cursor-pointer flex items-center gap-2"
+              className="px-6 py-3.5 bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] font-bold text-sm rounded-xl border border-[#13251E]/30 dark:border-white/20 hover:bg-stone-100 transition-all cursor-pointer flex items-center gap-2"
             >
               <XCircle className="w-4 h-4 text-stone-500" />
               <span>عدم الحفظ وإنهاء الجلسة</span>
@@ -738,18 +738,18 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
 
       {/* 9. STATE: COMPLETED */}
       {sessionState === 'completed' && (
-        <div className="bg-white dark:bg-[#18181C] border-[1.5px] border-[#111113] dark:border-white/20 rounded-3xl p-8 sm:p-12 shadow-[4px_4px_0_#111113] space-y-6 animate-fadeIn text-center">
+        <div className="bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-3xl p-8 sm:p-12 shadow-sm space-y-6 animate-fadeIn text-center">
           <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/40">
             <CheckCircle2 className="w-9 h-9" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-syne font-black text-[#111113] dark:text-[#F7F3E9]">
+          <h2 className="text-2xl sm:text-3xl font-syne font-black text-[#13251E] dark:text-[#F7F3E9]">
             أتممت جلستك الأسبوعية «خزائن النفس» بنجاح 🌿
           </h2>
-          <p className="text-sm text-[#111113]/75 dark:text-stone-400 max-w-md mx-auto">
+          <p className="text-sm text-[#13251E]/75 dark:text-stone-400 max-w-md mx-auto">
             {consentToSave ? 'تم حفظ هدفك والخطوة العملية في سجلك الشخصي بنجاح.' : 'انتهت الجلسة دون حفظ أي بيانات بناءً على رغبتك.'}
           </p>
-          <div className="bg-[#F8F7F4] dark:bg-[#121214] border border-[#111113]/15 dark:border-white/10 rounded-2xl p-6 max-w-lg mx-auto text-right space-y-2">
-            <div className="flex items-center justify-between pb-2 border-b border-[#111113]/10 dark:border-white/10">
+          <div className="bg-[#F7F3E9] dark:bg-[#0D1914] border border-[#13251E]/15 dark:border-white/10 rounded-2xl p-6 max-w-lg mx-auto text-right space-y-2">
+            <div className="flex items-center justify-between pb-2 border-b border-[#13251E]/10 dark:border-white/10">
               <span className="text-xs font-jetbrains text-emerald-600 font-bold">ملخص إنجاز الجلسة</span>
               <TextAudioPlayer
                 text={`أتممت جلستك الأسبوعية بنجاح. الهدف الأسبوعي: ${actionGoal || 'متابعة التنظيم النفسي'}. والخطوة العملية: ${actionStep || 'تنفيذ الخطوة المحددة بعناية'}.`}
@@ -759,14 +759,14 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
               />
             </div>
             <span className="text-xs font-jetbrains text-emerald-600 font-bold">الهدف الأسبوعي:</span>
-            <p className="text-sm font-bold text-[#111113] dark:text-white">{actionGoal || 'متابعة التنظيم النفسي'}</p>
+            <p className="text-sm font-bold text-[#13251E] dark:text-white">{actionGoal || 'متابعة التنظيم النفسي'}</p>
             <span className="text-xs font-jetbrains text-emerald-600 font-bold pt-2 block">الخطوة العملية:</span>
-            <p className="text-xs text-[#111113]/70 dark:text-stone-300">{actionStep || 'تنفيذ الخطوة المحددة بعناية'}</p>
+            <p className="text-xs text-[#13251E]/70 dark:text-stone-300">{actionStep || 'تنفيذ الخطوة المحددة بعناية'}</p>
           </div>
           <div className="pt-4 flex justify-center gap-4">
             <button
               onClick={() => onNavigate('home')}
-              className="px-8 py-3.5 bg-[#111113] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#111113] font-bold text-sm rounded-xl border-[1.5px] border-[#111113] shadow-[3px_3px_0_#174C3C] cursor-pointer font-syne"
+              className="px-8 py-3.5 bg-[#13251E] dark:bg-[#F7F3E9] text-[#F7F3E9] dark:text-[#13251E] font-bold text-sm rounded-xl border border-[#174C3C]/20 shadow-xs cursor-pointer font-syne"
             >
               العودة للرئيسية
             </button>
@@ -796,7 +796,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
             />
           </div>
 
-          <div className="bg-white dark:bg-[#18181C] border border-red-300 rounded-2xl p-6 max-w-md mx-auto text-right space-y-3">
+          <div className="bg-white dark:bg-[#14271F] border border-red-300 rounded-2xl p-6 max-w-md mx-auto text-right space-y-3">
             <div className="flex items-center gap-3 text-red-700 dark:text-red-300 font-bold">
               <PhoneCall className="w-5 h-5 shrink-0" />
               <span>خطوط الدعم النفسي الرسمية والطوارئ:</span>
@@ -819,7 +819,7 @@ export const WeeklySessionScreen: React.FC<WeeklySessionScreenProps> = ({
             </button>
             <button
               onClick={() => setSessionState('ready')}
-              className="px-6 py-3 bg-white dark:bg-[#18181C] text-stone-800 dark:text-stone-200 font-bold text-sm rounded-xl border border-stone-300 cursor-pointer"
+              className="px-6 py-3 bg-white dark:bg-[#14271F] text-stone-800 dark:text-stone-200 font-bold text-sm rounded-xl border border-stone-300 cursor-pointer"
             >
               العودة للبداية بأمان
             </button>

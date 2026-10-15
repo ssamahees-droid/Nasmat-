@@ -272,7 +272,7 @@ export const PersonalDiscoveryQuizModal: React.FC<PersonalDiscoveryQuizModalProp
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-2xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_12px_45px_-10px_rgba(58,90,64,0.3)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_12px_45px_-10px_rgba(58,90,64,0.3)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-3.5 border-b border-[#E6E8D8] shrink-0">

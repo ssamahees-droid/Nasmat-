@@ -30,7 +30,7 @@ export const NotificationsModal: React.FC<NotificationsModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto space-y-4 text-right shadow-2xl">
+      <div className="bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto space-y-4 text-right shadow-2xl">
         <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]">
           <div className="flex items-center gap-2">
             <Bell className="w-5 h-5 text-[#174C3C]" />

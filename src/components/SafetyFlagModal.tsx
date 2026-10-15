@@ -16,7 +16,7 @@ export const SafetyFlagModal: React.FC<SafetyFlagModalProps> = ({ isOpen, onClos
       aria-modal="true"
       aria-labelledby="safety-title"
     >
-      <div className="relative w-full max-w-lg bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-lg bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden">
         {/* Soft reassuring header */}
         <div className="flex items-start justify-between pb-4 border-b border-[#E6E8D8]">
           <div className="flex items-center gap-3">

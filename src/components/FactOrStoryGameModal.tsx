@@ -62,7 +62,7 @@ export const FactOrStoryGameModal: React.FC<FactOrStoryGameModalProps> = ({ isOp
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-xl bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-2xl overflow-hidden text-right max-h-[90vh] flex flex-col">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70 shrink-0">
@@ -156,7 +156,7 @@ export const FactOrStoryGameModal: React.FC<FactOrStoryGameModalProps> = ({ isOp
 
               {/* Feedback and Explanation */}
               {isAnswered && (
-                <div className="p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-2xl space-y-2.5 animate-fade-in">
+                <div className="p-4 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-2xl space-y-2.5 animate-fade-in">
                   <div className="flex items-center gap-2">
                     {selectedAnswer === currentQ.correctCategory ? (
                       <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800">
@@ -206,7 +206,7 @@ export const FactOrStoryGameModal: React.FC<FactOrStoryGameModalProps> = ({ isOp
               </div>
 
               {/* Exact user prompt requirement message */}
-              <div className="p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-2xl max-w-md mx-auto text-xs text-[#174C3C] leading-relaxed font-bold">
+              <div className="p-4 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-2xl max-w-md mx-auto text-xs text-[#174C3C] leading-relaxed font-bold">
                 «مش الهدف إنك تكسب... الهدف إنك تبدأ تلاحظ الفرق بين الحدث وبين الحكاية اللي عقلك بيبنيها.»
               </div>
 

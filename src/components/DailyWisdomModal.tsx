@@ -66,7 +66,7 @@ export const DailyWisdomModal: React.FC<DailyWisdomModalProps> = ({ isOpen, onCl
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-md bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 shadow-2xl text-right overflow-hidden">
+      <div className="relative w-full max-w-md bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-6 shadow-2xl text-right overflow-hidden">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#E6E8D8]/70">

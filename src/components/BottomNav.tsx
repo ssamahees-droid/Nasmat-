@@ -9,6 +9,7 @@ import {
   LayoutDashboard 
 } from 'lucide-react';
 import { UserRole } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface BottomNavProps {
   currentTab: string;
@@ -23,19 +24,20 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   onNavigate, 
   userRole
 }) => {
+  const { t, language } = useLanguage();
   const isAdmin = userRole !== 'user';
 
   const navItems = [
-    { id: 'home', label: 'الرئيسية', icon: Home },
-    { id: 'start', label: 'ابدأ من هنا', icon: Compass },
-    { id: 'explore', label: 'تعلّم وطبّق', icon: BookOpen },
-    { id: 'games', label: 'خذ استراحة', icon: Gamepad2 },
-    { id: 'rescue', label: 'خطط المساندة', icon: ShieldAlert },
-    { id: 'support', label: 'اطلب الدعم', icon: MessageCircle }
+    { id: 'home', label: t('nav.home', 'الرئيسية'), icon: Home },
+    { id: 'start', label: t('nav.start', 'ابدأ من هنا'), icon: Compass },
+    { id: 'explore', label: t('nav.explore', 'تعلّم وطبّق'), icon: BookOpen },
+    { id: 'games', label: t('nav.games', 'خذ استراحة'), icon: Gamepad2 },
+    { id: 'rescue', label: t('nav.rescue', 'خطط المساندة'), icon: ShieldAlert },
+    { id: 'support', label: t('nav.support', 'اطلب الدعم'), icon: MessageCircle }
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#F7F3E9]/98 dark:bg-[#0D1914]/98 backdrop-blur-md border-t border-[#174C3C]/15 dark:border-[#A9C5A0]/15 pb-safe shadow-[0_-4px_16px_rgba(23,76,60,0.06)]" dir="rtl">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#F7F3E9]/98 dark:bg-[#0D1914]/98 backdrop-blur-md border-t border-[#174C3C]/15 dark:border-[#A9C5A0]/15 pb-safe shadow-[0_-4px_16px_rgba(23,76,60,0.06)]" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className={`max-w-md mx-auto grid ${isAdmin ? 'grid-cols-7' : 'grid-cols-6'} items-center h-16 px-1 font-cairo`}>
         
         {navItems.map((item) => {

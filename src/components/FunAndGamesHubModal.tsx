@@ -199,7 +199,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-3xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-3xl bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Floating animated smiles */}
         <div className="absolute top-12 left-10 pointer-events-none z-50 flex flex-col items-center gap-1">
@@ -542,7 +542,7 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
               </div>
 
               {/* Memory Cards Grid */}
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 p-4 bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl">
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 p-4 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-3xl">
                 {cards.map((card) => (
                   <button
                     key={card.id}

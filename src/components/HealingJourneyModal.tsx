@@ -102,7 +102,7 @@ export const HealingJourneyModal: React.FC<HealingJourneyModalProps> = ({
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-2xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
+      <div className="relative w-full max-w-2xl bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[92vh] flex flex-col">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[#E6E8D8] shrink-0">
@@ -212,17 +212,17 @@ export const HealingJourneyModal: React.FC<HealingJourneyModalProps> = ({
                 </div>
 
                 <div className="space-y-2.5 text-xs">
-                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]">
+                  <div className="p-3 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] rounded-xl border border-[#E6E8D8]">
                     <span className="font-bold text-[#3A5A40] block">1. ما الذي حدث:</span>
                     <p className="text-[#283618] mt-0.5">{answers.whatHappened || 'لم يُحدد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]">
+                  <div className="p-3 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] rounded-xl border border-[#E6E8D8]">
                     <span className="font-bold text-amber-900 block">2. الأثر الذي تركه:</span>
                     <p className="text-[#283618] mt-0.5">{answers.impactOnMe || 'لم يُحدد'}</p>
                   </div>
 
-                  <div className="p-3 bg-[#F7F3E9] rounded-xl border border-[#E6E8D8]">
+                  <div className="p-3 bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] rounded-xl border border-[#E6E8D8]">
                     <span className="font-bold text-rose-900 block">3. ما زلت أحمله وأحتاج لتركه:</span>
                     <p className="text-[#283618] mt-0.5">{answers.stillCarrying || 'لم يُحدد'}</p>
                   </div>

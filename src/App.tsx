@@ -56,6 +56,7 @@ import { DigitalReleaseRitualModal } from './components/DigitalReleaseRitualModa
 import { RelationalEnergyMatrixModal } from './components/RelationalEnergyMatrixModal';
 import { PersonalDiscoveryQuizModal } from './components/PersonalDiscoveryQuizModal';
 import { FekerAppModal } from './components/FekerAppModal';
+import { MoodKitchenModal } from './components/MoodKitchenModal';
 import { CompanionModal } from './components/CompanionModal';
 import { CompanionFloatingButton } from './components/CompanionFloatingButton';
 import { Footer } from './components/Footer';
@@ -276,9 +277,13 @@ export default function App() {
   const [isInnerLabyrinthOpen, setIsInnerLabyrinthOpen] = useState(false);
   const [isDigitalReleaseOpen, setIsDigitalReleaseOpen] = useState(false);
   const [isRelationalEnergyOpen, setIsRelationalEnergyOpen] = useState(false);
+  const [isMoodKitchenOpen, setIsMoodKitchenOpen] = useState(false);
 
   const handleOpenModalByName = (modalName: string, extraData?: any) => {
     switch (modalName) {
+      case 'mood_kitchen':
+        setIsMoodKitchenOpen(true);
+        break;
       case 'inner_burdens':
         setIsInnerBurdensOpen(true);
         break;
@@ -531,6 +536,7 @@ export default function App() {
             // Personal Discovery Quiz
             onOpenDiscoveryQuiz={() => setIsDiscoveryQuizOpen(true)}
             onOpenCompanion={() => setIsCompanionOpen(true)}
+            onOpenMoodKitchen={() => setIsMoodKitchenOpen(true)}
           />
         )}
 
@@ -610,6 +616,7 @@ export default function App() {
             onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
             onOpenConflictWithoutWar={() => setIsConflictWithoutWarOpen(true)}
             onOpenHealingJourney={() => setIsHealingJourneyOpen(true)}
+            onOpenMoodKitchen={() => setIsMoodKitchenOpen(true)}
           />
         )}
 
@@ -785,6 +792,11 @@ export default function App() {
       <FekerAppModal
         isOpen={isFekerModalOpen}
         onClose={() => setIsFekerModalOpen(false)}
+      />
+      {/* 🍲 مطبخ المزاج — غذاء يدعم أمعاءك وعافيتك النفسية */}
+      <MoodKitchenModal
+        isOpen={isMoodKitchenOpen}
+        onClose={() => setIsMoodKitchenOpen(false)}
       />
 
       {/* 🛠️ PDF Practical Workshops Modals */}

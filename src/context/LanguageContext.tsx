@@ -48,9 +48,43 @@ const translations: Record<Language, Record<string, string>> = {
     'home.hero.badge': 'مبادرة وطنية متكاملة للصحة النفسية',
     'home.hero.title': 'مساحتك الآمنة للسلام الداخلي والدعم النفسي',
     'home.hero.desc': 'منصة رقمية تفاعلية مصممة خصيصاً لمساعدتك على فهم مشاعرك، تخفيف التوتر، وتطوير مرونتك النفسية مع أدوات احترافية وشخصية ذكية.',
+    'home.welcome': 'أهلاً بك في نسمة حياة 🌿',
+    'home.welcomeDesc': 'هنا مساحتك الهادئة للتعرف على مشاعرك، وتخفيف أثقال اليوم، واكتساب مهارات عملية تدعم سلامك الداخلي بكرامة ووضوح دون تعقيد أو أحكام مسبقة.',
+    'home.startTour': 'جولة في المنصة (ابدأ من هنا)',
+    'home.breatheMinute': 'دقيقة تنفس هادئة',
+    'home.talkCompanion': 'تحدث مع رفيقي 🌿',
+    'home.principles': 'مبادئ نسمة حياة الأساسية',
     'home.stats.users': 'مستفيد ومستفيدة',
     'home.stats.tools': 'أداة وتمرين نفسي',
     'home.stats.satisfaction': 'نسبة الرضا والارتياح',
+
+    // Mood & Needs
+    'home.mood.title': 'كيف تشعر في هذه اللحظة؟',
+    'home.mood.subtitle': 'تسجيل مشاعرك خطوة أولى نحو تفريغ الحمل وفهم احتياجاتك اليومية',
+    'home.mood.saved': 'تم حفظ تسجيل مشاعرك لليوم بنجاح',
+    'home.mood.good': 'كويس وراضي',
+    'home.mood.fair': 'مقبول / عادي',
+    'home.mood.confused': 'مش عارف مالي',
+    'home.mood.not_good': 'مش كويس ومضغوط',
+    'home.mood.exhausted': 'طاقتي نفدت',
+    'home.needs.title': 'أنا هنا لأنني...',
+    'home.needs.subtitle': 'مسارات موجهة خصيصاً لمساعدتك حسب ما تشعر به الآن',
+
+    // Pillars & Modules
+    'home.weeklySession.title': 'الجلسة النفسية الأسبوعية',
+    'home.weeklySession.subtitle': 'رحلة خطوة بخطوة للتعافي وإعادة التوازن النفسي',
+    'home.weeklySession.btn': 'ابدأ جلسة هذا الأسبوع',
+    'home.listenToYourself.title': 'اسمع نفسك — الحوار الداخلي',
+    'home.listenToYourself.desc': 'تواصل مع الطفل الداخلي، الراشد المتزن، والأب الداخلي في مساحة آمنة ومستقلة',
+    'home.listenToYourself.btn': 'ادخل مساحة اسمع نفسك',
+    'home.feker.title': 'استوديو تفكيك الأفكار (فكّر)',
+    'home.feker.desc': 'اكتشف التشوهات الإدراكية وأعد صياغة أفكارك علمياً وبمرونة',
+    'home.feker.btn': 'افتح تطبيق فكّر',
+
+    // Crisis & Safety
+    'home.crisis.title': 'هل تمر بلحظة ضيق أو أزمة طارئة؟',
+    'home.crisis.desc': 'لست وحدك؛ خطوط المساندة المجانية والسرية متوفرة على مدار الساعة',
+    'home.crisis.btn': 'أرقام الطوارئ والدعم الفوري',
 
     // Companion / Refiqi
     'companion.title': 'رفيقي النفسي الذكي',
@@ -102,9 +136,43 @@ const translations: Record<Language, Record<string, string>> = {
     'home.hero.badge': 'Comprehensive National Mental Health Initiative',
     'home.hero.title': 'Your Safe Sanctuary for Inner Peace & Mental Support',
     'home.hero.desc': 'An interactive digital platform designed to help you understand your emotions, relieve stress, and develop psychological resilience with professional tools and smart guidance.',
+    'home.welcome': 'Welcome to Nesmat Al-Hayat 🌿',
+    'home.welcomeDesc': 'Your serene sanctuary to understand emotions, relieve daily strain, and cultivate practical habits for inner peace with dignity and clarity.',
+    'home.startTour': 'Platform Tour (Start Here)',
+    'home.breatheMinute': 'Calm Breathing Minute',
+    'home.talkCompanion': 'Talk to Refiqi 🌿',
+    'home.principles': 'Core Principles of Nesmat Al-Hayat',
     'home.stats.users': 'Beneficiaries',
     'home.stats.tools': 'Tools & Exercises',
     'home.stats.satisfaction': 'Satisfaction Rate',
+
+    // Mood & Needs
+    'home.mood.title': 'How are you feeling right now?',
+    'home.mood.subtitle': 'Checking in with your feelings is the first step toward self-awareness and relief',
+    'home.mood.saved': 'Your daily mood check-in has been saved successfully',
+    'home.mood.good': 'Good & Content',
+    'home.mood.fair': 'Okay / Normal',
+    'home.mood.confused': 'Confused / Unsure',
+    'home.mood.not_good': 'Stressed / Not Good',
+    'home.mood.exhausted': 'Drained / Exhausted',
+    'home.needs.title': 'I am here because...',
+    'home.needs.subtitle': 'Curated pathways tailored to what you are experiencing right now',
+
+    // Pillars & Modules
+    'home.weeklySession.title': 'Weekly Psychological Session',
+    'home.weeklySession.subtitle': 'A step-by-step journey toward healing and inner balance',
+    'home.weeklySession.btn': 'Start This Week\'s Session',
+    'home.listenToYourself.title': 'Listen to Yourself — Inner Dialogue',
+    'home.listenToYourself.desc': 'Connect with the Inner Child, Balanced Adult, and Inner Father in a safe sanctuary',
+    'home.listenToYourself.btn': 'Enter Inner Dialogue',
+    'home.feker.title': 'Thought Deconstruction Studio (Feker)',
+    'home.feker.desc': 'Identify cognitive distortions and reframe your thinking scientifically',
+    'home.feker.btn': 'Open Feker App',
+
+    // Crisis & Safety
+    'home.crisis.title': 'Going through an acute crisis or distress?',
+    'home.crisis.desc': 'You are not alone; free, confidential hotlines are available 24/7',
+    'home.crisis.btn': 'Emergency Hotlines & Immediate Support',
 
     // Companion / Refiqi
     'companion.title': 'Smart Psychological Companion',
@@ -139,8 +207,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('nesma_lang', language);
+      const dir = language === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = language;
-      document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.dir = dir;
+      if (document.body) {
+        document.body.dir = dir;
+      }
+      document.documentElement.classList.remove('dir-rtl', 'dir-ltr');
+      document.documentElement.classList.add(`dir-${dir}`);
     }
   }, [language]);
 

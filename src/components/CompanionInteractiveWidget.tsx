@@ -72,29 +72,17 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
 
     switch (currentTab) {
       case 'breathe':
-        contextualText = settings.persona === 'child'
-          ? 'أنا بتنفس معاك بهدوء.. شهيق وزفير براحة أوي 🌱'
-          : settings.persona === 'father'
-          ? 'أنا معك في كل نَفَس.. استند إلى هدوئك واطرد أي اضطراب 🛡️'
-          : 'أنا حاضر معك في جلسة التنفس.. خذ شهيقاً عميقاً واستعد توازنك 🌿';
+        contextualText = 'أنا حاضر معك في جلسة التنفس.. خذ شهيقاً عميقاً واستعد توازنك وسكينتك 🌿';
         targetExpression = 'empathy';
         break;
 
       case 'games':
-        contextualText = settings.persona === 'child'
-          ? 'تعال نلعب شوية ونريح دماغنا من الزعل والتفكير! 🎮'
-          : settings.persona === 'father'
-          ? 'الترويح عن النفس حكمة.. اختر لعبة خفيفة لتجديد نشاطك 🛡️'
-          : 'ألعاب الاسترخاء وسيلة علمية لتخفيف نشاط مركز القلق 🌿';
+        contextualText = 'ألعاب الاسترخاء وسيلة علمية لتخفيف نشاط مركز التوتر وتجديد طاقتك الذهنية 🎮';
         targetExpression = 'encouraging';
         break;
 
       case 'rescue':
-        contextualText = settings.persona === 'child'
-          ? 'أنا ماسك إيدك وجنبك.. متخافش كل حاجة هتعدي بخير 🌱'
-          : settings.persona === 'father'
-          ? 'أنا معك كدرع حامٍ.. لست وحدك، خذ نفساً والنجدة والحلول موجودة 🛡️'
-          : 'أنا بجانبك في مساحة الإنقاذ.. أنت في أمان تام الآن 🌿';
+        contextualText = 'أنا بجانبك في مساحة الإنقاذ.. أنت في أمان تام الآن، خذ نفساً والحلول موجودة 🛡️';
         targetExpression = 'empathy';
         break;
 
@@ -124,46 +112,19 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
         break;
 
       default:
-        contextualText = settings.persona === 'child'
-          ? 'أنا هنا جنبك في نسمة حياة.. حاسس بإيه دلوقتي يا صديقي؟ 🌱'
-          : settings.persona === 'father'
-          ? 'مرحباً بك.. أنا حاضر معك بروية وحكمة، كيف أساندك اليوم؟ 🛡️'
-          : 'مرحباً بك في نسمة حياة.. أنا حاضر معك لأسمعك وأساند خطواتك 🌿';
+        contextualText = 'مرحباً بك في نسمة حياة.. أنا رفيقي، حاضر معك لأسمعك وأساند خطواتك 🌿';
         targetExpression = 'welcome';
         break;
     }
 
     setActiveSpeechText(contextualText);
     setExpression(targetExpression);
-  }, [currentTab, settings.persona]);
+  }, [currentTab]);
 
   // Persist display mode
   const handleChangeWidgetMode = (mode: 'docked' | 'card' | 'hidden') => {
     setWidgetMode(mode);
     localStorage.setItem('nesmat_character_widget_mode', mode);
-  };
-
-  // Persona switch
-  const handleTogglePersona = () => {
-    voiceService.stop();
-    setIsSpeaking(false);
-
-    const nextPersona: CompanionPersona = 
-      settings.persona === 'adult' ? 'child' :
-      settings.persona === 'child' ? 'father' : 'adult';
-
-    const updated = { ...settings, persona: nextPersona };
-    setSettings(updated);
-    CompanionEngine.saveSettings(updated);
-
-    const introNotice = nextPersona === 'child'
-      ? 'أنا مساحة لطفلك الداخلي الآن 🌱.. احكيلي براحتك وبدون أي لوم.'
-      : nextPersona === 'father'
-      ? 'أنا صوت الأب الداخلي الحكيم والداعم 🛡️.. حاضر لأحميك وأساند ثباتك.'
-      : 'أنا حاضر معك بوعي الراشد المتزن 🌿.. لنفهم مشاعرك ونرتب أفكارك.';
-
-    setActiveSpeechText(introNotice);
-    setExpression('welcome');
   };
 
   // Speak current text with Web Speech API
@@ -421,20 +382,20 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
       <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[#174C3C] to-[#254234] text-white">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs font-black tracking-wide">شخصية نسمة حياة</span>
+          <span className="text-xs font-black tracking-wide">رفيقي النفسي الذكي</span>
           <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 text-white font-medium">
-            {settings.persona === 'child' ? '🌱 الطفل' : settings.persona === 'father' ? '🛡️ الأب' : '🌿 الراشد'}
+            🌿 المرشد المرافق
           </span>
         </div>
 
         <div className="flex items-center gap-1">
-          {/* Persona switch */}
+          {/* Audio speech trigger */}
           <button
-            onClick={handleTogglePersona}
-            className="p-1.5 rounded-lg hover:bg-white/20 text-white/90 hover:text-white transition-colors cursor-pointer"
-            title="تبديل الجانب النفسي"
+            onClick={handleSpeakCurrent}
+            className={`p-1.5 rounded-lg hover:bg-white/20 transition-colors cursor-pointer ${isSpeaking ? 'text-emerald-300' : 'text-white/90 hover:text-white'}`}
+            title={isSpeaking ? 'إيقاف الصوت' : 'استماع للرسالة'}
           >
-            <RefreshCw className="w-3.5 h-3.5" />
+            {isSpeaking ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
           </button>
 
           {/* Full modal */}
@@ -478,7 +439,6 @@ export const CompanionInteractiveWidget: React.FC<CompanionInteractiveWidgetProp
               isListening={isListeningMic}
               size="md"
               isAnimated={true}
-              onTogglePersona={handleTogglePersona}
               theme={settings.animeTheme}
               accessory={settings.animeAccessory}
               onThemeChange={(newTheme) => {

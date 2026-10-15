@@ -20,6 +20,7 @@ import {
 import { UserRole } from '../types';
 import { storage } from '../services/storage';
 import { PWAInstallButton } from './PWAInstallButton';
+import { LanguageToggle } from './LanguageToggle';
 import { useLanguage } from '../context/LanguageContext';
 
 interface NavbarProps {
@@ -150,15 +151,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          {/* Language Switch Button */}
-          <button
-            onClick={toggleLanguage}
-            className="px-2.5 py-1.5 rounded-xl border border-[#174C3C]/15 dark:border-[#A9C5A0]/20 bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] hover:bg-[#E6E8D8]/50 dark:hover:bg-[#1B342A] transition-all cursor-pointer font-jetbrains text-xs font-bold shadow-2xs"
-            title="تبديل اللغة / Switch Language"
-            aria-label="تبديل اللغة"
-          >
-            {language === 'ar' ? 'EN' : 'عربي'}
-          </button>
+          {/* Unified Language Toggle */}
+          <LanguageToggle />
 
           {/* Digital Character Button (رفيقي) */}
           {onOpenCompanion && (
@@ -299,6 +293,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
             <PWAInstallButton variant="full" />
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-xs font-bold text-[#13251E]/70 dark:text-[#F7F3E9]/70">اللغة / Language:</span>
+              <LanguageToggle variant="pill" />
+            </div>
           </div>
 
           <div className="pt-2 border-t border-[#174C3C]/10 dark:border-[#A9C5A0]/15 flex items-center justify-between text-xs">

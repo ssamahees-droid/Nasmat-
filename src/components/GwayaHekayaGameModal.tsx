@@ -96,7 +96,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-3xl bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[94vh] flex flex-col">
+      <div className="relative w-full max-w-3xl bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-7 shadow-[0_10px_40px_-10px_rgba(58,90,64,0.25)] overflow-hidden text-right max-h-[94vh] flex flex-col">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-3.5 border-b border-[#E6E8D8] shrink-0">
@@ -505,7 +505,7 @@ export const GwayaHekayaGameModal: React.FC<GwayaHekayaGameModalProps> = ({ isOp
                   className="w-full p-3 bg-[#F7F3E9] border border-[#E6E8D8] rounded-2xl text-xs text-[#283618] outline-none font-bold"
                 />
 
-                <div className="text-[11px] text-[#58645C] bg-[#F7F3E9] p-2.5 rounded-xl border border-[#E6E8D8]">
+                <div className="text-[11px] text-[#58645C] bg-[#F7F3E9] dark:bg-[#14271F] dark:border-[#A9C5A0]/20 dark:text-[#F7F3E9] p-2.5 rounded-xl border border-[#E6E8D8]">
                   💡 {currentPlan.practice.note}
                 </div>
               </div>

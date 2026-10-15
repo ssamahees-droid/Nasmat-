@@ -28,6 +28,7 @@ import { storage } from '../services/storage';
 import { PWAInstallButton } from '../components/PWAInstallButton';
 import { CompanionHeroSection } from '../components/CompanionHeroSection';
 import { NesmatGuideBanner } from '../components/NesmatGuideBanner';
+import { useLanguage } from '../context/LanguageContext';
 
 interface HomeScreenProps {
   onNavigate: (tab: string) => void;
@@ -46,6 +47,7 @@ interface HomeScreenProps {
   onOpenUntangleKnot: () => void;
   onOpenNesmaLaughs: () => void;
   onOpenEmergencyHelp: () => void;
+  onOpenMoodKitchen?: () => void;
   // Booklet additions
   onOpenBooklet: () => void;
   onOpenPersonalPlan: () => void;
@@ -119,6 +121,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenInnerCompass,
   theme = 'dark'
 }) => {
+  const { t, language } = useLanguage();
   const isDark = theme === 'dark';
 
   const [selectedMood, setSelectedMood] = useState<MoodValue | null>(() => {
@@ -268,11 +271,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </div>
 
             <h1 className="text-2xl sm:text-4xl font-extrabold text-white leading-tight font-tajawal drop-shadow-xs">
-              أهلاً بك في نسمة حياة 🌿
+              {t('home.welcome', 'أهلاً بك في نسمة حياة 🌿')}
             </h1>
 
             <p className={`text-xs sm:text-sm leading-relaxed max-w-xl ${isDark ? 'text-stone-300' : 'text-stone-700'}`}>
-              هنا جنينتك الهادئة... مساحة مخصصة للتعرف على مشاعرك، وتخفيف أثقال اليوم، واكتساب مهارات عملية تدعم سلامك الداخلي بكرامة ووضوح دون تعقيد أو أحكام مسبقة.
+              {t('home.welcomeDesc', 'هنا جنينتك الهادئة... مساحة مخصصة للتعرف على مشاعرك، وتخفيف أثقال اليوم، واكتساب مهارات عملية تدعم سلامك الداخلي بكرامة ووضوح دون تعقيد أو أحكام مسبقة.')}
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-1">
@@ -281,7 +284,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-2 cursor-pointer"
               >
                 <Compass className="w-4 h-4" />
-                <span>جولة في الجنينة (ابدأ من هنا)</span>
+                <span>{t('home.startTour', 'جولة في الجنينة (ابدأ من هنا)')}</span>
               </button>
               
               <button
@@ -293,7 +296,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 }`}
               >
                 <Wind className="w-4 h-4 text-emerald-400" />
-                <span>دقيقة تنفس هادئة</span>
+                <span>{t('home.breatheMinute', 'دقيقة تنفس هادئة')}</span>
               </button>
 
               {onOpenCompanion && (
@@ -302,7 +305,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   className="px-4 py-2.5 bg-linear-to-r from-[#174C3C] to-[#254234] hover:from-[#2A493B] hover:to-[#1B3126] text-white text-xs font-bold rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-2 cursor-pointer border border-emerald-400/30"
                 >
                   <Sparkles className="w-4 h-4 text-amber-300" />
-                  <span>تحدث مع شخصية نسمة حياة 🌿</span>
+                  <span>{t('home.talkCompanion', 'تحدث مع رفيقي 🌿')}</span>
                 </button>
               )}
             </div>
@@ -316,7 +319,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           }`}>
             <div className={`font-bold text-xs border-b pb-2 flex items-center gap-1.5 ${isDark ? 'text-white border-white/10' : 'text-stone-900 border-emerald-600/15'}`}>
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>مبادئ نسمة حياة الأساسية</span>
+              <span>{t('home.principles', 'مبادئ نسمة حياة الأساسية')}</span>
             </div>
             <div className={`space-y-1.5 text-[11px] pt-1 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
               <div>✓ خصوصية وسرية تامة</div>
