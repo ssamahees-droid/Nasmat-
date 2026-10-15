@@ -21,7 +21,9 @@ import {
   FileText,
   SlidersHorizontal,
   Flame,
-  BatteryCharging
+  BatteryCharging,
+  RotateCw,
+  Play
 } from 'lucide-react';
 import { MoodValue, ContentItem } from '../types';
 import { storage } from '../services/storage';
@@ -83,6 +85,15 @@ const MOOD_OPTIONS: { id: MoodValue; label: string; emoji: string; tip: string }
   { id: 'exhausted', label: 'طاقتي نفدت', emoji: '😫', tip: 'بطاريتك تحتاج شحناً؛ خذ استراحة فورية دون تأنيب ضمير 🔋' },
 ];
 
+interface WheelSectionItem {
+  id: string;
+  title: string;
+  desc: string;
+  emoji: string;
+  color: string;
+  action: () => void;
+}
+
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onNavigate,
   onOpenContent,
@@ -99,6 +110,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenUntangleKnot,
   onOpenNesmaLaughs,
   onOpenEmergencyHelp,
+  onOpenMoodKitchen,
   onOpenBooklet,
   onOpenPersonalPlan,
   onOpenEnergyBudget,
@@ -123,7 +135,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 }) => {
   const { t, language } = useLanguage();
   const isDark = theme === 'dark';
-
   const [selectedMood, setSelectedMood] = useState<MoodValue | null>(() => {
     const today = new Date().toISOString().split('T')[0];
     const todayCheckin = storage.getDailyCheckins().find(c => c.date === today);
@@ -131,68 +142,110 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   });
   const [justSavedCheckin, setJustSavedCheckin] = useState(false);
   const [savedFavorites, setSavedFavorites] = useState<string[]>(storage.getFavorites());
-  const [activeShelf, setActiveShelf] = useState<'featured' | 'needs' | 'readings'>('featured');
-  const [selectedNeedId, setSelectedNeedId] = useState<string>('stressed');
 
-  const NEED_BASED_PATHS = [
+  // Spin Wheel States
+  const WHEEL_SECTIONS: WheelSectionItem[] = [
     {
-      id: 'stressed',
-      title: 'متوتر أو قلقان',
-      desc: 'نبضك سريع أو أفكارك متلاحقة؟ ابدأ بتهدئة جهازك العصبي فوراً دون تعقيد.',
+      id: 'mood_kitchen',
+      title: 'مطبخ المزاج',
+      desc: 'غذاء يدعم أمعاءك وعافيتك النفسية بوصفات منزلية بسيطة',
+      emoji: '🍲',
+      color: 'from-emerald-500 to-teal-600',
+      action: () => onOpenMoodKitchen ? onOpenMoodKitchen() : onNavigate('explore')
+    },
+    {
+      id: 'feker',
+      title: 'تطبيق فكّر',
+      desc: 'فكك أفكارك السامة التلقائية واكشف أفخاخ التفكير',
+      emoji: '💡',
+      color: 'from-lime-500 to-emerald-600',
+      action: () => onOpenFeker ? onOpenFeker() : onNavigate('games')
+    },
+    {
+      id: 'gwaya_hekaya',
+      title: 'جوايا حكاية',
+      desc: 'العالم الذي يشرح نفسه واستكشاف ما يدور بداخلك',
+      emoji: '📖',
+      color: 'from-teal-500 to-cyan-600',
+      action: () => onOpenGwayaHekaya()
+    },
+    {
+      id: 'breathe',
+      title: 'تمرين التنفس الهادئ',
+      desc: 'تمرين 4-7-8 لتهدئة الجهاز العصبي فوراً',
       emoji: '🌊',
-      actionLabel: 'تمرين التنفس 4-7-8',
-      action: () => onNavigate('breathe'),
-      secondaryActionLabel: 'خطة وقت الانفعال',
-      secondaryAction: () => onNavigate('rescue')
+      color: 'from-cyan-500 to-blue-600',
+      action: () => onNavigate('breathe')
     },
     {
-      id: 'scattered',
-      title: 'مشتت وتائه في الأفكار',
-      desc: 'عقلك ينسج سيناريوهات مقلقة؟ افرز الأفكار المنطقية عن المخاوف الافتراضية.',
-      emoji: '🌀',
-      actionLabel: 'استوديو تفكيك الأفكار (فكّر)',
-      action: () => onOpenFeker ? onOpenFeker() : onNavigate('games'),
-      secondaryActionLabel: 'فك عقدة المشاعر',
-      secondaryAction: () => onOpenUntangleKnot()
-    },
-    {
-      id: 'heavy',
-      title: 'مخنوق أو حزين',
-      desc: 'حاسس بحمل تقيل على صدرك؟ امنح نفسك مساحة تفريغ آمنة دون لوم أو أحكام.',
-      emoji: '🌧️',
-      actionLabel: 'تفريغ وفكفكة المشاعر',
-      action: () => onOpenTranslateFeelings(),
-      secondaryActionLabel: 'خطة وقت الضيق والخنقة',
-      secondaryAction: () => onNavigate('rescue')
-    },
-    {
-      id: 'exhausted',
-      title: 'منهك وبطاريتي فارغة',
-      desc: 'طاقتك في الحضيض ولا تستطيع التركيز؟ اعرف ما يستنزف طاقتك وكيف تشحنها.',
-      emoji: '🔋',
-      actionLabel: 'فحص شاحن الطاقة النفسية',
-      action: () => onOpenBatteryCheck(),
-      secondaryActionLabel: 'ميزانية الطاقة والحدود',
-      secondaryAction: () => onOpenEnergyBudget()
-    },
-    {
-      id: 'curious',
-      title: 'أبحث عن فهم ذاتي وتطوير',
-      desc: 'تريد استكشاف محركات سلوكك، بوصلة مشاعرك، وبناء خطة مرونة حقيقية؟',
+      id: 'emotion_compass',
+      title: 'بوصلة المشاعر',
+      desc: 'استكشاف وتسمية ما تشعر به بدقة وترتيبه',
       emoji: '🧭',
-      actionLabel: 'الفحص الذاتي الشامل',
-      action: () => onNavigate('self-discovery'),
-      secondaryActionLabel: 'لعبة جوايا حكاية',
-      secondaryAction: () => onOpenGwayaHekaya()
+      color: 'from-amber-500 to-orange-600',
+      action: () => onOpenEmotionCompass()
+    },
+    {
+      id: 'rescue',
+      title: 'إسعافات الطوارئ النفسية',
+      desc: 'خطة سريعة وقت الضيق الشديد والتوتر الحاد',
+      emoji: '🆘',
+      color: 'from-rose-500 to-red-600',
+      action: () => onNavigate('rescue')
+    },
+    {
+      id: 'battery_check',
+      title: 'فحص شاحن الطاقة',
+      desc: 'معرفة ما يستنزف طاقتك النفسية وكيف تشحنها',
+      emoji: '🔋',
+      color: 'from-purple-500 to-indigo-600',
+      action: () => onOpenBatteryCheck()
+    },
+    {
+      id: 'games',
+      title: 'الألعاب النفسية التفاعلية',
+      desc: 'فرقعة الأعباء، الجسر العاطفي، وحديقة الامتنان',
+      emoji: '🎈',
+      color: 'from-pink-500 to-rose-600',
+      action: () => onNavigate('games')
+    },
+    {
+      id: 'explore',
+      title: 'الكتيب والورش',
+      desc: 'مكتبة التثقيف النفسي الشاملة والورش التفاعلية',
+      emoji: '📚',
+      color: 'from-amber-600 to-yellow-600',
+      action: () => onNavigate('explore')
+    },
+    {
+      id: 'weekly',
+      title: 'الجلسة الأسبوعية',
+      desc: 'التأمل والمراجعة الأسبوعية الشاملة للنمو',
+      emoji: '📅',
+      color: 'from-emerald-600 to-green-700',
+      action: () => onNavigate('weekly')
     }
   ];
 
-  const activeNeed = NEED_BASED_PATHS.find(n => n.id === selectedNeedId) || NEED_BASED_PATHS[0];
-  const activeMoodObj = MOOD_OPTIONS.find(m => m.id === selectedMood);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [spinRotation, setSpinRotation] = useState(0);
+  const [selectedSection, setSelectedSection] = useState<WheelSectionItem | null>(null);
 
-  const suggestedContent: ContentItem[] = storage.getContent()
-    .filter(c => c.isSuggested || c.reviewStatus === 'published')
-    .slice(0, 3);
+  const handleSpinWheel = () => {
+    if (isSpinning) return;
+    setIsSpinning(true);
+    setSelectedSection(null);
+
+    const randomExtra = 1800 + Math.floor(Math.random() * 1080);
+    const newRotation = spinRotation + randomExtra;
+    setSpinRotation(newRotation);
+
+    setTimeout(() => {
+      setIsSpinning(false);
+      const randomIndex = Math.floor(Math.random() * WHEEL_SECTIONS.length);
+      setSelectedSection(WHEEL_SECTIONS[randomIndex]);
+    }, 2000);
+  };
 
   const handleMoodSelect = (mood: MoodValue) => {
     setSelectedMood(mood);
@@ -201,59 +254,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     setTimeout(() => setJustSavedCheckin(false), 4000);
   };
 
-  const handleToggleFavorite = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
-    storage.toggleFavorite(id);
-    setSavedFavorites(storage.getFavorites());
-  };
-
-  const handleOpenModalByName = (modalName: string) => {
-    switch (modalName) {
-      case 'ana_delwaqti': onOpenAnaDelwaqti(); break;
-      case 'untangle_knot': onOpenUntangleKnot(); break;
-      case 'thought_release': onOpenThoughtRelease(); break;
-      case 'gwaya_hekaya': onOpenGwayaHekaya(); break;
-      case 'soundscape': onOpenSoundscapeStudio(); break;
-      case 'emotion_compass': onOpenEmotionCompass(); break;
-      case 'daily_wisdom': onOpenDailyWisdom(); break;
-      case 'energy_budget': onOpenEnergyBudget(); break;
-      case 'boundary_builder': onOpenBoundaryBuilder(); break;
-      case 'specialist_guide': onOpenSpecialistGuide(); break;
-      case 'booklet': onOpenBooklet(); break;
-      case 'emergency_help': onOpenEmergencyHelp(); break;
-      case 'rescue_kit': onOpenRescueKit(); break;
-      case 'battery_check': onOpenBatteryCheck(); break;
-      case 'translate_feelings': onOpenTranslateFeelings(); break;
-      case 'fact_game': onOpenFactGame(); break;
-      case 'nesma_laughs': onOpenNesmaLaughs(); break;
-      case 'feker': onOpenFeker ? onOpenFeker() : onNavigate('games'); break;
-      case 'discovery_quiz': onOpenDiscoveryQuiz(); break;
-      case 'workshops_hub': onOpenWorkshopsHub(); break;
-      case 'psychological_er': onOpenPsychologicalER(); break;
-      case 'conflict_without_war': onOpenConflictWithoutWar(); break;
-      case 'healing_journey': onOpenHealingJourney(); break;
-      case 'inner_burdens': onOpenInnerBurdens ? onOpenInnerBurdens() : onNavigate('games'); break;
-      case 'emotional_bridge': onOpenEmotionalBridge ? onOpenEmotionalBridge() : onNavigate('games'); break;
-      case 'gratitude_garden': onOpenGratitudeGarden ? onOpenGratitudeGarden() : onNavigate('games'); break;
-      case 'inner_compass': onOpenInnerCompass ? onOpenInnerCompass() : onNavigate('games'); break;
-      default: break;
-    }
-  };
+  const activeMoodObj = MOOD_OPTIONS.find(m => m.id === selectedMood);
 
   return (
-    <div className={`pb-28 pt-4 px-4 sm:px-6 max-w-5xl mx-auto space-y-10 animate-fade-in text-right ${isDark ? 'text-[#e8ede9]' : 'text-[#1a2920]'}`}>
-      
-      {/* 1. Welcoming Hero: بهو الجنينة والترحيب الهادئ */}
-      <section className={`border rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden transition-all ${
+    <div className="space-y-6 sm:space-y-8 pb-16 animate-fade-in">
+      {/* 1. Welcome & Greeting Banner */}
+      <section className={`relative overflow-hidden p-6 sm:p-8 rounded-3xl border shadow-lg ${
         isDark 
-          ? 'bg-gradient-to-br from-[#16231b] via-[#101914] to-[#0b100d] border-emerald-500/20' 
+          ? 'bg-gradient-to-br from-[#12221A] via-[#111B17] to-[#0A120E] border-emerald-500/30' 
           : 'bg-gradient-to-br from-[#f0f7f2] via-[#e8f2eb] to-[#e0ede4] border-emerald-600/15'
       }`}>
         <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
           <div className="space-y-4 max-w-2xl">
-            {/* Initiative Logo & Identity */}
             <div className="flex items-center gap-3">
               <img 
                 src="/logo.jpg" 
@@ -311,7 +325,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </div>
           </div>
 
-          {/* Calming Principles Box */}
           <div className={`hidden lg:flex flex-col gap-2 shrink-0 border p-4 rounded-2xl text-xs min-w-[220px] ${
             isDark 
               ? 'bg-black/30 border-white/10 text-stone-300' 
@@ -331,6 +344,158 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </section>
 
+      {/* 🌿 Daily Mood Check-In */}
+      <section className={`p-6 border rounded-3xl space-y-4 shadow-sm ${
+        isDark ? 'bg-[#14221A] border-emerald-500/20' : 'bg-white border-emerald-600/15'
+      }`}>
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">مساحة تفقد المشاعر اليومية</span>
+            <h3 className={`text-base font-bold ${isDark ? 'text-white' : 'text-stone-900'}`}>كيف حال مشاعرك في هذه اللحظة؟</h3>
+          </div>
+          {justSavedCheckin && (
+            <span className="text-xs px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold animate-fade-in flex items-center gap-1">
+              <Check className="w-3.5 h-3.5" /> تم تسجيل حالتك اليومية 🌱
+            </span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+          {MOOD_OPTIONS.map((m) => {
+            const isSelected = selectedMood === m.id;
+            return (
+              <button
+                key={m.id}
+                onClick={() => handleMoodSelect(m.id)}
+                className={`p-3 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
+                  isSelected 
+                    ? 'bg-emerald-500/20 border-emerald-400 text-white shadow-md scale-102' 
+                    : isDark 
+                      ? 'bg-black/20 border-white/10 text-stone-300 hover:border-emerald-500/40' 
+                      : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-emerald-500/40'
+                }`}
+              >
+                <span className="text-2xl">{m.emoji}</span>
+                <span className="text-xs font-bold block">{m.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {activeMoodObj && (
+          <div className={`p-3.5 rounded-2xl border text-xs flex items-center gap-3 animate-fade-in ${
+            isDark ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200' : 'bg-emerald-50 border-emerald-600/20 text-emerald-900'
+          }`}>
+            <span className="text-lg">🌿</span>
+            <p className="font-medium leading-relaxed">{activeMoodObj.tip}</p>
+          </div>
+        )}
+      </section>
+
+      {/* 🎡 عجلة الحظ التفاعلية — محور الهيكلة الجديدة */}
+      <section className={`p-6 sm:p-8 border rounded-3xl space-y-6 shadow-md text-center relative overflow-hidden ${
+        isDark ? 'bg-gradient-to-br from-[#122018] via-[#101914] to-[#0A100C] border-emerald-500/30' : 'bg-gradient-to-br from-[#f4faf5] to-[#eaf4ed] border-emerald-600/20'
+      }`}>
+        <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="space-y-2 relative z-10 max-w-xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>عجلة الحظ التفاعلية لاختيار خطوتك التالية</span>
+          </div>
+          <h2 className={`text-xl sm:text-2xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
+            دكّن العجلة... ودعنا نقترح عليك القسم الأنسب لخطوتك اليوم 🎡
+          </h2>
+          <p className={`text-xs sm:text-sm ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
+            اضغط على زر الدوران أدناه، ودع العجلة تختار لك إحدى محطات نسمة حياة بكل بساطة وهدوء.
+          </p>
+        </div>
+
+        <div className="flex flex-col items-center justify-center space-y-6 relative z-10 py-4">
+          <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full border-4 border-emerald-500/40 p-2 shadow-xl bg-black/20 flex items-center justify-center overflow-hidden">
+            <div className="absolute -top-1 z-30 w-6 h-8 bg-amber-400 shadow-md" style={{ clipPath: 'polygon(50% 100%, 0 0, 100% 0)' }} />
+
+            <div 
+              className="w-full h-full rounded-full relative transition-transform duration-2000 ease-out flex items-center justify-center"
+              style={{ transform: `rotate(${spinRotation}deg)` }}
+            >
+              {WHEEL_SECTIONS.map((sec, idx) => {
+                const angle = (idx * 360) / WHEEL_SECTIONS.length;
+                return (
+                  <div 
+                    key={sec.id}
+                    className="absolute inset-0 flex items-start justify-center pt-3"
+                    style={{ transform: `rotate(${angle}deg)`, transformOrigin: 'center' }}
+                  >
+                    <div className="flex flex-col items-center text-center max-w-[60px]">
+                      <span className="text-xl drop-shadow-md">{sec.emoji}</span>
+                      <span className={`text-[10px] font-bold truncate max-w-[55px] ${isDark ? 'text-white' : 'text-stone-900'}`}>{sec.title}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            <div className="absolute z-20 w-16 h-16 rounded-full bg-linear-to-br from-emerald-500 to-teal-700 border-4 border-white/20 shadow-lg flex items-center justify-center text-white font-black text-xs">
+              🌿
+            </div>
+          </div>
+
+          {!selectedSection ? (
+            <button
+              onClick={handleSpinWheel}
+              disabled={isSpinning}
+              className={`px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-black font-extrabold rounded-2xl shadow-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer text-sm ${
+                isSpinning ? 'opacity-70 cursor-not-allowed animate-pulse' : ''
+              }`}
+            >
+              <RotateCw className={`w-4 h-4 ${isSpinning ? 'animate-spin' : ''}`} />
+              <span>{isSpinning ? 'جاري دوران العجلة...' : 'يلا نلف العجلة! 🎡'}</span>
+            </button>
+          ) : (
+            <div className={`w-full max-w-md p-6 rounded-3xl border shadow-xl animate-fade-in space-y-4 text-center ${
+              isDark ? 'bg-[#182c21] border-emerald-500/40' : 'bg-white border-emerald-600/30'
+            }`}>
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/20 text-3xl border border-emerald-500/30 mx-auto">
+                {selectedSection.emoji}
+              </div>
+              
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">النتيجة التي اختارتها العجلة لك اليوم</span>
+                <h3 className={`text-xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
+                  {selectedSection.title}
+                </h3>
+                <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
+                  {selectedSection.desc}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-center gap-3 pt-2">
+                <button
+                  onClick={() => selectedSection.action()}
+                  className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-extrabold rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                >
+                  <Play className="w-4 h-4" />
+                  <span>افتح القسم فوراً 🌿</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedSection(null);
+                    handleSpinWheel();
+                  }}
+                  className={`px-4 py-3 border rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                    isDark ? 'bg-white/5 hover:bg-white/10 text-stone-200 border-white/10' : 'bg-stone-100 hover:bg-stone-200 text-stone-800 border-stone-200'
+                  }`}
+                >
+                  <RotateCw className="w-3.5 h-3.5" />
+                  <span>إعادة اللف 🎡</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* 🌿 شخصية نسمة حياة — المرشدة الدائمة */}
       <NesmatGuideBanner 
         theme={theme} 
@@ -338,844 +503,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         onOpenCompanion={() => onOpenCompanion && onOpenCompanion()} 
       />
 
-
-      {/* 🧭 الركائز الثلاث الأساسية لمنصة نسمة حياة */}
-      <section className={`p-6 border rounded-3xl space-y-6 shadow-xs ${
-        isDark ? 'bg-[#14271F] border-[#A9C5A0]/20' : 'bg-white border-[#174C3C]/15 shadow-sm'
-      }`}>
-        <div className="flex items-center justify-between border-b pb-4 border-[#174C3C]/10 dark:border-[#A9C5A0]/15">
-          <div>
-            <span className="font-jetbrains text-[10px] text-[#174C3C] dark:text-[#A9C5A0] uppercase tracking-widest font-bold">CORE_PILLARS_HUB</span>
-            <h2 className="text-xl font-syne font-black mt-1 text-[#174C3C] dark:text-[#F7F3E9]">الأقسام والركائز الثلاث الأساسية</h2>
-          </div>
-          <span className="text-xs px-3 py-1 bg-[#174C3C]/10 dark:bg-[#A9C5A0]/15 text-[#174C3C] dark:text-[#A9C5A0] font-bold rounded-full border border-[#174C3C]/20 dark:border-[#A9C5A0]/30">
-            منظومة متكاملة
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* Pillar 1: Refiqi */}
-          <div 
-            onClick={() => onOpenCompanion && onOpenCompanion()}
-            className={`p-5 rounded-2xl border transition-all cursor-pointer group flex flex-col justify-between ${
-              isDark ? 'bg-[#193127] border-[#A9C5A0]/20 hover:border-[#A9C5A0]' : 'bg-[#E6E8D8]/40 border-[#174C3C]/15 hover:border-[#174C3C] shadow-xs'
-            }`}
-          >
-            <div>
-              <div className="w-10 h-10 rounded-xl bg-[#174C3C]/10 dark:bg-[#A9C5A0]/20 text-[#174C3C] dark:text-[#A9C5A0] flex items-center justify-center font-bold mb-3 border border-[#174C3C]/20 dark:border-[#A9C5A0]/30">
-                🌿
-              </div>
-              <span className="font-jetbrains text-[10px] text-[#174C3C] dark:text-[#A9C5A0] uppercase font-bold">القسم الأول</span>
-              <h3 className="font-syne font-black text-lg mt-1 mb-2 text-[#174C3C] dark:text-[#F7F3E9] group-hover:text-[#174C3C] dark:group-hover:text-[#A9C5A0] transition-colors">
-                رفيقي — المرشد المرافق
-              </h3>
-              <p className="text-xs text-[#13251E]/70 dark:text-[#F7F3E9]/70 leading-relaxed">
-                مساعدك الدافئ للدعم النفسي والتنظيم العاطفي ومرافقتك في مواقف الحياة اليومية على مدار الساعة.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-[#174C3C]/10 dark:border-[#A9C5A0]/15 flex items-center justify-between text-xs font-bold text-[#174C3C] dark:text-[#A9C5A0]">
-              <span>فتح رفيقي الآن</span>
-              <span>←</span>
-            </div>
-          </div>
-
-          {/* Pillar 2: Listen To Yourself */}
-          <div 
-            onClick={() => onNavigate('listen-to-yourself')}
-            className={`p-5 rounded-2xl border transition-all cursor-pointer group flex flex-col justify-between ${
-              isDark ? 'bg-[#193127] border-[#A9C5A0]/20 hover:border-[#A9C5A0]' : 'bg-[#E6E8D8]/40 border-[#174C3C]/15 hover:border-[#174C3C] shadow-xs'
-            }`}
-          >
-            <div>
-              <div className="w-10 h-10 rounded-xl bg-[#A9C5A0]/25 text-[#174C3C] dark:text-[#A9C5A0] flex items-center justify-center font-bold mb-3 border border-[#A9C5A0]/35">
-                🧠
-              </div>
-              <span className="font-jetbrains text-[10px] text-[#174C3C] dark:text-[#A9C5A0] uppercase font-bold">القسم الثاني</span>
-              <h3 className="font-syne font-black text-lg mt-1 mb-2 text-[#174C3C] dark:text-[#F7F3E9] group-hover:text-[#174C3C] dark:group-hover:text-[#A9C5A0] transition-colors">
-                اسمع نفسك — الطفل والراشد والأب
-              </h3>
-              <p className="text-xs text-[#13251E]/70 dark:text-[#F7F3E9]/70 leading-relaxed">
-                ثلاثة أصوات داخلية متوازنة لفهم مشاعرك، تنظيم أفكارك، وتقديم الاحتواء والحكمة غير الحُكمية.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-[#174C3C]/10 dark:border-[#A9C5A0]/15 flex items-center justify-between text-xs font-bold text-[#174C3C] dark:text-[#A9C5A0]">
-              <span>استكشف المنظورات</span>
-              <span>←</span>
-            </div>
-          </div>
-
-          {/* Pillar 3: Weekly Session */}
-          <div 
-            onClick={() => onNavigate('weekly-session')}
-            className={`p-5 rounded-2xl border transition-all cursor-pointer group flex flex-col justify-between ${
-              isDark ? 'bg-[#193127] border-[#D5A65A]/30 hover:border-[#D5A65A]' : 'bg-[#F7F3E9] border-[#D5A65A]/35 hover:border-[#D5A65A] shadow-xs'
-            }`}
-          >
-            <div>
-              <div className="w-10 h-10 rounded-xl bg-[#D5A65A]/20 text-[#D5A65A] flex items-center justify-center font-bold mb-3 border border-[#D5A65A]/35">
-                📅
-              </div>
-              <span className="font-jetbrains text-[10px] text-[#D5A65A] uppercase font-bold">القسم الثالث</span>
-              <h3 className="font-syne font-black text-lg mt-1 mb-2 text-[#174C3C] dark:text-[#F7F3E9] group-hover:text-[#D5A65A] transition-colors">
-                الجلسة النفسية الأسبوعية — خزائن النفس
-              </h3>
-              <p className="text-xs text-[#13251E]/70 dark:text-[#F7F3E9]/70 leading-relaxed">
-                رحلة تفاعلية متكيفة عبر ٧ خزائن نفسية لاكتشاف الذات وبناء خطوة عملية أسبوعية مع دعم صوتي مسموع.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-[#D5A65A]/20 flex items-center justify-between text-xs font-bold text-[#D5A65A]">
-              <span>بدء جلسة هذا الأسبوع</span>
-              <span>←</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Emotional Mood Check-in & Daily Oasis: ركن الاطمئنان اليومي */}
-      <section className={`p-5 sm:p-6 border rounded-3xl space-y-4 shadow-md transition-all ${
-        isDark 
-          ? 'bg-[#121a15] border-white/10' 
-          : 'bg-white border-emerald-600/15 shadow-sm'
-      }`}>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-0.5">
-            <h2 className={`text-base sm:text-lg font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-              <span>إنت عامل إيه النهارده؟</span>
-              {justSavedCheckin && (
-                <span className="text-xs text-emerald-400 font-bold animate-fade-in flex items-center gap-1">
-                  <Check className="w-3.5 h-3.5" />
-                  تم الحفظ في رحلتك ✓
-                </span>
-              )}
-            </h2>
-            <p className={`text-xs ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-              تسجيل شعورك اليومي خطوة أولى لملاحظة نمط مشاعرك واحتياجاتك
-            </p>
-          </div>
-
-          {/* Quick Oasis Actions */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={onOpenDailyWisdom}
-              className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1.5 cursor-pointer ${
-                isDark 
-                  ? 'bg-white/5 hover:bg-white/10 border-white/10 text-emerald-300' 
-                  : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-800'
-              }`}
-            >
-              <span>حكمة اليوم 📜</span>
-            </button>
-            <button
-              onClick={onOpenSoundscapeStudio}
-              className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1.5 cursor-pointer ${
-                isDark 
-                  ? 'bg-white/5 hover:bg-white/10 border-white/10 text-emerald-300' 
-                  : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-800'
-              }`}
-            >
-              <span>أصوات الطبيعة 🎧</span>
-            </button>
-            <button
-              onClick={onOpenEmotionCompass}
-              className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1.5 cursor-pointer ${
-                isDark 
-                  ? 'bg-white/5 hover:bg-white/10 border-white/10 text-emerald-300' 
-                  : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-800'
-              }`}
-            >
-              <span>بوصلة المشاعر 🧭</span>
-            </button>
-          </div>
-        </div>
-
-        {/* 5 Calming Mood Emojis */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-          {MOOD_OPTIONS.map((mood) => {
-            const isSelected = selectedMood === mood.id;
-            return (
-              <button
-                key={mood.id}
-                onClick={() => handleMoodSelect(mood.id)}
-                className={`p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
-                  isSelected
-                    ? isDark
-                      ? 'border-emerald-500 bg-emerald-500/20 text-emerald-300 font-bold shadow-sm'
-                      : 'border-emerald-600 bg-emerald-100 text-emerald-900 font-bold shadow-sm ring-1 ring-emerald-500/30'
-                    : isDark
-                      ? 'border-white/10 hover:border-emerald-500/40 bg-[#0e1411] text-stone-300'
-                      : 'border-stone-200 hover:border-emerald-500/40 bg-stone-50 text-stone-700'
-                }`}
-              >
-                <span className="text-2xl">{mood.emoji}</span>
-                <span className="text-xs">{mood.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Tailored Tip Whisper if Mood Selected */}
-        {activeMoodObj && (
-          <div className={`p-3 rounded-xl border text-xs flex items-center justify-between gap-3 ${
-            isDark 
-              ? 'bg-[#0a100d] border-emerald-500/20 text-emerald-300/90' 
-              : 'bg-emerald-50/70 border-emerald-200 text-emerald-900'
-          }`}>
-            <span className="leading-relaxed">💡 {activeMoodObj.tip}</span>
-            <button 
-              onClick={() => onNavigate('journey')}
-              className="text-emerald-400 hover:underline font-bold shrink-0 text-[11px] cursor-pointer"
-            >
-              دفتر رحلتي ←
-            </button>
-          </div>
-        )}
-      </section>
-
-      {/* 3. The 6 Garden Gates: بوابات الجنينة الست الرئيسية */}
-      <section className="space-y-4">
-        <div className="border-b border-white/10 pb-3 flex items-center justify-between">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold mb-1">
-              <span>مسارات الجنينة المنظمة</span>
-            </div>
-            <h2 className={`text-lg sm:text-xl font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-              <span>بوابات «نسمة حياة» الست</span>
-            </h2>
-            <p className={`text-xs mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-              كل قسم يمثل ركناً مستقلاً هادئاً يمنحك تجربة متكاملة دون تشتيت
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          
-          {/* Gate 1: ابدأ من هنا */}
-          <div className={`p-5 border rounded-2xl transition-all shadow-md flex flex-col justify-between group ${
-            isDark ? 'bg-[#121a15] border-white/10 hover:border-emerald-500/50' : 'bg-white border-stone-200 hover:border-emerald-500/50'
-          }`}>
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-2xl p-2 rounded-xl bg-emerald-500/15 text-emerald-300">🌱</span>
-                <span className="text-xs px-2.5 py-0.5 rounded-md bg-white/5 text-emerald-400 font-bold">بوابة 01</span>
-              </div>
-              <h3 className={`text-base font-bold transition-colors group-hover:text-emerald-400 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                ابدأ من هنا — التعرف على المبادرة
-              </h3>
-              <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                دليلك الترحيبي الأول لفهم رسالة المبادرة، وميثاق الأمان، وكيفية الاستفادة من الموارد دون أي تعقيد.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-white/5">
-              <button
-                onClick={() => onNavigate('start')}
-                className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500 hover:text-black text-emerald-300 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>دخول الرواق</span>
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Gate 2: افهم نفسك */}
-          <div className={`p-5 border rounded-2xl transition-all shadow-md flex flex-col justify-between group ${
-            isDark ? 'bg-[#121a15] border-white/10 hover:border-amber-500/50' : 'bg-white border-stone-200 hover:border-amber-500/50'
-          }`}>
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-2xl p-2 rounded-xl bg-amber-500/15 text-amber-300">🧭</span>
-                <span className="text-xs px-2.5 py-0.5 rounded-md bg-white/5 text-amber-400 font-bold">بوابة 02</span>
-              </div>
-              <h3 className={`text-base font-bold transition-colors group-hover:text-amber-300 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                افهم نفسك — الوعي واستكشاف الذات
-              </h3>
-              <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                مقياس PHQ-9 المعتمد، الفحص الذاتي الأولي، بوصلة المشاعر، فحص مستوى الطاقة «بطاريتي كام؟»، وترجم مشاعرك.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-white/5">
-              <button
-                onClick={() => onNavigate('self-discovery')}
-                className="w-full py-2 bg-amber-500/10 hover:bg-amber-500 hover:text-black text-amber-300 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>دخول المحراب</span>
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Gate 3: خذ استراحة */}
-          <div className={`p-5 border rounded-2xl transition-all shadow-md flex flex-col justify-between group ${
-            isDark ? 'bg-[#121a15] border-white/10 hover:border-purple-500/50' : 'bg-white border-stone-200 hover:border-purple-500/50'
-          }`}>
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-2xl p-2 rounded-xl bg-purple-500/15 text-purple-300">🎈</span>
-                <span className="text-xs px-2.5 py-0.5 rounded-md bg-white/5 text-purple-400 font-bold">بوابة 03</span>
-              </div>
-              <h3 className={`text-base font-bold transition-colors group-hover:text-purple-300 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                خذ استراحة — الألعاب والأنشطة النفسية
-              </h3>
-              <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                لعبة جوايا حكاية، استوديو فكّر (CBT)، لعبة الحقيقة والحدوتة، فك العقدة، أصوات الطبيعة، وتفريغ الأفكار.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-white/5">
-              <button
-                onClick={() => onNavigate('games')}
-                className="w-full py-2 bg-purple-500/10 hover:bg-purple-500 hover:text-black text-purple-300 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>دخول الواحة</span>
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Gate 4: تعلّم وطبّق */}
-          <div className={`p-5 border rounded-2xl transition-all shadow-md flex flex-col justify-between group ${
-            isDark ? 'bg-[#121a15] border-white/10 hover:border-emerald-500/50' : 'bg-white border-stone-200 hover:border-emerald-500/50'
-          }`}>
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-2xl p-2 rounded-xl bg-emerald-500/15 text-emerald-300">📖</span>
-                <span className="text-xs px-2.5 py-0.5 rounded-md bg-white/5 text-emerald-400 font-bold">بوابة 04</span>
-              </div>
-              <h3 className={`text-base font-bold transition-colors group-hover:text-emerald-300 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                تعلّم وطبّق — المكتبة والمعرفة النفسية
-              </h3>
-              <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                مكتبة التثقيف النفسي (30 موضوعاً في 6 مسارات موثوقة)، كتيب نسمة حياة (12 فصلاً تفاعلياً)، والورش التطبيقية.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-white/5">
-              <button
-                onClick={() => onNavigate('explore')}
-                className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500 hover:text-black text-emerald-300 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>دخول البستان</span>
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Gate 5: مارس المهارات */}
-          <div className={`p-5 border rounded-2xl transition-all shadow-md flex flex-col justify-between group ${
-            isDark ? 'bg-[#121a15] border-white/10 hover:border-sky-500/50' : 'bg-white border-stone-200 hover:border-sky-500/50'
-          }`}>
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-2xl p-2 rounded-xl bg-sky-500/15 text-sky-300">🧘</span>
-                <span className="text-xs px-2.5 py-0.5 rounded-md bg-white/5 text-sky-400 font-bold">بوابة 05</span>
-              </div>
-              <h3 className={`text-base font-bold transition-colors group-hover:text-sky-300 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                مارس المهارات — التمارين والتطبيقات
-              </h3>
-              <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                تمارين التنفس 4-7-8، استوديو اليقظة والتجذير 5-4-3-2-1، مدونة الأفكار، خطة السلامة، وبناء الحدود.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-white/5">
-              <button
-                onClick={() => onNavigate('practice')}
-                className="w-full py-2 bg-sky-500/10 hover:bg-sky-500 hover:text-black text-sky-300 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>دخول الميدان</span>
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Gate 6: خطط المساندة */}
-          <div className={`p-5 border rounded-2xl transition-all shadow-md flex flex-col justify-between group ${
-            isDark ? 'bg-[#121a15] border-white/10 hover:border-rose-500/50' : 'bg-white border-stone-200 hover:border-rose-500/50'
-          }`}>
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-2xl p-2 rounded-xl bg-rose-500/15 text-rose-300">🛡️</span>
-                <span className="text-xs px-2.5 py-0.5 rounded-md bg-white/5 text-rose-400 font-bold">بوابة 06</span>
-              </div>
-              <h3 className={`text-base font-bold transition-colors group-hover:text-rose-300 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                عندما تحتاج مساعدة — خطط المساندة
-              </h3>
-              <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                شنطة الإسعاف النفسي (الحزن، الهلع، الاحتراق، الغضب)، محاكاة غرفة الطوارئ، وتذاكر الدعم السري.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-white/5">
-              <button
-                onClick={() => onNavigate('rescue')}
-                className="w-full py-2 bg-rose-500/10 hover:bg-rose-500 hover:text-black text-rose-300 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>دخول الملاذ</span>
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 4. Organized Perspective Shelves: أركان الجنينة المنظمة عبر تبويبات ذكية */}
-      <section className="space-y-5">
-        
-        {/* Shelf Tabs Control */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-3 flex-wrap gap-2">
-          <div>
-            <span className="text-xs text-emerald-400 font-bold block">استكشف بمستوى تركيز هادئ</span>
-            <h3 className={`text-base sm:text-lg font-bold ${isDark ? 'text-white' : 'text-stone-900'}`}>
-              أركان الجنينة التفاعلية
-            </h3>
-          </div>
-
-          <div className={`flex items-center p-1 rounded-xl border text-xs ${
-            isDark ? 'bg-[#0e1411] border-white/10' : 'bg-stone-100 border-stone-200'
-          }`}>
-            <button
-              onClick={() => setActiveShelf('featured')}
-              className={`px-3 py-1.5 rounded-lg transition-all font-semibold cursor-pointer ${
-                activeShelf === 'featured'
-                  ? 'bg-emerald-500 text-black font-bold shadow-xs'
-                  : isDark ? 'text-stone-400 hover:text-white' : 'text-stone-600 hover:text-stone-900'
-              }`}
-            >
-              ⭐ الإصدارات والألعاب الكبرى
-            </button>
-            <button
-              onClick={() => setActiveShelf('needs')}
-              className={`px-3 py-1.5 rounded-lg transition-all font-semibold cursor-pointer ${
-                activeShelf === 'needs'
-                  ? 'bg-emerald-500 text-black font-bold shadow-xs'
-                  : isDark ? 'text-stone-400 hover:text-white' : 'text-stone-600 hover:text-stone-900'
-              }`}
-            >
-              🧭 حسب احتياجك اللحظي
-            </button>
-            <button
-              onClick={() => setActiveShelf('readings')}
-              className={`px-3 py-1.5 rounded-lg transition-all font-semibold cursor-pointer ${
-                activeShelf === 'readings'
-                  ? 'bg-emerald-500 text-black font-bold shadow-xs'
-                  : isDark ? 'text-stone-400 hover:text-white' : 'text-stone-600 hover:text-stone-900'
-              }`}
-            >
-              🌱 قراءات وتأملات هادئة
-            </button>
-          </div>
-        </div>
-
-        {/* Shelf 1: Major Releases & Flagship Tools */}
-        {activeShelf === 'featured' && (
-          <div className="space-y-5 animate-fade-in">
-            {/* Booklet Banner */}
-            <div className={`border rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-md ${
-              isDark 
-                ? 'bg-gradient-to-r from-[#1b281f] via-[#141f18] to-[#0e1612] border-emerald-500/30' 
-                : 'bg-gradient-to-r from-[#eef7f1] via-[#e6f3eb] to-[#dff0e5] border-emerald-600/20 shadow-xs'
-            }`}>
-              <div className="space-y-2 max-w-xl">
-                <div className="inline-flex items-center gap-2 text-xs text-emerald-400 font-bold">
-                  <BookOpen className="w-4 h-4" />
-                  <span>إصدار مبادرة نسمة حياة التفاعلي</span>
-                </div>
-                <h3 className={`text-lg sm:text-xl font-bold ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                  كتيب «نسمة حياة» · دليل مبسط للصحة النفسية
-                </h3>
-                <p className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-700'}`}>
-                  «كثيرون يعيشون الحياة... وقليلون يستمتعون بها» — 12 فصلاً صغيراً تفاعلياً يساعدك على فهم ما يحدث لك، واكتشاف العلامات المبكرة، ومتى تحتاج إلى مختص.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-2.5 shrink-0">
-                <button
-                  onClick={onOpenBooklet}
-                  className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-1.5 cursor-pointer"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  <span>تصفح الكتيب كاملاً 📖</span>
-                </button>
-                <button
-                  onClick={onOpenPersonalPlan}
-                  className={`px-4 py-2.5 border rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
-                    isDark 
-                      ? 'bg-white/5 hover:bg-white/10 text-stone-200 border-white/10' 
-                      : 'bg-white hover:bg-stone-50 text-stone-800 border-emerald-600/20 shadow-xs'
-                  }`}
-                >
-                  <FileText className="w-4 h-4 text-emerald-400" />
-                  <span>خطتي الخاصة 📑</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Flagship Duo: Feker & Gwaya Hekaya */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              
-              {/* Feker App Highlight */}
-              <div className={`p-6 border rounded-3xl space-y-3 shadow-md flex flex-col justify-between ${
-                isDark 
-                  ? 'bg-gradient-to-br from-[#192416] to-[#10180e] border-lime-500/30' 
-                  : 'bg-gradient-to-br from-[#f2f8ed] to-[#e7f3dd] border-lime-600/25'
-              }`}>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-lime-400/20 text-lime-400 font-bold">
-                      💡 استوديو تفكيك الأفكار
-                    </span>
-                  </div>
-                  <h4 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                    تطبيق «فكّر» — المرونة العقلية وتصحيح التفكير
-                  </h4>
-                  <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-700'}`}>
-                    فكك أفكارك السامة التلقائية واكشف أفخاخ التفكير، والعب تحدي «حقيقة أم حكاية»، وصغ بدائل منطقية متزنة.
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => onOpenFeker ? onOpenFeker() : onNavigate('feker')}
-                  className="mt-4 py-2.5 px-4 bg-lime-400 hover:bg-lime-300 text-black text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-2 self-start cursor-pointer shadow-xs"
-                >
-                  <Brain className="w-4 h-4" />
-                  <span>فتح تطبيق فكّر 💡</span>
-                </button>
-              </div>
-
-              {/* Gwaya Hekaya Highlight */}
-              <div className={`p-6 border rounded-3xl space-y-3 shadow-md flex flex-col justify-between ${
-                isDark 
-                  ? 'bg-gradient-to-br from-[#1c2921] to-[#121c16] border-emerald-500/30' 
-                  : 'bg-gradient-to-br from-[#eaf5ee] to-[#ddede2] border-emerald-600/25'
-              }`}>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-400 font-bold">
-                      🪄 لعبة الاستكشاف الذاتي الكبرى
-                    </span>
-                  </div>
-                  <h4 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                    «جوايا حكاية» — العالم الذي يشرح نفسه
-                  </h4>
-                  <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-700'}`}>
-                    ٤ فصول واقعية و٦ محطات لاستكشاف ما يدور بداخلك وفصل الحقيقة الملموسة عن القصة القديمة، مع بطاقة الإنجاز.
-                  </p>
-                </div>
-
-                <button
-                  onClick={onOpenGwayaHekaya}
-                  className="mt-4 py-2.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-extrabold rounded-xl transition-all flex items-center justify-center gap-2 self-start cursor-pointer shadow-xs"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  <span>بدء اللعبة التفاعلية ✨</span>
-                </button>
-              </div>
-
-            </div>
-
-            {/* 🎮 4 New Creative Psychological Games Mini-Row */}
-            <div className="pt-2">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-black">ألعاب نفسية تفاعلية جديدة 🎈</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold">
-                    إبداعات حصرية
-                  </span>
-                </div>
-                <button
-                  onClick={() => onNavigate('games')}
-                  className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 cursor-pointer"
-                >
-                  <span>عرض الكل في قسم الألعاب</span>
-                  <span>←</span>
-                </button>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                {/* 1. فرقعة الفقاعات النفسية */}
-                <button
-                  onClick={onOpenInnerBurdens || (() => onNavigate('games'))}
-                  className={`p-3 rounded-2xl border text-right transition-all cursor-pointer flex flex-col justify-between ${
-                    isDark 
-                      ? 'bg-gradient-to-br from-[#16251D] to-[#0E1712] border-emerald-500/30 hover:border-emerald-400' 
-                      : 'bg-white border-emerald-600/20 hover:border-emerald-500 shadow-sm'
-                  }`}
-                >
-                  <span className="text-2xl mb-1.5">🫧</span>
-                  <div className="space-y-0.5">
-                    <span className="text-xs font-black block">فرقعة الأعباء</span>
-                    <span className="text-[10px] text-stone-400 block line-clamp-1">تفريغ بصري ولمسي لحظي</span>
-                  </div>
-                </button>
-
-                {/* 2. بناء الجسر العاطفي */}
-                <button
-                  onClick={onOpenEmotionalBridge || (() => onNavigate('games'))}
-                  className={`p-3 rounded-2xl border text-right transition-all cursor-pointer flex flex-col justify-between ${
-                    isDark 
-                      ? 'bg-gradient-to-br from-[#201D17] to-[#14120E] border-amber-500/30 hover:border-amber-400' 
-                      : 'bg-white border-amber-600/20 hover:border-amber-500 shadow-sm'
-                  }`}
-                >
-                  <span className="text-2xl mb-1.5">🌉</span>
-                  <div className="space-y-0.5">
-                    <span className="text-xs font-black block">الجسر العاطفي</span>
-                    <span className="text-[10px] text-stone-400 block line-clamp-1">حل الخلافات ووضع الحدود</span>
-                  </div>
-                </button>
-
-                {/* 3. حديقة الامتنان */}
-                <button
-                  onClick={onOpenGratitudeGarden || (() => onNavigate('games'))}
-                  className={`p-3 rounded-2xl border text-right transition-all cursor-pointer flex flex-col justify-between ${
-                    isDark 
-                      ? 'bg-gradient-to-br from-[#16231C] to-[#0E1712] border-teal-500/30 hover:border-teal-400' 
-                      : 'bg-white border-teal-600/20 hover:border-teal-500 shadow-sm'
-                  }`}
-                >
-                  <span className="text-2xl mb-1.5">🌸</span>
-                  <div className="space-y-0.5">
-                    <span className="text-xs font-black block">حديقة الامتنان</span>
-                    <span className="text-[10px] text-stone-400 block line-clamp-1">ازرع نبتة لكل نعمة</span>
-                  </div>
-                </button>
-
-                {/* 4. رحلة البوصلة الداخلية */}
-                <button
-                  onClick={onOpenInnerCompass || (() => onNavigate('games'))}
-                  className={`p-3 rounded-2xl border text-right transition-all cursor-pointer flex flex-col justify-between ${
-                    isDark 
-                      ? 'bg-gradient-to-br from-[#132123] to-[#0C1517] border-cyan-500/30 hover:border-cyan-400' 
-                      : 'bg-white border-cyan-600/20 hover:border-cyan-500 shadow-sm'
-                  }`}
-                >
-                  <span className="text-2xl mb-1.5">🧭</span>
-                  <div className="space-y-0.5">
-                    <span className="text-xs font-black block">البوصلة الداخلية</span>
-                    <span className="text-[10px] text-stone-400 block line-clamp-1">اكتشاف اتجاهك النفسي اليوم</span>
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Shelf 2: Need-Based Paths */}
-        {activeShelf === 'needs' && (
-          <div className={`p-5 sm:p-6 border rounded-3xl space-y-4 shadow-md animate-fade-in ${
-            isDark ? 'bg-[#121a15] border-emerald-500/20' : 'bg-white border-emerald-600/15'
-          }`}>
-            <div className="border-b border-white/10 pb-3">
-              <h4 className={`text-base font-bold ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                ما الذي يصف ما تمر به في هذه اللحظة؟
-              </h4>
-              <p className={`text-xs ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                اختر حالتك لنقترح عليك الخطوة الأنسب فوراً دون حيرة
-              </p>
-            </div>
-
-            {/* State Badges */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-              {NEED_BASED_PATHS.map((item) => {
-                const isSelected = selectedNeedId === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setSelectedNeedId(item.id)}
-                    className={`p-2.5 rounded-xl border text-right transition-all cursor-pointer flex items-center gap-2 ${
-                      isSelected
-                        ? isDark
-                          ? 'bg-emerald-950/60 border-emerald-500 text-white shadow-sm ring-1 ring-emerald-500/30'
-                          : 'bg-emerald-100 border-emerald-600 text-emerald-900 font-bold shadow-xs'
-                        : isDark
-                          ? 'bg-[#0a100d] border-white/10 hover:border-white/20 text-stone-300'
-                          : 'bg-stone-50 border-stone-200 hover:border-stone-300 text-stone-700'
-                    }`}
-                  >
-                    <span className="text-xl">{item.emoji}</span>
-                    <span className={`text-xs font-bold ${isSelected ? 'text-emerald-400' : ''}`}>
-                      {item.title}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Active Need Tailored Guidance Card */}
-            {activeNeed && (
-              <div className={`p-4 border rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
-                isDark ? 'bg-[#0a100d] border-emerald-500/30' : 'bg-emerald-50/50 border-emerald-200'
-              }`}>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
-                    <span>{activeNeed.emoji}</span>
-                    <span>المسار الموصى به لـ: {activeNeed.title}</span>
-                  </div>
-                  <p className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-700'}`}>
-                    {activeNeed.desc}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2 shrink-0 flex-wrap">
-                  <button
-                    onClick={activeNeed.action}
-                    className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <span>{activeNeed.actionLabel}</span>
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={activeNeed.secondaryAction}
-                    className={`px-3 py-2 border text-xs font-semibold rounded-xl transition-colors cursor-pointer ${
-                      isDark 
-                        ? 'bg-white/5 hover:bg-white/10 border-white/10 text-stone-300' 
-                        : 'bg-white hover:bg-stone-100 border-stone-200 text-stone-800'
-                    }`}
-                  >
-                    <span>{activeNeed.secondaryActionLabel}</span>
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Shelf 3: Suggested Readings */}
-        {activeShelf === 'readings' && (
-          <div className="space-y-4 animate-fade-in">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {suggestedContent.map((item) => {
-                const isFav = savedFavorites.includes(item.id);
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => onOpenContent(item.id)}
-                    className={`cursor-pointer border rounded-2xl p-4 transition-all shadow-sm flex flex-col justify-between group ${
-                      isDark 
-                        ? 'bg-[#121a15] hover:bg-[#18241d] border-white/10 hover:border-emerald-500/40' 
-                        : 'bg-white hover:bg-emerald-50/30 border-stone-200 hover:border-emerald-500/40'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex items-center justify-between text-[11px] mb-2">
-                        <span className="font-bold text-emerald-400">
-                          {item.subCategory || item.category}
-                        </span>
-                        <button
-                          onClick={(e) => handleToggleFavorite(e, item.id)}
-                          className={`p-1 rounded-full transition-colors cursor-pointer ${
-                            isFav ? 'text-rose-500' : 'text-stone-500 hover:text-stone-300'
-                          }`}
-                          aria-label="حفظ في المفضلة"
-                        >
-                          <Bookmark className={`w-3.5 h-3.5 ${isFav ? 'fill-current' : ''}`} />
-                        </button>
-                      </div>
-
-                      <h4 className={`font-bold text-sm group-hover:text-emerald-400 transition-colors line-clamp-2 leading-snug mb-1.5 ${
-                        isDark ? 'text-white' : 'text-stone-900'
-                      }`}>
-                        {item.title}
-                      </h4>
-
-                      <p className={`text-xs line-clamp-2 leading-relaxed ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                        {item.description}
-                      </p>
-                    </div>
-
-                    <div className="mt-4 pt-2.5 border-t border-white/5 flex items-center justify-between text-[11px] text-stone-400">
-                      <span>{item.duration}</span>
-                      {item.contentType === 'audio' ? (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onOpenAudioModal(item.title, item.category, 5);
-                          }}
-                          className="inline-flex items-center gap-1 text-emerald-400 font-bold hover:underline cursor-pointer"
-                        >
-                          <Volume2 className="w-3.5 h-3.5" />
-                          <span>استمع الآن</span>
-                        </button>
-                      ) : (
-                        <span className="text-emerald-400 font-bold group-hover:underline">
-                          قراءة المقال ←
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="text-center pt-2">
-              <button
-                onClick={() => onNavigate('explore')}
-                className={`text-xs font-bold text-emerald-400 hover:underline inline-flex items-center gap-1 cursor-pointer`}
-              >
-                <span>تصفح مكتبة المقالات والجلسات الصوتية كاملة</span>
-                <ArrowLeft className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        )}
-
-      </section>
-
-      {/* 5. Humane Footer & Dignified Safety Haven: خاتمة الجنينة وملاذ الأمان */}
-      <footer className="border-t border-white/10 pt-8 pb-4 text-stone-400 space-y-6 text-right">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
-          
-          {/* Col 1: Brand & PWA */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2.5">
-              <img src="/logo.jpg" alt="شعار نسمة حياة" className="w-8 h-8 rounded-xl object-cover" />
-              <span className={`font-bold text-sm ${isDark ? 'text-white' : 'text-stone-900'}`}>نسمة حياة</span>
-            </div>
-            <p className="text-stone-400 leading-relaxed text-[11px]">
-              مبادرة عربية إنسانية لنشر الوعي بالصحة النفسية ومساندة الأفراد في رحلة استكشاف الذات والتعافي بكرامة وأمان.
-            </p>
-            <div className="pt-1">
-              <PWAInstallButton variant="compact" />
-            </div>
-          </div>
-
-          {/* Col 2: Garden Pathways Navigation */}
-          <div className="space-y-2">
-            <span className={`font-bold block text-xs ${isDark ? 'text-white' : 'text-stone-900'}`}>أقسام الجنينة ومساراتها</span>
-            <div className="grid grid-cols-2 gap-1.5 text-[11px]">
-              <button onClick={() => onNavigate('start')} className="text-right hover:text-emerald-400 cursor-pointer">ابدأ من هنا</button>
-              <button onClick={() => onNavigate('self-discovery')} className="text-right hover:text-emerald-400 cursor-pointer">افهم نفسك</button>
-              <button onClick={() => onNavigate('games')} className="text-right hover:text-emerald-400 cursor-pointer">خذ استراحة</button>
-              <button onClick={() => onNavigate('explore')} className="text-right hover:text-emerald-400 cursor-pointer">تعلّم وطبّق</button>
-              <button onClick={() => onNavigate('practice')} className="text-right hover:text-emerald-400 cursor-pointer">مارس المهارات</button>
-              <button onClick={() => onNavigate('rescue')} className="text-right hover:text-emerald-400 cursor-pointer">خطط المساندة</button>
-              <button onClick={() => onNavigate('support')} className="text-right hover:text-emerald-400 cursor-pointer">اطلب الدعم</button>
-              <button onClick={() => onNavigate('profile')} className="text-right hover:text-emerald-400 cursor-pointer">حسابي والأسئلة</button>
-            </div>
-          </div>
-
-          {/* Col 3: Emergency & Urgent Care */}
-          <div className="space-y-2">
-            <span className={`font-bold block text-xs ${isDark ? 'text-white' : 'text-stone-900'}`}>طوارئ ومساندة عاجلة</span>
-            <p className="text-[11px] leading-relaxed text-stone-400">
-              إن كنت تمر بأزمة حادة أو أفكار مؤذية، لا تبقَ وحدك. تواصل فوراً مع خطوط المساعدة المجانية الرسمية:
-            </p>
-            <button
-              onClick={onOpenEmergencyHelp}
-              className="py-1.5 px-3 bg-rose-500/15 border border-rose-500/30 text-rose-300 rounded-lg text-xs font-bold hover:bg-rose-500/25 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
-            >
-              <PhoneCall className="w-3.5 h-3.5" />
-              <span>أرقام الطوارئ والمساعدة الفورية</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-stone-500">
-          <div>
-            جميع الحقوق محفوظة © {new Date().getFullYear()} مبادرة «نسمة حياة» للصحة النفسية.
-          </div>
-          <div className="text-stone-400">
-            المحتوى للتوعية والمساندة الذاتية ولا يغني عن التشخيص أو العلاج المتخصص.
-          </div>
-        </div>
-      </footer>
-
+      {/* Footer PWA Install */}
+      <div className="flex justify-center pt-4">
+        <PWAInstallButton />
+      </div>
     </div>
   );
 };
