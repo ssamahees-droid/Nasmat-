@@ -15,6 +15,9 @@ import {
 } from 'lucide-react';
 import { storage, PersonalNote } from '../services/storage';
 import { DailyCheckin, MoodValue, AssessmentRecord, WellnessHabit, HabitCategory } from '../types';
+import { RelaxationCalendarSection } from '../components/RelaxationCalendarSection';
+import { MoodJourneyChartSection } from '../components/MoodJourneyChartSection';
+import { MoodReportGenerator } from '../components/MoodReportGenerator';
 
 interface JourneyScreenProps {
   onOpenAssessment: () => void;
@@ -22,6 +25,9 @@ interface JourneyScreenProps {
   onOpenPersonalPlan?: () => void;
   onOpenThoughtJournal?: () => void;
   onOpenMindfulnessStudio?: () => void;
+  onOpenVoiceJournal?: () => void;
+  onNavigateToBreathe?: () => void;
+  onNavigateToListen?: () => void;
 }
 
 const MOOD_MAP: Record<MoodValue, { label: string; emoji: string; color: string }> = {
@@ -37,7 +43,10 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
   onNavigateToContent,
   onOpenPersonalPlan,
   onOpenThoughtJournal,
-  onOpenMindfulnessStudio
+  onOpenMindfulnessStudio,
+  onOpenVoiceJournal,
+  onNavigateToBreathe,
+  onNavigateToListen
 }) => {
   const [checkins, setCheckins] = useState<DailyCheckin[]>(storage.getDailyCheckins());
   const [notes, setNotes] = useState<PersonalNote[]>(storage.getNotes());
@@ -208,6 +217,54 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
           </div>
         )}
       </div>
+
+      {/* المذكرة الصوتية الواعية */}
+      {onOpenVoiceJournal && (
+        <div
+          onClick={onOpenVoiceJournal}
+          className="cursor-pointer p-4 bg-gradient-to-r from-rose-50 via-white to-[#F7F3E9] border border-rose-500/30 hover:border-rose-600 rounded-3xl transition-all shadow-xs flex items-center justify-between group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+              🎙️
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <h3 className="font-extrabold text-xs sm:text-sm text-[#26332D]">
+                  المذكرة الصوتية الواعية (تسجيل كلام إلى نص)
+                </h3>
+                <span className="text-[10px] bg-rose-500/15 text-rose-800 font-bold px-2 py-0.5 rounded-full">
+                  جديد 🎙️
+                </span>
+              </div>
+              <p className="text-xs text-[#52645B] mt-0.5">
+                سجل مشاعرك بصوتك، وسيقوم النظام بتحويله وحفظه في مذكراتك فورياً
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-bold text-rose-700 group-hover:-translate-x-1 transition-transform">
+            ابدأ التسجيل 👈
+          </span>
+        </div>
+      )}
+
+      {/* الرسوم البيانية لتطور الحالة المزاجية والتقدم النفسي بواسطة recharts */}
+      <MoodJourneyChartSection
+        onOpenThoughtJournal={onOpenThoughtJournal}
+        onOpenMindfulnessStudio={onOpenMindfulnessStudio}
+      />
+
+      {/* المولد الذكي للتقرير الأسبوعي */}
+      <MoodReportGenerator
+        onOpenThoughtJournal={onOpenThoughtJournal}
+        onOpenMindfulnessStudio={onOpenMindfulnessStudio}
+      />
+
+      {/* تقويم الاسترخاء والتذكيرات اليومية */}
+      <RelaxationCalendarSection
+        onNavigateToBreathe={onNavigateToBreathe}
+        onNavigateToListen={onNavigateToListen}
+      />
 
       {/* Wellness Habits & Weekly Consistency Tracker */}
       <section className="bg-gradient-to-br from-[#F7F3E9] via-white to-emerald-50/40 border border-[#E6E8D8] rounded-3xl p-5 shadow-xs space-y-4">

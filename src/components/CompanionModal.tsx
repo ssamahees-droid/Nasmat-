@@ -1186,6 +1186,31 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
               </span>
             </div>
 
+            {/* Inner Safety Space Recommendation */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-teal-500/15 to-[#D98F83]/10 border border-emerald-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+              <div className="flex items-center gap-2.5">
+                <span className="text-2xl">🛡️</span>
+                <div>
+                  <span className="font-bold text-xs sm:text-sm text-emerald-800 dark:text-emerald-200 block">
+                    ترشيح رفيقي: «مساحة أمانك الداخلي»
+                  </span>
+                  <span className="text-[11px] text-stone-600 dark:text-stone-300 block">
+                    تمارين متدرجة لاحتواء الذات والوعي بالمشاعر في قسم «اسمع نفسك».
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onNavigate('listen-to-yourself');
+                }}
+                className="px-3.5 py-1.5 bg-[#174C3C] hover:bg-[#123C30] dark:bg-[#A9C5A0] dark:hover:bg-[#BFD9B6] text-white dark:text-[#0D1914] text-xs font-bold rounded-xl transition-all cursor-pointer shrink-0 self-stretch sm:self-auto text-center"
+              >
+                استكشف المساحة
+              </button>
+            </div>
+
             {/* 6 Guided Self-Reflection Journeys */}
             <div className="space-y-3">
               <h4 className="font-bold text-xs sm:text-sm text-stone-800 dark:text-stone-200 flex items-center gap-2">

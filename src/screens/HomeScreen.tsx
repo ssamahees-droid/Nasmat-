@@ -234,6 +234,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       bgHex: '#047857', // Forest Green - Weekly Reflection
       textColor: 'text-emerald-100',
       action: () => onNavigate('weekly')
+    },
+    {
+      id: 'listen_safety',
+      title: 'اسمع نفسك وأمانك',
+      desc: 'مساحة أمانك الداخلي، احتواء الذات، والحوار المتزن',
+      emoji: '🛡️',
+      bgHex: '#0f766e', // Deep Teal - Inner Safety & Containment
+      textColor: 'text-teal-100',
+      action: () => onNavigate('listen-to-yourself')
     }
   ];
 

@@ -42,6 +42,7 @@ import { HealingJourneyModal } from './components/HealingJourneyModal';
 // Mindful Thoughts Journal & Mindfulness Studio
 import { ThoughtJournalModal } from './components/ThoughtJournalModal';
 import { MindfulnessStudioModal } from './components/MindfulnessStudioModal';
+import { VoiceJournalModal } from './components/VoiceJournalModal';
 
 // Fun, Jokes & Mind Games Hub
 import { FunAndGamesHubModal } from './components/FunAndGamesHubModal';
@@ -253,6 +254,7 @@ export default function App() {
   // Mindful Thoughts Journal & Mindfulness Studio state
   const [isThoughtJournalOpen, setIsThoughtJournalOpen] = useState(false);
   const [isMindfulnessStudioOpen, setIsMindfulnessStudioOpen] = useState(false);
+  const [isVoiceJournalOpen, setIsVoiceJournalOpen] = useState(false);
 
   // Fun, Jokes & Mind Games state
   const [funAndGamesState, setFunAndGamesState] = useState<{
@@ -663,6 +665,9 @@ export default function App() {
             onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
             onOpenThoughtJournal={() => setIsThoughtJournalOpen(true)}
             onOpenMindfulnessStudio={() => setIsMindfulnessStudioOpen(true)}
+            onOpenVoiceJournal={() => setIsVoiceJournalOpen(true)}
+            onNavigateToBreathe={() => handleNavigate('breathe')}
+            onNavigateToListen={() => handleNavigate('listen')}
           />
         )}
 
@@ -963,6 +968,11 @@ export default function App() {
       <DailyWisdomModal
         isOpen={isDailyWisdomOpen}
         onClose={() => setIsDailyWisdomOpen(false)}
+      />
+
+      <VoiceJournalModal
+        isOpen={isVoiceJournalOpen}
+        onClose={() => setIsVoiceJournalOpen(false)}
       />
 
       {/* 🌿 شخصية نسمة حياة — الحضور التفاعلي الدائم عبر كامل أقسام المنصة */}

@@ -275,3 +275,40 @@ export interface PsychoeducationTrack {
   topicsCount: number;
 }
 
+// ==========================================
+// Inner Safety Space Types (مساحة أمانك الداخلي)
+// ==========================================
+export interface InnerSafetySummary {
+  id: string;
+  userId: string;
+  createdAt: string;
+  identifiedEmotion: string;
+  emotionTrigger?: string;
+  underlyingThought?: string;
+  identifiedNeed?: string;
+  compassionateRephrase?: string;
+  observationFocus?: string;
+  actionStep: string;
+  actionStepNotes?: string;
+  reviewDate?: string;
+}
+
+// ==========================================
+// Scheduled Relaxation Calendar Types (تقويم الاسترخاء)
+// ==========================================
+export interface ScheduledRelaxationSession {
+  id: string;
+  userId: string;
+  exerciseId: string;
+  exerciseTitle: string;
+  exerciseIcon: string;
+  durationMinutes: number;
+  date: string; // YYYY-MM-DD
+  time: string; // HH:mm
+  reminderEnabled: boolean;
+  repeatDaily?: boolean;
+  completed: boolean;
+  notes?: string;
+  createdAt: string;
+}
+

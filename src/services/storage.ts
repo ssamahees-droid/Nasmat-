@@ -13,7 +13,9 @@ import {
   ReviewStatus,
   SupportStatus,
   MoodValue,
-  WellnessHabit
+  WellnessHabit,
+  InnerSafetySummary,
+  ScheduledRelaxationSession
 } from '../types';
 import { 
   INITIAL_CATEGORIES, 
@@ -43,7 +45,10 @@ const KEYS = {
   SLEEP_LOGS: 'nesmat_sleep_logs_v1',
   THOUGHT_POSTS: 'nesmat_thought_posts_v1',
   MINDFULNESS_SESSIONS: 'nesmat_mindfulness_sessions_v1',
-  GRATITUDE_GARDEN: 'nesmat_gratitude_garden_v1'
+  GRATITUDE_GARDEN: 'nesmat_gratitude_garden_v1',
+  INNER_SAFETY_SUMMARIES: 'nesmat_inner_safety_summaries_v1',
+  SCHEDULED_RELAXATION: 'nesmat_scheduled_relaxation_v1',
+  RELAXATION_REMINDERS_CONFIG: 'nesmat_relaxation_reminders_config_v1'
 };
 
 export interface PersonalNote {
@@ -1018,6 +1023,143 @@ class StorageService {
     localStorage.setItem(KEYS.GRATITUDE_GARDEN, JSON.stringify(plants));
   }
 
+  // --- Inner Safety Space (مساحة أمانك الداخلي) ---
+  getInnerSafetySummaries(): InnerSafetySummary[] {
+    try {
+      const data = localStorage.getItem(KEYS.INNER_SAFETY_SUMMARIES);
+      const user = this.getUser();
+      if (!data) return [];
+      const parsed: InnerSafetySummary[] = JSON.parse(data);
+      // Filter by current user ID to prevent cross-user access
+      return parsed.filter(s => s.userId === user.id);
+    } catch {
+      return [];
+    }
+  }
+
+  addInnerSafetySummary(summaryData: Omit<InnerSafetySummary, 'id' | 'createdAt' | 'userId'>): InnerSafetySummary {
+    const list = this.getAllInnerSafetySummariesRaw();
+    const user = this.getUser();
+    const newSummary: InnerSafetySummary = {
+      ...summaryData,
+      id: `in_safety_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      userId: user.id,
+      createdAt: new Date().toISOString()
+    };
+    list.unshift(newSummary);
+    localStorage.setItem(KEYS.INNER_SAFETY_SUMMARIES, JSON.stringify(list));
+    return newSummary;
+  }
+
+  deleteInnerSafetySummary(id: string): void {
+    const list = this.getAllInnerSafetySummariesRaw();
+    const user = this.getUser();
+    const filtered = list.filter(s => !(s.id === id && s.userId === user.id));
+    localStorage.setItem(KEYS.INNER_SAFETY_SUMMARIES, JSON.stringify(filtered));
+  }
+
+  private getAllInnerSafetySummariesRaw(): InnerSafetySummary[] {
+    try {
+      const data = localStorage.getItem(KEYS.INNER_SAFETY_SUMMARIES);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  // --- Scheduled Relaxation Calendar (تقويم الاسترخاء والتذكيرات) ---
+  getScheduledRelaxationSessions(): ScheduledRelaxationSession[] {
+    try {
+      const raw = localStorage.getItem(KEYS.SCHEDULED_RELAXATION);
+      const user = this.getUser();
+      if (!raw) return [];
+      const parsed: ScheduledRelaxationSession[] = JSON.parse(raw);
+      return parsed.filter(s => s.userId === user.id);
+    } catch {
+      return [];
+    }
+  }
+
+  addScheduledRelaxationSession(data: Omit<ScheduledRelaxationSession, 'id' | 'createdAt' | 'userId' | 'completed'>): ScheduledRelaxationSession {
+    const list = this.getAllScheduledRelaxationRaw();
+    const user = this.getUser();
+    const newSession: ScheduledRelaxationSession = {
+      ...data,
+      id: `relax_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      userId: user.id,
+      completed: false,
+      createdAt: new Date().toISOString()
+    };
+    list.unshift(newSession);
+    localStorage.setItem(KEYS.SCHEDULED_RELAXATION, JSON.stringify(list));
+
+    // If reminder enabled, add a notification item
+    if (data.reminderEnabled) {
+      this.addNotification({
+        title: `تذكير استرخاء: ${data.exerciseTitle}`,
+        body: `حان موعد تمرينك المفضل اليوم (${data.exerciseTitle}) في الساعة ${data.time}. خصص لنفسك بضع دقائق هادئة 🌿.`,
+        type: 'reminder'
+      });
+    }
+
+    return newSession;
+  }
+
+  toggleScheduledRelaxationCompletion(id: string): ScheduledRelaxationSession | null {
+    const list = this.getAllScheduledRelaxationRaw();
+    const user = this.getUser();
+    const session = list.find(s => s.id === id && s.userId === user.id);
+    if (!session) return null;
+    session.completed = !session.completed;
+    localStorage.setItem(KEYS.SCHEDULED_RELAXATION, JSON.stringify(list));
+    return session;
+  }
+
+  deleteScheduledRelaxationSession(id: string): void {
+    const list = this.getAllScheduledRelaxationRaw();
+    const user = this.getUser();
+    const filtered = list.filter(s => !(s.id === id && s.userId === user.id));
+    localStorage.setItem(KEYS.SCHEDULED_RELAXATION, JSON.stringify(filtered));
+  }
+
+  getRelaxationReminderSettings(): { enabled: boolean; preferredTime: string } {
+    try {
+      const raw = localStorage.getItem(KEYS.RELAXATION_REMINDERS_CONFIG);
+      if (!raw) return { enabled: true, preferredTime: '21:00' };
+      return JSON.parse(raw);
+    } catch {
+      return { enabled: true, preferredTime: '21:00' };
+    }
+  }
+
+  setRelaxationReminderSettings(settings: { enabled: boolean; preferredTime: string }): void {
+    localStorage.setItem(KEYS.RELAXATION_REMINDERS_CONFIG, JSON.stringify(settings));
+  }
+
+  addNotification(notif: Omit<NotificationItem, 'id' | 'createdAt' | 'read' | 'userId'>): NotificationItem {
+    const notifs = this.getNotifications();
+    const user = this.getUser();
+    const newItem: NotificationItem = {
+      ...notif,
+      id: `notif_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      userId: user.id,
+      read: false,
+      createdAt: new Date().toISOString()
+    };
+    notifs.unshift(newItem);
+    localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(notifs));
+    return newItem;
+  }
+
+  private getAllScheduledRelaxationRaw(): ScheduledRelaxationSession[] {
+    try {
+      const raw = localStorage.getItem(KEYS.SCHEDULED_RELAXATION);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
   // --- Privacy & Egyptian Data Law 151 / 2020 Compliance ---
   exportAllUserData(): string {
     const data = {
@@ -1029,7 +1171,9 @@ class StorageService {
       notes: this.getNotes(),
       assessments: this.getAssessments(),
       supportRequests: this.getSupportRequests().filter(r => r.userId === this.getUser().id),
-      favorites: this.getFavorites()
+      favorites: this.getFavorites(),
+      innerSafetySummaries: this.getInnerSafetySummaries(),
+      scheduledRelaxation: this.getScheduledRelaxationSessions()
     };
     return JSON.stringify(data, null, 2);
   }
@@ -1042,6 +1186,9 @@ class StorageService {
     localStorage.removeItem(KEYS.ASSESSMENTS);
     localStorage.removeItem(KEYS.FAVORITES);
     localStorage.removeItem(KEYS.ONBOARDED);
+    localStorage.removeItem(KEYS.INNER_SAFETY_SUMMARIES);
+    localStorage.removeItem(KEYS.SCHEDULED_RELAXATION);
+    localStorage.removeItem(KEYS.RELAXATION_REMINDERS_CONFIG);
   }
 
   resetAllToFactoryDemo(): void {

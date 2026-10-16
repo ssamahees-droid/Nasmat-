@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Heart, 
   Brain, 
@@ -8,10 +8,17 @@ import {
   ArrowLeft, 
   CheckCircle2, 
   Smile,
-  BookOpen
+  BookOpen,
+  Trash2,
+  Calendar,
+  Lock,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { storage } from '../services/storage';
 import { TextAudioPlayer } from '../components/TextAudioPlayer';
+import { InnerSafetySpaceModal } from '../components/InnerSafetySpaceModal';
+import { InnerSafetySummary } from '../types';
 
 interface ListenToYourselfScreenProps {
   onNavigate: (tab: string) => void;
@@ -23,10 +30,23 @@ export const ListenToYourselfScreen: React.FC<ListenToYourselfScreenProps> = ({
 }) => {
   const [activePerspective, setActivePerspective] = useState<'child' | 'adult' | 'father'>('adult');
   const [userInput, setUserInput] = useState('');
+  const [isInnerSafetyModalOpen, setIsInnerSafetyModalOpen] = useState(false);
+  const [savedSummaries, setSavedSummaries] = useState<InnerSafetySummary[]>([]);
+  const [showSavedNotebook, setShowSavedNotebook] = useState(false);
+
+  useEffect(() => {
+    setSavedSummaries(storage.getInnerSafetySummaries());
+  }, [isInnerSafetyModalOpen]);
+
+  const handleDeleteSummary = (id: string) => {
+    storage.deleteInnerSafetySummary(id);
+    setSavedSummaries(storage.getInnerSafetySummaries());
+  };
+
   const [dialogueLog, setDialogueLog] = useState<{ sender: 'user' | 'perspective'; text: string; time: string }[]>([
     {
       sender: 'perspective',
-      text: 'مرحباً بك في مساحة «اسمع نفسك». هنا يمكنك استكشاف ما يدور بداخلك من خلال ثلاثة أصوات داخلية متوازنة: الطفل الداخلي (للتعبير عن المشاعر والاحتياجات بأمان)، الراشد المتزن (لفهم الواقع والأفكار بموضوعية)، والأب الداخلي (لتقديم الاحتواء والحماية بحنان). اختر المنظور الذي تحتاجه الآن.',
+      text: 'مرحباً بك في مساحة «اسمع نفسك». هنا يمكنك استكشاف ما يدور بداخلك من خلال ثلاثة أصوات داخلية متوازنة: الطفل الداخلي (ل للتعبير عن المشاعر والاحتياجات بأمان)، الراشد المتزن (لفهم الواقع والأفكار بموضوعية)، والأب الداخلي (لتقديم الاحتواء والحماية بحنان). اختر المنظور الذي تحتاجه الآن.',
       time: 'الآن'
     }
   ]);
@@ -37,8 +57,8 @@ export const ListenToYourselfScreen: React.FC<ListenToYourselfScreenProps> = ({
 
     const newText = userInput.trim();
     const timeStr = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-
     let responseText = '';
+
     if (activePerspective === 'child') {
       responseText = `يا حبيبي، أنا سامعك وحاسس بوجعك أو خوفك تماماً. مش لوحدك، وعادي جداً تحس كده. تعال نبكي أو نهدى مع بعض من غير لوم ولا خجل 🤍.`;
     } else if (activePerspective === 'adult') {
@@ -63,6 +83,7 @@ export const ListenToYourselfScreen: React.FC<ListenToYourselfScreenProps> = ({
       {/* Header */}
       <div className="bg-white dark:bg-[#14271F] border border-[#174C3C]/15 dark:border-[#A9C5A0]/20 rounded-3xl p-6 sm:p-8 shadow-xs mb-8 relative overflow-hidden transition-colors">
         <div className="absolute top-0 right-0 w-48 h-48 bg-[#A9C5A0]/10 rounded-full blur-3xl pointer-events-none" />
+        
         <div className="flex items-center justify-between gap-3 mb-3">
           <span className="px-3 py-1 bg-[#174C3C]/10 dark:bg-[#A9C5A0]/15 text-[#174C3C] dark:text-[#A9C5A0] font-jetbrains text-xs font-bold rounded-full border border-[#174C3C]/20 dark:border-[#A9C5A0]/30">
             الركيزة الثانية // الحوار الداخلي الواعي
@@ -75,6 +96,7 @@ export const ListenToYourselfScreen: React.FC<ListenToYourselfScreenProps> = ({
             <span>العودة للرئيسية</span>
           </button>
         </div>
+
         <h1 className="text-2xl sm:text-4xl font-syne font-black text-[#174C3C] dark:text-[#F7F3E9] mb-3">
           اسمع نفسك — الطفل والراشد والأب
         </h1>
@@ -82,6 +104,117 @@ export const ListenToYourselfScreen: React.FC<ListenToYourselfScreenProps> = ({
           مساحة مستقلة لفهم مشاعرك واحتياجاتك العميقة عبر ثلاثة أصوات أو منظورات داخلية متوازنة تساعدك على احتواء ألمك، ترتيب أفكارك، واستعادة الأمان الداخلي.
         </p>
       </div>
+
+      {/* 🌿 Featured Card: مساحة أمانك الداخلي */}
+      <section className="bg-gradient-to-br from-[#174C3C]/10 via-[#A9C5A0]/15 to-[#D98F83]/10 dark:from-[#174C3C]/30 dark:via-[#1A3328] dark:to-[#11241C] border-2 border-[#174C3C]/25 dark:border-[#A9C5A0]/30 rounded-3xl p-6 sm:p-8 shadow-sm mb-8 transition-all relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="space-y-3 max-w-2xl">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="px-3 py-1 bg-[#174C3C] text-white dark:bg-[#A9C5A0] dark:text-[#0D1914] font-bold text-xs rounded-full">
+              مساحة أمانك الداخلي ✨
+            </span>
+            <span className="text-xs text-[#174C3C] dark:text-[#A9C5A0] font-semibold">
+              «مش كل شعور محتاج حل فوري… أحيانًا محتاج نفهمه الأول»
+            </span>
+          </div>
+
+          <h2 className="text-xl sm:text-3xl font-syne font-black text-[#174C3C] dark:text-[#F7F3E9]">
+            مساحة أمانك الداخلي — تمارين احتواء الذات والوعي الداخلي
+          </h2>
+
+          <p className="text-[#13251E]/80 dark:text-[#F7F3E9]/80 text-sm sm:text-base leading-relaxed">
+            «رحلة هادئة تساعدك تفهم مشاعرك، وتتعامل مع نفسك برفق، وتكتشف احتياجاتك، وتختار خطوة صغيرة تساعدك في حياتك اليومية».
+          </p>
+
+          <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-[#13251E]/70 dark:text-[#F7F3E9]/70">
+            <span className="flex items-center gap-1 font-medium">🪞 مرآة المشاعر</span>
+            <span>•</span>
+            <span className="flex items-center gap-1 font-medium">💚 صوتي الحنون</span>
+            <span>•</span>
+            <span className="flex items-center gap-1 font-medium">🧘 مساحتي الداخلية</span>
+            <span>•</span>
+            <span className="flex items-center gap-1 font-medium">🌱 خطوة صغيرة لنفسي</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0 w-full sm:w-auto">
+          <button
+            onClick={() => setIsInnerSafetyModalOpen(true)}
+            className="px-6 py-3.5 bg-[#174C3C] hover:bg-[#123C30] dark:bg-[#A9C5A0] dark:hover:bg-[#BFD9B6] text-white dark:text-[#0D1914] font-bold text-sm rounded-2xl shadow-md hover:translate-y-[-2px] transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300 dark:text-[#0D1914]" />
+            <span>ابدأ رحلتك</span>
+          </button>
+
+          {savedSummaries.length > 0 && (
+            <button
+              onClick={() => setShowSavedNotebook(!showSavedNotebook)}
+              className="px-4 py-2 bg-white/70 dark:bg-black/30 border border-[#174C3C]/20 dark:border-[#A9C5A0]/20 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-white transition-all cursor-pointer"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-[#174C3C] dark:text-[#A9C5A0]" />
+              <span>دفتري الآمن ({savedSummaries.length})</span>
+              {showSavedNotebook ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
+          )}
+        </div>
+      </section>
+
+      {/* Saved Summaries Notebook Accordion */}
+      {showSavedNotebook && savedSummaries.length > 0 && (
+        <div className="p-6 rounded-3xl bg-white dark:bg-[#14271F] border border-[#174C3C]/15 dark:border-[#A9C5A0]/20 shadow-xs mb-8 space-y-4 animate-fade-in">
+          <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+            <div className="flex items-center gap-2 text-sm font-bold text-[#174C3C] dark:text-[#A9C5A0]">
+              <Lock className="w-4 h-4" />
+              <span>ملخصات رحلات الأمان الداخلي المحفوظة بموافقتك</span>
+            </div>
+            <span className="text-xs opacity-60">محفوظة محلياً على جهازك فقط</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {savedSummaries.map(item => (
+              <div 
+                key={item.id}
+                className="p-4 rounded-2xl bg-[#F7F3E9]/60 dark:bg-[#0D1914] border border-[#174C3C]/10 dark:border-[#A9C5A0]/15 space-y-2 relative"
+              >
+                <div className="flex items-center justify-between text-xs text-[#13251E]/60 dark:text-[#F7F3E9]/60">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{new Date(item.createdAt).toLocaleDateString('ar-EG')}</span>
+                  </span>
+                  <button
+                    onClick={() => handleDeleteSummary(item.id)}
+                    className="p-1 rounded-lg text-rose-500 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                    title="حذف هذا الملخص"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="space-y-1">
+                  <div className="text-xs">
+                    <span className="font-bold opacity-70">الشعور: </span>
+                    <span className="font-semibold">{item.identifiedEmotion}</span>
+                  </div>
+                  {item.identifiedNeed && (
+                    <div className="text-xs">
+                      <span className="font-bold opacity-70">الاحتياج: </span>
+                      <span>{item.identifiedNeed}</span>
+                    </div>
+                  )}
+                  {item.compassionateRephrase && (
+                    <div className="text-xs text-emerald-800 dark:text-emerald-300 font-medium">
+                      «{item.compassionateRephrase}»
+                    </div>
+                  )}
+                  <div className="text-xs pt-1 border-t border-black/5 dark:border-white/5">
+                    <span className="font-bold text-purple-700 dark:text-purple-300">الخطوة: </span>
+                    <span>{item.actionStep}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Perspective Tabs */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -244,6 +377,12 @@ export const ListenToYourselfScreen: React.FC<ListenToYourselfScreenProps> = ({
         </button>
       </div>
 
+      {/* Inner Safety Space Modal Journey */}
+      <InnerSafetySpaceModal 
+        isOpen={isInnerSafetyModalOpen}
+        onClose={() => setIsInnerSafetyModalOpen(false)}
+        onNavigate={onNavigate}
+      />
     </div>
   );
 };
