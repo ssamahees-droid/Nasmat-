@@ -90,7 +90,8 @@ interface WheelSectionItem {
   title: string;
   desc: string;
   emoji: string;
-  color: string;
+  bgHex: string;
+  textColor: string;
   action: () => void;
 }
 
@@ -141,16 +142,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     return todayCheckin ? todayCheckin.moodValue : null;
   });
   const [justSavedCheckin, setJustSavedCheckin] = useState(false);
-  const [savedFavorites, setSavedFavorites] = useState<string[]>(storage.getFavorites());
 
-  // Spin Wheel States
+  // Spin Wheel Sections with dynamic brand-aligned color coding matching each section's emotional tone
   const WHEEL_SECTIONS: WheelSectionItem[] = [
     {
       id: 'mood_kitchen',
       title: 'مطبخ المزاج',
       desc: 'غذاء يدعم أمعاءك وعافيتك النفسية بوصفات منزلية بسيطة',
       emoji: '🍲',
-      color: 'from-emerald-500 to-teal-600',
+      bgHex: '#059669', // Emerald - Gut & Nourishment
+      textColor: 'text-emerald-100',
       action: () => onOpenMoodKitchen ? onOpenMoodKitchen() : onNavigate('explore')
     },
     {
@@ -158,7 +159,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       title: 'تطبيق فكّر',
       desc: 'فكك أفكارك السامة التلقائية واكشف أفخاخ التفكير',
       emoji: '💡',
-      color: 'from-lime-500 to-emerald-600',
+      bgHex: '#65a30d', // Lime Green - Mental Clarity & Growth
+      textColor: 'text-lime-100',
       action: () => onOpenFeker ? onOpenFeker() : onNavigate('games')
     },
     {
@@ -166,15 +168,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       title: 'جوايا حكاية',
       desc: 'العالم الذي يشرح نفسه واستكشاف ما يدور بداخلك',
       emoji: '📖',
-      color: 'from-teal-500 to-cyan-600',
+      bgHex: '#0d9488', // Teal - Self Discovery
+      textColor: 'text-teal-100',
       action: () => onOpenGwayaHekaya()
     },
     {
       id: 'breathe',
-      title: 'تمرين التنفس الهادئ',
+      title: 'التنفس الهادئ',
       desc: 'تمرين 4-7-8 لتهدئة الجهاز العصبي فوراً',
       emoji: '🌊',
-      color: 'from-cyan-500 to-blue-600',
+      bgHex: '#0284c7', // Sky Blue - Calming Nervous System
+      textColor: 'text-sky-100',
       action: () => onNavigate('breathe')
     },
     {
@@ -182,31 +186,35 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       title: 'بوصلة المشاعر',
       desc: 'استكشاف وتسمية ما تشعر به بدقة وترتيبه',
       emoji: '🧭',
-      color: 'from-amber-500 to-orange-600',
+      bgHex: '#d97706', // Warm Amber - Emotional Navigation
+      textColor: 'text-amber-100',
       action: () => onOpenEmotionCompass()
     },
     {
       id: 'rescue',
-      title: 'إسعافات الطوارئ النفسية',
+      title: 'إسعافات الطوارئ',
       desc: 'خطة سريعة وقت الضيق الشديد والتوتر الحاد',
       emoji: '🆘',
-      color: 'from-rose-500 to-red-600',
+      bgHex: '#e11d48', // Rose / Red - Crisis Relief
+      textColor: 'text-rose-100',
       action: () => onNavigate('rescue')
     },
     {
       id: 'battery_check',
-      title: 'فحص شاحن الطاقة',
+      title: 'شاحن الطاقة',
       desc: 'معرفة ما يستنزف طاقتك النفسية وكيف تشحنها',
       emoji: '🔋',
-      color: 'from-purple-500 to-indigo-600',
+      bgHex: '#7c3aed', // Purple - Energy & Balance
+      textColor: 'text-purple-100',
       action: () => onOpenBatteryCheck()
     },
     {
       id: 'games',
-      title: 'الألعاب النفسية التفاعلية',
+      title: 'الألعاب النفسية',
       desc: 'فرقعة الأعباء، الجسر العاطفي، وحديقة الامتنان',
       emoji: '🎈',
-      color: 'from-pink-500 to-rose-600',
+      bgHex: '#db2777', // Pink - Playful Relief
+      textColor: 'text-pink-100',
       action: () => onNavigate('games')
     },
     {
@@ -214,7 +222,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       title: 'الكتيب والورش',
       desc: 'مكتبة التثقيف النفسي الشاملة والورش التفاعلية',
       emoji: '📚',
-      color: 'from-amber-600 to-yellow-600',
+      bgHex: '#b45309', // Deep Amber - Knowledge & Wisdom
+      textColor: 'text-amber-100',
       action: () => onNavigate('explore')
     },
     {
@@ -222,7 +231,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       title: 'الجلسة الأسبوعية',
       desc: 'التأمل والمراجعة الأسبوعية الشاملة للنمو',
       emoji: '📅',
-      color: 'from-emerald-600 to-green-700',
+      bgHex: '#047857', // Forest Green - Weekly Reflection
+      textColor: 'text-emerald-100',
       action: () => onNavigate('weekly')
     }
   ];
@@ -230,11 +240,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [isSpinning, setIsSpinning] = useState(false);
   const [spinRotation, setSpinRotation] = useState(0);
   const [selectedSection, setSelectedSection] = useState<WheelSectionItem | null>(null);
+  const [viewingDetailSection, setViewingDetailSection] = useState<WheelSectionItem | null>(null);
 
   const handleSpinWheel = () => {
     if (isSpinning) return;
     setIsSpinning(true);
     setSelectedSection(null);
+    setViewingDetailSection(null);
 
     const randomExtra = 1800 + Math.floor(Math.random() * 1080);
     const newRotation = spinRotation + randomExtra;
@@ -392,108 +404,161 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         )}
       </section>
 
-      {/* 🎡 عجلة الحظ التفاعلية — محور الهيكلة الجديدة */}
+      {/* 🎡 عجلة الحظ التفاعلية — مطابقة ديناميكياً للهوية البصرية */}
       <section className={`p-6 sm:p-8 border rounded-3xl space-y-6 shadow-md text-center relative overflow-hidden ${
         isDark ? 'bg-gradient-to-br from-[#122018] via-[#101914] to-[#0A100C] border-emerald-500/30' : 'bg-gradient-to-br from-[#f4faf5] to-[#eaf4ed] border-emerald-600/20'
       }`}>
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="space-y-2 relative z-10 max-w-xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>عجلة الحظ التفاعلية لاختيار خطوتك التالية</span>
-          </div>
-          <h2 className={`text-xl sm:text-2xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
-            دكّن العجلة... ودعنا نقترح عليك القسم الأنسب لخطوتك اليوم 🎡
-          </h2>
-          <p className={`text-xs sm:text-sm ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
-            اضغط على زر الدوران أدناه، ودع العجلة تختار لك إحدى محطات نسمة حياة بكل بساطة وهدوء.
-          </p>
-        </div>
-
-        <div className="flex flex-col items-center justify-center space-y-6 relative z-10 py-4">
-          <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full border-4 border-emerald-500/40 p-2 shadow-xl bg-black/20 flex items-center justify-center overflow-hidden">
-            <div className="absolute -top-1 z-30 w-6 h-8 bg-amber-400 shadow-md" style={{ clipPath: 'polygon(50% 100%, 0 0, 100% 0)' }} />
-
-            <div 
-              className="w-full h-full rounded-full relative transition-transform duration-2000 ease-out flex items-center justify-center"
-              style={{ transform: `rotate(${spinRotation}deg)` }}
-            >
-              {WHEEL_SECTIONS.map((sec, idx) => {
-                const angle = (idx * 360) / WHEEL_SECTIONS.length;
-                return (
-                  <div 
-                    key={sec.id}
-                    className="absolute inset-0 flex items-start justify-center pt-3"
-                    style={{ transform: `rotate(${angle}deg)`, transformOrigin: 'center' }}
-                  >
-                    <div className="flex flex-col items-center text-center max-w-[60px]">
-                      <span className="text-xl drop-shadow-md">{sec.emoji}</span>
-                      <span className={`text-[10px] font-bold truncate max-w-[55px] ${isDark ? 'text-white' : 'text-stone-900'}`}>{sec.title}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            
-            <div className="absolute z-20 w-16 h-16 rounded-full bg-linear-to-br from-emerald-500 to-teal-700 border-4 border-white/20 shadow-lg flex items-center justify-center text-white font-black text-xs">
-              🌿
-            </div>
-          </div>
-
-          {!selectedSection ? (
-            <button
-              onClick={handleSpinWheel}
-              disabled={isSpinning}
-              className={`px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-black font-extrabold rounded-2xl shadow-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer text-sm ${
-                isSpinning ? 'opacity-70 cursor-not-allowed animate-pulse' : ''
-              }`}
-            >
-              <RotateCw className={`w-4 h-4 ${isSpinning ? 'animate-spin' : ''}`} />
-              <span>{isSpinning ? 'جاري دوران العجلة...' : 'يلا نلف العجلة! 🎡'}</span>
-            </button>
-          ) : (
-            <div className={`w-full max-w-md p-6 rounded-3xl border shadow-xl animate-fade-in space-y-4 text-center ${
-              isDark ? 'bg-[#182c21] border-emerald-500/40' : 'bg-white border-emerald-600/30'
-            }`}>
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/20 text-3xl border border-emerald-500/30 mx-auto">
-                {selectedSection.emoji}
+        {!viewingDetailSection ? (
+          <>
+            <div className="space-y-2 relative z-10 max-w-xl mx-auto">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>عجلة الحظ التفاعلية ذات الألوان الشعورية المتناسقة</span>
               </div>
-              
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">النتيجة التي اختارتها العجلة لك اليوم</span>
-                <h3 className={`text-xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                  {selectedSection.title}
-                </h3>
-                <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
-                  {selectedSection.desc}
+              <h2 className={`text-xl sm:text-2xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
+                دكّن العجلة... ودعنا نقترح عليك القسم الأنسب لخطوتك اليوم 🎡
+              </h2>
+              <p className={`text-xs sm:text-sm ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
+                كل قطاع يعكس بطابع هادئ وألوان متناسقة طابع القسم وهدفه النفسي.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center justify-center space-y-6 relative z-10 py-4">
+              <div className="relative w-68 h-68 sm:w-80 sm:h-80 rounded-full border-4 border-emerald-500/40 p-2 shadow-2xl bg-black/30 flex items-center justify-center overflow-hidden">
+                <div className="absolute -top-1 z-30 w-6 h-8 bg-amber-400 shadow-md" style={{ clipPath: 'polygon(50% 100%, 0 0, 100% 0)' }} />
+
+                <div 
+                  className="w-full h-full rounded-full relative transition-transform duration-2500 ease-out flex items-center justify-center shadow-inner"
+                  style={{ transform: `rotate(${spinRotation}deg)` }}
+                >
+                  {WHEEL_SECTIONS.map((sec, idx) => {
+                    const angle = (idx * 360) / WHEEL_SECTIONS.length;
+                    return (
+                      <div 
+                        key={sec.id}
+                        className="absolute inset-0 flex items-start justify-center pt-2"
+                        style={{ transform: `rotate(${angle}deg)`, transformOrigin: 'center' }}
+                      >
+                        <div 
+                          className="flex flex-col items-center text-center px-1.5 py-1 rounded-xl shadow-xs"
+                          style={{ backgroundColor: sec.bgHex, minWidth: '50px' }}
+                        >
+                          <span className="text-lg drop-shadow-sm">{sec.emoji}</span>
+                          <span className="text-[9px] font-black text-white truncate max-w-[55px]">{sec.title}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                
+                <div className="absolute z-20 w-16 h-16 rounded-full bg-linear-to-br from-emerald-500 to-teal-700 border-4 border-white/25 shadow-xl flex items-center justify-center text-white font-black text-xs">
+                  🌿
+                </div>
+              </div>
+
+              {!selectedSection ? (
+                <button
+                  onClick={handleSpinWheel}
+                  disabled={isSpinning}
+                  className={`px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-black font-extrabold rounded-2xl shadow-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer text-sm ${
+                    isSpinning ? 'opacity-70 cursor-not-allowed animate-pulse' : ''
+                  }`}
+                >
+                  <RotateCw className={`w-4 h-4 ${isSpinning ? 'animate-spin' : ''}`} />
+                  <span>{isSpinning ? 'جاري دوران العجلة...' : 'يلا نلف العجلة! 🎡'}</span>
+                </button>
+              ) : (
+                <div className={`w-full max-w-md p-6 rounded-3xl border shadow-xl animate-fade-in space-y-4 text-center ${
+                  isDark ? 'bg-[#182c21] border-emerald-500/40' : 'bg-white border-emerald-600/30'
+                }`}>
+                  <div 
+                    className="inline-flex items-center justify-center w-16 h-16 rounded-2xl text-3xl shadow-md mx-auto text-white"
+                    style={{ backgroundColor: selectedSection.bgHex }}
+                  >
+                    {selectedSection.emoji}
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">النتيجة التي اختارتها العجلة لك اليوم</span>
+                    <h3 className={`text-xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
+                      {selectedSection.title}
+                    </h3>
+                    <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
+                      {selectedSection.desc}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-3 pt-2">
+                    <button
+                      onClick={() => {
+                        setViewingDetailSection(selectedSection);
+                      }}
+                      className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-extrabold rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                    >
+                      <Play className="w-4 h-4" />
+                      <span>افتح القسم 🌿</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedSection(null);
+                        handleSpinWheel();
+                      }}
+                      className={`px-4 py-3 border rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                        isDark ? 'bg-white/5 hover:bg-white/10 text-stone-200 border-white/10' : 'bg-stone-100 hover:bg-stone-200 text-stone-800 border-stone-200'
+                      }`}
+                    >
+                      <RotateCw className="w-3.5 h-3.5" />
+                      <span>إعادة اللف 🎡</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          /* Dedicated Section Independent View with Back Button */
+          <div className={`p-6 sm:p-8 rounded-3xl border shadow-xl animate-fade-in space-y-6 text-right ${
+            isDark ? 'bg-[#15251d] border-emerald-500/40 text-white' : 'bg-white border-emerald-600/30 text-stone-900'
+          }`}>
+            <div className="flex items-center justify-between border-b pb-4 border-white/10">
+              <button
+                onClick={() => setViewingDetailSection(null)}
+                className="px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>العودة إلى عجلة الحظ 🎡</span>
+              </button>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">{viewingDetailSection.emoji}</span>
+                <span className="text-sm font-black">{viewingDetailSection.title}</span>
+              </div>
+            </div>
+
+            <div className="space-y-4 py-4">
+              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-2">
+                <h4 className="font-bold text-base text-emerald-400">عن القسم: {viewingDetailSection.title}</h4>
+                <p className="text-xs sm:text-sm leading-relaxed text-stone-300">
+                  {viewingDetailSection.desc}
                 </p>
               </div>
 
-              <div className="flex items-center justify-center gap-3 pt-2">
+              <div className="p-6 rounded-2xl border border-white/10 bg-black/20 text-center space-y-4">
+                <p className="text-xs text-stone-400">
+                  اضغط على الزر أدناه لبدء وتفعيل هذا القسم والانتقال إلى محتوياته الكاملة بالكامل:
+                </p>
                 <button
-                  onClick={() => selectedSection.action()}
-                  className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-extrabold rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                  onClick={() => viewingDetailSection.action()}
+                  className="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-extrabold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 mx-auto cursor-pointer"
                 >
                   <Play className="w-4 h-4" />
-                  <span>افتح القسم فوراً 🌿</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedSection(null);
-                    handleSpinWheel();
-                  }}
-                  className={`px-4 py-3 border rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                    isDark ? 'bg-white/5 hover:bg-white/10 text-stone-200 border-white/10' : 'bg-stone-100 hover:bg-stone-200 text-stone-800 border-stone-200'
-                  }`}
-                >
-                  <RotateCw className="w-3.5 h-3.5" />
-                  <span>إعادة اللف 🎡</span>
+                  <span>بدء الاستخدام والدخول الفوري 🚀</span>
                 </button>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </section>
 
       {/* 🌿 شخصية نسمة حياة — المرشدة الدائمة */}
