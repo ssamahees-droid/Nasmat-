@@ -26,6 +26,7 @@ import {
   RiddleItem 
 } from '../data/funAndGamesData';
 import { storage } from '../services/storage';
+import { chimeService } from '../services/chimeService';
 import { TakeawayResultCard } from './TakeawayResultCard';
 
 interface FunAndGamesHubModalProps {
@@ -153,12 +154,18 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
     const interval = setInterval(() => {
       const rand = Math.floor(Math.random() * JOY_CHALLENGES.length);
       setSelectedChallenge(JOY_CHALLENGES[rand]);
+      try {
+        chimeService.playWheelTickSound(0.9 + (counter * 0.03));
+      } catch {}
       counter++;
       if (counter > 15) {
         clearInterval(interval);
         setIsSpinning(false);
+        try {
+          chimeService.playWheelWinSound();
+        } catch {}
       }
-    }, 100);
+    }, 110);
   };
 
   // Memory Game Card Flip
@@ -487,29 +494,32 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
           {/* TAB 4: عجلة الحظ للبهجة */}
           {activeTab === 'wheel' && (
             <div className="space-y-4 animate-fade-in text-center">
-              <div className="p-6 bg-white border border-[#E6E8D8] rounded-3xl shadow-xs space-y-4">
-                <div className="text-xs font-bold text-[#3A5A40] bg-[#3A5A40]/10 px-3 py-1 rounded-full inline-block">
-                  🎡 دولاب البهجة اليومي
+              <div className="p-6 bg-white dark:bg-[#14271F] border border-[#E6E8D8] dark:border-[#A9C5A0]/25 rounded-3xl shadow-sm space-y-4 relative overflow-hidden">
+                <div className="text-xs font-bold text-[#174C3C] dark:text-[#A9C5A0] bg-[#174C3C]/10 dark:bg-[#A9C5A0]/15 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5 border border-[#174C3C]/20">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  <span>🎡 دولاب البهجة اليومي — نسمة حياة</span>
                 </div>
 
-                <div className="py-4">
-                  <div className={`w-28 h-28 mx-auto rounded-full bg-gradient-to-tr from-amber-400 via-rose-400 to-[#3A5A40] p-1.5 shadow-lg flex items-center justify-center ${isSpinning ? 'animate-spin' : ''}`}>
-                    <div className="w-full h-full bg-white rounded-full flex items-center justify-center text-4xl shadow-inner">
+                <div className="py-4 relative flex items-center justify-center">
+                  <div className={`w-32 h-32 rounded-full p-2 bg-gradient-to-tr from-amber-400 via-emerald-500 to-[#174C3C] shadow-xl flex items-center justify-center transition-all ${
+                    isSpinning ? 'animate-spin scale-105' : 'hover:scale-102'
+                  }`}>
+                    <div className="w-full h-full bg-white dark:bg-[#0D1914] rounded-full flex items-center justify-center text-5xl shadow-inner border-2 border-white/40">
                       {isSpinning ? '🎲' : (selectedChallenge?.emoji || '🎡')}
                     </div>
                   </div>
                 </div>
 
                 {selectedChallenge ? (
-                  <div className="p-5 bg-gradient-to-r from-amber-50 via-white to-amber-50 border-2 border-amber-300 rounded-3xl max-w-md mx-auto space-y-2 animate-fade-in">
-                    <span className="text-xs font-bold text-amber-900 block">تحدي البهجة المختار لك الآن:</span>
-                    <p className="text-sm font-black text-[#283618] leading-relaxed">
+                  <div className="p-5 bg-gradient-to-r from-amber-50 via-white to-emerald-50 dark:from-[#1B342A] dark:via-[#14271F] dark:to-[#1B342A] border-2 border-emerald-500/40 rounded-3xl max-w-md mx-auto space-y-2 animate-won-card shadow-md">
+                    <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 block">✨ تحدي البهجة المختار لك الآن:</span>
+                    <p className="text-sm font-black text-[#13251E] dark:text-[#F7F3E9] leading-relaxed">
                       {selectedChallenge.text}
                     </p>
                   </div>
                 ) : (
-                  <p className="text-xs text-[#58645C] max-w-sm mx-auto">
-                    اضغط على الزر لتدوير العجلة والحصول على مهمة لطيفة تزرع ابتسامة على وجهك فوراً!
+                  <p className="text-xs text-[#58645C] dark:text-stone-300 max-w-sm mx-auto leading-relaxed">
+                    اضغط على الزر لتدوير العجلة والحصول على مهمة لطيفة تزرع ابتسامة هادئة على وجهك فوراً!
                   </p>
                 )}
 
@@ -517,10 +527,10 @@ export const FunAndGamesHubModal: React.FC<FunAndGamesHubModalProps> = ({
                   <button
                     disabled={isSpinning}
                     onClick={handleSpinWheel}
-                    className="py-3 px-8 bg-[#3A5A40] hover:bg-[#283618] disabled:opacity-50 text-white rounded-2xl text-xs font-black transition-all shadow-md active:scale-95 inline-flex items-center gap-2"
+                    className="py-3 px-8 bg-gradient-to-r from-emerald-600 via-teal-600 to-[#174C3C] hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white rounded-2xl text-xs font-black transition-all shadow-md active:scale-95 inline-flex items-center gap-2 cursor-pointer"
                   >
-                    <Dice5 className="w-4 h-4" />
-                    <span>{isSpinning ? 'جارٍ السحب...' : 'دوّر العجلة الآن! ✨'}</span>
+                    <Dice5 className={`w-4 h-4 ${isSpinning ? 'animate-spin' : ''}`} />
+                    <span>{isSpinning ? 'جارٍ السحب برقة...' : 'دوّر العجلة الآن! ✨'}</span>
                   </button>
                 </div>
               </div>

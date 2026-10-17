@@ -421,6 +421,69 @@ class ChimeService {
       osc.stop(now + 0.35);
     } catch (_) {}
   }
+
+  /**
+   * Plays a subtle, tactile click/tick sound for wheel rotations (like a gentle wooden peg click)
+   */
+  public playWheelTickSound(pitchFactor = 1.0) {
+    if (this.isMutedState) return;
+    const ctx = this.getAudioContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      // Soft marimba / wooden tick
+      osc.type = 'triangle';
+      const baseFreq = 540 * pitchFactor;
+      osc.frequency.setValueAtTime(baseFreq, now);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.7, now + 0.035);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(0.09, now + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.05);
+    } catch (_) {}
+  }
+
+  /**
+   * Plays a warm, celebratory pentatonic arpeggio when the wheel lands on a prize/section
+   */
+  public playWheelWinSound() {
+    if (this.isMutedState) return;
+    const ctx = this.getAudioContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      // Nesmat Hayat gentle pentatonic celebration: F4, A4, C5, D5, F5
+      const notes = [349.23, 440.0, 523.25, 587.33, 698.46];
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+
+        gain.gain.setValueAtTime(0.0001, now + idx * 0.07);
+        gain.gain.linearRampToValueAtTime(0.12, now + idx * 0.07 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.07 + 0.8);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + idx * 0.07);
+        osc.stop(now + idx * 0.07 + 0.85);
+      });
+    } catch (_) {}
+  }
 }
 
 export const chimeService = new ChimeService();

@@ -30,7 +30,9 @@ import { storage } from '../services/storage';
 import { PWAInstallButton } from '../components/PWAInstallButton';
 import { CompanionHeroSection } from '../components/CompanionHeroSection';
 import { NesmatGuideBanner } from '../components/NesmatGuideBanner';
+import { NesmatLuckyWheel, WheelSectionItem } from '../components/NesmatLuckyWheel';
 import { useLanguage } from '../context/LanguageContext';
+import { chimeService } from '../services/chimeService';
 
 interface HomeScreenProps {
   onNavigate: (tab: string) => void;
@@ -84,16 +86,6 @@ const MOOD_OPTIONS: { id: MoodValue; label: string; emoji: string; tip: string }
   { id: 'not_good', label: 'مش كويس ومضغوط', emoji: '😔', tip: 'نحن معك؛ تمرين التنفس أو تفريغ الأفكار قد يخفف الحمل الآن 🌿' },
   { id: 'exhausted', label: 'طاقتي نفدت', emoji: '😫', tip: 'بطاريتك تحتاج شحناً؛ خذ استراحة فورية دون تأنيب ضمير 🔋' },
 ];
-
-interface WheelSectionItem {
-  id: string;
-  title: string;
-  desc: string;
-  emoji: string;
-  bgHex: string;
-  textColor: string;
-  action: () => void;
-}
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onNavigate,
@@ -151,6 +143,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       desc: 'غذاء يدعم أمعاءك وعافيتك النفسية بوصفات منزلية بسيطة',
       emoji: '🍲',
       bgHex: '#059669', // Emerald - Gut & Nourishment
+      gradientStart: '#10B981',
+      gradientEnd: '#065F46',
       textColor: 'text-emerald-100',
       action: () => onOpenMoodKitchen ? onOpenMoodKitchen() : onNavigate('explore')
     },
@@ -160,6 +154,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       desc: 'فكك أفكارك السامة التلقائية واكشف أفخاخ التفكير',
       emoji: '💡',
       bgHex: '#65a30d', // Lime Green - Mental Clarity & Growth
+      gradientStart: '#84CC16',
+      gradientEnd: '#3F6212',
       textColor: 'text-lime-100',
       action: () => onOpenFeker ? onOpenFeker() : onNavigate('games')
     },
@@ -169,6 +165,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       desc: 'العالم الذي يشرح نفسه واستكشاف ما يدور بداخلك',
       emoji: '📖',
       bgHex: '#0d9488', // Teal - Self Discovery
+      gradientStart: '#14B8A6',
+      gradientEnd: '#115E59',
       textColor: 'text-teal-100',
       action: () => onOpenGwayaHekaya()
     },
@@ -178,6 +176,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       desc: 'تمرين 4-7-8 لتهدئة الجهاز العصبي فوراً',
       emoji: '🌊',
       bgHex: '#0284c7', // Sky Blue - Calming Nervous System
+      gradientStart: '#38BDF8',
+      gradientEnd: '#075985',
       textColor: 'text-sky-100',
       action: () => onNavigate('breathe')
     },
@@ -187,6 +187,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       desc: 'استكشاف وتسمية ما تشعر به بدقة وترتيبه',
       emoji: '🧭',
       bgHex: '#d97706', // Warm Amber - Emotional Navigation
+      gradientStart: '#F59E0B',
+      gradientEnd: '#92400E',
       textColor: 'text-amber-100',
       action: () => onOpenEmotionCompass()
     },
@@ -196,6 +198,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       desc: 'خطة سريعة وقت الضيق الشديد والتوتر الحاد',
       emoji: '🆘',
       bgHex: '#e11d48', // Rose / Red - Crisis Relief
+      gradientStart: '#F43F5E',
+      gradientEnd: '#9F1239',
       textColor: 'text-rose-100',
       action: () => onNavigate('rescue')
     },
@@ -205,6 +209,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       desc: 'معرفة ما يستنزف طاقتك النفسية وكيف تشحنها',
       emoji: '🔋',
       bgHex: '#7c3aed', // Purple - Energy & Balance
+      gradientStart: '#8B5CF6',
+      gradientEnd: '#5B21B6',
       textColor: 'text-purple-100',
       action: () => onOpenBatteryCheck()
     },
@@ -214,6 +220,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       desc: 'فرقعة الأعباء، الجسر العاطفي، وحديقة الامتنان',
       emoji: '🎈',
       bgHex: '#db2777', // Pink - Playful Relief
+      gradientStart: '#EC4899',
+      gradientEnd: '#9D174D',
       textColor: 'text-pink-100',
       action: () => onNavigate('games')
     },
@@ -223,6 +231,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       desc: 'مكتبة التثقيف النفسي الشاملة والورش التفاعلية',
       emoji: '📚',
       bgHex: '#b45309', // Deep Amber - Knowledge & Wisdom
+      gradientStart: '#D97706',
+      gradientEnd: '#78350F',
       textColor: 'text-amber-100',
       action: () => onNavigate('explore')
     },
@@ -232,6 +242,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       desc: 'التأمل والمراجعة الأسبوعية الشاملة للنمو',
       emoji: '📅',
       bgHex: '#047857', // Forest Green - Weekly Reflection
+      gradientStart: '#059669',
+      gradientEnd: '#064E3B',
       textColor: 'text-emerald-100',
       action: () => onNavigate('weekly')
     },
@@ -241,32 +253,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       desc: 'مساحة أمانك الداخلي، احتواء الذات، والحوار المتزن',
       emoji: '🛡️',
       bgHex: '#0f766e', // Deep Teal - Inner Safety & Containment
+      gradientStart: '#2DD4BF',
+      gradientEnd: '#134E4A',
       textColor: 'text-teal-100',
       action: () => onNavigate('listen-to-yourself')
     }
   ];
-
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [spinRotation, setSpinRotation] = useState(0);
-  const [selectedSection, setSelectedSection] = useState<WheelSectionItem | null>(null);
-  const [viewingDetailSection, setViewingDetailSection] = useState<WheelSectionItem | null>(null);
-
-  const handleSpinWheel = () => {
-    if (isSpinning) return;
-    setIsSpinning(true);
-    setSelectedSection(null);
-    setViewingDetailSection(null);
-
-    const randomExtra = 1800 + Math.floor(Math.random() * 1080);
-    const newRotation = spinRotation + randomExtra;
-    setSpinRotation(newRotation);
-
-    setTimeout(() => {
-      setIsSpinning(false);
-      const randomIndex = Math.floor(Math.random() * WHEEL_SECTIONS.length);
-      setSelectedSection(WHEEL_SECTIONS[randomIndex]);
-    }, 2000);
-  };
 
   const handleMoodSelect = (mood: MoodValue) => {
     setSelectedMood(mood);
@@ -413,162 +405,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         )}
       </section>
 
-      {/* 🎡 عجلة الحظ التفاعلية — مطابقة ديناميكياً للهوية البصرية */}
-      <section className={`p-6 sm:p-8 border rounded-3xl space-y-6 shadow-md text-center relative overflow-hidden ${
-        isDark ? 'bg-gradient-to-br from-[#122018] via-[#101914] to-[#0A100C] border-emerald-500/30' : 'bg-gradient-to-br from-[#f4faf5] to-[#eaf4ed] border-emerald-600/20'
-      }`}>
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        {!viewingDetailSection ? (
-          <>
-            <div className="space-y-2 relative z-10 max-w-xl mx-auto">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>عجلة الحظ التفاعلية ذات الألوان الشعورية المتناسقة</span>
-              </div>
-              <h2 className={`text-xl sm:text-2xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                دكّن العجلة... ودعنا نقترح عليك القسم الأنسب لخطوتك اليوم 🎡
-              </h2>
-              <p className={`text-xs sm:text-sm ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
-                كل قطاع يعكس بطابع هادئ وألوان متناسقة طابع القسم وهدفه النفسي.
-              </p>
-            </div>
-
-            <div className="flex flex-col items-center justify-center space-y-6 relative z-10 py-4">
-              <div className="relative w-68 h-68 sm:w-80 sm:h-80 rounded-full border-4 border-emerald-500/40 p-2 shadow-2xl bg-black/30 flex items-center justify-center overflow-hidden">
-                <div className="absolute -top-1 z-30 w-6 h-8 bg-amber-400 shadow-md" style={{ clipPath: 'polygon(50% 100%, 0 0, 100% 0)' }} />
-
-                <div 
-                  className="w-full h-full rounded-full relative transition-transform duration-2500 ease-out flex items-center justify-center shadow-inner"
-                  style={{ transform: `rotate(${spinRotation}deg)` }}
-                >
-                  {WHEEL_SECTIONS.map((sec, idx) => {
-                    const angle = (idx * 360) / WHEEL_SECTIONS.length;
-                    return (
-                      <div 
-                        key={sec.id}
-                        className="absolute inset-0 flex items-start justify-center pt-2"
-                        style={{ transform: `rotate(${angle}deg)`, transformOrigin: 'center' }}
-                      >
-                        <div 
-                          className="flex flex-col items-center text-center px-1.5 py-1 rounded-xl shadow-xs"
-                          style={{ backgroundColor: sec.bgHex, minWidth: '50px' }}
-                        >
-                          <span className="text-lg drop-shadow-sm">{sec.emoji}</span>
-                          <span className="text-[9px] font-black text-white truncate max-w-[55px]">{sec.title}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                
-                <div className="absolute z-20 w-16 h-16 rounded-full bg-linear-to-br from-emerald-500 to-teal-700 border-4 border-white/25 shadow-xl flex items-center justify-center text-white font-black text-xs">
-                  🌿
-                </div>
-              </div>
-
-              {!selectedSection ? (
-                <button
-                  onClick={handleSpinWheel}
-                  disabled={isSpinning}
-                  className={`px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-black font-extrabold rounded-2xl shadow-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer text-sm ${
-                    isSpinning ? 'opacity-70 cursor-not-allowed animate-pulse' : ''
-                  }`}
-                >
-                  <RotateCw className={`w-4 h-4 ${isSpinning ? 'animate-spin' : ''}`} />
-                  <span>{isSpinning ? 'جاري دوران العجلة...' : 'يلا نلف العجلة! 🎡'}</span>
-                </button>
-              ) : (
-                <div className={`w-full max-w-md p-6 rounded-3xl border shadow-xl animate-fade-in space-y-4 text-center ${
-                  isDark ? 'bg-[#182c21] border-emerald-500/40' : 'bg-white border-emerald-600/30'
-                }`}>
-                  <div 
-                    className="inline-flex items-center justify-center w-16 h-16 rounded-2xl text-3xl shadow-md mx-auto text-white"
-                    style={{ backgroundColor: selectedSection.bgHex }}
-                  >
-                    {selectedSection.emoji}
-                  </div>
-                  
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">النتيجة التي اختارتها العجلة لك اليوم</span>
-                    <h3 className={`text-xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                      {selectedSection.title}
-                    </h3>
-                    <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
-                      {selectedSection.desc}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-center gap-3 pt-2">
-                    <button
-                      onClick={() => {
-                        setViewingDetailSection(selectedSection);
-                      }}
-                      className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-extrabold rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
-                    >
-                      <Play className="w-4 h-4" />
-                      <span>افتح القسم 🌿</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSelectedSection(null);
-                        handleSpinWheel();
-                      }}
-                      className={`px-4 py-3 border rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                        isDark ? 'bg-white/5 hover:bg-white/10 text-stone-200 border-white/10' : 'bg-stone-100 hover:bg-stone-200 text-stone-800 border-stone-200'
-                      }`}
-                    >
-                      <RotateCw className="w-3.5 h-3.5" />
-                      <span>إعادة اللف 🎡</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          /* Dedicated Section Independent View with Back Button */
-          <div className={`p-6 sm:p-8 rounded-3xl border shadow-xl animate-fade-in space-y-6 text-right ${
-            isDark ? 'bg-[#15251d] border-emerald-500/40 text-white' : 'bg-white border-emerald-600/30 text-stone-900'
-          }`}>
-            <div className="flex items-center justify-between border-b pb-4 border-white/10">
-              <button
-                onClick={() => setViewingDetailSection(null)}
-                className="px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>العودة إلى عجلة الحظ 🎡</span>
-              </button>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">{viewingDetailSection.emoji}</span>
-                <span className="text-sm font-black">{viewingDetailSection.title}</span>
-              </div>
-            </div>
-
-            <div className="space-y-4 py-4">
-              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-2">
-                <h4 className="font-bold text-base text-emerald-400">عن القسم: {viewingDetailSection.title}</h4>
-                <p className="text-xs sm:text-sm leading-relaxed text-stone-300">
-                  {viewingDetailSection.desc}
-                </p>
-              </div>
-
-              <div className="p-6 rounded-2xl border border-white/10 bg-black/20 text-center space-y-4">
-                <p className="text-xs text-stone-400">
-                  اضغط على الزر أدناه لبدء وتفعيل هذا القسم والانتقال إلى محتوياته الكاملة بالكامل:
-                </p>
-                <button
-                  onClick={() => viewingDetailSection.action()}
-                  className="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-extrabold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 mx-auto cursor-pointer"
-                >
-                  <Play className="w-4 h-4" />
-                  <span>بدء الاستخدام والدخول الفوري 🚀</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
+      {/* 🎡 عجلة الحظ التفاعلية الفاخرة — هوية نسمة حياة الرسمية واختيار الأقسام المباشر */}
+      <NesmatLuckyWheel 
+        sections={WHEEL_SECTIONS}
+        theme={theme}
+      />
 
       {/* 🌿 شخصية نسمة حياة — المرشدة الدائمة */}
       <NesmatGuideBanner 
