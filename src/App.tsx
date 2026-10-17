@@ -60,6 +60,10 @@ import { FekerAppModal } from './components/FekerAppModal';
 import { MoodKitchenModal } from './components/MoodKitchenModal';
 import { CompanionModal } from './components/CompanionModal';
 import { CompanionFloatingButton } from './components/CompanionFloatingButton';
+import { EndlessPsychologyKnowledgeHub } from './components/EndlessPsychologyKnowledgeHub';
+import { PersonalityTypologyModal } from './components/PersonalityTypologyModal';
+import { ActivityRatingModal, ActivityRatingItem } from './components/ActivityRatingModal';
+import { localNotificationService } from './services/localNotificationService';
 import { Footer } from './components/Footer';
 import { initAnonymousAuth } from './services/authService';
 import { syncService } from './services/syncService';
@@ -219,6 +223,41 @@ export default function App() {
       });
   }, []);
 
+  // 🔔 Local Notification Monitor for 24-hour Mood Kitchen inactivity
+  const [notificationToast, setNotificationToast] = useState<{
+    id: string;
+    title: string;
+    body: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const stopMonitor = localNotificationService.startAutoMonitor(15);
+
+    const handleOpenMoodKitchenEvent = () => {
+      setIsMoodKitchenOpen(true);
+    };
+
+    const handleNotificationDispatched = (e: any) => {
+      const notif = e.detail?.notification;
+      if (notif) {
+        setNotificationToast({
+          id: notif.id,
+          title: notif.title,
+          body: notif.body
+        });
+      }
+    };
+
+    window.addEventListener('nesmat_open_mood_kitchen', handleOpenMoodKitchenEvent);
+    window.addEventListener('nesmat_notification_dispatched', handleNotificationDispatched);
+
+    return () => {
+      stopMonitor();
+      window.removeEventListener('nesmat_open_mood_kitchen', handleOpenMoodKitchenEvent);
+      window.removeEventListener('nesmat_notification_dispatched', handleNotificationDispatched);
+    };
+  }, []);
+
   // Universal and Creative Modals state
   const [isSafetyModalOpen, setIsSafetyModalOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -226,6 +265,31 @@ export default function App() {
   const [isSoundscapeOpen, setIsSoundscapeOpen] = useState(false);
   const [isEmotionCompassOpen, setIsEmotionCompassOpen] = useState(false);
   const [isDailyWisdomOpen, setIsDailyWisdomOpen] = useState(false);
+  const [endlessPsychologyState, setEndlessPsychologyState] = useState<{ isOpen: boolean; category: string }>({
+    isOpen: false,
+    category: 'all'
+  });
+  const [activityRatingState, setActivityRatingState] = useState<{
+    isOpen: boolean;
+    activity: ActivityRatingItem | null;
+  }>({
+    isOpen: false,
+    activity: null
+  });
+  const [personalityTypologyState, setPersonalityTypologyState] = useState<{
+    isOpen: boolean;
+    initialType: 'mbti16' | 'bigfive' | 'attachment' | 'stress_coping';
+  }>({
+    isOpen: false,
+    initialType: 'mbti16'
+  });
+
+  const triggerActivityRating = (activityId: string, activityTitle: string, category: string) => {
+    setActivityRatingState({
+      isOpen: true,
+      activity: { activityId, activityTitle, category }
+    });
+  };
 
   // Interactive Tools state
   const [isAnaDelwaqtiOpen, setIsAnaDelwaqtiOpen] = useState(false);
@@ -366,6 +430,21 @@ export default function App() {
         break;
       case 'discovery_quiz':
         setIsDiscoveryQuizOpen(true);
+        break;
+      case 'personality_tests':
+      case 'personality':
+      case 'personality_typology':
+      case 'mbti':
+        setPersonalityTypologyState({ isOpen: true, initialType: 'mbti16' });
+        break;
+      case 'bigfive':
+        setPersonalityTypologyState({ isOpen: true, initialType: 'bigfive' });
+        break;
+      case 'attachment':
+        setPersonalityTypologyState({ isOpen: true, initialType: 'attachment' });
+        break;
+      case 'stress_coping':
+        setPersonalityTypologyState({ isOpen: true, initialType: 'stress_coping' });
         break;
       case 'workshops_hub':
         setIsWorkshopsHubOpen(true);
@@ -537,8 +616,13 @@ export default function App() {
             onOpenFeker={() => setIsFekerModalOpen(true)}
             // Personal Discovery Quiz
             onOpenDiscoveryQuiz={() => setIsDiscoveryQuizOpen(true)}
+            onOpenPersonalityTests={() => setPersonalityTypologyState({ isOpen: true, initialType: 'mbti16' })}
             onOpenCompanion={() => setIsCompanionOpen(true)}
             onOpenMoodKitchen={() => setIsMoodKitchenOpen(true)}
+            onOpenInnerBurdens={() => setIsInnerBurdensOpen(true)}
+            onOpenEmotionalBridge={() => setIsEmotionalBridgeOpen(true)}
+            onOpenGratitudeGarden={() => setIsGratitudeGardenOpen(true)}
+            onOpenEndlessPsychology={(cat) => setEndlessPsychologyState({ isOpen: true, category: cat })}
           />
         )}
 
@@ -555,6 +639,7 @@ export default function App() {
             onNavigate={handleNavigate}
             onOpenAssessment={() => handleNavigate('assessment')}
             onOpenDiscoveryQuiz={() => setIsDiscoveryQuizOpen(true)}
+            onOpenPersonalityTests={() => setPersonalityTypologyState({ isOpen: true, initialType: 'mbti16' })}
             onOpenAnaDelwaqti={() => setIsAnaDelwaqtiOpen(true)}
             onOpenEmotionCompass={() => setIsEmotionCompassOpen(true)}
             onOpenBatteryCheck={() => setIsBatteryCheckOpen(true)}
@@ -742,66 +827,125 @@ export default function App() {
       {/* 🫧 1. لعبة فرقعة الفقاعات النفسية (Pop the Inner Burdens) */}
       <InnerBurdensBubbleGameModal
         isOpen={isInnerBurdensOpen}
-        onClose={() => setIsInnerBurdensOpen(false)}
+        onClose={() => {
+          setIsInnerBurdensOpen(false);
+          triggerActivityRating('inner_burdens', 'لعبة فرقعة الأعباء النفسية', 'ألعاب التهدئة');
+        }}
       />
 
       {/* 🌉 2. لعبة بناء الجسر العاطفي (Build the Bridge) */}
       <EmotionalBridgeGameModal
         isOpen={isEmotionalBridgeOpen}
-        onClose={() => setIsEmotionalBridgeOpen(false)}
+        onClose={() => {
+          setIsEmotionalBridgeOpen(false);
+          triggerActivityRating('emotional_bridge', 'لعبة بناء الجسر العاطفي', 'ألعاب التهدئة');
+        }}
       />
 
       {/* 🌸 3. لعبة حديقة الامتنان اليومية (The Daily Gratitude Garden) */}
       <GratitudeGardenModal
         isOpen={isGratitudeGardenOpen}
-        onClose={() => setIsGratitudeGardenOpen(false)}
+        onClose={() => {
+          setIsGratitudeGardenOpen(false);
+          triggerActivityRating('gratitude_garden', 'حديقة الامتنان اليومية', 'ألعاب التهدئة');
+        }}
       />
 
       {/* 🧭 4. لعبة رحلة البوصلة الداخلية (Inner Compass Journey) */}
       <InnerCompassJourneyModal
         isOpen={isInnerCompassOpen}
-        onClose={() => setIsInnerCompassOpen(false)}
+        onClose={() => {
+          setIsInnerCompassOpen(false);
+          triggerActivityRating('inner_compass', 'رحلة البوصلة الداخلية', 'رحلة الاستكشاف');
+        }}
       />
 
       {/* 🧩 5. لعبة صانع الأنماط: فك شفرة الأفكار (Cognitive Reframing Puzzle) */}
       <CognitiveReframingPuzzleModal
         isOpen={isReframingPuzzleOpen}
-        onClose={() => setIsReframingPuzzleOpen(false)}
+        onClose={() => {
+          setIsReframingPuzzleOpen(false);
+          triggerActivityRating('reframing_puzzle', 'لعبة فك شفرة الأفكار', 'ألعاب التهدئة');
+        }}
       />
 
       {/* 🌀 6. لعبة متاهة الهدوء التفاعلية (The Inner Labyrinth) */}
       <InnerLabyrinthModal
         isOpen={isInnerLabyrinthOpen}
-        onClose={() => setIsInnerLabyrinthOpen(false)}
+        onClose={() => {
+          setIsInnerLabyrinthOpen(false);
+          triggerActivityRating('inner_labyrinth', 'متاهة الهدوء التفاعلية', 'ألعاب التهدئة');
+        }}
       />
 
       {/* 🪞 7. لعبة مرآة الأعماق: طقوس التحرر الرقمي (Digital Release Ritual) */}
       <DigitalReleaseRitualModal
         isOpen={isDigitalReleaseOpen}
-        onClose={() => setIsDigitalReleaseOpen(false)}
+        onClose={() => {
+          setIsDigitalReleaseOpen(false);
+          triggerActivityRating('digital_release', 'مرآة الأعماق وطقوس التحرر', 'ألعاب التهدئة');
+        }}
       />
 
       {/* 🪐 8. لعبة حصاد طاقة الروابط (The Relational Energy Matrix) */}
       <RelationalEnergyMatrixModal
         isOpen={isRelationalEnergyOpen}
-        onClose={() => setIsRelationalEnergyOpen(false)}
+        onClose={() => {
+          setIsRelationalEnergyOpen(false);
+          triggerActivityRating('relational_matrix', 'مصفوفة طاقة الروابط', 'ألعاب التهدئة');
+        }}
       />
 
       {/* 🧭 Personal Discovery Quiz */}
       <PersonalDiscoveryQuizModal
         isOpen={isDiscoveryQuizOpen}
-        onClose={() => setIsDiscoveryQuizOpen(false)}
+        onClose={() => {
+          setIsDiscoveryQuizOpen(false);
+          triggerActivityRating('discovery_quiz', 'اختبار الاستكشاف الشخصي', 'رحلة الاستكشاف');
+        }}
       />
 
       {/* 💡 تطبيق فكّر المدمج (Feker App - AI Studio 6b9dc7c3) */}
       <FekerAppModal
         isOpen={isFekerModalOpen}
-        onClose={() => setIsFekerModalOpen(false)}
+        onClose={() => {
+          setIsFekerModalOpen(false);
+          triggerActivityRating('feker_app', 'تطبيق فكّر لتفكيك الأفكار', 'ورش العمل');
+        }}
       />
+
       {/* 🍲 مطبخ المزاج — غذاء يدعم أمعاءك وعافيتك النفسية */}
       <MoodKitchenModal
         isOpen={isMoodKitchenOpen}
         onClose={() => setIsMoodKitchenOpen(false)}
+      />
+
+      {/* ⭐ تقييم الأنشطة والألعاب (5 نجوم) لتقييم الفائدة والتأثير */}
+      <ActivityRatingModal
+        isOpen={activityRatingState.isOpen}
+        activity={activityRatingState.activity}
+        onClose={() => setActivityRatingState({ isOpen: false, activity: null })}
+        theme={theme}
+      />
+
+      {/* 🧠 موسوعة المعلومات النفسية اللانهائية */}
+      <EndlessPsychologyKnowledgeHub
+        isOpen={endlessPsychologyState.isOpen}
+        initialCategory={endlessPsychologyState.category}
+        onClose={() => setEndlessPsychologyState(prev => ({ ...prev, isOpen: false }))}
+        theme={theme}
+      />
+
+      {/* 🧭 اختبارات تصنيف الشخصية والأنماط النفسية المتقدمة */}
+      <PersonalityTypologyModal
+        isOpen={personalityTypologyState.isOpen}
+        initialTestType={personalityTypologyState.initialType}
+        onClose={() => {
+          setPersonalityTypologyState(prev => ({ ...prev, isOpen: false }));
+          triggerActivityRating('personality_typology', 'اختبارات تصنيف الشخصية والأنماط', 'رحلة الاستكشاف');
+        }}
+        onOpenActivity={(activityId) => handleOpenModalByName(activityId)}
+        theme={theme}
       />
 
       {/* 🛠️ PDF Practical Workshops Modals */}
@@ -948,6 +1092,7 @@ export default function App() {
         onClose={() => setIsNotificationsOpen(false)}
         onNavigateToContent={() => setCurrentTab('explore')}
         onNavigateToBreathe={() => setCurrentTab('breathe')}
+        onOpenMoodKitchen={() => setIsMoodKitchenOpen(true)}
       />
 
       <ThoughtReleaseModal
@@ -991,6 +1136,47 @@ export default function App() {
         onOpenModal={handleOpenModalByName}
         onOpenAudio={handleOpenAudio}
       />
+
+      {/* 🔔 Floating In-App Reminder Toast for Mood Kitchen & Calming Activities */}
+      {notificationToast && (
+        <div className="fixed bottom-20 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-50 bg-[#14271F] border border-emerald-500/40 text-white p-4 rounded-3xl shadow-2xl animate-fade-in flex flex-col gap-2.5">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🍳</span>
+              <h4 className="font-bold text-xs sm:text-sm text-emerald-300">{notificationToast.title}</h4>
+            </div>
+            <button
+              onClick={() => setNotificationToast(null)}
+              className="text-stone-400 hover:text-white p-1 text-sm cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+          <p className="text-xs text-stone-300 leading-relaxed">
+            {notificationToast.body}
+          </p>
+          <div className="flex items-center justify-between gap-2 pt-2 border-t border-white/10 text-xs">
+            <button
+              onClick={() => {
+                setNotificationToast(null);
+                setIsNotificationsOpen(true);
+              }}
+              className="text-stone-400 hover:text-stone-200 text-[11px] underline cursor-pointer"
+            >
+              عرض الإشعارات
+            </button>
+            <button
+              onClick={() => {
+                setNotificationToast(null);
+                setIsMoodKitchenOpen(true);
+              }}
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold rounded-xl transition-all shadow-md active:scale-95 cursor-pointer"
+            >
+              فتح مطبخ المزاج والأنشطة 🍳
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

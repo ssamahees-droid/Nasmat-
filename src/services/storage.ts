@@ -48,7 +48,10 @@ const KEYS = {
   GRATITUDE_GARDEN: 'nesmat_gratitude_garden_v1',
   INNER_SAFETY_SUMMARIES: 'nesmat_inner_safety_summaries_v1',
   SCHEDULED_RELAXATION: 'nesmat_scheduled_relaxation_v1',
-  RELAXATION_REMINDERS_CONFIG: 'nesmat_relaxation_reminders_config_v1'
+  RELAXATION_REMINDERS_CONFIG: 'nesmat_relaxation_reminders_config_v1',
+  ACTIVITY_RATINGS: 'nesmat_activity_ratings_v1',
+  MOOD_KITCHEN_LOGS: 'nesmat_mood_kitchen_meal_logs',
+  PERSONALITY_TEST_RESULTS: 'nesmat_personality_test_results_v1'
 };
 
 export interface PersonalNote {
@@ -1136,6 +1139,72 @@ class StorageService {
     localStorage.setItem(KEYS.RELAXATION_REMINDERS_CONFIG, JSON.stringify(settings));
   }
 
+  addActivityRating(data: { activityId: string; activityTitle: string; category: string; rating: number; feedback?: string }) {
+    const ratings = this.getActivityRatings();
+    const user = this.getUser();
+    const newRating = {
+      id: `rating_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      userId: user.id,
+      ...data,
+      createdAt: new Date().toISOString()
+    };
+    ratings.unshift(newRating);
+    localStorage.setItem(KEYS.ACTIVITY_RATINGS, JSON.stringify(ratings));
+    return newRating;
+  }
+
+  getActivityRatings(): any[] {
+    try {
+      const raw = localStorage.getItem(KEYS.ACTIVITY_RATINGS);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  getMoodKitchenLogs(): any[] {
+    try {
+      const raw = localStorage.getItem(KEYS.MOOD_KITCHEN_LOGS);
+      if (raw) return JSON.parse(raw);
+      return [
+        {
+          id: 'log-sample-1',
+          timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),
+          timeFormattedAr: 'اليوم، منذ ساعتين',
+          timeFormattedEn: 'Today, 2 hours ago',
+          mealType: 'breakfast',
+          ingredients: ['زبادي بلدي أو خمائر حية', 'بذور كتان أو شوفان'],
+          customIngredients: 'رشة عسل أبيض وقطرات ليمون',
+          mood: 'calm',
+          digestiveComfort: 'light',
+          notes: 'تناولت الإفطار بهدوء بعيداً عن الهاتف',
+          advice: {
+            titleAr: 'تناغم محوري ممتاز بين الأمعاء والدماغ',
+            titleEn: 'Optimal Gut-Brain Axis Harmony',
+            gutBrainConnectionAr: 'مزيج الخمائر الحية من الزبادي البلدي مع ألياف بذور الكتان يمنح بكتيريا الأمعاء النافعة وقوداً مثالياً لإنتاج الأحماض الدهنية قصيرة السلسلة (SCFA) التي تُرسل إشارات استرخاء فورية عبر العصب الحائر.',
+            gutBrainConnectionEn: 'The synergy of live active cultures and prebiotic flaxseed fiber nourishes gut microbiota to synthesize short-chain fatty acids that communicate calming signals via the vagus nerve.',
+            practicalTipAr: 'واصل هذا الطقس الصباحي؛ فهو يحافظ على استقرار مستويات الدوبامين والسيروتونين الطبيعية في الجهاز العصبي المعوي.',
+            practicalTipEn: 'Maintain this morning ritual; it sustains baseline dopamine and serotonin signaling in your enteric nervous system.'
+          }
+        }
+      ];
+    } catch {
+      return [];
+    }
+  }
+
+  getLatestMoodKitchenLog(): any | null {
+    const logs = this.getMoodKitchenLogs();
+    return logs.length > 0 ? logs[0] : null;
+  }
+
+  saveMoodKitchenLogs(logs: any[]): void {
+    localStorage.setItem(KEYS.MOOD_KITCHEN_LOGS, JSON.stringify(logs));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('nesmat_mood_kitchen_updated'));
+    }
+  }
+
   addNotification(notif: Omit<NotificationItem, 'id' | 'createdAt' | 'read' | 'userId'>): NotificationItem {
     const notifs = this.getNotifications();
     const user = this.getUser();
@@ -1149,6 +1218,33 @@ class StorageService {
     notifs.unshift(newItem);
     localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(notifs));
     return newItem;
+  }
+
+  savePersonalityTestResult(result: any): any {
+    const list = this.getPersonalityTestResults();
+    const item = {
+      id: `pt_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      createdAt: new Date().toISOString(),
+      ...result
+    };
+    list.unshift(item);
+    localStorage.setItem(KEYS.PERSONALITY_TEST_RESULTS, JSON.stringify(list));
+    return item;
+  }
+
+  getPersonalityTestResults(): any[] {
+    try {
+      const raw = localStorage.getItem(KEYS.PERSONALITY_TEST_RESULTS);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  getLatestPersonalityTestResult(testType?: string): any | null {
+    const all = this.getPersonalityTestResults();
+    if (!testType) return all[0] || null;
+    return all.find(r => r.testType === testType) || null;
   }
 
   private getAllScheduledRelaxationRaw(): ScheduledRelaxationSession[] {

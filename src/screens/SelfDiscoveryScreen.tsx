@@ -17,6 +17,7 @@ interface SelfDiscoveryScreenProps {
   onNavigate: (tab: string) => void;
   onOpenAssessment: () => void;
   onOpenDiscoveryQuiz: () => void;
+  onOpenPersonalityTests?: () => void;
   onOpenAnaDelwaqti: () => void;
   onOpenEmotionCompass: () => void;
   onOpenBatteryCheck: () => void;
@@ -27,6 +28,7 @@ export const SelfDiscoveryScreen: React.FC<SelfDiscoveryScreenProps> = ({
   onNavigate,
   onOpenAssessment,
   onOpenDiscoveryQuiz,
+  onOpenPersonalityTests,
   onOpenAnaDelwaqti,
   onOpenEmotionCompass,
   onOpenBatteryCheck,
@@ -70,6 +72,34 @@ export const SelfDiscoveryScreen: React.FC<SelfDiscoveryScreenProps> = ({
               <strong>تنبيه توعوي:</strong> هذه الأدوات استكشافية وتوعوية لمساعدتك على قراءة ذاتك، وليست تقييماً طبياً أو تشخيصاً سريرياً بديلاً عن مقابلة الطبيب المختص.
             </span>
           </div>
+        </div>
+      </section>
+
+      {/* 🧠 بطاقة بارزة: اختبارات تصنيف الشخصية والأنماط النفسية */}
+      <section className="bg-linear-to-r from-emerald-950/60 via-[#162720] to-[#12231A] border border-emerald-500/30 rounded-3xl p-6 sm:p-7 shadow-xl relative overflow-hidden transition-all hover:border-emerald-400/50">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div className="space-y-2.5 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/15 border border-amber-500/30 rounded-full text-amber-300 text-xs font-bold">
+              <span>🧠</span>
+              <span>جديد: مركز اختبارات تصنيف الشخصية المتقدمة</span>
+            </div>
+
+            <h2 className="text-xl sm:text-2xl font-bold text-white leading-snug">
+              اكتشف نمط شخصيتك، نقاط قوتك، وسلوكك تحت الضغط 🧭
+            </h2>
+
+            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+              ٤ مقاييس سيكولوجية عميقة: اختبار الأنماط الـ ١٦ (MBTI)، مقياس العوامل الخمسة الكبرى (OCEAN)، أنماط التعلّق في العلاقات، وأسلوب مواجهة الضغوط مع توصيات فورية بتمارين وألعاب ملائمة لنمطك.
+            </p>
+          </div>
+
+          <button
+            onClick={() => onOpenPersonalityTests && onOpenPersonalityTests()}
+            className="px-6 py-3.5 bg-linear-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black text-xs font-extrabold rounded-2xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 cursor-pointer shrink-0"
+          >
+            <span>بدء اختبارات تصنيف الشخصية</span>
+            <ArrowLeft className="w-4 h-4" />
+          </button>
         </div>
       </section>
 

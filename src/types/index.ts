@@ -184,9 +184,11 @@ export interface NotificationItem {
   userId: string;
   title: string;
   body: string;
-  type: 'reminder' | 'content' | 'support' | 'system';
+  type: 'reminder' | 'content' | 'support' | 'system' | 'mood_kitchen';
   read: boolean;
   createdAt: string;
+  actionType?: 'mood_kitchen' | 'breathe' | 'game' | 'content';
+  actionPayload?: string;
 }
 
 export interface AuditLog {

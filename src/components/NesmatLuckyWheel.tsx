@@ -11,6 +11,7 @@ import {
   Compass
 } from 'lucide-react';
 import { chimeService } from '../services/chimeService';
+import { motion } from 'motion/react';
 
 export interface WheelSectionItem {
   id: string;
@@ -370,14 +371,14 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                       />
                     ))}
 
-                    {/* Rotating Wheel Group with cubic-bezier deceleration */}
-                    <g 
-                      transform={`rotate(${spinRotation}, 200, 200)`}
-                      style={{
-                        transition: isSpinning 
-                          ? 'transform 3.8s cubic-bezier(0.12, 0.82, 0.18, 1)' 
-                          : 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                    {/* Rotating Wheel Group with Framer Motion realistic physics */}
+                    <motion.g 
+                      animate={{ rotate: spinRotation }}
+                      transition={{ 
+                        duration: isSpinning ? 3.8 : 1.2, 
+                        ease: [0.12, 0.82, 0.18, 1] 
                       }}
+                      style={{ transformOrigin: '200px 200px' }}
                     >
                       {sections.map((sec, idx) => {
                         const sliceRot = idx * sliceAngle;
@@ -426,7 +427,7 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                           </g>
                         );
                       })}
-                    </g>
+                    </motion.g>
 
                     {/* Center Hub Core */}
                     <circle
@@ -544,10 +545,15 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                   <span>{isSpinning ? 'العجلة تدور الآن برقة...' : 'يلا نلف العجلة! 🎡'}</span>
                 </button>
               ) : (
-                /* Selected Result Card */
-                <div className={`w-full max-w-md p-6 rounded-3xl border shadow-2xl animate-won-card space-y-4 text-center ${
-                  isDark ? 'bg-[#182C21] border-emerald-500/60' : 'bg-white border-emerald-600/35'
-                }`}>
+                /* Selected Result Card with Framer Motion Spring */
+                <motion.div 
+                  initial={{ scale: 0.8, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                  className={`w-full max-w-md p-6 rounded-3xl border shadow-2xl space-y-4 text-center ${
+                    isDark ? 'bg-[#182C21] border-emerald-500/60' : 'bg-white border-emerald-600/35'
+                  }`}
+                >
                   <div 
                     className="inline-flex items-center justify-center w-16 h-16 rounded-2xl text-3xl shadow-lg mx-auto text-white"
                     style={{ backgroundColor: selectedSection.bgHex }}
@@ -597,7 +603,7 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                       <span>إعادة التدوير 🎡</span>
                     </button>
                   </div>
-                </div>
+                </motion.div>
               )}
             </div>
           ) : (

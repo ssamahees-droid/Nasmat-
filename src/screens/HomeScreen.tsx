@@ -31,6 +31,8 @@ import { PWAInstallButton } from '../components/PWAInstallButton';
 import { CompanionHeroSection } from '../components/CompanionHeroSection';
 import { NesmatGuideBanner } from '../components/NesmatGuideBanner';
 import { NesmatLuckyWheel, WheelSectionItem } from '../components/NesmatLuckyWheel';
+import { MainSixHubsSection } from '../components/MainSixHubsSection';
+import { MoodKitchenRecommendations } from '../components/MoodKitchenRecommendations';
 import { useLanguage } from '../context/LanguageContext';
 import { chimeService } from '../services/chimeService';
 
@@ -71,11 +73,13 @@ interface HomeScreenProps {
   onOpenGwayaHekaya: () => void;
   onOpenFeker?: () => void;
   onOpenDiscoveryQuiz: () => void;
+  onOpenPersonalityTests?: () => void;
   onOpenCompanion?: () => void;
   onOpenInnerBurdens?: () => void;
   onOpenEmotionalBridge?: () => void;
   onOpenGratitudeGarden?: () => void;
   onOpenInnerCompass?: () => void;
+  onOpenEndlessPsychology?: (category: string) => void;
   theme?: 'dark' | 'light' | 'system';
 }
 
@@ -119,11 +123,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenGwayaHekaya,
   onOpenFeker,
   onOpenDiscoveryQuiz,
+  onOpenPersonalityTests,
   onOpenCompanion,
   onOpenInnerBurdens,
   onOpenEmotionalBridge,
   onOpenGratitudeGarden,
   onOpenInnerCompass,
+  onOpenEndlessPsychology,
   theme = 'dark'
 }) => {
   const { t, language } = useLanguage();
@@ -135,128 +141,73 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   });
   const [justSavedCheckin, setJustSavedCheckin] = useState(false);
 
-  // Spin Wheel Sections with dynamic brand-aligned color coding matching each section's emotional tone
+  // Spin Wheel Sections aligned with the 6 core main categories
   const WHEEL_SECTIONS: WheelSectionItem[] = [
     {
-      id: 'mood_kitchen',
-      title: 'مطبخ المزاج',
-      desc: 'غذاء يدعم أمعاءك وعافيتك النفسية بوصفات منزلية بسيطة',
-      emoji: '🍲',
-      bgHex: '#059669', // Emerald - Gut & Nourishment
+      id: 'exploration',
+      title: 'رحلة الاستكشاف',
+      desc: 'ابدأ رحلتك النفسية واكتشف ذاتك والكتيب التوجيهي الشامل',
+      emoji: '🧭',
+      bgHex: '#059669',
       gradientStart: '#10B981',
       gradientEnd: '#065F46',
       textColor: 'text-emerald-100',
-      action: () => onOpenMoodKitchen ? onOpenMoodKitchen() : onNavigate('explore')
+      action: () => onNavigate('start')
     },
     {
-      id: 'feker',
-      title: 'تطبيق فكّر',
-      desc: 'فكك أفكارك السامة التلقائية واكشف أفخاخ التفكير',
-      emoji: '💡',
-      bgHex: '#65a30d', // Lime Green - Mental Clarity & Growth
-      gradientStart: '#84CC16',
-      gradientEnd: '#3F6212',
-      textColor: 'text-lime-100',
-      action: () => onOpenFeker ? onOpenFeker() : onNavigate('games')
+      id: 'workshops',
+      title: 'ورش العمل',
+      desc: 'ورش عملية، تطبيق فكّر لتفكيك الأفكار السامة، ورحلة التعافي',
+      emoji: '📚',
+      bgHex: '#b45309',
+      gradientStart: '#D97706',
+      gradientEnd: '#78350F',
+      textColor: 'text-amber-100',
+      action: () => onOpenWorkshopsHub()
     },
     {
-      id: 'gwaya_hekaya',
-      title: 'جوايا حكاية',
-      desc: 'العالم الذي يشرح نفسه واستكشاف ما يدور بداخلك',
-      emoji: '📖',
-      bgHex: '#0d9488', // Teal - Self Discovery
-      gradientStart: '#14B8A6',
-      gradientEnd: '#115E59',
-      textColor: 'text-teal-100',
-      action: () => onOpenGwayaHekaya()
+      id: 'games_relief',
+      title: 'ألعاب التهدئة',
+      desc: 'فرقعة الأعباء، حديقة الامتنان، والجسر العاطفي للبهجة والتفريغ',
+      emoji: '🎈',
+      bgHex: '#db2777',
+      gradientStart: '#EC4899',
+      gradientEnd: '#9D174D',
+      textColor: 'text-pink-100',
+      action: () => onOpenFunAndGames('wheel')
     },
     {
-      id: 'breathe',
-      title: 'التنفس الهادئ',
-      desc: 'تمرين 4-7-8 لتهدئة الجهاز العصبي فوراً',
+      id: 'mind_library',
+      title: 'مكتبة العقل',
+      desc: 'اسمع نفسك وأمانك الداخلي، والجلسة الأسبوعية التأملية والمذكرات',
+      emoji: '🧠',
+      bgHex: '#4f46e5',
+      gradientStart: '#6366F1',
+      gradientEnd: '#312E81',
+      textColor: 'text-indigo-100',
+      action: () => onNavigate('listen-to-yourself')
+    },
+    {
+      id: 'quick_tools',
+      title: 'الأدوات السريعة',
+      desc: 'التنفس الهادئ 4-7-8، بوصلة المشاعر، ومطبخ المزاج وشاحن الطاقة',
       emoji: '🌊',
-      bgHex: '#0284c7', // Sky Blue - Calming Nervous System
+      bgHex: '#0284c7',
       gradientStart: '#38BDF8',
       gradientEnd: '#075985',
       textColor: 'text-sky-100',
       action: () => onNavigate('breathe')
     },
     {
-      id: 'emotion_compass',
-      title: 'بوصلة المشاعر',
-      desc: 'استكشاف وتسمية ما تشعر به بدقة وترتيبه',
-      emoji: '🧭',
-      bgHex: '#d97706', // Warm Amber - Emotional Navigation
-      gradientStart: '#F59E0B',
-      gradientEnd: '#92400E',
-      textColor: 'text-amber-100',
-      action: () => onOpenEmotionCompass()
-    },
-    {
-      id: 'rescue',
-      title: 'إسعافات الطوارئ',
-      desc: 'خطة سريعة وقت الضيق الشديد والتوتر الحاد',
-      emoji: '🆘',
-      bgHex: '#e11d48', // Rose / Red - Crisis Relief
-      gradientStart: '#F43F5E',
-      gradientEnd: '#9F1239',
-      textColor: 'text-rose-100',
-      action: () => onNavigate('rescue')
-    },
-    {
-      id: 'battery_check',
-      title: 'شاحن الطاقة',
-      desc: 'معرفة ما يستنزف طاقتك النفسية وكيف تشحنها',
-      emoji: '🔋',
-      bgHex: '#7c3aed', // Purple - Energy & Balance
-      gradientStart: '#8B5CF6',
-      gradientEnd: '#5B21B6',
-      textColor: 'text-purple-100',
-      action: () => onOpenBatteryCheck()
-    },
-    {
-      id: 'games',
-      title: 'الألعاب النفسية',
-      desc: 'فرقعة الأعباء، الجسر العاطفي، وحديقة الامتنان',
-      emoji: '🎈',
-      bgHex: '#db2777', // Pink - Playful Relief
-      gradientStart: '#EC4899',
-      gradientEnd: '#9D174D',
-      textColor: 'text-pink-100',
-      action: () => onNavigate('games')
-    },
-    {
-      id: 'explore',
-      title: 'الكتيب والورش',
-      desc: 'مكتبة التثقيف النفسي الشاملة والورش التفاعلية',
-      emoji: '📚',
-      bgHex: '#b45309', // Deep Amber - Knowledge & Wisdom
-      gradientStart: '#D97706',
-      gradientEnd: '#78350F',
-      textColor: 'text-amber-100',
-      action: () => onNavigate('explore')
-    },
-    {
-      id: 'weekly',
-      title: 'الجلسة الأسبوعية',
-      desc: 'التأمل والمراجعة الأسبوعية الشاملة للنمو',
-      emoji: '📅',
-      bgHex: '#047857', // Forest Green - Weekly Reflection
-      gradientStart: '#059669',
-      gradientEnd: '#064E3B',
-      textColor: 'text-emerald-100',
-      action: () => onNavigate('weekly')
-    },
-    {
-      id: 'listen_safety',
-      title: 'اسمع نفسك وأمانك',
-      desc: 'مساحة أمانك الداخلي، احتواء الذات، والحوار المتزن',
-      emoji: '🛡️',
-      bgHex: '#0f766e', // Deep Teal - Inner Safety & Containment
-      gradientStart: '#2DD4BF',
-      gradientEnd: '#134E4A',
+      id: 'companion_support',
+      title: 'التواصل مع رفيقي',
+      desc: 'رفيقي الذكي لاحتواء مشاعرك، إسعافات الطوارئ، والدعم المتخصص',
+      emoji: '🌿',
+      bgHex: '#0d9488',
+      gradientStart: '#14B8A6',
+      gradientEnd: '#115E59',
       textColor: 'text-teal-100',
-      action: () => onNavigate('listen-to-yourself')
+      action: () => onOpenCompanion ? onOpenCompanion() : onNavigate('support')
     }
   ];
 
@@ -405,9 +356,46 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         )}
       </section>
 
+      {/* 🍳 قسم ربط بيانات مطبخ المزاج بالتوصيات النفسية والأنشطة المخصصة */}
+      <MoodKitchenRecommendations 
+        onOpenMoodKitchen={() => onOpenMoodKitchen ? onOpenMoodKitchen() : onNavigate('explore')}
+        onNavigate={onNavigate}
+        onOpenInnerBurdens={onOpenInnerBurdens}
+        onOpenEmotionalBridge={onOpenEmotionalBridge}
+        onOpenGratitudeGarden={onOpenGratitudeGarden}
+        onOpenEmotionCompass={onOpenEmotionCompass}
+        onOpenMindfulnessStudio={onOpenMindfulnessStudio}
+        onOpenSoundscapeStudio={onOpenSoundscapeStudio}
+        onOpenThoughtRelease={onOpenThoughtRelease}
+        onOpenFeker={onOpenFeker}
+        onOpenWorkshopsHub={onOpenWorkshopsHub}
+        onOpenThoughtJournal={onOpenThoughtJournal}
+        onOpenEndlessPsychology={onOpenEndlessPsychology}
+        onOpenCompanion={onOpenCompanion}
+        onOpenFunAndGames={onOpenFunAndGames}
+        theme={theme}
+      />
+
       {/* 🎡 عجلة الحظ التفاعلية الفاخرة — هوية نسمة حياة الرسمية واختيار الأقسام المباشر */}
       <NesmatLuckyWheel 
         sections={WHEEL_SECTIONS}
+        theme={theme}
+      />
+
+      {/* 🧭 التصنيفات الستة الرئيسية المدمجة */}
+      <MainSixHubsSection 
+        onNavigate={onNavigate}
+        onOpenCompanion={() => onOpenCompanion && onOpenCompanion()}
+        onOpenWorkshopsHub={onOpenWorkshopsHub}
+        onOpenThoughtJournal={onOpenThoughtJournal}
+        onOpenMindfulnessStudio={onOpenMindfulnessStudio}
+        onOpenFunAndGames={onOpenFunAndGames}
+        onOpenMoodKitchen={() => onOpenMoodKitchen ? onOpenMoodKitchen() : onNavigate('explore')}
+        onOpenEmotionCompass={onOpenEmotionCompass}
+        onOpenRescueKit={onOpenRescueKit}
+        onOpenFeker={() => onOpenFeker ? onOpenFeker() : onNavigate('games')}
+        onOpenPersonalityTests={onOpenPersonalityTests}
+        onOpenEndlessPsychology={(cat) => onOpenEndlessPsychology && onOpenEndlessPsychology(cat)}
         theme={theme}
       />
 
