@@ -32,7 +32,6 @@ import { CompanionHeroSection } from '../components/CompanionHeroSection';
 import { NesmatGuideBanner } from '../components/NesmatGuideBanner';
 import { NesmatLuckyWheel, WheelSectionItem } from '../components/NesmatLuckyWheel';
 import { MainSixHubsSection } from '../components/MainSixHubsSection';
-import { MoodKitchenRecommendations } from '../components/MoodKitchenRecommendations';
 import { useLanguage } from '../context/LanguageContext';
 import { chimeService } from '../services/chimeService';
 
@@ -79,6 +78,8 @@ interface HomeScreenProps {
   onOpenEmotionalBridge?: () => void;
   onOpenGratitudeGarden?: () => void;
   onOpenInnerCompass?: () => void;
+  onOpenDailyMiracle?: () => void;
+  onOpenOrigamiGarden?: () => void;
   onOpenEndlessPsychology?: (category: string) => void;
   theme?: 'dark' | 'light' | 'system';
 }
@@ -129,6 +130,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenEmotionalBridge,
   onOpenGratitudeGarden,
   onOpenInnerCompass,
+  onOpenDailyMiracle,
+  onOpenOrigamiGarden,
   onOpenEndlessPsychology,
   theme = 'dark'
 }) => {
@@ -141,12 +144,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   });
   const [justSavedCheckin, setJustSavedCheckin] = useState(false);
 
-  // Spin Wheel Sections aligned with the 6 core main categories
+  // Spin Wheel Sections: 9 comprehensive, vibrant slices covering core areas and all new innovations
   const WHEEL_SECTIONS: WheelSectionItem[] = [
     {
       id: 'exploration',
       title: 'رحلة الاستكشاف',
-      desc: 'ابدأ رحلتك النفسية واكتشف ذاتك والكتيب التوجيهي الشامل',
+      desc: 'ابدأ رحلتك النفسية واكتشف ذاتك والكتيب التوجيهي الشامل وخطوتك الأولى',
       emoji: '🧭',
       bgHex: '#059669',
       gradientStart: '#10B981',
@@ -155,20 +158,64 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       action: () => onNavigate('start')
     },
     {
-      id: 'workshops',
-      title: 'ورش العمل',
-      desc: 'ورش عملية، تطبيق فكّر لتفكيك الأفكار السامة، ورحلة التعافي',
-      emoji: '📚',
-      bgHex: '#b45309',
-      gradientStart: '#D97706',
+      id: 'personality_tests',
+      title: 'تصنيف الشخصية',
+      desc: 'اختبارات سيكولوجية عميقة: الأنماط الـ ١٦ (MBTI)، العوامل الخمسة، وأنماط التعلّق',
+      emoji: '🧠',
+      bgHex: '#7c3aed',
+      gradientStart: '#8B5CF6',
+      gradientEnd: '#4C1D95',
+      textColor: 'text-purple-100',
+      action: () => onOpenPersonalityTests ? onOpenPersonalityTests() : onNavigate('self-discovery')
+    },
+    {
+      id: 'mood_kitchen',
+      title: 'مطبخ المزاج',
+      desc: 'محور الأمعاء–الدماغ، أطعمة تدعم هدوء الأعصاب، وتسجيل ميكروبيوم المزاج',
+      emoji: '🍳',
+      bgHex: '#d97706',
+      gradientStart: '#F59E0B',
       gradientEnd: '#78350F',
       textColor: 'text-amber-100',
+      action: () => onOpenMoodKitchen ? onOpenMoodKitchen() : onNavigate('explore')
+    },
+    {
+      id: 'daily_miracle',
+      title: 'درج المعجزات',
+      desc: 'رسائل تأملية حكيمة تلتقط السكينة واليقظة من وسط زحمة اليوم والضغوط',
+      emoji: '✨',
+      bgHex: '#ca8a04',
+      gradientStart: '#FACC15',
+      gradientEnd: '#713F12',
+      textColor: 'text-yellow-100',
+      action: () => onOpenDailyMiracle ? onOpenDailyMiracle() : onNavigate('listen-to-yourself')
+    },
+    {
+      id: 'origami_garden',
+      title: 'الأوريغامي الشعوري',
+      desc: 'طي المشاعر والأفكار بطريقة فنية وتأملية لتحليق طائر الطمأنينة واللوتس',
+      emoji: '🕊️',
+      bgHex: '#0d9488',
+      gradientStart: '#14B8A6',
+      gradientEnd: '#115E59',
+      textColor: 'text-teal-100',
+      action: () => onOpenOrigamiGarden ? onOpenOrigamiGarden() : onOpenFunAndGames('wheel')
+    },
+    {
+      id: 'workshops',
+      title: 'ورش العمل وفكّر',
+      desc: 'ورش عملية، تطبيق فكّر لتفكيك الأفكار السامة، وإسعافات الطوارئ النفسية',
+      emoji: '📚',
+      bgHex: '#e11d48',
+      gradientStart: '#F43F5E',
+      gradientEnd: '#881337',
+      textColor: 'text-rose-100',
       action: () => onOpenWorkshopsHub()
     },
     {
       id: 'games_relief',
       title: 'ألعاب التهدئة',
-      desc: 'فرقعة الأعباء، حديقة الامتنان، والجسر العاطفي للبهجة والتفريغ',
+      desc: 'فرقعة الأعباء النفسية، حديقة الامتنان، والجسر العاطفي للتفريغ والبهجة',
       emoji: '🎈',
       bgHex: '#db2777',
       gradientStart: '#EC4899',
@@ -177,20 +224,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       action: () => onOpenFunAndGames('wheel')
     },
     {
-      id: 'mind_library',
-      title: 'مكتبة العقل',
-      desc: 'اسمع نفسك وأمانك الداخلي، والجلسة الأسبوعية التأملية والمذكرات',
-      emoji: '🧠',
-      bgHex: '#4f46e5',
-      gradientStart: '#6366F1',
-      gradientEnd: '#312E81',
-      textColor: 'text-indigo-100',
-      action: () => onNavigate('listen-to-yourself')
-    },
-    {
       id: 'quick_tools',
-      title: 'الأدوات السريعة',
-      desc: 'التنفس الهادئ 4-7-8، بوصلة المشاعر، ومطبخ المزاج وشاحن الطاقة',
+      title: 'التنفس والاسترخاء',
+      desc: 'التنفس الهادئ 4-7-8، بوصلة المشاعر، وشاحن بطارية الطاقة النفسية',
       emoji: '🌊',
       bgHex: '#0284c7',
       gradientStart: '#38BDF8',
@@ -201,12 +237,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     {
       id: 'companion_support',
       title: 'التواصل مع رفيقي',
-      desc: 'رفيقي الذكي لاحتواء مشاعرك، إسعافات الطوارئ، والدعم المتخصص',
+      desc: 'رفيقي الذكي لاحتواء مشاعرك بلهجة دافئة، إسعافات الطوارئ، والدعم المتخصص',
       emoji: '🌿',
-      bgHex: '#0d9488',
-      gradientStart: '#14B8A6',
-      gradientEnd: '#115E59',
-      textColor: 'text-teal-100',
+      bgHex: '#15803d',
+      gradientStart: '#22C55E',
+      gradientEnd: '#14532D',
+      textColor: 'text-emerald-100',
       action: () => onOpenCompanion ? onOpenCompanion() : onNavigate('support')
     }
   ];
@@ -222,7 +258,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-16 animate-fade-in">
-      {/* 1. Welcome & Greeting Banner */}
+      {/* 1. Welcome & Greeting Banner (Clean & Serene) */}
       <section className={`relative overflow-hidden p-6 sm:p-8 rounded-3xl border shadow-lg ${
         isDark 
           ? 'bg-gradient-to-br from-[#12221A] via-[#111B17] to-[#0A120E] border-emerald-500/30' 
@@ -308,7 +344,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </section>
 
-      {/* 🌿 Daily Mood Check-In */}
+      {/* 2. 🌿 Daily Mood Check-In */}
       <section className={`p-6 border rounded-3xl space-y-4 shadow-sm ${
         isDark ? 'bg-[#14221A] border-emerald-500/20' : 'bg-white border-emerald-600/15'
       }`}>
@@ -356,33 +392,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         )}
       </section>
 
-      {/* 🍳 قسم ربط بيانات مطبخ المزاج بالتوصيات النفسية والأنشطة المخصصة */}
-      <MoodKitchenRecommendations 
-        onOpenMoodKitchen={() => onOpenMoodKitchen ? onOpenMoodKitchen() : onNavigate('explore')}
-        onNavigate={onNavigate}
-        onOpenInnerBurdens={onOpenInnerBurdens}
-        onOpenEmotionalBridge={onOpenEmotionalBridge}
-        onOpenGratitudeGarden={onOpenGratitudeGarden}
-        onOpenEmotionCompass={onOpenEmotionCompass}
-        onOpenMindfulnessStudio={onOpenMindfulnessStudio}
-        onOpenSoundscapeStudio={onOpenSoundscapeStudio}
-        onOpenThoughtRelease={onOpenThoughtRelease}
-        onOpenFeker={onOpenFeker}
-        onOpenWorkshopsHub={onOpenWorkshopsHub}
-        onOpenThoughtJournal={onOpenThoughtJournal}
-        onOpenEndlessPsychology={onOpenEndlessPsychology}
-        onOpenCompanion={onOpenCompanion}
-        onOpenFunAndGames={onOpenFunAndGames}
-        theme={theme}
-      />
-
-      {/* 🎡 عجلة الحظ التفاعلية الفاخرة — هوية نسمة حياة الرسمية واختيار الأقسام المباشر */}
+      {/* 3. 🎡 عجلة الحظ التفاعلية الفاخرة — تأتي مباشرة بعد رسالة الترحيب وتفقد المشاعر */}
       <NesmatLuckyWheel 
         sections={WHEEL_SECTIONS}
         theme={theme}
       />
 
-      {/* 🧭 التصنيفات الستة الرئيسية المدمجة */}
+      {/* 4. 🧭 التصنيفات الستة الرئيسية المدمجة — تضم كافة الأدوات والابتكارات بدون زحمة */}
       <MainSixHubsSection 
         onNavigate={onNavigate}
         onOpenCompanion={() => onOpenCompanion && onOpenCompanion()}
@@ -395,18 +411,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         onOpenRescueKit={onOpenRescueKit}
         onOpenFeker={() => onOpenFeker ? onOpenFeker() : onNavigate('games')}
         onOpenPersonalityTests={onOpenPersonalityTests}
+        onOpenDailyMiracle={onOpenDailyMiracle}
+        onOpenOrigamiGarden={onOpenOrigamiGarden}
+        onOpenInnerBurdens={onOpenInnerBurdens}
+        onOpenGratitudeGarden={onOpenGratitudeGarden}
+        onOpenEmotionalBridge={onOpenEmotionalBridge}
         onOpenEndlessPsychology={(cat) => onOpenEndlessPsychology && onOpenEndlessPsychology(cat)}
         theme={theme}
       />
 
-      {/* 🌿 شخصية نسمة حياة — المرشدة الدائمة */}
+      {/* 5. 🌿 شخصية نسمة حياة — المرشدة الدائمة */}
       <NesmatGuideBanner 
         theme={theme} 
         onNavigate={onNavigate} 
         onOpenCompanion={() => onOpenCompanion && onOpenCompanion()} 
       />
 
-      {/* Footer PWA Install */}
+      {/* 6. Footer PWA Install */}
       <div className="flex justify-center pt-4">
         <PWAInstallButton />
       </div>

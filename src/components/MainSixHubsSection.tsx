@@ -27,6 +27,11 @@ interface MainSixHubsSectionProps {
   onOpenRescueKit: () => void;
   onOpenFeker: () => void;
   onOpenPersonalityTests?: () => void;
+  onOpenDailyMiracle?: () => void;
+  onOpenOrigamiGarden?: () => void;
+  onOpenInnerBurdens?: () => void;
+  onOpenGratitudeGarden?: () => void;
+  onOpenEmotionalBridge?: () => void;
   onOpenEndlessPsychology: (category: string) => void;
   theme?: 'dark' | 'light' | 'system';
 }
@@ -61,6 +66,11 @@ export const MainSixHubsSection: React.FC<MainSixHubsSectionProps> = ({
   onOpenRescueKit,
   onOpenFeker,
   onOpenPersonalityTests,
+  onOpenDailyMiracle,
+  onOpenOrigamiGarden,
+  onOpenInnerBurdens,
+  onOpenGratitudeGarden,
+  onOpenEmotionalBridge,
   onOpenEndlessPsychology,
   theme = 'dark'
 }) => {
@@ -97,7 +107,7 @@ export const MainSixHubsSection: React.FC<MainSixHubsSectionProps> = ({
       icon: BookOpen,
       items: [
         { title: 'الورش العملية الشاملة', desc: 'ورش للتأمل وإعادة بناء السلام الداخلي', action: () => onOpenWorkshopsHub() },
-        { title: 'تطبيق فكّر (تفكيك الأفكار)', desc: 'كشف أفخخ التفكير والتخلص من الأفكار السامة', action: () => onOpenFeker() },
+        { title: 'تطبيق فكّر (تفكيك الأفكار السامة)', desc: 'كشف أفخاخ التفكير والتخلص من الأفكار المقلقة', action: () => onOpenFeker(), badge: 'تفكير 💡' },
         { title: 'رحلة التعافي والنمو', desc: 'مسار متكامل للتعافي النفسي التدريجي', action: () => onNavigate('journey') }
       ]
     },
@@ -105,48 +115,50 @@ export const MainSixHubsSection: React.FC<MainSixHubsSectionProps> = ({
       id: 'games_relief',
       title: 'ألعاب التهدئة والترويح',
       subtitle: 'مساحة اللعب الهادئ والتفريغ',
-      desc: 'ألعاب تفاعلية لفرقعة الأعباء، وبناء الجسور العاطفية، وحديقة الامتنان.',
+      desc: 'ألعاب تفاعلية لفرقعة الأعباء، الأوريغامي الشعوري، وحديقة الامتنان.',
       emoji: '🎈',
       bgGradient: 'from-pink-600/20 via-rose-600/10 to-transparent',
       borderColor: 'border-pink-500/30',
       textColor: 'text-pink-400',
       icon: Gamepad2,
       items: [
-        { title: 'الألعاب النفسية الشاملة', desc: 'فرقعة الأعباء، فوازير ذكية، ودولاب البهجة', action: () => onOpenFunAndGames('wheel') },
-        { title: 'حديقة الامتنان والبهجة', desc: 'ازرع وردة امتنان يومية لتغذية طاقتك الإيجابية', action: () => onOpenFunAndGames('bubbles') },
-        { title: 'الجسر العاطفي والتواصل', desc: 'ألعاب تفاعلية لتقريب المسافات العاطفية', action: () => onOpenFunAndGames('riddles') }
+        { title: 'حديقة الأوريغامي الشعوري (طي المشاعر)', desc: 'تحويل الأفكار الثقيلة إلى طيور ورقية محلقة للسكينة', action: () => onOpenOrigamiGarden ? onOpenOrigamiGarden() : onOpenFunAndGames('wheel'), badge: 'فني 🕊️' },
+        { title: 'فرقعة الأعباء النفسية وتفريغ التوتر', desc: 'فرقعة الفقاعات لإفراغ شحنات القلق والأدرينالين', action: () => onOpenInnerBurdens ? onOpenInnerBurdens() : onOpenFunAndGames('bubbles'), badge: 'مهدئ 🫧' },
+        { title: 'حديقة الامتنان وبناء الجسور العاطفية', desc: 'ازرع ورود الرضا وعزز ترابطك العاطفي المتزن', action: () => onOpenGratitudeGarden ? onOpenGratitudeGarden() : onOpenFunAndGames('bubbles'), badge: 'امتنان 🌸' },
+        { title: 'دولاب الفوازير والضحكات النفسية', desc: 'ابتسامات خفيفة وفوازير ذكية لإنعاش المزاج', action: () => onOpenFunAndGames('jokes') }
       ]
     },
     {
       id: 'mind_library',
       title: 'مكتبة العقل والجلسات',
       subtitle: 'تأملات، مذكرات، وجلسات أسبوعية',
-      desc: 'مساحات مخصصة للتأمل العميق، تدوين المشاعر، ومراجعة الأسبوع.',
+      desc: 'مساحات مخصصة للتأمل العميق، درج المعجزات، ومراجعة الأسبوع.',
       emoji: '🧠',
       bgGradient: 'from-indigo-600/20 via-purple-600/10 to-transparent',
       borderColor: 'border-indigo-500/30',
       textColor: 'text-indigo-400',
       icon: Brain,
       items: [
+        { title: 'درج المعجزات الصغيرة اليومية', desc: 'رسائل تأملية حكيمة تلتقط السكينة من وسط زحمة اليوم', action: () => onOpenDailyMiracle ? onOpenDailyMiracle() : onNavigate('listen-to-yourself'), badge: 'إبداع ✨' },
         { title: 'اسمع نفسك وأمانك الداخلي', desc: 'مساحة لاحتواء الذات والحوار المتزن مع النفس', action: () => onNavigate('listen-to-yourself') },
-        { title: 'الجلسة الأسبوعية التأملية', desc: 'مراجعة وتأمل شامل لنموك خلال الأسبوع الماضي', action: () => onNavigate('weekly-session') },
-        { title: 'مذكرات التفكير والتدوين', desc: 'سجل أفكارك ومشاعرك بحرية وأمان تام', action: () => onOpenThoughtJournal() }
+        { title: 'الجلسة الأسبوعية التأملية والمذكرات', desc: 'مراجعة وتأمل شامل لنموك خلال الأسبوع الماضي', action: () => onNavigate('weekly-session') },
+        { title: 'موسوعة المعلومات النفسية اللانهائية', desc: 'معارف واستكشافات سيكولوجية عميقة لا نهائية', action: () => onOpenEndlessPsychology('all'), badge: 'موسوعة 📚' }
       ]
     },
     {
       id: 'quick_tools',
       title: 'الأدوات السريعة والاسترخاء',
-      subtitle: 'إسعافات فورية وتنفس هادئ',
-      desc: 'أدوات فورية لتعديل المزاج، التنفس العميق 4-7-8، وغذاء الأمعاء النفسي.',
+      subtitle: 'إسعافات فورية وتنفس ومطبخ المزاج',
+      desc: 'أدوات فورية لتعديل المزاج، التنفس العميق 4-7-8، ومحور الأمعاء والدماغ.',
       emoji: '🌊',
       bgGradient: 'from-sky-600/20 via-blue-600/10 to-transparent',
       borderColor: 'border-sky-500/30',
       textColor: 'text-sky-400',
       icon: Wind,
       items: [
+        { title: 'مطبخ المزاج ومحور الأمعاء–الدماغ', desc: 'أغذية تدعم عافيتك النفسية وطاقتك وتوازن العصب الحائر', action: () => onOpenMoodKitchen(), badge: 'تغذية 🍳' },
         { title: 'التنفس الهادئ (4-7-8)', desc: 'تمرين تنفس فوري لتهدئة الجهاز العصبي والتوتر', action: () => onNavigate('breathe') },
-        { title: 'بوصلة المشاعر الدقيقة', desc: 'تسمية وترتيب مشاعرك الحالية للوصول للوضوح', action: () => onOpenEmotionCompass() },
-        { title: 'مطبخ المزاج وشاحن الطاقة', desc: 'أغذية تدعم عافيتك النفسية وطاقتك اليومية', action: () => onOpenMoodKitchen() }
+        { title: 'بوصلة المشاعر الدقيقة وتسمية الاحتياج', desc: 'تسمية وترتيب مشاعرك الحالية للوصول للوضوح الداخلي', action: () => onOpenEmotionCompass() }
       ]
     },
     {
@@ -160,7 +172,7 @@ export const MainSixHubsSection: React.FC<MainSixHubsSectionProps> = ({
       textColor: 'text-emerald-400',
       icon: HeartHandshake,
       items: [
-        { title: 'رفيقي (شخصية نسمة حياة)', desc: 'مرشدتك النفسية الذكية للحوار والاحتواء الفوري', action: () => onOpenCompanion() },
+        { title: 'رفيقي (شخصية نسمة حياة)', desc: 'مرشدتك النفسية الذكية للحوار والاحتواء الفوري بلهجة دافئة', action: () => onOpenCompanion() },
         { title: 'إسعافات الطوارئ والضيق', desc: 'خطة إنقاذ سريعة وقت الضيق الشديد والهلع', action: () => onOpenRescueKit() },
         { title: 'طلب الدعم البشري والاحتواء', desc: 'تواصل مع فريق الدعم المتخصص بسرية تامة', action: () => onNavigate('support') }
       ]

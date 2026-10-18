@@ -1205,6 +1205,18 @@ class StorageService {
     }
   }
 
+  saveMoodKitchenLog(entry: any): any {
+    const list = this.getMoodKitchenLogs();
+    const item = {
+      id: entry.id || `log-${Date.now()}`,
+      timestamp: entry.timestamp || new Date().toISOString(),
+      ...entry
+    };
+    list.unshift(item);
+    this.saveMoodKitchenLogs(list);
+    return item;
+  }
+
   addNotification(notif: Omit<NotificationItem, 'id' | 'createdAt' | 'read' | 'userId'>): NotificationItem {
     const notifs = this.getNotifications();
     const user = this.getUser();

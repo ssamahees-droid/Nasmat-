@@ -62,6 +62,8 @@ import { CompanionModal } from './components/CompanionModal';
 import { CompanionFloatingButton } from './components/CompanionFloatingButton';
 import { EndlessPsychologyKnowledgeHub } from './components/EndlessPsychologyKnowledgeHub';
 import { PersonalityTypologyModal } from './components/PersonalityTypologyModal';
+import { DailyMiracleDrawerModal } from './components/DailyMiracleDrawerModal';
+import { EmotionalOrigamiGardenModal } from './components/EmotionalOrigamiGardenModal';
 import { ActivityRatingModal, ActivityRatingItem } from './components/ActivityRatingModal';
 import { localNotificationService } from './services/localNotificationService';
 import { Footer } from './components/Footer';
@@ -283,6 +285,8 @@ export default function App() {
     isOpen: false,
     initialType: 'mbti16'
   });
+  const [isDailyMiracleOpen, setIsDailyMiracleOpen] = useState(false);
+  const [isOrigamiGardenOpen, setIsOrigamiGardenOpen] = useState(false);
 
   const triggerActivityRating = (activityId: string, activityTitle: string, category: string) => {
     setActivityRatingState({
@@ -622,6 +626,8 @@ export default function App() {
             onOpenInnerBurdens={() => setIsInnerBurdensOpen(true)}
             onOpenEmotionalBridge={() => setIsEmotionalBridgeOpen(true)}
             onOpenGratitudeGarden={() => setIsGratitudeGardenOpen(true)}
+            onOpenDailyMiracle={() => setIsDailyMiracleOpen(true)}
+            onOpenOrigamiGarden={() => setIsOrigamiGardenOpen(true)}
             onOpenEndlessPsychology={(cat) => setEndlessPsychologyState({ isOpen: true, category: cat })}
           />
         )}
@@ -944,6 +950,22 @@ export default function App() {
           setPersonalityTypologyState(prev => ({ ...prev, isOpen: false }));
           triggerActivityRating('personality_typology', 'اختبارات تصنيف الشخصية والأنماط', 'رحلة الاستكشاف');
         }}
+        onOpenActivity={(activityId) => handleOpenModalByName(activityId)}
+        theme={theme}
+      />
+
+      {/* ✨ درج المعجزات الصغيرة اليومية (Daily Miracle Drawer) */}
+      <DailyMiracleDrawerModal
+        isOpen={isDailyMiracleOpen}
+        onClose={() => setIsDailyMiracleOpen(false)}
+        onOpenActivity={(activityId) => handleOpenModalByName(activityId)}
+        theme={theme}
+      />
+
+      {/* 🕊️ حديقة الأوريغامي الشعوري (Emotional Origami Garden) */}
+      <EmotionalOrigamiGardenModal
+        isOpen={isOrigamiGardenOpen}
+        onClose={() => setIsOrigamiGardenOpen(false)}
         onOpenActivity={(activityId) => handleOpenModalByName(activityId)}
         theme={theme}
       />
