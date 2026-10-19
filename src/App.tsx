@@ -67,6 +67,7 @@ import { EmotionalOrigamiGardenModal } from './components/EmotionalOrigamiGarden
 import { OmarKhairatMusicLoungeModal } from './components/OmarKhairatMusicLoungeModal';
 import { MusicPrototypeTester } from './components/MusicPrototypeTester';
 import { SampledMusicTester } from './components/SampledMusicTester';
+import { AudioEngineComparisonModal } from './components/AudioEngineComparisonModal';
 import { ActivityRatingModal, ActivityRatingItem } from './components/ActivityRatingModal';
 import { localNotificationService } from './services/localNotificationService';
 import { Footer } from './components/Footer';
@@ -293,6 +294,7 @@ export default function App() {
   const [isMusicLoungeOpen, setIsMusicLoungeOpen] = useState(false);
   const [isMusicPrototypeTesterOpen, setIsMusicPrototypeTesterOpen] = useState(false);
   const [isSampledMusicTesterOpen, setIsSampledMusicTesterOpen] = useState(false);
+  const [isAudioComparisonOpen, setIsAudioComparisonOpen] = useState(false);
 
   const triggerActivityRating = (activityId: string, activityTitle: string, category: string) => {
     setActivityRatingState({
@@ -1007,24 +1009,24 @@ export default function App() {
         onClose={() => setIsSampledMusicTesterOpen(false)}
       />
 
-      {/* أزرار عائمة مؤقتة لاختبار النماذج الموسيقية */}
+      {/* 🎧 صفحة المقارنة الصوتية التفاعلية (15 ثانية A/B Test) */}
+      <AudioEngineComparisonModal
+        isOpen={isAudioComparisonOpen}
+        onClose={() => setIsAudioComparisonOpen(false)}
+      />
+
+      {/* أزرار عائمة لاختبار النماذج والمقارنة التفاعلية */}
       <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-2.5">
         <button
-          onClick={() => setIsSampledMusicTesterOpen(true)}
-          className="px-4 py-3 bg-gradient-to-r from-emerald-600 to-amber-700 hover:from-emerald-500 hover:to-amber-600 text-white rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold border border-emerald-400/30 transition-all transform hover:scale-105 active:scale-95"
-          title="اختبار عينات البيانو الحقيقية (الواقعية)"
+          onClick={() => setIsAudioComparisonOpen(true)}
+          className="px-5 py-3.5 bg-gradient-to-r from-amber-500 via-emerald-600 to-teal-500 hover:from-amber-400 hover:via-emerald-500 hover:to-teal-400 text-stone-950 rounded-2xl shadow-2xl flex items-center gap-3 text-xs font-black border border-white/30 transition-all transform hover:scale-105 active:scale-95 ring-2 ring-emerald-400/50"
+          title="مقارنة صوتية تفاعلية: عينة 15 ثانية متطابقة النغمات"
         >
-          <span className="text-base">🎹</span>
-          <span>تجربة بيانو العينات الحقيقية (واقعي)</span>
-        </button>
-
-        <button
-          onClick={() => setIsMusicPrototypeTesterOpen(true)}
-          className="px-4 py-3 bg-gradient-to-r from-amber-600 to-stone-800 hover:from-amber-500 hover:to-stone-700 text-white rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold border border-amber-400/30 transition-all transform hover:scale-105 active:scale-95"
-          title="اختبار المذبذبات (النموذج السابق)"
-        >
-          <span className="text-base">🎵</span>
-          <span>تجربة مذبذبات الويب القديمة</span>
+          <span className="text-lg">🎧</span>
+          <span className="flex flex-col text-right leading-tight">
+            <span>مقارنة صوتية تفاعلية (A/B Test)</span>
+            <span className="text-[10px] font-normal text-stone-900/80">عينة 15 ثانية متطابقة النغمات</span>
+          </span>
         </button>
       </div>
 
