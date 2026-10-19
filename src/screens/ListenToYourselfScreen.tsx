@@ -23,10 +23,12 @@ import { InnerSafetySummary } from '../types';
 interface ListenToYourselfScreenProps {
   onNavigate: (tab: string) => void;
   onOpenCompanionPersona?: (persona: 'child' | 'adult' | 'father') => void;
+  onOpenMusicLounge?: () => void;
 }
 
 export const ListenToYourselfScreen: React.FC<ListenToYourselfScreenProps> = ({
-  onNavigate
+  onNavigate,
+  onOpenMusicLounge
 }) => {
   const [activePerspective, setActivePerspective] = useState<'child' | 'adult' | 'father'>('adult');
   const [userInput, setUserInput] = useState('');
@@ -153,6 +155,15 @@ export const ListenToYourselfScreen: React.FC<ListenToYourselfScreenProps> = ({
               <BookOpen className="w-3.5 h-3.5 text-[#174C3C] dark:text-[#A9C5A0]" />
               <span>دفتري الآمن ({savedSummaries.length})</span>
               {showSavedNotebook ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
+          )}
+
+          {onOpenMusicLounge && (
+            <button
+              onClick={onOpenMusicLounge}
+              className="px-4 py-2 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 rounded-xl text-xs font-bold text-amber-800 dark:text-amber-200 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+            >
+              <span>🎹 صالون موسيقى عمر خيرت</span>
             </button>
           )}
         </div>

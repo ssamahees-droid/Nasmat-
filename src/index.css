@@ -532,3 +532,50 @@
 .animate-won-card {
   animation: won-card-bounce 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* 🌬️ Visual Breathing Circle Animations */
+@keyframes breathe-idle {
+  0%, 100% {
+    transform: scale(0.92);
+    box-shadow: 0 0 25px -5px rgba(23, 76, 60, 0.25), 0 0 50px -10px rgba(169, 197, 160, 0.2);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 40px 5px rgba(23, 76, 60, 0.4), 0 0 75px 10px rgba(169, 197, 160, 0.35);
+  }
+}
+
+.animate-breathe-idle {
+  animation: breathe-idle 4s ease-in-out infinite;
+}
+
+@keyframes breathe-ripple-expand {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.animate-breathe-ripple {
+  animation: breathe-ripple-expand 3s cubic-bezier(0.1, 0.7, 0.3, 1) infinite;
+}
+
+@keyframes breathe-glow-shimmer {
+  0%, 100% {
+    opacity: 0.7;
+    filter: brightness(1) drop-shadow(0 0 15px rgba(52, 211, 153, 0.3));
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.2) drop-shadow(0 0 30px rgba(52, 211, 153, 0.6));
+  }
+}
+
+.animate-breathe-shimmer {
+  animation: breathe-glow-shimmer 2.5s ease-in-out infinite;
+}
+

@@ -32,6 +32,7 @@ interface MainSixHubsSectionProps {
   onOpenInnerBurdens?: () => void;
   onOpenGratitudeGarden?: () => void;
   onOpenEmotionalBridge?: () => void;
+  onOpenMusicLounge?: () => void;
   onOpenEndlessPsychology: (category: string) => void;
   theme?: 'dark' | 'light' | 'system';
 }
@@ -71,6 +72,7 @@ export const MainSixHubsSection: React.FC<MainSixHubsSectionProps> = ({
   onOpenInnerBurdens,
   onOpenGratitudeGarden,
   onOpenEmotionalBridge,
+  onOpenMusicLounge,
   onOpenEndlessPsychology,
   theme = 'dark'
 }) => {
@@ -139,6 +141,7 @@ export const MainSixHubsSection: React.FC<MainSixHubsSectionProps> = ({
       textColor: 'text-indigo-400',
       icon: Brain,
       items: [
+        { title: 'صالون النغم والسكينة (روائع عمر خيرت)', desc: 'روائع البيانو الشرقي والوتريات لتهدئة الأعصاب وتحفيز موجات ألفا', action: () => onOpenMusicLounge ? onOpenMusicLounge() : onNavigate('listen-to-yourself'), badge: 'نغم 🎹' },
         { title: 'درج المعجزات الصغيرة اليومية', desc: 'رسائل تأملية حكيمة تلتقط السكينة من وسط زحمة اليوم', action: () => onOpenDailyMiracle ? onOpenDailyMiracle() : onNavigate('listen-to-yourself'), badge: 'إبداع ✨' },
         { title: 'اسمع نفسك وأمانك الداخلي', desc: 'مساحة لاحتواء الذات والحوار المتزن مع النفس', action: () => onNavigate('listen-to-yourself') },
         { title: 'الجلسة الأسبوعية التأملية والمذكرات', desc: 'مراجعة وتأمل شامل لنموك خلال الأسبوع الماضي', action: () => onNavigate('weekly-session') },

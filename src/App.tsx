@@ -64,6 +64,9 @@ import { EndlessPsychologyKnowledgeHub } from './components/EndlessPsychologyKno
 import { PersonalityTypologyModal } from './components/PersonalityTypologyModal';
 import { DailyMiracleDrawerModal } from './components/DailyMiracleDrawerModal';
 import { EmotionalOrigamiGardenModal } from './components/EmotionalOrigamiGardenModal';
+import { OmarKhairatMusicLoungeModal } from './components/OmarKhairatMusicLoungeModal';
+import { MusicPrototypeTester } from './components/MusicPrototypeTester';
+import { SampledMusicTester } from './components/SampledMusicTester';
 import { ActivityRatingModal, ActivityRatingItem } from './components/ActivityRatingModal';
 import { localNotificationService } from './services/localNotificationService';
 import { Footer } from './components/Footer';
@@ -287,6 +290,9 @@ export default function App() {
   });
   const [isDailyMiracleOpen, setIsDailyMiracleOpen] = useState(false);
   const [isOrigamiGardenOpen, setIsOrigamiGardenOpen] = useState(false);
+  const [isMusicLoungeOpen, setIsMusicLoungeOpen] = useState(false);
+  const [isMusicPrototypeTesterOpen, setIsMusicPrototypeTesterOpen] = useState(false);
+  const [isSampledMusicTesterOpen, setIsSampledMusicTesterOpen] = useState(false);
 
   const triggerActivityRating = (activityId: string, activityTitle: string, category: string) => {
     setActivityRatingState({
@@ -356,6 +362,10 @@ export default function App() {
         break;
       case 'inner_burdens':
         setIsInnerBurdensOpen(true);
+        break;
+      case 'music_lounge':
+      case 'omar_khairat':
+        setIsMusicLoungeOpen(true);
         break;
       case 'emotional_bridge':
         setIsEmotionalBridgeOpen(true);
@@ -628,6 +638,7 @@ export default function App() {
             onOpenGratitudeGarden={() => setIsGratitudeGardenOpen(true)}
             onOpenDailyMiracle={() => setIsDailyMiracleOpen(true)}
             onOpenOrigamiGarden={() => setIsOrigamiGardenOpen(true)}
+            onOpenMusicLounge={() => setIsMusicLoungeOpen(true)}
             onOpenEndlessPsychology={(cat) => setEndlessPsychologyState({ isOpen: true, category: cat })}
           />
         )}
@@ -684,6 +695,7 @@ export default function App() {
             onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
             onOpenEnergyBudget={() => setIsEnergyBudgetOpen(true)}
             onOpenBoundaryBuilder={() => setIsBoundaryBuilderOpen(true)}
+            onOpenMusicLounge={() => setIsMusicLoungeOpen(true)}
           />
         )}
 
@@ -714,7 +726,10 @@ export default function App() {
         )}
 
         {currentTab === 'listen-to-yourself' && (
-          <ListenToYourselfScreen onNavigate={handleNavigate} />
+          <ListenToYourselfScreen 
+            onNavigate={handleNavigate} 
+            onOpenMusicLounge={() => setIsMusicLoungeOpen(true)}
+          />
         )}
 
         {currentTab === 'weekly-session' && (
@@ -731,7 +746,7 @@ export default function App() {
         )}
 
         {currentTab === 'breathe' && (
-          <BreatheScreen />
+          <BreatheScreen onOpenMusicLounge={() => setIsMusicLoungeOpen(true)} />
         )}
 
         {currentTab === 'assessment' && (
@@ -969,6 +984,49 @@ export default function App() {
         onOpenActivity={(activityId) => handleOpenModalByName(activityId)}
         theme={theme}
       />
+
+      {/* 🎹 صالون النغم والسكينة (موسيقى عمر خيرت والموسيقى الهادئة) */}
+      <OmarKhairatMusicLoungeModal
+        isOpen={isMusicLoungeOpen}
+        onClose={() => {
+          setIsMusicLoungeOpen(false);
+          triggerActivityRating('omar_khairat_music', 'صالون النغم والسكينة (عمر خيرت)', 'جلسات الاسترخاء');
+        }}
+        onNavigate={handleNavigate}
+      />
+
+      {/* 🧪 نافذة اختبار النموذج الأولي الموسيقي الاحترافي */}
+      <MusicPrototypeTester
+        isOpen={isMusicPrototypeTesterOpen}
+        onClose={() => setIsMusicPrototypeTesterOpen(false)}
+      />
+
+      {/* 🎹 نافذة اختبار عينات البيانو الحقيقية */}
+      <SampledMusicTester
+        isOpen={isSampledMusicTesterOpen}
+        onClose={() => setIsSampledMusicTesterOpen(false)}
+      />
+
+      {/* أزرار عائمة مؤقتة لاختبار النماذج الموسيقية */}
+      <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-2.5">
+        <button
+          onClick={() => setIsSampledMusicTesterOpen(true)}
+          className="px-4 py-3 bg-gradient-to-r from-emerald-600 to-amber-700 hover:from-emerald-500 hover:to-amber-600 text-white rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold border border-emerald-400/30 transition-all transform hover:scale-105 active:scale-95"
+          title="اختبار عينات البيانو الحقيقية (الواقعية)"
+        >
+          <span className="text-base">🎹</span>
+          <span>تجربة بيانو العينات الحقيقية (واقعي)</span>
+        </button>
+
+        <button
+          onClick={() => setIsMusicPrototypeTesterOpen(true)}
+          className="px-4 py-3 bg-gradient-to-r from-amber-600 to-stone-800 hover:from-amber-500 hover:to-stone-700 text-white rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold border border-amber-400/30 transition-all transform hover:scale-105 active:scale-95"
+          title="اختبار المذبذبات (النموذج السابق)"
+        >
+          <span className="text-base">🎵</span>
+          <span>تجربة مذبذبات الويب القديمة</span>
+        </button>
+      </div>
 
       {/* 🛠️ PDF Practical Workshops Modals */}
       <WorkshopsHubModal

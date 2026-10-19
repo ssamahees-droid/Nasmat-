@@ -164,6 +164,8 @@ export interface SupportMessage {
   createdAt: string;
 }
 
+export type BreathingPhase = 'inhale' | 'hold' | 'exhale' | 'rest';
+
 export interface BreathingSession {
   id: string;
   title: string;
@@ -172,7 +174,7 @@ export interface BreathingSession {
   type: 'quick_calm' | 'stress_relief' | 'sleep' | 'busy_mind' | 'spiritual';
   icon: string;
   instructions: {
-    phase: 'inhale' | 'hold' | 'exhale' | 'rest';
+    phase: BreathingPhase;
     seconds: number;
     label: string;
   }[];

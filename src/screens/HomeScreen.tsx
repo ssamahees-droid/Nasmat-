@@ -80,6 +80,7 @@ interface HomeScreenProps {
   onOpenInnerCompass?: () => void;
   onOpenDailyMiracle?: () => void;
   onOpenOrigamiGarden?: () => void;
+  onOpenMusicLounge?: () => void;
   onOpenEndlessPsychology?: (category: string) => void;
   theme?: 'dark' | 'light' | 'system';
 }
@@ -132,6 +133,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenInnerCompass,
   onOpenDailyMiracle,
   onOpenOrigamiGarden,
+  onOpenMusicLounge,
   onOpenEndlessPsychology,
   theme = 'dark'
 }) => {
@@ -233,6 +235,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       gradientEnd: '#075985',
       textColor: 'text-sky-100',
       action: () => onNavigate('breathe')
+    },
+    {
+      id: 'music_lounge',
+      title: 'موسيقى عمر خيرت',
+      desc: 'صالون النغم والسكينة: بيانو ووتريات عمر خيرت وموجات ألفا لتهدئة الأعصاب',
+      emoji: '🎹',
+      bgHex: '#b45309',
+      gradientStart: '#F59E0B',
+      gradientEnd: '#78350F',
+      textColor: 'text-amber-100',
+      action: () => onOpenMusicLounge ? onOpenMusicLounge() : onNavigate('listen-to-yourself')
     },
     {
       id: 'companion_support',
@@ -416,6 +429,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         onOpenInnerBurdens={onOpenInnerBurdens}
         onOpenGratitudeGarden={onOpenGratitudeGarden}
         onOpenEmotionalBridge={onOpenEmotionalBridge}
+        onOpenMusicLounge={onOpenMusicLounge}
         onOpenEndlessPsychology={(cat) => onOpenEndlessPsychology && onOpenEndlessPsychology(cat)}
         theme={theme}
       />
