@@ -68,6 +68,7 @@ import { OmarKhairatMusicLoungeModal } from './components/OmarKhairatMusicLounge
 import { MusicPrototypeTester } from './components/MusicPrototypeTester';
 import { SampledMusicTester } from './components/SampledMusicTester';
 import { AudioEngineComparisonModal } from './components/AudioEngineComparisonModal';
+import { PWAFloatingInstallBadge } from './components/PWAFloatingInstallBadge';
 import { ActivityRatingModal, ActivityRatingItem } from './components/ActivityRatingModal';
 import { localNotificationService } from './services/localNotificationService';
 import { Footer } from './components/Footer';
@@ -1014,6 +1015,9 @@ export default function App() {
         isOpen={isAudioComparisonOpen}
         onClose={() => setIsAudioComparisonOpen(false)}
       />
+
+      {/* 📱 شارة تثبيت التطبيق المخصصة عند توفر حدث التثبيت */}
+      <PWAFloatingInstallBadge />
 
       {/* أزرار عائمة لاختبار النماذج والمقارنة التفاعلية */}
       <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-2.5">

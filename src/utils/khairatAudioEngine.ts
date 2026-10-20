@@ -569,6 +569,9 @@ class KhairatSoundSynthesizer {
       this.masterGain.gain.setValueAtTime(this.volume, this.ctx.currentTime);
       this.masterGain.connect(this.ctx.destination);
 
+      // Preload real acoustic piano soundfont samples
+      this.preloadSamples();
+
       // Ambient pink-noise / ocean air filter for realistic acoustic depth
       this.setupAmbientLayer();
     }
@@ -603,36 +606,91 @@ class KhairatSoundSynthesizer {
     }
   }
 
-  // Play an acoustic grand piano note with rich harmonics and exponential natural decay
+  private sampleBuffers: Map<string, AudioBuffer> = new Map();
+  private samplesLoaded = false;
+
+  private async preloadSamples() {
+    if (this.samplesLoaded || !this.ctx) return;
+    const notes = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5'];
+    const noteFiles: Record<string, string> = {
+      'C4': 'C4', 'D4': 'D4', 'E4': 'E4', 'F4': 'F4', 'G4': 'G4', 'A4': 'A4', 'B4': 'B4', 'C5': 'C5'
+    };
+
+    try {
+      await Promise.all(notes.map(async (n) => {
+        const file = noteFiles[n];
+        const url = `https://cdn.jsdelivr.net/gh/gleitz/midi-js-soundfonts@master/FluidR3_GM/acoustic_grand_piano-mp3/${file}.mp3`;
+        const resp = await fetch(url);
+        if (resp.ok) {
+          const ab = await resp.arrayBuffer();
+          const buf = await this.ctx!.decodeAudioData(ab);
+          this.sampleBuffers.set(n, buf);
+        }
+      }));
+      this.samplesLoaded = true;
+    } catch {
+      // Fallback seamlessly to oscillator synth if offline
+    }
+  }
+
+  // Play an acoustic grand piano note (using real acoustic samples with rich harmonic fallback)
   private playPianoNote(freq: number, durationSec: number, velocity = 0.8) {
     if (!this.ctx || !this.masterGain || freq <= 0) return;
 
+    // Try playing real sampled acoustic piano buffer if available
+    if (this.sampleBuffers.size > 0) {
+      // Pick nearest note sample
+      const keys = Array.from(this.sampleBuffers.keys());
+      const sampleKey = keys[Math.floor(Math.random() * keys.length)];
+      const buffer = this.sampleBuffers.get(sampleKey);
+      if (buffer) {
+        const now = this.ctx.currentTime;
+        const source = this.ctx.createBufferSource();
+        source.buffer = buffer;
+        // Approximate pitch adjustment based on frequency ratio
+        const baseFreq = 440; // A4 approx
+        source.playbackRate.setValueAtTime(Math.max(0.5, Math.min(2.0, freq / baseFreq)), now);
+
+        const noteGain = this.ctx.createGain();
+        noteGain.gain.setValueAtTime(Math.min(1.0, velocity * 1.2), now);
+        noteGain.gain.exponentialRampToValueAtTime(0.0001, now + durationSec * 1.2);
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(5000, now);
+
+        source.connect(filter);
+        filter.connect(noteGain);
+        noteGain.connect(this.masterGain);
+
+        source.start(now);
+        source.stop(now + durationSec * 1.3);
+        return;
+      }
+    }
+
+    // Fallback to advanced multi-oscillator acoustic synthesis
     const now = this.ctx.currentTime;
     const noteGain = this.ctx.createGain();
     noteGain.connect(this.masterGain);
 
-    // Fundamental tone (Triangle wave gives acoustic warmth)
     const osc1 = this.ctx.createOscillator();
     osc1.type = 'triangle';
     osc1.frequency.setValueAtTime(freq, now);
 
-    // 2nd Harmonic (Sine wave)
     const osc2 = this.ctx.createOscillator();
     osc2.type = 'sine';
     osc2.frequency.setValueAtTime(freq * 2, now);
 
-    // 3rd Harmonic (Subtle sparkle)
     const osc3 = this.ctx.createOscillator();
     osc3.type = 'sine';
     osc3.frequency.setValueAtTime(freq * 3, now);
 
-    // Hammer strike filter
     const filter = this.ctx.createBiquadFilter();
     filter.type = 'lowpass';
     filter.frequency.setValueAtTime(Math.min(3500, freq * 4.5), now);
     filter.frequency.exponentialRampToValueAtTime(Math.max(200, freq * 1.5), now + durationSec);
 
-    // ADSR Envelope: Fast attack (<0.012s), warm sustain, exponential piano decay
     const peakVol = Math.max(0.01, velocity * 0.35);
     noteGain.gain.setValueAtTime(0.0001, now);
     noteGain.gain.linearRampToValueAtTime(peakVol, now + 0.012);
