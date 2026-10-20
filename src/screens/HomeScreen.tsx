@@ -28,6 +28,7 @@ import {
 import { MoodValue, ContentItem } from '../types';
 import { storage } from '../services/storage';
 import { PWAInstallButton } from '../components/PWAInstallButton';
+import { PWAUpdatePrompt } from '../components/PWAUpdatePrompt';
 import { CompanionHeroSection } from '../components/CompanionHeroSection';
 import { NesmatGuideBanner } from '../components/NesmatGuideBanner';
 import { NesmatLuckyWheel, WheelSectionItem } from '../components/NesmatLuckyWheel';
@@ -441,9 +442,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         onOpenCompanion={() => onOpenCompanion && onOpenCompanion()} 
       />
 
-      {/* 6. Footer PWA Install */}
-      <div className="flex justify-center pt-4">
-        <PWAInstallButton />
+      {/* 6. Footer PWA Install & Update Hub */}
+      <div className="pt-4 px-4 max-w-xl mx-auto w-full pb-10">
+        <div className="flex justify-center mb-3">
+          <PWAInstallButton variant="full" />
+        </div>
+        <PWAUpdatePrompt />
       </div>
     </div>
   );
