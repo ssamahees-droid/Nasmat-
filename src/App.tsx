@@ -996,6 +996,7 @@ export default function App() {
           triggerActivityRating('omar_khairat_music', 'صالون النغم والسكينة (عمر خيرت)', 'جلسات الاسترخاء');
         }}
         onNavigate={handleNavigate}
+        onOpenComparison={() => setIsAudioComparisonOpen(true)}
       />
 
       {/* 🧪 نافذة اختبار النموذج الأولي الموسيقي الاحترافي */}

@@ -19,7 +19,8 @@ import {
   Sliders, 
   Share2, 
   RefreshCw,
-  Disc3
+  Disc3,
+  ArrowRightLeft
 } from 'lucide-react';
 import { 
   khairatEngine, 
@@ -34,13 +35,15 @@ interface OmarKhairatMusicLoungeModalProps {
   onClose: () => void;
   onNavigate?: (tab: string) => void;
   initialTrackIndex?: number;
+  onOpenComparison?: () => void;
 }
 
 export const OmarKhairatMusicLoungeModal: React.FC<OmarKhairatMusicLoungeModalProps> = ({
   isOpen,
   onClose,
   onNavigate,
-  initialTrackIndex = 0
+  initialTrackIndex = 0,
+  onOpenComparison
 }) => {
   const { language } = useLanguage();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -310,6 +313,22 @@ export const OmarKhairatMusicLoungeModal: React.FC<OmarKhairatMusicLoungeModalPr
           </div>
 
           <div className="flex items-center gap-2">
+            {onOpenComparison && (
+              <button
+                onClick={() => {
+                  if (isPlaying) {
+                    khairatEngine.pause();
+                    setIsPlaying(false);
+                  }
+                  onOpenComparison();
+                }}
+                className="p-2 sm:px-3 sm:py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 bg-gradient-to-r from-amber-500/20 via-emerald-500/20 to-teal-500/20 text-emerald-300 border-emerald-500/40 hover:from-amber-500/30 hover:to-emerald-500/30 shadow-sm"
+                title="مقارنة الجودة الصوتية: عينة 15 ثانية متطابقة نوتة بنوتة"
+              >
+                <ArrowRightLeft className="w-4 h-4 text-amber-400" />
+                <span className="hidden sm:inline">مقارنة جودة الصوت (A/B)</span>
+              </button>
+            )}
             <button
               onClick={() => setShowScientificInsight(!showScientificInsight)}
               className={`p-2 sm:px-3 sm:py-1.5 rounded-xl text-xs font-medium border transition-all flex items-center gap-1.5 ${

@@ -8,10 +8,14 @@ import {
   CheckCircle2, 
   ArrowLeft,
   MousePointerClick,
-  Compass
+  Compass,
+  Star,
+  Flame,
+  Heart,
+  Gift
 } from 'lucide-react';
 import { chimeService } from '../services/chimeService';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export interface WheelSectionItem {
   id: string;
@@ -32,6 +36,15 @@ interface NesmatLuckyWheelProps {
   onSectionOpen?: (section: WheelSectionItem) => void;
 }
 
+// Daily fortune reflections corresponding to winning sections
+const FORTUNE_REFLECTIONS: Record<string, string[]> = {
+  default: [
+    '«كل خطوة صغنونة بتقربك لسلامك الداخلي.. استمر ولا تستعجل.»',
+    '«اليوم هو فرصة جديدة لتكون ألطف مع نفسك.»',
+    '«أنفاسك الهادئة هي أقوى درع لحماية طاقتك.»'
+  ]
+};
+
 export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
   sections,
   theme = 'dark',
@@ -46,13 +59,14 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
   const [isMuted, setIsMuted] = useState(() => chimeService.isMuted());
   const [isNeedleTicking, setIsNeedleTicking] = useState(false);
   const [selectionSource, setSelectionSource] = useState<'spin' | 'manual'>('spin');
+  const [dailyFortune, setDailyFortune] = useState<string>('');
+  const [showConfettiEffect, setShowConfettiEffect] = useState(false);
 
   const tickTimersRef = useRef<NodeJS.Timeout[]>([]);
   const numSections = sections.length;
   const sliceAngle = 360 / numSections;
   const halfAngle = sliceAngle / 2;
 
-  // Cleanup tick timers on unmount
   useEffect(() => {
     return () => {
       tickTimersRef.current.forEach(clearTimeout);
@@ -64,45 +78,32 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
     setIsMuted(nextMuted);
   };
 
-  /**
-   * Calculates the rotation angle required to bring the given section index to 12 o'clock (the needle).
-   * Slice 0 is centered at 12 o'clock (0°).
-   * Clockwise rotation brings slices in reverse order under the pointer.
-   */
-  const getRotationForIndex = (index: number, currentRot: number, minSpins = 5) => {
-    // Target normalized angle under needle is index * sliceAngle
+  const getRotationForIndex = (index: number, currentRot: number, minSpins = 6) => {
     const targetNormalized = (360 - (index * sliceAngle)) % 360;
     const currentNormalized = currentRot % 360;
     let forwardDiff = targetNormalized - currentNormalized;
     if (forwardDiff < 0) {
       forwardDiff += 360;
     }
-    // Add full rotations for visual excitement
     return currentRot + (minSpins * 360) + forwardDiff;
   };
 
-  /**
-   * Triggers the realistic decelerating audio clicks & needle wobbles.
-   */
-  const scheduleDeceleratingTicks = (durationMs = 3800) => {
-    // Clear previous
+  const scheduleDeceleratingTicks = (durationMs = 4000) => {
     tickTimersRef.current.forEach(clearTimeout);
     tickTimersRef.current = [];
 
-    // Schedule ticks with increasing intervals (exponential deceleration)
     let currentDelay = 0;
-    let interval = 70; // starts fast: 70ms
-    const factor = 1.09; // slows down smoothly
+    let interval = 65;
+    const factor = 1.10;
 
     while (currentDelay + interval < durationMs - 150) {
       currentDelay += interval;
       interval *= factor;
       const delay = currentDelay;
-      const pitchFactor = 0.95 + (Math.random() * 0.15);
+      const pitchFactor = 0.9 + (Math.random() * 0.2);
 
       const timer = setTimeout(() => {
         chimeService.playWheelTickSound(pitchFactor);
-        // Needle wobble
         setIsNeedleTicking(true);
         setTimeout(() => setIsNeedleTicking(false), 90);
       }, delay);
@@ -111,65 +112,63 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
     }
   };
 
-  /**
-   * Spins the wheel to a random section with authentic physics and sound.
-   */
   const handleSpinWheel = () => {
     if (isSpinning) return;
     setIsSpinning(true);
     setSelectedSection(null);
     setViewingDetailSection(null);
     setSelectionSource('spin');
+    setShowConfettiEffect(false);
 
-    // Pick random winning section
     const targetIndex = Math.floor(Math.random() * numSections);
     const targetSec = sections[targetIndex];
 
-    // Compute target rotation
-    const newRot = getRotationForIndex(targetIndex, spinRotation, 6);
+    const newRot = getRotationForIndex(targetIndex, spinRotation, 7);
     setSpinRotation(newRot);
 
-    // Audio & needle ticks
-    scheduleDeceleratingTicks(3800);
+    scheduleDeceleratingTicks(4000);
 
-    // Conclude after 3.8s
     setTimeout(() => {
       setIsSpinning(false);
       setSelectedSection(targetSec);
+      setShowConfettiEffect(true);
+      
+      // Pick a random reflection
+      const list = FORTUNE_REFLECTIONS.default;
+      setDailyFortune(list[Math.floor(Math.random() * list.length)]);
+
       try {
         chimeService.playWheelWinSound();
       } catch {}
-    }, 3800);
+    }, 4000);
   };
 
-  /**
-   * Allows the user to choose a section manually by clicking its slice on the wheel or quick pill.
-   */
   const handleManualSelect = (sec: WheelSectionItem) => {
     if (isSpinning) return;
     setSelectionSource('manual');
+    setShowConfettiEffect(false);
     const index = sections.findIndex(s => s.id === sec.id);
     if (index === -1) return;
 
-    // Smoothly rotate the wheel to point at this section with 1-2 spins
-    const newRot = getRotationForIndex(index, spinRotation, 1);
+    const newRot = getRotationForIndex(index, spinRotation, 2);
     setSpinRotation(newRot);
 
-    scheduleDeceleratingTicks(1200);
+    scheduleDeceleratingTicks(1400);
 
     setTimeout(() => {
       setSelectedSection(sec);
+      setShowConfettiEffect(true);
+      const list = FORTUNE_REFLECTIONS.default;
+      setDailyFortune(list[Math.floor(Math.random() * list.length)]);
+
       try {
         chimeService.playWheelTickSound(1.2);
         chimeService.playStoneDropChime();
       } catch {}
-    }, 1200);
+    }, 1400);
   };
 
-  // SVG Geometry for Slices
-  // Radius = 188, Center = (200, 200)
-  // Each slice is centered around 12 o'clock (-90°), spanning from (-90 - halfAngle) to (-90 + halfAngle)
-  const R = 188;
+  const R = 185;
   const cx = 200;
   const cy = 200;
   const rad1 = ((-90 - halfAngle) * Math.PI) / 180;
@@ -180,11 +179,10 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
   const y2 = (cy + R * Math.sin(rad2)).toFixed(2);
   const slicePathD = `M ${cx} ${cy} L ${x1} ${y1} A ${R} ${R} 0 0 1 ${x2} ${y2} Z`;
 
-  // Perimeter rim lights (22 glowing studs)
-  const rimLights = Array.from({ length: 22 }).map((_, i) => {
-    const angle = (i * 360) / 22;
+  const rimLights = Array.from({ length: 24 }).map((_, i) => {
+    const angle = (i * 360) / 24;
     const rad = (angle * Math.PI) / 180;
-    const lightR = 194;
+    const lightR = 193;
     return {
       x: cx + lightR * Math.cos(rad),
       y: cy + lightR * Math.sin(rad),
@@ -193,112 +191,117 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
   });
 
   return (
-    <section className={`p-6 sm:p-8 border rounded-3xl space-y-6 shadow-xl text-center relative overflow-hidden ${
+    <section className={`p-6 sm:p-10 border rounded-[2.5rem] space-y-8 shadow-2xl text-center relative overflow-hidden transition-all duration-300 ${
       isDark 
-        ? 'bg-gradient-to-br from-[#12221A] via-[#101914] to-[#0A120E] border-emerald-500/40' 
-        : 'bg-gradient-to-br from-[#F7F3E9] via-[#EBF3ED] to-[#E2EDE5] border-emerald-600/25'
+        ? 'bg-gradient-to-br from-[#0F2218] via-[#09140E] to-[#050A08] border-emerald-500/50 shadow-emerald-950/40' 
+        : 'bg-gradient-to-br from-[#FDFBF7] via-[#EAF3EC] to-[#DEEFE3] border-emerald-600/30 shadow-emerald-900/10'
     }`}>
-      {/* Background Decorative Auras */}
-      <div className="absolute -top-24 -right-24 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      
+      {/* Immersive Background Auras */}
+      <div className="absolute -top-32 -right-32 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+      <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-amber-500/15 rounded-full blur-[100px] pointer-events-none" />
 
       {!viewingDetailSection ? (
         <>
-          {/* Header & Mode Switcher */}
-          <div className="space-y-3 relative z-10 max-w-xl mx-auto">
+          {/* Header & Interactive Mode Bar */}
+          <div className="space-y-4 relative z-10 max-w-xl mx-auto">
             <div className="flex items-center justify-between gap-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-xs font-bold border border-emerald-500/25">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>عجلة الحظ التفاعلية — نسمة حياة 🌿</span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black border border-emerald-500/30 shadow-inner">
+                <Sparkles className="w-4 h-4 text-amber-300 animate-spin" />
+                <span>عجلة الحظ والتوجيه النفسي التفاعلية 🎡</span>
               </div>
 
-              {/* Sound Toggle */}
-              <button
-                onClick={toggleSound}
-                title={isMuted ? 'تفعيل الصوت الهادئ' : 'كتم الصوت'}
-                className={`p-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
-                  isMuted 
-                    ? 'bg-stone-500/10 text-stone-400 border-stone-500/20 hover:bg-stone-500/20' 
-                    : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25'
-                }`}
-              >
-                {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-              </button>
-            </div>
-
-            <h2 className={`text-xl sm:text-2xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
-              جنينة نسمة حياة التفاعلية 🎡
-            </h2>
-            <p className={`text-xs sm:text-sm ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
-              اختر طريقتك المفضلة: دوّر العجلة ودع الصدفة اللطيفة ترشدك، أو انقر على القسم الذي تحتاجه بنفسك الآن.
-            </p>
-
-            {/* Mode Switcher Tabs & Direct Section Jump Dropdown */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <div className="flex items-center gap-2">
+                {/* Sound Toggle */}
                 <button
-                  onClick={() => setWheelMode('spin')}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
-                    wheelMode === 'spin'
-                      ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-black font-black scale-102 shadow-md'
-                      : isDark ? 'bg-white/5 text-stone-300 hover:bg-white/10' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                  onClick={toggleSound}
+                  title={isMuted ? 'تفعيل المؤثرات الصوتية' : 'كتم الصوت'}
+                  className={`p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer border shadow-sm ${
+                    isMuted 
+                      ? 'bg-stone-500/10 text-stone-400 border-stone-500/20 hover:bg-stone-500/20' 
+                      : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
                   }`}
                 >
-                  <span>🎡 العجلة العشوائية</span>
+                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <h2 className={`text-2xl sm:text-3xl font-black tracking-tight ${isDark ? 'text-white' : 'text-stone-900'}`}>
+                بستان نسمة حياة التفاعلي ✨
+              </h2>
+              <p className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
+                دوّر العجلة ودع الصدفة الهادئة تختار لك تمرينك اليومي، أو انتقل فوراً لأي قسم تفضله بنقرة واحدة.
+              </p>
+            </div>
+
+            {/* Mode Switcher Tabs & Direct Jump */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <div className="flex items-center gap-2 bg-black/25 p-1 rounded-2xl border border-white/10 shadow-inner">
+                <button
+                  onClick={() => setWheelMode('spin')}
+                  className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
+                    wheelMode === 'spin'
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-stone-950 shadow-lg scale-102 font-black'
+                      : 'text-stone-300 hover:text-white'
+                  }`}
+                >
+                  <span>🎡 العجلة الدوارة</span>
                 </button>
                 <button
                   onClick={() => setWheelMode('grid')}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
+                  className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
                     wheelMode === 'grid'
-                      ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-black font-black scale-102 shadow-md'
-                      : isDark ? 'bg-white/5 text-stone-300 hover:bg-white/10' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-stone-950 shadow-lg scale-102 font-black'
+                      : 'text-stone-300 hover:text-white'
                   }`}
                 >
                   <span>📋 شبكة الأقسام ({numSections})</span>
                 </button>
               </div>
 
-              {/* Direct Section Jump Dropdown */}
-              <div className="relative w-full sm:w-auto">
-                <select
-                  onChange={(e) => {
-                    const secId = e.target.value;
-                    if (!secId) return;
-                    const found = sections.find(s => s.id === secId);
-                    if (found) {
-                      if (onSectionOpen) {
-                        onSectionOpen(found);
-                      } else {
-                        setViewingDetailSection(found);
-                      }
+              {/* Direct Jump Selector */}
+              <select
+                onChange={(e) => {
+                  const secId = e.target.value;
+                  if (!secId) return;
+                  const found = sections.find(s => s.id === secId);
+                  if (found) {
+                    if (onSectionOpen) {
+                      onSectionOpen(found);
+                    } else {
+                      setViewingDetailSection(found);
                     }
-                    e.target.value = '';
-                  }}
-                  defaultValue=""
-                  className={`w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all border outline-none ${
-                    isDark 
-                      ? 'bg-[#182C21] text-emerald-300 border-emerald-500/40 hover:border-emerald-400' 
-                      : 'bg-white text-emerald-950 border-emerald-600/30 hover:border-emerald-500'
-                  }`}
-                >
-                  <option value="" disabled>🎯 الانتقال المباشر للقسم...</option>
-                  {sections.map((sec) => (
-                    <option key={sec.id} value={sec.id}>
-                      {sec.emoji} {sec.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  }
+                  e.target.value = '';
+                }}
+                defaultValue=""
+                className={`w-full sm:w-auto px-4 py-3 rounded-2xl text-xs font-bold cursor-pointer transition-all border outline-none shadow-sm ${
+                  isDark 
+                    ? 'bg-[#152A20] text-emerald-200 border-emerald-500/40 hover:border-emerald-400' 
+                    : 'bg-white text-emerald-950 border-emerald-600/30 hover:border-emerald-500'
+                }`}
+              >
+                <option value="" disabled>🎯 الانتقال السريع لأي قسم...</option>
+                {sections.map((sec) => (
+                  <option key={sec.id} value={sec.id}>
+                    {sec.emoji} {sec.title}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
           {wheelMode === 'spin' ? (
-            <div className="flex flex-col items-center justify-center space-y-6 relative z-10 py-2 animate-fade-in">
-              {/* Wheel Container with Rim Lighting */}
+            <div className="flex flex-col items-center justify-center space-y-8 relative z-10 py-4 animate-fade-in">
+              
+              {/* Wheel Container with Pulsing Neon Rim */}
               <div className="relative w-80 h-80 sm:w-96 sm:h-96 flex items-center justify-center">
-                {/* Outer Glow Halo */}
-                <div className={`absolute inset-0 rounded-full blur-xl transition-all duration-700 pointer-events-none ${
-                  isSpinning ? 'bg-emerald-400/30 scale-105' : 'bg-emerald-500/10'
+                
+                {/* Outer Pulsing Halo */}
+                <div className={`absolute inset-0 rounded-full blur-2xl transition-all duration-700 pointer-events-none ${
+                  isSpinning ? 'bg-emerald-400/40 scale-110 animate-pulse' : 'bg-emerald-500/15'
                 }`} />
 
                 {/* SVG Wheel Chassis */}
@@ -308,19 +311,17 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                     className="w-full h-full overflow-visible drop-shadow-2xl select-none"
                   >
                     <defs>
-                      {/* Brand Gradients for each slice */}
                       {sections.map((sec) => (
                         <radialGradient 
                           key={`grad-${sec.id}`} 
                           id={`grad-${sec.id}`}
-                          cx="50%" cy="25%" r="75%"
+                          cx="50%" cy="30%" r="75%"
                         >
                           <stop offset="0%" stopColor={sec.gradientStart} />
                           <stop offset="100%" stopColor={sec.gradientEnd} />
                         </radialGradient>
                       ))}
 
-                      {/* Golden Outer Bezel */}
                       <linearGradient id="outer-gold-rim" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#FDE68A" />
                         <stop offset="35%" stopColor="#D5A65A" />
@@ -328,15 +329,14 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                         <stop offset="100%" stopColor="#F59E0B" />
                       </linearGradient>
 
-                      {/* Center Hub Metallic Rim */}
                       <radialGradient id="center-hub-glow" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stopColor="#10B981" />
-                        <stop offset="60%" stopColor="#174C3C" />
-                        <stop offset="100%" stopColor="#0B2019" />
+                        <stop offset="0%" stopColor="#34D399" />
+                        <stop offset="70%" stopColor="#065F46" />
+                        <stop offset="100%" stopColor="#022C22" />
                       </radialGradient>
                     </defs>
 
-                    {/* Outer Decorative Ring */}
+                    {/* Outer Bezel */}
                     <circle 
                       cx="200" 
                       cy="200" 
@@ -344,38 +344,38 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                       fill="none" 
                       stroke="url(#outer-gold-rim)" 
                       strokeWidth="8"
-                      className="drop-shadow-lg"
+                      className="drop-shadow-xl"
                     />
                     <circle 
                       cx="200" 
                       cy="200" 
                       r="191" 
-                      fill="#0C1B14" 
-                      stroke="#174C3C" 
-                      strokeWidth="2"
+                      fill="#08140F" 
+                      stroke="#1B4D3E" 
+                      strokeWidth="2.5"
                     />
 
-                    {/* Perimeter Glowing Studs / Rivets */}
+                    {/* Perimeter Glowing Studs */}
                     {rimLights.map((light, i) => (
                       <circle
                         key={light.key}
                         cx={light.x}
                         cy={light.y}
-                        r={isSpinning ? 3.5 : 2.8}
-                        fill={isSpinning ? (i % 2 === 0 ? '#FBBF24' : '#34D399') : '#D5A65A'}
-                        className={`transition-all duration-300 ${isSpinning ? 'animate-pulse' : 'opacity-80'}`}
+                        r={isSpinning ? 3.8 : 3}
+                        fill={isSpinning ? (i % 2 === 0 ? '#FBBF24' : '#6EE7B7') : '#D5A65A'}
+                        className={`transition-all duration-300 ${isSpinning ? 'animate-ping' : 'opacity-90'}`}
                         style={{
-                          filter: isSpinning ? 'drop-shadow(0 0 4px #FBBF24)' : undefined,
-                          animationDelay: `${(i * 70)}ms`
+                          filter: isSpinning ? 'drop-shadow(0 0 6px #34D399)' : undefined,
+                          animationDelay: `${(i * 50)}ms`
                         }}
                       />
                     ))}
 
-                    {/* Rotating Wheel Group with Framer Motion realistic physics */}
+                    {/* Rotating Wheel Group */}
                     <motion.g 
                       animate={{ rotate: spinRotation }}
                       transition={{ 
-                        duration: isSpinning ? 3.8 : 1.2, 
+                        duration: isSpinning ? 4.0 : 1.2, 
                         ease: [0.12, 0.82, 0.18, 1] 
                       }}
                       style={{ transformOrigin: '200px 200px' }}
@@ -390,23 +390,21 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                             className="cursor-pointer group"
                           >
                             <title>{`قسم ${sec.title} — انقر للاختيار المباشر`}</title>
-                            {/* Slice Path */}
                             <path
                               d={slicePathD}
                               fill={`url(#grad-${sec.id})`}
                               stroke="#FFFFFF"
-                              strokeWidth="1.25"
-                              strokeOpacity="0.35"
-                              className="transition-opacity group-hover:opacity-90"
+                              strokeWidth="1.5"
+                              strokeOpacity="0.4"
+                              className="transition-opacity group-hover:opacity-90 shadow-sm"
                             />
 
-                            {/* Slice Content (Emoji & Title) */}
                             <text
                               x="200"
                               y="52"
                               textAnchor="middle"
                               dominantBaseline="central"
-                              className="text-2xl select-none filter drop-shadow-md pointer-events-none"
+                              className="text-2xl select-none filter drop-shadow-lg pointer-events-none"
                             >
                               {sec.emoji}
                             </text>
@@ -417,9 +415,9 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                               textAnchor="middle"
                               dominantBaseline="central"
                               fill="#FFFFFF"
-                              fontSize="9.5"
+                              fontSize="10"
                               fontWeight="900"
-                              className="select-none font-cairo pointer-events-none drop-shadow"
+                              className="select-none font-cairo pointer-events-none drop-shadow-md"
                               style={{ letterSpacing: '0.2px' }}
                             >
                               {sec.title}
@@ -433,24 +431,24 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                     <circle
                       cx="200"
                       cy="200"
-                      r="40"
+                      r="42"
                       fill="url(#outer-gold-rim)"
-                      className="drop-shadow-xl"
+                      className="drop-shadow-2xl"
                     />
                     <circle
                       cx="200"
                       cy="200"
-                      r="34"
+                      r="36"
                       fill="url(#center-hub-glow)"
                       stroke="#FFFFFF"
-                      strokeWidth="2"
-                      strokeOpacity="0.4"
+                      strokeWidth="2.5"
+                      strokeOpacity="0.6"
                       onClick={handleSpinWheel}
-                      className="cursor-pointer hover:scale-102 transition-transform"
+                      className="cursor-pointer hover:scale-105 transition-transform"
                     />
                     <text
                       x="200"
-                      y="195"
+                      y="194"
                       textAnchor="middle"
                       dominantBaseline="central"
                       className="text-lg select-none pointer-events-none"
@@ -463,65 +461,61 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                       textAnchor="middle"
                       dominantBaseline="central"
                       fill="#F7F3E9"
-                      fontSize="9"
+                      fontSize="9.5"
                       fontWeight="900"
                       className="select-none font-cairo pointer-events-none"
                     >
-                      {isSpinning ? 'دور...' : 'دوّر!'}
+                      {isSpinning ? 'تدور...' : 'دوّر!'}
                     </text>
 
-                    {/* Top Pointer Needle with Realistic Mechanical Peg Recoil */}
+                    {/* Top Pointer Needle */}
                     <g 
-                      transform="translate(200, 10)"
-                      className={isNeedleTicking ? 'animate-needle-tick' : ''}
+                      transform="translate(200, 8)"
+                      className={isNeedleTicking ? 'animate-bounce' : ''}
                       style={{ transformOrigin: 'top center' }}
                     >
-                      {/* Needle Shadow */}
                       <path
-                        d="M -11 -4 L 11 -4 L 0 32 Z"
-                        fill="rgba(0, 0, 0, 0.45)"
-                        transform="translate(0, 3)"
+                        d="M -12 -4 L 12 -4 L 0 34 Z"
+                        fill="rgba(0, 0, 0, 0.5)"
+                        transform="translate(0, 4)"
                       />
-                      {/* Needle Body */}
                       <path
-                        d="M -11 -4 L 11 -4 L 0 32 Z"
+                        d="M -12 -4 L 12 -4 L 0 34 Z"
                         fill="url(#outer-gold-rim)"
                         stroke="#FFF"
-                        strokeWidth="1"
+                        strokeWidth="1.5"
                       />
-                      {/* Needle Facet Highlight */}
                       <path
-                        d="M 0 -4 L 11 -4 L 0 32 Z"
-                        fill="rgba(255, 255, 255, 0.28)"
+                        d="M 0 -4 L 12 -4 L 0 34 Z"
+                        fill="rgba(255, 255, 255, 0.35)"
                       />
-                      {/* Needle Pivot Pin */}
-                      <circle cx="0" cy="0" r="4.5" fill="#DC2626" stroke="#FEF08A" strokeWidth="1.5" />
+                      <circle cx="0" cy="0" r="5" fill="#EF4444" stroke="#FEF08A" strokeWidth="2" />
                     </g>
                   </svg>
                 </div>
               </div>
 
-              {/* Quick Section Picker Pills (Direct Selection under the Wheel) */}
-              <div className="w-full max-w-xl mx-auto space-y-2 pt-1">
-                <div className="flex items-center justify-between text-xs px-2">
+              {/* Quick Section Picker Pills */}
+              <div className="w-full max-w-xl mx-auto space-y-2.5 pt-2">
+                <div className="flex items-center justify-between text-xs px-3">
                   <span className={`font-bold flex items-center gap-1.5 ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
-                    <MousePointerClick className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>أو انقر مباشرة على أي قسم من هنا:</span>
+                    <MousePointerClick className="w-4 h-4 text-emerald-400" />
+                    <span>تخطي العجلة والانتقال السريع:</span>
                   </span>
-                  <span className="text-[11px] text-emerald-500 font-bold">11 قسماً متاحاً</span>
+                  <span className="text-[11px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">{numSections} أقسام متاحة</span>
                 </div>
 
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none px-1">
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none px-1">
                   {sections.map((sec) => (
                     <button
                       key={sec.id}
                       onClick={() => handleManualSelect(sec)}
                       disabled={isSpinning}
-                      className={`shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border shadow-2xs ${
+                      className={`shrink-0 px-3.5 py-2 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer border shadow-sm ${
                         selectedSection?.id === sec.id
-                          ? 'bg-emerald-500 text-black border-emerald-400 scale-102 font-black'
+                          ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-stone-950 border-emerald-300 scale-105 font-black shadow-md'
                           : isDark
-                            ? 'bg-black/30 border-white/10 text-stone-200 hover:bg-white/10 hover:border-emerald-500/40'
+                            ? 'bg-[#15251D] border-white/10 text-stone-200 hover:bg-white/10 hover:border-emerald-500/40'
                             : 'bg-white border-emerald-600/15 text-stone-800 hover:bg-emerald-50 hover:border-emerald-500/40'
                       }`}
                     >
@@ -537,41 +531,53 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                 <button
                   onClick={handleSpinWheel}
                   disabled={isSpinning}
-                  className={`px-8 py-3.5 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 hover:from-emerald-300 hover:to-teal-300 text-black font-black rounded-2xl shadow-xl transition-all active:scale-95 flex items-center gap-2 cursor-pointer text-sm ${
-                    isSpinning ? 'opacity-70 cursor-not-allowed animate-pulse' : 'hover:scale-102'
+                  className={`px-10 py-4 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 hover:from-emerald-300 hover:to-teal-300 text-stone-950 font-black rounded-2xl shadow-xl transition-all active:scale-95 flex items-center gap-3 cursor-pointer text-sm sm:text-base border border-emerald-200/50 ${
+                    isSpinning ? 'opacity-70 cursor-not-allowed animate-pulse' : 'hover:scale-105 shadow-emerald-950/50'
                   }`}
                 >
-                  <RotateCw className={`w-4 h-4 ${isSpinning ? 'animate-spin' : ''}`} />
-                  <span>{isSpinning ? 'العجلة تدور الآن برقة...' : 'يلا نلف العجلة! 🎡'}</span>
+                  <RotateCw className={`w-5 h-5 ${isSpinning ? 'animate-spin' : ''}`} />
+                  <span>{isSpinning ? 'العجلة تدور الآن باهتمام...' : 'يلا نلف العجلة العشوائية! 🎡'}</span>
                 </button>
               ) : (
-                /* Selected Result Card with Framer Motion Spring */
+                /* Gorgeous Winner Result Card */
                 <motion.div 
-                  initial={{ scale: 0.8, opacity: 0, y: 20 }}
+                  initial={{ scale: 0.8, opacity: 0, y: 30 }}
                   animate={{ scale: 1, opacity: 1, y: 0 }}
-                  transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                  className={`w-full max-w-md p-6 rounded-3xl border shadow-2xl space-y-4 text-center ${
-                    isDark ? 'bg-[#182C21] border-emerald-500/60' : 'bg-white border-emerald-600/35'
+                  transition={{ type: "spring", damping: 18, stiffness: 260 }}
+                  className={`w-full max-w-lg p-7 rounded-[2rem] border shadow-2xl space-y-5 text-center relative overflow-hidden ${
+                    isDark ? 'bg-gradient-to-br from-[#162D22] to-[#0F1E16] border-emerald-400/50 shadow-emerald-950/60' : 'bg-white border-emerald-600/40 shadow-emerald-900/15'
                   }`}
                 >
+                  {showConfettiEffect && (
+                    <div className="absolute -top-10 -right-10 w-32 h-32 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
+                  )}
+
                   <div 
-                    className="inline-flex items-center justify-center w-16 h-16 rounded-2xl text-3xl shadow-lg mx-auto text-white"
+                    className="inline-flex items-center justify-center w-20 h-20 rounded-3xl text-4xl shadow-xl mx-auto text-white border-2 border-white/20"
                     style={{ backgroundColor: selectedSection.bgHex }}
                   >
                     {selectedSection.emoji}
                   </div>
                   
-                  <div className="space-y-1.5">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[11px] font-black">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>{selectionSource === 'spin' ? 'النتيجة المختارة لك اليوم 🌿' : 'اختيارك الشخصي المباشر ✨'}</span>
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black border border-emerald-500/30">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <span>{selectionSource === 'spin' ? 'الهدية التي اختارتها لك العجلة اليوم 🌿' : 'اختيارك الشخصي ✨'}</span>
                     </div>
-                    <h3 className={`text-xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
+                    
+                    <h3 className={`text-2xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
                       {selectedSection.title}
                     </h3>
-                    <p className={`text-xs leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
+
+                    <p className={`text-xs sm:text-sm leading-relaxed max-w-md mx-auto ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
                       {selectedSection.desc}
                     </p>
+
+                    {dailyFortune && (
+                      <div className="p-3 rounded-2xl bg-black/20 border border-white/10 text-xs italic text-amber-300/90 font-tajawal">
+                        {dailyFortune}
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-center gap-3 pt-2">
@@ -583,24 +589,25 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                           setViewingDetailSection(selectedSection);
                         }
                       }}
-                      className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black text-xs font-black rounded-xl transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                      className="px-7 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-stone-950 text-xs sm:text-sm font-black rounded-2xl transition-all shadow-xl flex items-center gap-2.5 cursor-pointer"
                     >
-                      <Play className="w-4 h-4" />
-                      <span>افتح القسم الآن 🌿</span>
+                      <Play className="w-4 h-4 fill-current" />
+                      <span>افتح القسم وابدأ الآن 🌿</span>
                     </button>
+                    
                     <button
                       onClick={() => {
                         setSelectedSection(null);
                         handleSpinWheel();
                       }}
-                      className={`px-4 py-3 border rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                      className={`px-4 py-3.5 border rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                         isDark 
                           ? 'bg-white/5 hover:bg-white/10 text-stone-200 border-white/10' 
                           : 'bg-stone-100 hover:bg-stone-200 text-stone-800 border-stone-200'
                       }`}
                     >
-                      <RotateCw className="w-3.5 h-3.5" />
-                      <span>إعادة التدوير 🎡</span>
+                      <RotateCw className="w-4 h-4" />
+                      <span>تدوير مرة أخرى 🎡</span>
                     </button>
                   </div>
                 </motion.div>
@@ -608,7 +615,7 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
             </div>
           ) : (
             /* Mode 2: Direct Section Picker Grid Mode */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 relative z-10 py-4 animate-fade-in text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10 py-4 animate-fade-in text-right">
               {sections.map((sec) => (
                 <div
                   key={sec.id}
@@ -619,24 +626,24 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                       setViewingDetailSection(sec);
                     }
                   }}
-                  className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start gap-3 group shadow-xs hover:scale-101 ${
+                  className={`p-5 rounded-3xl border transition-all cursor-pointer flex items-start gap-4 group shadow-sm hover:scale-102 ${
                     isDark 
-                      ? 'bg-black/30 border-white/10 hover:border-emerald-500/50 hover:bg-black/40' 
+                      ? 'bg-[#15251D]/60 border-white/10 hover:border-emerald-500/50 hover:bg-[#15251D]' 
                       : 'bg-white border-emerald-600/15 hover:border-emerald-500/50 hover:bg-emerald-50/40'
                   }`}
                 >
                   <div 
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 text-white shadow-sm group-hover:scale-105 transition-transform"
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 text-white shadow-md group-hover:scale-105 transition-transform"
                     style={{ backgroundColor: sec.bgHex }}
                   >
                     {sec.emoji}
                   </div>
-                  <div className="space-y-1 flex-1 min-w-0">
+                  <div className="space-y-1.5 flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h4 className={`font-black text-xs truncate ${isDark ? 'text-white' : 'text-stone-900'}`}>{sec.title}</h4>
-                      <span className="text-[10px] font-bold text-emerald-500 group-hover:-translate-x-1 transition-transform">فتح 👈</span>
+                      <h4 className={`font-black text-sm truncate ${isDark ? 'text-white' : 'text-stone-900'}`}>{sec.title}</h4>
+                      <span className="text-xs font-bold text-emerald-400 group-hover:-translate-x-1 transition-transform">فتح 👈</span>
                     </div>
-                    <p className={`text-[11px] leading-relaxed line-clamp-2 ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>{sec.desc}</p>
+                    <p className={`text-xs leading-relaxed line-clamp-2 ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>{sec.desc}</p>
                   </div>
                 </div>
               ))}
@@ -645,13 +652,13 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
         </>
       ) : (
         /* Dedicated Section Detail View */
-        <div className={`p-6 sm:p-8 rounded-3xl border shadow-xl animate-fade-in space-y-6 text-right ${
-          isDark ? 'bg-[#15251D] border-emerald-500/40 text-white' : 'bg-white border-emerald-600/30 text-stone-900'
+        <div className={`p-6 sm:p-10 rounded-[2.5rem] border shadow-2xl animate-fade-in space-y-6 text-right ${
+          isDark ? 'bg-[#13241C] border-emerald-500/50 text-white' : 'bg-white border-emerald-600/30 text-stone-900'
         }`}>
           <div className="flex items-center justify-between border-b pb-4 border-white/10">
             <button
               onClick={() => setViewingDetailSection(null)}
-              className="px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer"
+              className="px-4 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>العودة للعجلة 🎡</span>
@@ -663,22 +670,22 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
           </div>
 
           <div className="space-y-4 py-4">
-            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-2">
-              <h4 className="font-bold text-base text-emerald-400">عن القسم: {viewingDetailSection.title}</h4>
+            <div className="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 space-y-2">
+              <h4 className="font-bold text-base text-emerald-300">عن القسم: {viewingDetailSection.title}</h4>
               <p className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
                 {viewingDetailSection.desc}
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/10 bg-black/20 text-center space-y-4">
-              <p className="text-xs text-stone-400">
-                اضغط على الزر أدناه للانتقال إلى محتويات وتمارين هذا القسم مباشرة:
+            <div className="p-8 rounded-3xl border border-white/10 bg-black/30 text-center space-y-5">
+              <p className="text-xs sm:text-sm text-stone-300">
+                اضغط على الزر أدناه للانتقال الفوري إلى محتويات وتمارين هذا القسم وبدء جولتك النفسية:
               </p>
               <button
                 onClick={() => viewingDetailSection.action()}
-                className="px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black text-xs font-black rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 mx-auto cursor-pointer"
+                className="px-10 py-4 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-stone-950 text-xs sm:text-sm font-black rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 mx-auto cursor-pointer"
               >
-                <Play className="w-4 h-4" />
+                <Play className="w-4 h-4 fill-current" />
                 <span>بدء الاستخدام والدخول الفوري 🚀</span>
               </button>
             </div>

@@ -17,6 +17,7 @@ export default defineConfig(() => {
           'apple-touch-icon.png',
           'pwa-192x192.png',
           'pwa-512x512.png',
+          'pwa-maskable-192x192.png',
           'pwa-maskable-512x512.png',
           'logo.jpg'
         ],
@@ -48,10 +49,45 @@ export default defineConfig(() => {
               purpose: 'any'
             },
             {
+              src: '/pwa-maskable-192x192.png',
+              sizes: '192x192',
+              type: 'image/png',
+              purpose: 'maskable'
+            },
+            {
               src: '/pwa-maskable-512x512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable'
+            },
+            {
+              src: '/apple-touch-icon.png',
+              sizes: '180x180',
+              type: 'image/png',
+              purpose: 'any'
+            }
+          ],
+          shortcuts: [
+            {
+              name: 'رفيقي النفسي',
+              short_name: 'رفيقي',
+              description: 'التحدث مع المرشد الذاتي للاحتواء والدعم النفسي',
+              url: '/?action=companion',
+              icons: [{ src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' }]
+            },
+            {
+              name: 'تمارين التهدئة',
+              short_name: 'التهدئة',
+              description: 'جلسات التنفس والاسترخاء السريع',
+              url: '/?action=breathe',
+              icons: [{ src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' }]
+            },
+            {
+              name: 'صالون النغم',
+              short_name: 'الموسيقى',
+              description: 'موسيقى الاسترخاء والهدوء بالبيانو الحقيقي',
+              url: '/?action=music',
+              icons: [{ src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' }]
             }
           ]
         },
