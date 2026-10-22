@@ -425,14 +425,14 @@ export const CompanionAvatar: React.FC<CompanionAvatarProps> = ({
     };
   }, [isSpeaking, isAnimatedMode, currentStyle]);
 
-  // Gentle breath loop
+  // Gentle breath loop for anime rig only
   useEffect(() => {
-    if (!isAnimatedMode) return;
+    if (!isAnimatedMode || currentStyle !== 'anime') return;
     const interval = setInterval(() => {
       setBreathTick(t => (t + 1) % 60);
-    }, 100);
+    }, 150);
     return () => clearInterval(interval);
-  }, [isAnimatedMode]);
+  }, [isAnimatedMode, currentStyle]);
 
   // 8. Personal Photo File Upload (Client-side only)
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

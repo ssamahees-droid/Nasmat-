@@ -3,101 +3,100 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { storage } from './services/storage';
 import { UserRole } from './types';
 import { Navbar } from './components/Navbar';
 import { BottomNav } from './components/BottomNav';
-import { SafetyFlagModal } from './components/SafetyFlagModal';
-import { AudioPlayerModal } from './components/AudioPlayerModal';
-import { NotificationsModal } from './components/NotificationsModal';
-import { ThoughtReleaseModal } from './components/ThoughtReleaseModal';
-import { SoundscapeStudio } from './components/SoundscapeStudio';
-import { EmotionCompassModal } from './components/EmotionCompassModal';
-import { DailyWisdomModal } from './components/DailyWisdomModal';
-
-// Interactive Phase Modals
-import { AnaDelwaqtiModal } from './components/AnaDelwaqtiModal';
-import { RescueKitModal } from './components/RescueKitModal';
-import { BatteryCheckModal } from './components/BatteryCheckModal';
-import { TranslateFeelingsModal } from './components/TranslateFeelingsModal';
-import { FactOrStoryGameModal } from './components/FactOrStoryGameModal';
-import { UntangleKnotModal } from './components/UntangleKnotModal';
-import { NesmaLaughsModal } from './components/NesmaLaughsModal';
-import { EmergencyHelpModal } from './components/EmergencyHelpModal';
-
-// PDF Booklet & Guided Plan Modals
-import { NesmatBookletModal } from './components/NesmatBookletModal';
-import { PersonalPlanModal } from './components/PersonalPlanModal';
-import { EnergyBudgetModal } from './components/EnergyBudgetModal';
-import { BoundaryBuilderModal } from './components/BoundaryBuilderModal';
-import { SpecialistGuideModal } from './components/SpecialistGuideModal';
-
-// Practical Workshops from PDF
-import { WorkshopsHubModal } from './components/WorkshopsHubModal';
-import { PsychologicalERModal } from './components/PsychologicalERModal';
-import { ConflictWithoutWarModal } from './components/ConflictWithoutWarModal';
-import { HealingJourneyModal } from './components/HealingJourneyModal';
-
-// Mindful Thoughts Journal & Mindfulness Studio
-import { ThoughtJournalModal } from './components/ThoughtJournalModal';
-import { MindfulnessStudioModal } from './components/MindfulnessStudioModal';
-import { VoiceJournalModal } from './components/VoiceJournalModal';
-
-// Fun, Jokes & Mind Games Hub
-import { FunAndGamesHubModal } from './components/FunAndGamesHubModal';
-import { GwayaHekayaGameModal } from './components/GwayaHekayaGameModal';
-import { InnerBurdensBubbleGameModal } from './components/InnerBurdensBubbleGameModal';
-import { EmotionalBridgeGameModal } from './components/EmotionalBridgeGameModal';
-import { GratitudeGardenModal } from './components/GratitudeGardenModal';
-import { InnerCompassJourneyModal } from './components/InnerCompassJourneyModal';
-import { CognitiveReframingPuzzleModal } from './components/CognitiveReframingPuzzleModal';
-import { InnerLabyrinthModal } from './components/InnerLabyrinthModal';
-import { DigitalReleaseRitualModal } from './components/DigitalReleaseRitualModal';
-import { RelationalEnergyMatrixModal } from './components/RelationalEnergyMatrixModal';
-import { PersonalDiscoveryQuizModal } from './components/PersonalDiscoveryQuizModal';
-import { FekerAppModal } from './components/FekerAppModal';
-import { MoodKitchenModal } from './components/MoodKitchenModal';
-import { CompanionModal } from './components/CompanionModal';
-import { CompanionFloatingButton } from './components/CompanionFloatingButton';
-import { EndlessPsychologyKnowledgeHub } from './components/EndlessPsychologyKnowledgeHub';
-import { PersonalityTypologyModal } from './components/PersonalityTypologyModal';
-import { DailyMiracleDrawerModal } from './components/DailyMiracleDrawerModal';
-import { EmotionalOrigamiGardenModal } from './components/EmotionalOrigamiGardenModal';
-import { OmarKhairatMusicLoungeModal } from './components/OmarKhairatMusicLoungeModal';
-import { MusicPrototypeTester } from './components/MusicPrototypeTester';
-import { SampledMusicTester } from './components/SampledMusicTester';
-import { AudioEngineComparisonModal } from './components/AudioEngineComparisonModal';
-import { PWAFloatingInstallBadge } from './components/PWAFloatingInstallBadge';
-import { ActivityRatingModal, ActivityRatingItem } from './components/ActivityRatingModal';
-import { localNotificationService } from './services/localNotificationService';
 import { Footer } from './components/Footer';
+import { PWAFloatingInstallBadge } from './components/PWAFloatingInstallBadge';
+import { CompanionFloatingButton } from './components/CompanionFloatingButton';
+import { ScreenLoader } from './components/ScreenLoader';
+import { localNotificationService } from './services/localNotificationService';
 import { initAnonymousAuth } from './services/authService';
 import { syncService } from './services/syncService';
+import type { ActivityRatingItem } from './components/ActivityRatingModal';
+import { TenScreensModal } from './components/TenScreensModal';
+import { MobileAppShell } from './components/MobileAppShell';
 
-// Screens
-import { WelcomeScreen } from './screens/WelcomeScreen';
-import { OnboardingScreen } from './screens/OnboardingScreen';
+// Keep HomeScreen statically imported so the first paint on mobile is instant
 import { HomeScreen } from './screens/HomeScreen';
-import { StartScreen } from './screens/StartScreen';
-import { SelfDiscoveryScreen } from './screens/SelfDiscoveryScreen';
-import { GamesScreen } from './screens/GamesScreen';
-import { PracticeScreen } from './screens/PracticeScreen';
-import { RescueScreen } from './screens/RescueScreen';
-import { ExploreScreen } from './screens/ExploreScreen';
-import { ContentDetailScreen } from './screens/ContentDetailScreen';
-import { AssessmentScreen } from './screens/AssessmentScreen';
-import { SupportScreen } from './screens/SupportScreen';
-import { BreatheScreen } from './screens/BreatheScreen';
-import { JourneyScreen } from './screens/JourneyScreen';
-import { ProfileScreen } from './screens/ProfileScreen';
-import { AdminDashboardScreen } from './screens/AdminDashboardScreen';
-import { FekerAppScreen } from './screens/FekerAppScreen';
-import { ListenToYourselfScreen } from './screens/ListenToYourselfScreen';
-import { WeeklySessionScreen } from './screens/WeeklySessionScreen';
+
+// Lazy-load other screens on demand
+const WelcomeScreen = lazy(() => import('./screens/WelcomeScreen').then(m => ({ default: m.WelcomeScreen })));
+const OnboardingScreen = lazy(() => import('./screens/OnboardingScreen').then(m => ({ default: m.OnboardingScreen })));
+const StartScreen = lazy(() => import('./screens/StartScreen').then(m => ({ default: m.StartScreen })));
+const SelfDiscoveryScreen = lazy(() => import('./screens/SelfDiscoveryScreen').then(m => ({ default: m.SelfDiscoveryScreen })));
+const GamesScreen = lazy(() => import('./screens/GamesScreen').then(m => ({ default: m.GamesScreen })));
+const PracticeScreen = lazy(() => import('./screens/PracticeScreen').then(m => ({ default: m.PracticeScreen })));
+const RescueScreen = lazy(() => import('./screens/RescueScreen').then(m => ({ default: m.RescueScreen })));
+const ExploreScreen = lazy(() => import('./screens/ExploreScreen').then(m => ({ default: m.ExploreScreen })));
+const ContentDetailScreen = lazy(() => import('./screens/ContentDetailScreen').then(m => ({ default: m.ContentDetailScreen })));
+const AssessmentScreen = lazy(() => import('./screens/AssessmentScreen').then(m => ({ default: m.AssessmentScreen })));
+const SupportScreen = lazy(() => import('./screens/SupportScreen').then(m => ({ default: m.SupportScreen })));
+const BreatheScreen = lazy(() => import('./screens/BreatheScreen').then(m => ({ default: m.BreatheScreen })));
+const JourneyScreen = lazy(() => import('./screens/JourneyScreen').then(m => ({ default: m.JourneyScreen })));
+const ProfileScreen = lazy(() => import('./screens/ProfileScreen').then(m => ({ default: m.ProfileScreen })));
+const AdminDashboardScreen = lazy(() => import('./screens/AdminDashboardScreen').then(m => ({ default: m.AdminDashboardScreen })));
+const FekerAppScreen = lazy(() => import('./screens/FekerAppScreen').then(m => ({ default: m.FekerAppScreen })));
+const ListenToYourselfScreen = lazy(() => import('./screens/ListenToYourselfScreen').then(m => ({ default: m.ListenToYourselfScreen })));
+const WeeklySessionScreen = lazy(() => import('./screens/WeeklySessionScreen').then(m => ({ default: m.WeeklySessionScreen })));
+
+// Lazy-load all interactive tools, games & workshop modals
+const SafetyFlagModal = lazy(() => import('./components/SafetyFlagModal').then(m => ({ default: m.SafetyFlagModal })));
+const AudioPlayerModal = lazy(() => import('./components/AudioPlayerModal').then(m => ({ default: m.AudioPlayerModal })));
+const NotificationsModal = lazy(() => import('./components/NotificationsModal').then(m => ({ default: m.NotificationsModal })));
+const ThoughtReleaseModal = lazy(() => import('./components/ThoughtReleaseModal').then(m => ({ default: m.ThoughtReleaseModal })));
+const SoundscapeStudio = lazy(() => import('./components/SoundscapeStudio').then(m => ({ default: m.SoundscapeStudio })));
+const EmotionCompassModal = lazy(() => import('./components/EmotionCompassModal').then(m => ({ default: m.EmotionCompassModal })));
+const DailyWisdomModal = lazy(() => import('./components/DailyWisdomModal').then(m => ({ default: m.DailyWisdomModal })));
+const AnaDelwaqtiModal = lazy(() => import('./components/AnaDelwaqtiModal').then(m => ({ default: m.AnaDelwaqtiModal })));
+const RescueKitModal = lazy(() => import('./components/RescueKitModal').then(m => ({ default: m.RescueKitModal })));
+const BatteryCheckModal = lazy(() => import('./components/BatteryCheckModal').then(m => ({ default: m.BatteryCheckModal })));
+const TranslateFeelingsModal = lazy(() => import('./components/TranslateFeelingsModal').then(m => ({ default: m.TranslateFeelingsModal })));
+const FactOrStoryGameModal = lazy(() => import('./components/FactOrStoryGameModal').then(m => ({ default: m.FactOrStoryGameModal })));
+const UntangleKnotModal = lazy(() => import('./components/UntangleKnotModal').then(m => ({ default: m.UntangleKnotModal })));
+const NesmaLaughsModal = lazy(() => import('./components/NesmaLaughsModal').then(m => ({ default: m.NesmaLaughsModal })));
+const EmergencyHelpModal = lazy(() => import('./components/EmergencyHelpModal').then(m => ({ default: m.EmergencyHelpModal })));
+const NesmatBookletModal = lazy(() => import('./components/NesmatBookletModal').then(m => ({ default: m.NesmatBookletModal })));
+const PersonalPlanModal = lazy(() => import('./components/PersonalPlanModal').then(m => ({ default: m.PersonalPlanModal })));
+const EnergyBudgetModal = lazy(() => import('./components/EnergyBudgetModal').then(m => ({ default: m.EnergyBudgetModal })));
+const BoundaryBuilderModal = lazy(() => import('./components/BoundaryBuilderModal').then(m => ({ default: m.BoundaryBuilderModal })));
+const SpecialistGuideModal = lazy(() => import('./components/SpecialistGuideModal').then(m => ({ default: m.SpecialistGuideModal })));
+const WorkshopsHubModal = lazy(() => import('./components/WorkshopsHubModal').then(m => ({ default: m.WorkshopsHubModal })));
+const PsychologicalERModal = lazy(() => import('./components/PsychologicalERModal').then(m => ({ default: m.PsychologicalERModal })));
+const ConflictWithoutWarModal = lazy(() => import('./components/ConflictWithoutWarModal').then(m => ({ default: m.ConflictWithoutWarModal })));
+const HealingJourneyModal = lazy(() => import('./components/HealingJourneyModal').then(m => ({ default: m.HealingJourneyModal })));
+const ThoughtJournalModal = lazy(() => import('./components/ThoughtJournalModal').then(m => ({ default: m.ThoughtJournalModal })));
+const MindfulnessStudioModal = lazy(() => import('./components/MindfulnessStudioModal').then(m => ({ default: m.MindfulnessStudioModal })));
+const VoiceJournalModal = lazy(() => import('./components/VoiceJournalModal').then(m => ({ default: m.VoiceJournalModal })));
+const FunAndGamesHubModal = lazy(() => import('./components/FunAndGamesHubModal').then(m => ({ default: m.FunAndGamesHubModal })));
+const GwayaHekayaGameModal = lazy(() => import('./components/GwayaHekayaGameModal').then(m => ({ default: m.GwayaHekayaGameModal })));
+const InnerBurdensBubbleGameModal = lazy(() => import('./components/InnerBurdensBubbleGameModal').then(m => ({ default: m.InnerBurdensBubbleGameModal })));
+const EmotionalBridgeGameModal = lazy(() => import('./components/EmotionalBridgeGameModal').then(m => ({ default: m.EmotionalBridgeGameModal })));
+const GratitudeGardenModal = lazy(() => import('./components/GratitudeGardenModal').then(m => ({ default: m.GratitudeGardenModal })));
+const InnerCompassJourneyModal = lazy(() => import('./components/InnerCompassJourneyModal').then(m => ({ default: m.InnerCompassJourneyModal })));
+const CognitiveReframingPuzzleModal = lazy(() => import('./components/CognitiveReframingPuzzleModal').then(m => ({ default: m.CognitiveReframingPuzzleModal })));
+const InnerLabyrinthModal = lazy(() => import('./components/InnerLabyrinthModal').then(m => ({ default: m.InnerLabyrinthModal })));
+const DigitalReleaseRitualModal = lazy(() => import('./components/DigitalReleaseRitualModal').then(m => ({ default: m.DigitalReleaseRitualModal })));
+const RelationalEnergyMatrixModal = lazy(() => import('./components/RelationalEnergyMatrixModal').then(m => ({ default: m.RelationalEnergyMatrixModal })));
+const PersonalDiscoveryQuizModal = lazy(() => import('./components/PersonalDiscoveryQuizModal').then(m => ({ default: m.PersonalDiscoveryQuizModal })));
+const FekerAppModal = lazy(() => import('./components/FekerAppModal').then(m => ({ default: m.FekerAppModal })));
+const MoodKitchenModal = lazy(() => import('./components/MoodKitchenModal').then(m => ({ default: m.MoodKitchenModal })));
+const CompanionModal = lazy(() => import('./components/CompanionModal').then(m => ({ default: m.CompanionModal })));
+const EndlessPsychologyKnowledgeHub = lazy(() => import('./components/EndlessPsychologyKnowledgeHub').then(m => ({ default: m.EndlessPsychologyKnowledgeHub })));
+const PersonalityTypologyModal = lazy(() => import('./components/PersonalityTypologyModal').then(m => ({ default: m.PersonalityTypologyModal })));
+const DailyMiracleDrawerModal = lazy(() => import('./components/DailyMiracleDrawerModal').then(m => ({ default: m.DailyMiracleDrawerModal })));
+const EmotionalOrigamiGardenModal = lazy(() => import('./components/EmotionalOrigamiGardenModal').then(m => ({ default: m.EmotionalOrigamiGardenModal })));
+const OmarKhairatMusicLoungeModal = lazy(() => import('./components/OmarKhairatMusicLoungeModal').then(m => ({ default: m.OmarKhairatMusicLoungeModal })));
+const MusicPrototypeTester = lazy(() => import('./components/MusicPrototypeTester').then(m => ({ default: m.MusicPrototypeTester })));
+const SampledMusicTester = lazy(() => import('./components/SampledMusicTester').then(m => ({ default: m.SampledMusicTester })));
+const AudioEngineComparisonModal = lazy(() => import('./components/AudioEngineComparisonModal').then(m => ({ default: m.AudioEngineComparisonModal })));
+const ActivityRatingModal = lazy(() => import('./components/ActivityRatingModal').then(m => ({ default: m.ActivityRatingModal })));
 
 const VALID_TABS: Record<string, string> = {
-  '': 'home',
+  '': 'welcome',
+  'welcome': 'welcome',
   'home': 'home',
   'start': 'start',
   'self-discovery': 'self-discovery',
@@ -120,28 +119,25 @@ const VALID_TABS: Record<string, string> = {
 };
 
 function getRouteFromLocation(): { tab: string; isExplicitDeepLink: boolean } {
-  if (typeof window === 'undefined') return { tab: 'home', isExplicitDeepLink: false };
+  if (typeof window === 'undefined') return { tab: 'welcome', isExplicitDeepLink: false };
   const path = window.location.pathname.replace(/^\/+/, '').split('/')[0].toLowerCase();
   const hash = window.location.hash.replace(/^#\/?/, '').split('/')[0].toLowerCase();
   const segment = path || hash;
   if (segment && VALID_TABS[segment]) {
-    return { tab: VALID_TABS[segment], isExplicitDeepLink: segment !== '' && segment !== 'home' };
+    return { tab: VALID_TABS[segment], isExplicitDeepLink: segment !== '' && segment !== 'welcome' };
   }
-  return { tab: 'home', isExplicitDeepLink: false };
+  return { tab: 'welcome', isExplicitDeepLink: false };
 }
 
 export default function App() {
   const initialRoute = getRouteFromLocation();
   const [hasOnboarded, setHasOnboarded] = useState<boolean>(() => storage.hasCompletedOnboarding());
   const [currentStep, setCurrentStep] = useState<'welcome' | 'onboarding' | 'main'>(() => {
-    if (storage.hasCompletedOnboarding()) {
-      return 'main';
-    }
-    // If a visitor directly opened a specific section (e.g. /rescue, /support),
-    // enter directly so urgent help isn't blocked by onboarding
+    // If user opened an explicit non-welcome deep link (e.g. /rescue, /games, /breathe, /home)
     if (initialRoute.isExplicitDeepLink) {
       return 'main';
     }
+    // Default to the creative welcome screen so the user experiences the rotary wheel immediately
     return 'welcome';
   });
   const [currentTab, setCurrentTab] = useState<string>(initialRoute.tab);
@@ -151,28 +147,76 @@ export default function App() {
   const handleNavigate = (tab: string, pushHistory: boolean = true) => {
     const resolvedTab = tab === 'listen' ? 'listen-to-yourself' : tab === 'weekly' ? 'weekly-session' : tab;
     setCurrentTab(resolvedTab);
+    if (resolvedTab === 'welcome') {
+      setCurrentStep('welcome');
+    } else {
+      setCurrentStep('main');
+    }
     if (pushHistory && typeof window !== 'undefined') {
-      const targetUrl = resolvedTab === 'home' ? '/' : `/${resolvedTab}`;
+      const targetUrl = resolvedTab === 'welcome' ? '/' : `/${resolvedTab}`;
       if (window.location.pathname !== targetUrl) {
         window.history.pushState({ tab: resolvedTab }, '', targetUrl);
       }
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
   };
 
   useEffect(() => {
     const handlePopState = () => {
       const { tab } = getRouteFromLocation();
       setCurrentTab(tab);
+      if (tab === 'welcome') {
+        setCurrentStep('welcome');
+      } else {
+        setCurrentStep('main');
+      }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Theme state: light, dark, system
+  // Theme state: light, dark, system (aligned with system preference on first boot to eliminate flicker)
   const [theme, setTheme] = useState<'dark' | 'light' | 'system'>(() => {
-    return (localStorage.getItem('nesmat_theme') as 'dark' | 'light' | 'system') || 'light';
+    const saved = localStorage.getItem('nesmat_theme');
+    if (saved && ['dark', 'light', 'system'].includes(saved)) {
+      return saved as 'dark' | 'light' | 'system';
+    }
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
   });
+
+  // Mobile Performance Mode: automatic device detection with user persistence
+  const [isMobilePerformanceMode, setIsMobilePerformanceMode] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const saved = localStorage.getItem('nesmat_mobile_perf_mode');
+    if (saved !== null) {
+      return saved === 'true';
+    }
+    // Auto-detect mobile devices
+    const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isSmallScreen = window.innerWidth < 768;
+    const isTouchDevice = 'ontouchstart' in window || Boolean(navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+    return Boolean(isMobileUserAgent || (isSmallScreen && isTouchDevice));
+  });
+
+  const handleToggleMobilePerformanceMode = () => {
+    setIsMobilePerformanceMode(prev => {
+      const next = !prev;
+      localStorage.setItem('nesmat_mobile_perf_mode', String(next));
+      return next;
+    });
+  };
+
+  // Automatically apply 'mobile-low-perf' class to the root element when Mobile Performance Mode is active
+  useEffect(() => {
+    if (isMobilePerformanceMode) {
+      document.documentElement.classList.add('mobile-low-perf');
+    } else {
+      document.documentElement.classList.remove('mobile-low-perf');
+    }
+  }, [isMobilePerformanceMode]);
 
   // Font size state: normal, large, extralarge
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'extralarge'>(() => {
@@ -228,6 +272,37 @@ export default function App() {
       .catch((err) => {
         console.warn('[Auth] Anonymous session init status:', err);
       });
+  }, []);
+
+  // ⌨️ Global Keyboard Shortcuts (h: home, e: emergency, n: notifications)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Do not trigger if typing inside input, textarea, or contenteditable
+      const target = e.target as HTMLElement;
+      if (
+        target && 
+        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
+      ) {
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+      if (key === 'h') {
+        e.preventDefault();
+        handleNavigate('home');
+      } else if (key === 'e') {
+        e.preventDefault();
+        setIsEmergencyHelpOpen(true);
+      } else if (key === 'n') {
+        e.preventDefault();
+        setIsNotificationsOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   // 🔔 Local Notification Monitor for 24-hour Mood Kitchen inactivity
@@ -296,6 +371,7 @@ export default function App() {
   const [isMusicPrototypeTesterOpen, setIsMusicPrototypeTesterOpen] = useState(false);
   const [isSampledMusicTesterOpen, setIsSampledMusicTesterOpen] = useState(false);
   const [isAudioComparisonOpen, setIsAudioComparisonOpen] = useState(false);
+  const [isTenScreensModalOpen, setIsTenScreensModalOpen] = useState(false);
 
   const triggerActivityRating = (activityId: string, activityTitle: string, category: string) => {
     setActivityRatingState({
@@ -533,38 +609,48 @@ export default function App() {
     setIsRescueKitOpen(true);
   };
 
-  // 1. Initial Welcome Screen
+  // 1. Initial Welcome Screen (Presented on its own)
   if (currentStep === 'welcome') {
     return (
-      <WelcomeScreen
-        onStart={() => setCurrentStep('onboarding')}
-        onSkip={() => {
-          setHasOnboarded(true);
-          storage.setOnboarded(true);
-          setCurrentStep('main');
-          handleNavigate('home');
-        }}
-      />
+      <Suspense fallback={<ScreenLoader />}>
+        <WelcomeScreen
+          onStart={() => setCurrentStep('onboarding')}
+          onSkip={() => {
+            setHasOnboarded(true);
+            storage.setOnboarded(true);
+            setCurrentStep('main');
+            handleNavigate('home');
+          }}
+          onNavigate={(targetTab) => {
+            setHasOnboarded(true);
+            storage.setOnboarded(true);
+            setCurrentStep('main');
+            handleNavigate(targetTab);
+          }}
+        />
+      </Suspense>
     );
   }
 
   // 2. Onboarding Screen
   if (currentStep === 'onboarding') {
     return (
-      <OnboardingScreen
-        onComplete={() => {
-          setHasOnboarded(true);
-          storage.setOnboarded(true);
-          setCurrentStep('main');
-          handleNavigate('home');
-        }}
-        onSkip={() => {
-          setHasOnboarded(true);
-          storage.setOnboarded(true);
-          setCurrentStep('main');
-          handleNavigate('home');
-        }}
-      />
+      <Suspense fallback={<ScreenLoader />}>
+        <OnboardingScreen
+          onComplete={() => {
+            setHasOnboarded(true);
+            storage.setOnboarded(true);
+            setCurrentStep('main');
+            handleNavigate('home');
+          }}
+          onSkip={() => {
+            setHasOnboarded(true);
+            storage.setOnboarded(true);
+            setCurrentStep('main');
+            handleNavigate('home');
+          }}
+        />
+      </Suspense>
     );
   }
 
@@ -591,220 +677,250 @@ export default function App() {
       />
 
       {/* Main View Router */}
-      <main className="flex-1">
-        {currentTab === 'home' && (
-          <HomeScreen
-            theme={theme}
-            onNavigate={handleNavigate}
-            onOpenContent={handleOpenContent}
-            onOpenAudioModal={handleOpenAudio}
-            onOpenThoughtRelease={() => setIsThoughtReleaseOpen(true)}
-            onOpenSoundscapeStudio={() => setIsSoundscapeOpen(true)}
-            onOpenEmotionCompass={() => setIsEmotionCompassOpen(true)}
-            onOpenDailyWisdom={() => setIsDailyWisdomOpen(true)}
-            // Interactive Tools
-            onOpenAnaDelwaqti={() => setIsAnaDelwaqtiOpen(true)}
-            onOpenRescueKit={handleOpenRescueKitWithPlan}
-            onOpenBatteryCheck={() => setIsBatteryCheckOpen(true)}
-            onOpenTranslateFeelings={() => setIsTranslateFeelingsOpen(true)}
-            onOpenFactGame={() => setIsFactGameOpen(true)}
-            onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
-            onOpenNesmaLaughs={() => setIsNesmaLaughsOpen(true)}
-            onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
-            // PDF Booklet additions
-            onOpenBooklet={() => setIsBookletOpen(true)}
-            onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
-            onOpenEnergyBudget={() => setIsEnergyBudgetOpen(true)}
-            onOpenBoundaryBuilder={() => setIsBoundaryBuilderOpen(true)}
-            onOpenSpecialistGuide={() => setIsSpecialistGuideOpen(true)}
-            // PDF Workshops
-            onOpenWorkshopsHub={() => setIsWorkshopsHubOpen(true)}
-            onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
-            onOpenConflictWithoutWar={() => setIsConflictWithoutWarOpen(true)}
-            onOpenHealingJourney={() => setIsHealingJourneyOpen(true)}
-            // Thoughts Journal & Mindfulness Studio
-            onOpenThoughtJournal={() => setIsThoughtJournalOpen(true)}
-            onOpenMindfulnessStudio={() => setIsMindfulnessStudioOpen(true)}
-            // Fun, Jokes & Mind Games
-            onOpenFunAndGames={(tab = 'jokes') => setFunAndGamesState({ isOpen: true, tab })}
-            // Gwaya Hekaya Interactive Game
-            onOpenGwayaHekaya={() => setIsGwayaHekayaOpen(true)}
-            // Feker App Integration
-            onOpenFeker={() => setIsFekerModalOpen(true)}
-            // Personal Discovery Quiz
-            onOpenDiscoveryQuiz={() => setIsDiscoveryQuizOpen(true)}
-            onOpenPersonalityTests={() => setPersonalityTypologyState({ isOpen: true, initialType: 'mbti16' })}
-            onOpenCompanion={() => setIsCompanionOpen(true)}
-            onOpenMoodKitchen={() => setIsMoodKitchenOpen(true)}
-            onOpenInnerBurdens={() => setIsInnerBurdensOpen(true)}
-            onOpenEmotionalBridge={() => setIsEmotionalBridgeOpen(true)}
-            onOpenGratitudeGarden={() => setIsGratitudeGardenOpen(true)}
-            onOpenDailyMiracle={() => setIsDailyMiracleOpen(true)}
-            onOpenOrigamiGarden={() => setIsOrigamiGardenOpen(true)}
-            onOpenMusicLounge={() => setIsMusicLoungeOpen(true)}
-            onOpenEndlessPsychology={(cat) => setEndlessPsychologyState({ isOpen: true, category: cat })}
-          />
-        )}
+      <main className="flex-1 pb-16 lg:pb-6">
+        <MobileAppShell currentTab={currentTab} isMobilePerformanceMode={isMobilePerformanceMode}>
+          <Suspense fallback={<ScreenLoader />}>
+          {currentTab === 'welcome' && (
+            <WelcomeScreen
+              onStart={() => handleNavigate('home')}
+              onSkip={() => handleNavigate('home')}
+              onNavigate={handleNavigate}
+            />
+          )}
 
-        {currentTab === 'start' && (
-          <StartScreen
-            onNavigate={handleNavigate}
-            onOpenBooklet={() => setIsBookletOpen(true)}
-            onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
-          />
-        )}
+          {currentTab === 'home' && (
+            <HomeScreen
+              theme={theme}
+              isMobilePerformanceMode={isMobilePerformanceMode}
+              onToggleMobilePerformanceMode={handleToggleMobilePerformanceMode}
+              onNavigate={handleNavigate}
+              onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
+              onOpenContent={handleOpenContent}
+              onOpenAudioModal={handleOpenAudio}
+              onOpenThoughtRelease={() => setIsThoughtReleaseOpen(true)}
+              onOpenSoundscapeStudio={() => setIsSoundscapeOpen(true)}
+              onOpenEmotionCompass={() => setIsEmotionCompassOpen(true)}
+              onOpenDailyWisdom={() => setIsDailyWisdomOpen(true)}
+              // Interactive Tools
+              onOpenAnaDelwaqti={() => setIsAnaDelwaqtiOpen(true)}
+              onOpenRescueKit={handleOpenRescueKitWithPlan}
+              onOpenBatteryCheck={() => setIsBatteryCheckOpen(true)}
+              onOpenTranslateFeelings={() => setIsTranslateFeelingsOpen(true)}
+              onOpenFactGame={() => setIsFactGameOpen(true)}
+              onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
+              onOpenNesmaLaughs={() => setIsNesmaLaughsOpen(true)}
+              onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
+              // PDF Booklet additions
+              onOpenBooklet={() => setIsBookletOpen(true)}
+              onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
+              onOpenEnergyBudget={() => setIsEnergyBudgetOpen(true)}
+              onOpenBoundaryBuilder={() => setIsBoundaryBuilderOpen(true)}
+              onOpenSpecialistGuide={() => setIsSpecialistGuideOpen(true)}
+              // PDF Workshops
+              onOpenWorkshopsHub={() => setIsWorkshopsHubOpen(true)}
+              onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
+              onOpenConflictWithoutWar={() => setIsConflictWithoutWarOpen(true)}
+              onOpenHealingJourney={() => setIsHealingJourneyOpen(true)}
+              // Thoughts Journal & Mindfulness Studio
+              onOpenThoughtJournal={() => setIsThoughtJournalOpen(true)}
+              onOpenMindfulnessStudio={() => setIsMindfulnessStudioOpen(true)}
+              // Fun, Jokes & Mind Games
+              onOpenFunAndGames={(tab = 'jokes') => setFunAndGamesState({ isOpen: true, tab })}
+              // Gwaya Hekaya Interactive Game
+              onOpenGwayaHekaya={() => setIsGwayaHekayaOpen(true)}
+              // Feker App Integration
+              onOpenFeker={() => setIsFekerModalOpen(true)}
+              // Personal Discovery Quiz
+              onOpenDiscoveryQuiz={() => setIsDiscoveryQuizOpen(true)}
+              onOpenPersonalityTests={() => setPersonalityTypologyState({ isOpen: true, initialType: 'mbti16' })}
+              onOpenCompanion={() => setIsCompanionOpen(true)}
+              onOpenMoodKitchen={() => setIsMoodKitchenOpen(true)}
+              onOpenInnerBurdens={() => setIsInnerBurdensOpen(true)}
+              onOpenEmotionalBridge={() => setIsEmotionalBridgeOpen(true)}
+              onOpenGratitudeGarden={() => setIsGratitudeGardenOpen(true)}
+              onOpenDailyMiracle={() => setIsDailyMiracleOpen(true)}
+              onOpenOrigamiGarden={() => setIsOrigamiGardenOpen(true)}
+              onOpenMusicLounge={() => setIsMusicLoungeOpen(true)}
+              onOpenEndlessPsychology={(cat) => setEndlessPsychologyState({ isOpen: true, category: cat })}
+            />
+          )}
 
-        {currentTab === 'self-discovery' && (
-          <SelfDiscoveryScreen
-            onNavigate={handleNavigate}
-            onOpenAssessment={() => handleNavigate('assessment')}
-            onOpenDiscoveryQuiz={() => setIsDiscoveryQuizOpen(true)}
-            onOpenPersonalityTests={() => setPersonalityTypologyState({ isOpen: true, initialType: 'mbti16' })}
-            onOpenAnaDelwaqti={() => setIsAnaDelwaqtiOpen(true)}
-            onOpenEmotionCompass={() => setIsEmotionCompassOpen(true)}
-            onOpenBatteryCheck={() => setIsBatteryCheckOpen(true)}
-            onOpenTranslateFeelings={() => setIsTranslateFeelingsOpen(true)}
-          />
-        )}
+          {currentTab === 'start' && (
+            <StartScreen
+              onNavigate={handleNavigate}
+              onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
+              onOpenBooklet={() => setIsBookletOpen(true)}
+              onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
+            />
+          )}
 
-        {currentTab === 'games' && (
-          <GamesScreen
-            onNavigate={handleNavigate}
-            onOpenGwayaHekaya={() => setIsGwayaHekayaOpen(true)}
-            onOpenFeker={() => setIsFekerModalOpen(true)}
-            onOpenFactGame={() => setIsFactGameOpen(true)}
-            onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
-            onOpenSoundscapeStudio={() => setIsSoundscapeOpen(true)}
-            onOpenThoughtRelease={() => setIsThoughtReleaseOpen(true)}
-            onOpenFunAndGames={(tab = 'jokes') => setFunAndGamesState({ isOpen: true, tab })}
-            onOpenNesmaLaughs={() => setIsNesmaLaughsOpen(true)}
-            onOpenInnerBurdens={() => setIsInnerBurdensOpen(true)}
-            onOpenEmotionalBridge={() => setIsEmotionalBridgeOpen(true)}
-            onOpenGratitudeGarden={() => setIsGratitudeGardenOpen(true)}
-            onOpenInnerCompass={() => setIsInnerCompassOpen(true)}
-            onOpenReframingPuzzle={() => setIsReframingPuzzleOpen(true)}
-            onOpenInnerLabyrinth={() => setIsInnerLabyrinthOpen(true)}
-            onOpenDigitalRelease={() => setIsDigitalReleaseOpen(true)}
-            onOpenRelationalEnergy={() => setIsRelationalEnergyOpen(true)}
-          />
-        )}
+          {currentTab === 'self-discovery' && (
+            <SelfDiscoveryScreen
+              onNavigate={handleNavigate}
+              onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
+              onOpenAssessment={() => handleNavigate('assessment')}
+              onOpenDiscoveryQuiz={() => setIsDiscoveryQuizOpen(true)}
+              onOpenPersonalityTests={() => setPersonalityTypologyState({ isOpen: true, initialType: 'mbti16' })}
+              onOpenAnaDelwaqti={() => setIsAnaDelwaqtiOpen(true)}
+              onOpenEmotionCompass={() => setIsEmotionCompassOpen(true)}
+              onOpenBatteryCheck={() => setIsBatteryCheckOpen(true)}
+              onOpenTranslateFeelings={() => setIsTranslateFeelingsOpen(true)}
+            />
+          )}
 
-        {currentTab === 'practice' && (
-          <PracticeScreen
-            onNavigate={handleNavigate}
-            onOpenBreathe={() => handleNavigate('breathe')}
-            onOpenMindfulnessStudio={() => setIsMindfulnessStudioOpen(true)}
-            onOpenThoughtJournal={() => setIsThoughtJournalOpen(true)}
-            onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
-            onOpenEnergyBudget={() => setIsEnergyBudgetOpen(true)}
-            onOpenBoundaryBuilder={() => setIsBoundaryBuilderOpen(true)}
-            onOpenMusicLounge={() => setIsMusicLoungeOpen(true)}
-          />
-        )}
+          {currentTab === 'games' && (
+            <GamesScreen
+              onNavigate={handleNavigate}
+              onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
+              onOpenGwayaHekaya={() => setIsGwayaHekayaOpen(true)}
+              onOpenFeker={() => setIsFekerModalOpen(true)}
+              onOpenFactGame={() => setIsFactGameOpen(true)}
+              onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
+              onOpenSoundscapeStudio={() => setIsSoundscapeOpen(true)}
+              onOpenThoughtRelease={() => setIsThoughtReleaseOpen(true)}
+              onOpenFunAndGames={(tab = 'jokes') => setFunAndGamesState({ isOpen: true, tab })}
+              onOpenNesmaLaughs={() => setIsNesmaLaughsOpen(true)}
+              onOpenInnerBurdens={() => setIsInnerBurdensOpen(true)}
+              onOpenEmotionalBridge={() => setIsEmotionalBridgeOpen(true)}
+              onOpenGratitudeGarden={() => setIsGratitudeGardenOpen(true)}
+              onOpenInnerCompass={() => setIsInnerCompassOpen(true)}
+              onOpenReframingPuzzle={() => setIsReframingPuzzleOpen(true)}
+              onOpenInnerLabyrinth={() => setIsInnerLabyrinthOpen(true)}
+              onOpenDigitalRelease={() => setIsDigitalReleaseOpen(true)}
+              onOpenRelationalEnergy={() => setIsRelationalEnergyOpen(true)}
+            />
+          )}
 
-        {currentTab === 'rescue' && (
-          <RescueScreen
-            onNavigate={handleNavigate}
-            onOpenRescueKit={handleOpenRescueKitWithPlan}
-            onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
-            onOpenSpecialistGuide={() => setIsSpecialistGuideOpen(true)}
-            onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
-            onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
-            onOpenBatteryCheck={() => setIsBatteryCheckOpen(true)}
-          />
-        )}
+          {currentTab === 'practice' && (
+            <PracticeScreen
+              onNavigate={handleNavigate}
+              onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
+              onOpenBreathe={() => handleNavigate('breathe')}
+              onOpenMindfulnessStudio={() => setIsMindfulnessStudioOpen(true)}
+              onOpenThoughtJournal={() => setIsThoughtJournalOpen(true)}
+              onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
+              onOpenEnergyBudget={() => setIsEnergyBudgetOpen(true)}
+              onOpenBoundaryBuilder={() => setIsBoundaryBuilderOpen(true)}
+              onOpenMusicLounge={() => setIsMusicLoungeOpen(true)}
+            />
+          )}
 
-        {currentTab === 'explore' && (
-          <ExploreScreen
-            onOpenContent={handleOpenContent}
-            onOpenAudioModal={handleOpenAudio}
-            onOpenBooklet={() => setIsBookletOpen(true)}
-            onNavigate={handleNavigate}
-            onOpenWorkshopsHub={() => setIsWorkshopsHubOpen(true)}
-            onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
-            onOpenConflictWithoutWar={() => setIsConflictWithoutWarOpen(true)}
-            onOpenHealingJourney={() => setIsHealingJourneyOpen(true)}
-            onOpenMoodKitchen={() => setIsMoodKitchenOpen(true)}
-          />
-        )}
+          {currentTab === 'rescue' && (
+            <RescueScreen
+              onNavigate={handleNavigate}
+              onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
+              onOpenRescueKit={handleOpenRescueKitWithPlan}
+              onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
+              onOpenSpecialistGuide={() => setIsSpecialistGuideOpen(true)}
+              onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
+              onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
+              onOpenBatteryCheck={() => setIsBatteryCheckOpen(true)}
+            />
+          )}
 
-        {currentTab === 'listen-to-yourself' && (
-          <ListenToYourselfScreen 
-            onNavigate={handleNavigate} 
-            onOpenMusicLounge={() => setIsMusicLoungeOpen(true)}
-          />
-        )}
+          {currentTab === 'explore' && (
+            <ExploreScreen
+              onOpenContent={handleOpenContent}
+              onOpenAudioModal={handleOpenAudio}
+              onOpenBooklet={() => setIsBookletOpen(true)}
+              onNavigate={handleNavigate}
+              onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
+              onOpenWorkshopsHub={() => setIsWorkshopsHubOpen(true)}
+              onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
+              onOpenConflictWithoutWar={() => setIsConflictWithoutWarOpen(true)}
+              onOpenHealingJourney={() => setIsHealingJourneyOpen(true)}
+              onOpenMoodKitchen={() => setIsMoodKitchenOpen(true)}
+            />
+          )}
 
-        {currentTab === 'weekly-session' && (
-          <WeeklySessionScreen onNavigate={handleNavigate} />
-        )}
+          {currentTab === 'listen-to-yourself' && (
+            <ListenToYourselfScreen 
+              onNavigate={handleNavigate} 
+              onOpenMusicLounge={() => setIsMusicLoungeOpen(true)}
+            />
+          )}
 
-        {currentTab === 'content-detail' && (
-          <ContentDetailScreen
-            contentId={selectedContentId}
-            onBack={() => handleNavigate('explore')}
-            onNavigateToSupport={() => handleNavigate('support')}
-            onOpenAudioModal={handleOpenAudio}
-          />
-        )}
+          {currentTab === 'weekly-session' && (
+            <WeeklySessionScreen onNavigate={handleNavigate} />
+          )}
 
-        {currentTab === 'breathe' && (
-          <BreatheScreen onOpenMusicLounge={() => setIsMusicLoungeOpen(true)} />
-        )}
+          {currentTab === 'content-detail' && (
+            <ContentDetailScreen
+              contentId={selectedContentId}
+              onBack={() => handleNavigate('explore')}
+              onNavigateToSupport={() => handleNavigate('support')}
+              onOpenAudioModal={handleOpenAudio}
+            />
+          )}
 
-        {currentTab === 'assessment' && (
-          <AssessmentScreen
-            onNavigateToContent={() => handleNavigate('explore')}
-            onNavigateToSupport={() => handleNavigate('support')}
-            onTriggerSafetyModal={() => setIsEmergencyHelpOpen(true)}
-          />
-        )}
+          {currentTab === 'breathe' && (
+            <BreatheScreen 
+              onNavigate={handleNavigate}
+              onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
+              onOpenMusicLounge={() => setIsMusicLoungeOpen(true)} 
+            />
+          )}
 
-        {currentTab === 'support' && (
-          <SupportScreen
-            onOpenSafetyModal={() => setIsEmergencyHelpOpen(true)}
-            onNavigate={handleNavigate}
-          />
-        )}
+          {currentTab === 'assessment' && (
+            <AssessmentScreen
+              onNavigateToContent={() => handleNavigate('explore')}
+              onNavigateToSupport={() => handleNavigate('support')}
+              onTriggerSafetyModal={() => setIsEmergencyHelpOpen(true)}
+            />
+          )}
 
-        {currentTab === 'journey' && (
-          <JourneyScreen
-            onOpenAssessment={() => handleNavigate('assessment')}
-            onNavigateToContent={() => handleNavigate('explore')}
-            onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
-            onOpenThoughtJournal={() => setIsThoughtJournalOpen(true)}
-            onOpenMindfulnessStudio={() => setIsMindfulnessStudioOpen(true)}
-            onOpenVoiceJournal={() => setIsVoiceJournalOpen(true)}
-            onNavigateToBreathe={() => handleNavigate('breathe')}
-            onNavigateToListen={() => handleNavigate('listen')}
-          />
-        )}
+          {currentTab === 'support' && (
+            <SupportScreen
+              onOpenSafetyModal={() => setIsEmergencyHelpOpen(true)}
+              onNavigate={handleNavigate}
+              onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
+            />
+          )}
 
-        {currentTab === 'profile' && (
-          <ProfileScreen
-            onNavigate={handleNavigate}
-            onOpenContent={handleOpenContent}
-            onRestartOnboarding={handleRestartOnboarding}
-            theme={theme}
-            setTheme={setTheme}
-            fontSize={fontSize}
-            setFontSize={setFontSize}
-          />
-        )}
+          {currentTab === 'journey' && (
+            <JourneyScreen
+              onOpenAssessment={() => handleNavigate('assessment')}
+              onNavigateToContent={() => handleNavigate('explore')}
+              onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
+              onOpenThoughtJournal={() => setIsThoughtJournalOpen(true)}
+              onOpenMindfulnessStudio={() => setIsMindfulnessStudioOpen(true)}
+              onOpenVoiceJournal={() => setIsVoiceJournalOpen(true)}
+              onNavigateToBreathe={() => handleNavigate('breathe')}
+              onNavigateToListen={() => handleNavigate('listen')}
+              onNavigate={handleNavigate}
+              onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
+            />
+          )}
 
-        {currentTab === 'feker' && (
-          <FekerAppScreen
-            onBackToHome={() => handleNavigate('home')}
-          />
-        )}
+          {currentTab === 'profile' && (
+            <ProfileScreen
+              onNavigate={handleNavigate}
+              onOpenContent={handleOpenContent}
+              onRestartOnboarding={handleRestartOnboarding}
+              theme={theme}
+              setTheme={setTheme}
+              fontSize={fontSize}
+              setFontSize={setFontSize}
+              isMobilePerformanceMode={isMobilePerformanceMode}
+              onToggleMobilePerformanceMode={handleToggleMobilePerformanceMode}
+            />
+          )}
 
-        {currentTab === 'admin' && (
-          <AdminDashboardScreen
-            currentRole={currentRole}
-            onRoleChange={(role) => setCurrentRole(role)}
-            onNavigateToUserApp={() => handleNavigate('home')}
-          />
-        )}
+          {currentTab === 'feker' && (
+            <FekerAppScreen
+              onBackToHome={() => handleNavigate('home')}
+            />
+          )}
+
+          {currentTab === 'admin' && (
+            <AdminDashboardScreen
+              currentRole={currentRole}
+              onRoleChange={(role) => setCurrentRole(role)}
+              onNavigateToUserApp={() => handleNavigate('home')}
+            />
+          )}
+          </Suspense>
+        </MobileAppShell>
       </main>
 
       {/* Variation 6 Footer */}
@@ -819,410 +935,495 @@ export default function App() {
         currentTab={currentTab}
         onNavigate={handleNavigate}
         userRole={currentRole}
+        onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
         onOpenGwayaHekaya={() => setIsGwayaHekayaOpen(true)}
         onOpenFeker={() => setIsFekerModalOpen(true)}
       />
 
-      {/* ✍️ Mindful Thoughts Journal */}
-      <ThoughtJournalModal
-        isOpen={isThoughtJournalOpen}
-        onClose={() => setIsThoughtJournalOpen(false)}
-      />
+      {/* On-Demand & Conditionally Rendered Interactive Modals */}
+      <Suspense fallback={null}>
+        {/* ✍️ Mindful Thoughts Journal */}
+        {isThoughtJournalOpen && (
+          <ThoughtJournalModal
+            isOpen={isThoughtJournalOpen}
+            onClose={() => setIsThoughtJournalOpen(false)}
+          />
+        )}
 
-      {/* 🧘 Mindfulness Studio */}
-      <MindfulnessStudioModal
-        isOpen={isMindfulnessStudioOpen}
-        onClose={() => setIsMindfulnessStudioOpen(false)}
-      />
+        {/* 🧘 Mindfulness Studio */}
+        {isMindfulnessStudioOpen && (
+          <MindfulnessStudioModal
+            isOpen={isMindfulnessStudioOpen}
+            onClose={() => setIsMindfulnessStudioOpen(false)}
+          />
+        )}
 
-      {/* 🎈 Fun, Jokes & Mind Games Hub */}
-      <FunAndGamesHubModal
-        isOpen={funAndGamesState.isOpen}
-        initialTab={funAndGamesState.tab}
-        onClose={() => setFunAndGamesState(prev => ({ ...prev, isOpen: false }))}
-      />
+        {/* 🎈 Fun, Jokes & Mind Games Hub */}
+        {funAndGamesState.isOpen && (
+          <FunAndGamesHubModal
+            isOpen={funAndGamesState.isOpen}
+            initialTab={funAndGamesState.tab}
+            onClose={() => setFunAndGamesState(prev => ({ ...prev, isOpen: false }))}
+          />
+        )}
 
-      {/* 📖 Gwaya Hekaya Interactive Game */}
-      <GwayaHekayaGameModal
-        isOpen={isGwayaHekayaOpen}
-        onClose={() => setIsGwayaHekayaOpen(false)}
-      />
+        {/* 📖 Gwaya Hekaya Interactive Game */}
+        {isGwayaHekayaOpen && (
+          <GwayaHekayaGameModal
+            isOpen={isGwayaHekayaOpen}
+            onClose={() => setIsGwayaHekayaOpen(false)}
+          />
+        )}
 
-      {/* 🫧 1. لعبة فرقعة الفقاعات النفسية (Pop the Inner Burdens) */}
-      <InnerBurdensBubbleGameModal
-        isOpen={isInnerBurdensOpen}
-        onClose={() => {
-          setIsInnerBurdensOpen(false);
-          triggerActivityRating('inner_burdens', 'لعبة فرقعة الأعباء النفسية', 'ألعاب التهدئة');
-        }}
-      />
+        {/* 🫧 1. لعبة فرقعة الفقاعات النفسية (Pop the Inner Burdens) */}
+        {isInnerBurdensOpen && (
+          <InnerBurdensBubbleGameModal
+            isOpen={isInnerBurdensOpen}
+            onClose={() => {
+              setIsInnerBurdensOpen(false);
+              triggerActivityRating('inner_burdens', 'لعبة فرقعة الأعباء النفسية', 'ألعاب التهدئة');
+            }}
+          />
+        )}
 
-      {/* 🌉 2. لعبة بناء الجسر العاطفي (Build the Bridge) */}
-      <EmotionalBridgeGameModal
-        isOpen={isEmotionalBridgeOpen}
-        onClose={() => {
-          setIsEmotionalBridgeOpen(false);
-          triggerActivityRating('emotional_bridge', 'لعبة بناء الجسر العاطفي', 'ألعاب التهدئة');
-        }}
-      />
+        {/* 🌉 2. لعبة بناء الجسر العاطفي (Build the Bridge) */}
+        {isEmotionalBridgeOpen && (
+          <EmotionalBridgeGameModal
+            isOpen={isEmotionalBridgeOpen}
+            onClose={() => {
+              setIsEmotionalBridgeOpen(false);
+              triggerActivityRating('emotional_bridge', 'لعبة بناء الجسر العاطفي', 'ألعاب التهدئة');
+            }}
+          />
+        )}
 
-      {/* 🌸 3. لعبة حديقة الامتنان اليومية (The Daily Gratitude Garden) */}
-      <GratitudeGardenModal
-        isOpen={isGratitudeGardenOpen}
-        onClose={() => {
-          setIsGratitudeGardenOpen(false);
-          triggerActivityRating('gratitude_garden', 'حديقة الامتنان اليومية', 'ألعاب التهدئة');
-        }}
-      />
+        {/* 🌸 3. لعبة حديقة الامتنان اليومية (The Daily Gratitude Garden) */}
+        {isGratitudeGardenOpen && (
+          <GratitudeGardenModal
+            isOpen={isGratitudeGardenOpen}
+            onClose={() => {
+              setIsGratitudeGardenOpen(false);
+              triggerActivityRating('gratitude_garden', 'حديقة الامتنان اليومية', 'ألعاب التهدئة');
+            }}
+          />
+        )}
 
-      {/* 🧭 4. لعبة رحلة البوصلة الداخلية (Inner Compass Journey) */}
-      <InnerCompassJourneyModal
-        isOpen={isInnerCompassOpen}
-        onClose={() => {
-          setIsInnerCompassOpen(false);
-          triggerActivityRating('inner_compass', 'رحلة البوصلة الداخلية', 'رحلة الاستكشاف');
-        }}
-      />
+        {/* 🧭 4. لعبة رحلة البوصلة الداخلية (Inner Compass Journey) */}
+        {isInnerCompassOpen && (
+          <InnerCompassJourneyModal
+            isOpen={isInnerCompassOpen}
+            onClose={() => {
+              setIsInnerCompassOpen(false);
+              triggerActivityRating('inner_compass', 'رحلة البوصلة الداخلية', 'رحلة الاستكشاف');
+            }}
+          />
+        )}
 
-      {/* 🧩 5. لعبة صانع الأنماط: فك شفرة الأفكار (Cognitive Reframing Puzzle) */}
-      <CognitiveReframingPuzzleModal
-        isOpen={isReframingPuzzleOpen}
-        onClose={() => {
-          setIsReframingPuzzleOpen(false);
-          triggerActivityRating('reframing_puzzle', 'لعبة فك شفرة الأفكار', 'ألعاب التهدئة');
-        }}
-      />
+        {/* 🧩 5. لعبة صانع الأنماط: فك شفرة الأفكار (Cognitive Reframing Puzzle) */}
+        {isReframingPuzzleOpen && (
+          <CognitiveReframingPuzzleModal
+            isOpen={isReframingPuzzleOpen}
+            onClose={() => {
+              setIsReframingPuzzleOpen(false);
+              triggerActivityRating('reframing_puzzle', 'لعبة فك شفرة الأفكار', 'ألعاب التهدئة');
+            }}
+          />
+        )}
 
-      {/* 🌀 6. لعبة متاهة الهدوء التفاعلية (The Inner Labyrinth) */}
-      <InnerLabyrinthModal
-        isOpen={isInnerLabyrinthOpen}
-        onClose={() => {
-          setIsInnerLabyrinthOpen(false);
-          triggerActivityRating('inner_labyrinth', 'متاهة الهدوء التفاعلية', 'ألعاب التهدئة');
-        }}
-      />
+        {/* 🌀 6. لعبة متاهة الهدوء التفاعلية (The Inner Labyrinth) */}
+        {isInnerLabyrinthOpen && (
+          <InnerLabyrinthModal
+            isOpen={isInnerLabyrinthOpen}
+            onClose={() => {
+              setIsInnerLabyrinthOpen(false);
+              triggerActivityRating('inner_labyrinth', 'متاهة الهدوء التفاعلية', 'ألعاب التهدئة');
+            }}
+          />
+        )}
 
-      {/* 🪞 7. لعبة مرآة الأعماق: طقوس التحرر الرقمي (Digital Release Ritual) */}
-      <DigitalReleaseRitualModal
-        isOpen={isDigitalReleaseOpen}
-        onClose={() => {
-          setIsDigitalReleaseOpen(false);
-          triggerActivityRating('digital_release', 'مرآة الأعماق وطقوس التحرر', 'ألعاب التهدئة');
-        }}
-      />
+        {/* 🪞 7. لعبة مرآة الأعماق: طقوس التحرر الرقمي (Digital Release Ritual) */}
+        {isDigitalReleaseOpen && (
+          <DigitalReleaseRitualModal
+            isOpen={isDigitalReleaseOpen}
+            onClose={() => {
+              setIsDigitalReleaseOpen(false);
+              triggerActivityRating('digital_release', 'مرآة الأعماق وطقوس التحرر', 'ألعاب التهدئة');
+            }}
+          />
+        )}
 
-      {/* 🪐 8. لعبة حصاد طاقة الروابط (The Relational Energy Matrix) */}
-      <RelationalEnergyMatrixModal
-        isOpen={isRelationalEnergyOpen}
-        onClose={() => {
-          setIsRelationalEnergyOpen(false);
-          triggerActivityRating('relational_matrix', 'مصفوفة طاقة الروابط', 'ألعاب التهدئة');
-        }}
-      />
+        {/* 🪐 8. لعبة حصاد طاقة الروابط (The Relational Energy Matrix) */}
+        {isRelationalEnergyOpen && (
+          <RelationalEnergyMatrixModal
+            isOpen={isRelationalEnergyOpen}
+            onClose={() => {
+              setIsRelationalEnergyOpen(false);
+              triggerActivityRating('relational_matrix', 'مصفوفة طاقة الروابط', 'ألعاب التهدئة');
+            }}
+          />
+        )}
 
-      {/* 🧭 Personal Discovery Quiz */}
-      <PersonalDiscoveryQuizModal
-        isOpen={isDiscoveryQuizOpen}
-        onClose={() => {
-          setIsDiscoveryQuizOpen(false);
-          triggerActivityRating('discovery_quiz', 'اختبار الاستكشاف الشخصي', 'رحلة الاستكشاف');
-        }}
-      />
+        {/* 🧭 Personal Discovery Quiz */}
+        {isDiscoveryQuizOpen && (
+          <PersonalDiscoveryQuizModal
+            isOpen={isDiscoveryQuizOpen}
+            onClose={() => {
+              setIsDiscoveryQuizOpen(false);
+              triggerActivityRating('discovery_quiz', 'اختبار الاستكشاف الشخصي', 'رحلة الاستكشاف');
+            }}
+          />
+        )}
 
-      {/* 💡 تطبيق فكّر المدمج (Feker App - AI Studio 6b9dc7c3) */}
-      <FekerAppModal
-        isOpen={isFekerModalOpen}
-        onClose={() => {
-          setIsFekerModalOpen(false);
-          triggerActivityRating('feker_app', 'تطبيق فكّر لتفكيك الأفكار', 'ورش العمل');
-        }}
-      />
+        {/* 💡 تطبيق فكّر المدمج (Feker App) */}
+        {isFekerModalOpen && (
+          <FekerAppModal
+            isOpen={isFekerModalOpen}
+            onClose={() => {
+              setIsFekerModalOpen(false);
+              triggerActivityRating('feker_app', 'تطبيق فكّر لتفكيك الأفكار', 'ورش العمل');
+            }}
+          />
+        )}
 
-      {/* 🍲 مطبخ المزاج — غذاء يدعم أمعاءك وعافيتك النفسية */}
-      <MoodKitchenModal
-        isOpen={isMoodKitchenOpen}
-        onClose={() => setIsMoodKitchenOpen(false)}
-      />
+        {/* 🍲 مطبخ المزاج */}
+        {isMoodKitchenOpen && (
+          <MoodKitchenModal
+            isOpen={isMoodKitchenOpen}
+            onClose={() => setIsMoodKitchenOpen(false)}
+          />
+        )}
 
-      {/* ⭐ تقييم الأنشطة والألعاب (5 نجوم) لتقييم الفائدة والتأثير */}
-      <ActivityRatingModal
-        isOpen={activityRatingState.isOpen}
-        activity={activityRatingState.activity}
-        onClose={() => setActivityRatingState({ isOpen: false, activity: null })}
-        theme={theme}
-      />
+        {/* ⭐ تقييم الأنشطة والألعاب */}
+        {activityRatingState.isOpen && (
+          <ActivityRatingModal
+            isOpen={activityRatingState.isOpen}
+            activity={activityRatingState.activity}
+            onClose={() => setActivityRatingState({ isOpen: false, activity: null })}
+            theme={theme}
+          />
+        )}
 
-      {/* 🧠 موسوعة المعلومات النفسية اللانهائية */}
-      <EndlessPsychologyKnowledgeHub
-        isOpen={endlessPsychologyState.isOpen}
-        initialCategory={endlessPsychologyState.category}
-        onClose={() => setEndlessPsychologyState(prev => ({ ...prev, isOpen: false }))}
-        theme={theme}
-      />
+        {/* 🧠 موسوعة المعلومات النفسية اللانهائية */}
+        {endlessPsychologyState.isOpen && (
+          <EndlessPsychologyKnowledgeHub
+            isOpen={endlessPsychologyState.isOpen}
+            initialCategory={endlessPsychologyState.category}
+            onClose={() => setEndlessPsychologyState(prev => ({ ...prev, isOpen: false }))}
+            theme={theme}
+          />
+        )}
 
-      {/* 🧭 اختبارات تصنيف الشخصية والأنماط النفسية المتقدمة */}
-      <PersonalityTypologyModal
-        isOpen={personalityTypologyState.isOpen}
-        initialTestType={personalityTypologyState.initialType}
-        onClose={() => {
-          setPersonalityTypologyState(prev => ({ ...prev, isOpen: false }));
-          triggerActivityRating('personality_typology', 'اختبارات تصنيف الشخصية والأنماط', 'رحلة الاستكشاف');
-        }}
-        onOpenActivity={(activityId) => handleOpenModalByName(activityId)}
-        theme={theme}
-      />
+        {/* 🧭 اختبارات تصنيف الشخصية والأنماط النفسية المتقدمة */}
+        {personalityTypologyState.isOpen && (
+          <PersonalityTypologyModal
+            isOpen={personalityTypologyState.isOpen}
+            initialTestType={personalityTypologyState.initialType}
+            onClose={() => {
+              setPersonalityTypologyState(prev => ({ ...prev, isOpen: false }));
+              triggerActivityRating('personality_typology', 'اختبارات تصنيف الشخصية والأنماط', 'رحلة الاستكشاف');
+            }}
+            onOpenActivity={(activityId) => handleOpenModalByName(activityId)}
+            theme={theme}
+          />
+        )}
 
-      {/* ✨ درج المعجزات الصغيرة اليومية (Daily Miracle Drawer) */}
-      <DailyMiracleDrawerModal
-        isOpen={isDailyMiracleOpen}
-        onClose={() => setIsDailyMiracleOpen(false)}
-        onOpenActivity={(activityId) => handleOpenModalByName(activityId)}
-        theme={theme}
-      />
+        {/* ✨ درج المعجزات الصغيرة اليومية */}
+        {isDailyMiracleOpen && (
+          <DailyMiracleDrawerModal
+            isOpen={isDailyMiracleOpen}
+            onClose={() => setIsDailyMiracleOpen(false)}
+            onOpenActivity={(activityId) => handleOpenModalByName(activityId)}
+            theme={theme}
+          />
+        )}
 
-      {/* 🕊️ حديقة الأوريغامي الشعوري (Emotional Origami Garden) */}
-      <EmotionalOrigamiGardenModal
-        isOpen={isOrigamiGardenOpen}
-        onClose={() => setIsOrigamiGardenOpen(false)}
-        onOpenActivity={(activityId) => handleOpenModalByName(activityId)}
-        theme={theme}
-      />
+        {/* 🕊️ حديقة الأوريغامي الشعوري */}
+        {isOrigamiGardenOpen && (
+          <EmotionalOrigamiGardenModal
+            isOpen={isOrigamiGardenOpen}
+            onClose={() => setIsOrigamiGardenOpen(false)}
+            onOpenActivity={(activityId) => handleOpenModalByName(activityId)}
+            theme={theme}
+          />
+        )}
 
-      {/* 🎹 صالون النغم والسكينة (موسيقى عمر خيرت والموسيقى الهادئة) */}
-      <OmarKhairatMusicLoungeModal
-        isOpen={isMusicLoungeOpen}
-        onClose={() => {
-          setIsMusicLoungeOpen(false);
-          triggerActivityRating('omar_khairat_music', 'صالون النغم والسكينة (عمر خيرت)', 'جلسات الاسترخاء');
-        }}
-        onNavigate={handleNavigate}
-        onOpenComparison={() => setIsAudioComparisonOpen(true)}
-      />
+        {/* 🎹 صالون النغم والسكينة */}
+        {isMusicLoungeOpen && (
+          <OmarKhairatMusicLoungeModal
+            isOpen={isMusicLoungeOpen}
+            onClose={() => {
+              setIsMusicLoungeOpen(false);
+              triggerActivityRating('omar_khairat_music', 'صالون النغم والسكينة (عمر خيرت)', 'جلسات الاسترخاء');
+            }}
+            onNavigate={handleNavigate}
+            onOpenComparison={() => setIsAudioComparisonOpen(true)}
+          />
+        )}
 
-      {/* 🧪 نافذة اختبار النموذج الأولي الموسيقي الاحترافي */}
-      <MusicPrototypeTester
-        isOpen={isMusicPrototypeTesterOpen}
-        onClose={() => setIsMusicPrototypeTesterOpen(false)}
-      />
+        {/* 🧪 نافذة اختبار النموذج الأولي الموسيقي */}
+        {isMusicPrototypeTesterOpen && (
+          <MusicPrototypeTester
+            isOpen={isMusicPrototypeTesterOpen}
+            onClose={() => setIsMusicPrototypeTesterOpen(false)}
+          />
+        )}
 
-      {/* 🎹 نافذة اختبار عينات البيانو الحقيقية */}
-      <SampledMusicTester
-        isOpen={isSampledMusicTesterOpen}
-        onClose={() => setIsSampledMusicTesterOpen(false)}
-      />
+        {/* 🎹 نافذة اختبار عينات البيانو الحقيقية */}
+        {isSampledMusicTesterOpen && (
+          <SampledMusicTester
+            isOpen={isSampledMusicTesterOpen}
+            onClose={() => setIsSampledMusicTesterOpen(false)}
+          />
+        )}
 
-      {/* 🎧 صفحة المقارنة الصوتية التفاعلية (15 ثانية A/B Test) */}
-      <AudioEngineComparisonModal
-        isOpen={isAudioComparisonOpen}
-        onClose={() => setIsAudioComparisonOpen(false)}
-      />
+        {/* 🎧 صفحة المقارنة الصوتية التفاعلية */}
+        {isAudioComparisonOpen && (
+          <AudioEngineComparisonModal
+            isOpen={isAudioComparisonOpen}
+            onClose={() => setIsAudioComparisonOpen(false)}
+          />
+        )}
 
-      {/* 📱 شارة تثبيت التطبيق المخصصة عند توفر حدث التثبيت */}
-      <PWAFloatingInstallBadge />
+        {/* 🛠️ PDF Practical Workshops Modals */}
+        {isWorkshopsHubOpen && (
+          <WorkshopsHubModal
+            isOpen={isWorkshopsHubOpen}
+            onClose={() => setIsWorkshopsHubOpen(false)}
+            onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
+            onOpenConflictWithoutWar={() => setIsConflictWithoutWarOpen(true)}
+            onOpenHealingJourney={() => setIsHealingJourneyOpen(true)}
+            onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
+            onOpenEnergyBudget={() => setIsEnergyBudgetOpen(true)}
+            onOpenBoundaryBuilder={() => setIsBoundaryBuilderOpen(true)}
+            onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
+            onOpenTranslateFeelings={() => setIsTranslateFeelingsOpen(true)}
+            onOpenFactGame={() => setIsFactGameOpen(true)}
+            onOpenSpecialistGuide={() => setIsSpecialistGuideOpen(true)}
+          />
+        )}
 
-      {/* أزرار عائمة لاختبار النماذج والمقارنة التفاعلية */}
-      <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-2.5">
-        <button
-          onClick={() => setIsAudioComparisonOpen(true)}
-          className="px-5 py-3.5 bg-gradient-to-r from-amber-500 via-emerald-600 to-teal-500 hover:from-amber-400 hover:via-emerald-500 hover:to-teal-400 text-stone-950 rounded-2xl shadow-2xl flex items-center gap-3 text-xs font-black border border-white/30 transition-all transform hover:scale-105 active:scale-95 ring-2 ring-emerald-400/50"
-          title="مقارنة صوتية تفاعلية: عينة 15 ثانية متطابقة النغمات"
-        >
-          <span className="text-lg">🎧</span>
-          <span className="flex flex-col text-right leading-tight">
-            <span>مقارنة صوتية تفاعلية (A/B Test)</span>
-            <span className="text-[10px] font-normal text-stone-900/80">عينة 15 ثانية متطابقة النغمات</span>
-          </span>
-        </button>
-      </div>
+        {isPsychologicalEROpen && (
+          <PsychologicalERModal
+            isOpen={isPsychologicalEROpen}
+            onClose={() => setIsPsychologicalEROpen(false)}
+            onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
+          />
+        )}
 
-      {/* 🛠️ PDF Practical Workshops Modals */}
-      <WorkshopsHubModal
-        isOpen={isWorkshopsHubOpen}
-        onClose={() => setIsWorkshopsHubOpen(false)}
-        onOpenPsychologicalER={() => setIsPsychologicalEROpen(true)}
-        onOpenConflictWithoutWar={() => setIsConflictWithoutWarOpen(true)}
-        onOpenHealingJourney={() => setIsHealingJourneyOpen(true)}
-        onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
-        onOpenEnergyBudget={() => setIsEnergyBudgetOpen(true)}
-        onOpenBoundaryBuilder={() => setIsBoundaryBuilderOpen(true)}
-        onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
-        onOpenTranslateFeelings={() => setIsTranslateFeelingsOpen(true)}
-        onOpenFactGame={() => setIsFactGameOpen(true)}
-        onOpenSpecialistGuide={() => setIsSpecialistGuideOpen(true)}
-      />
+        {isConflictWithoutWarOpen && (
+          <ConflictWithoutWarModal
+            isOpen={isConflictWithoutWarOpen}
+            onClose={() => setIsConflictWithoutWarOpen(false)}
+          />
+        )}
 
-      <PsychologicalERModal
-        isOpen={isPsychologicalEROpen}
-        onClose={() => setIsPsychologicalEROpen(false)}
-        onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
-      />
+        {isHealingJourneyOpen && (
+          <HealingJourneyModal
+            isOpen={isHealingJourneyOpen}
+            onClose={() => setIsHealingJourneyOpen(false)}
+          />
+        )}
 
-      <ConflictWithoutWarModal
-        isOpen={isConflictWithoutWarOpen}
-        onClose={() => setIsConflictWithoutWarOpen(false)}
-      />
+        {/* 📖 PDF Booklet & Personal Plan Modals */}
+        {isBookletOpen && (
+          <NesmatBookletModal
+            isOpen={isBookletOpen}
+            onClose={() => setIsBookletOpen(false)}
+            onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
+            onOpenEnergyBudget={() => setIsEnergyBudgetOpen(true)}
+            onOpenBoundaryBuilder={() => setIsBoundaryBuilderOpen(true)}
+            onOpenSpecialistGuide={() => setIsSpecialistGuideOpen(true)}
+            onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
+          />
+        )}
 
-      <HealingJourneyModal
-        isOpen={isHealingJourneyOpen}
-        onClose={() => setIsHealingJourneyOpen(false)}
-      />
+        {isPersonalPlanOpen && (
+          <PersonalPlanModal
+            isOpen={isPersonalPlanOpen}
+            onClose={() => setIsPersonalPlanOpen(false)}
+          />
+        )}
 
-      {/* 📖 PDF Booklet & Personal Plan Modals */}
-      <NesmatBookletModal
-        isOpen={isBookletOpen}
-        onClose={() => setIsBookletOpen(false)}
-        onOpenPersonalPlan={() => setIsPersonalPlanOpen(true)}
-        onOpenEnergyBudget={() => setIsEnergyBudgetOpen(true)}
-        onOpenBoundaryBuilder={() => setIsBoundaryBuilderOpen(true)}
-        onOpenSpecialistGuide={() => setIsSpecialistGuideOpen(true)}
-        onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
-      />
+        {isEnergyBudgetOpen && (
+          <EnergyBudgetModal
+            isOpen={isEnergyBudgetOpen}
+            onClose={() => setIsEnergyBudgetOpen(false)}
+          />
+        )}
 
-      <PersonalPlanModal
-        isOpen={isPersonalPlanOpen}
-        onClose={() => setIsPersonalPlanOpen(false)}
-      />
+        {isBoundaryBuilderOpen && (
+          <BoundaryBuilderModal
+            isOpen={isBoundaryBuilderOpen}
+            onClose={() => setIsBoundaryBuilderOpen(false)}
+          />
+        )}
 
-      <EnergyBudgetModal
-        isOpen={isEnergyBudgetOpen}
-        onClose={() => setIsEnergyBudgetOpen(false)}
-      />
+        {isSpecialistGuideOpen && (
+          <SpecialistGuideModal
+            isOpen={isSpecialistGuideOpen}
+            onClose={() => setIsSpecialistGuideOpen(false)}
+            onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
+            onNavigateToSupport={() => {
+              handleNavigate('support');
+            }}
+          />
+        )}
 
-      <BoundaryBuilderModal
-        isOpen={isBoundaryBuilderOpen}
-        onClose={() => setIsBoundaryBuilderOpen(false)}
-      />
+        {/* 🌿 Interactive Phase Modals */}
+        {isAnaDelwaqtiOpen && (
+          <AnaDelwaqtiModal
+            isOpen={isAnaDelwaqtiOpen}
+            onClose={() => setIsAnaDelwaqtiOpen(false)}
+            onNavigateTab={(tab) => {
+              handleNavigate(tab);
+            }}
+            onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
+            onOpenUntangle={() => setIsUntangleKnotOpen(true)}
+            onOpenTranslate={() => setIsTranslateFeelingsOpen(true)}
+            onOpenBattery={() => setIsBatteryCheckOpen(true)}
+            onOpenLaughs={() => setIsNesmaLaughsOpen(true)}
+          />
+        )}
 
-      <SpecialistGuideModal
-        isOpen={isSpecialistGuideOpen}
-        onClose={() => setIsSpecialistGuideOpen(false)}
-        onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
-        onNavigateToSupport={() => {
-          setCurrentTab('support');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-      />
+        {isRescueKitOpen && (
+          <RescueKitModal
+            isOpen={isRescueKitOpen}
+            onClose={() => setIsRescueKitOpen(false)}
+            initialPlanId={selectedRescuePlanId}
+            onNavigateTab={(tab) => {
+              handleNavigate(tab);
+            }}
+            onOpenContent={handleOpenContent}
+          />
+        )}
 
-      {/* 🌿 Interactive Phase Modals */}
-      <AnaDelwaqtiModal
-        isOpen={isAnaDelwaqtiOpen}
-        onClose={() => setIsAnaDelwaqtiOpen(false)}
-        onNavigateTab={(tab) => {
-          setCurrentTab(tab);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onOpenEmergencyHelp={() => setIsEmergencyHelpOpen(true)}
-        onOpenUntangle={() => setIsUntangleKnotOpen(true)}
-        onOpenTranslate={() => setIsTranslateFeelingsOpen(true)}
-        onOpenBattery={() => setIsBatteryCheckOpen(true)}
-        onOpenLaughs={() => setIsNesmaLaughsOpen(true)}
-      />
+        {isBatteryCheckOpen && (
+          <BatteryCheckModal
+            isOpen={isBatteryCheckOpen}
+            onClose={() => setIsBatteryCheckOpen(false)}
+          />
+        )}
 
-      <RescueKitModal
-        isOpen={isRescueKitOpen}
-        onClose={() => setIsRescueKitOpen(false)}
-        initialPlanId={selectedRescuePlanId}
-        onNavigateTab={(tab) => {
-          setCurrentTab(tab);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onOpenContent={handleOpenContent}
-      />
+        {isTranslateFeelingsOpen && (
+          <TranslateFeelingsModal
+            isOpen={isTranslateFeelingsOpen}
+            onClose={() => setIsTranslateFeelingsOpen(false)}
+          />
+        )}
 
-      <BatteryCheckModal
-        isOpen={isBatteryCheckOpen}
-        onClose={() => setIsBatteryCheckOpen(false)}
-      />
+        {isFactGameOpen && (
+          <FactOrStoryGameModal
+            isOpen={isFactGameOpen}
+            onClose={() => setIsFactGameOpen(false)}
+          />
+        )}
 
-      <TranslateFeelingsModal
-        isOpen={isTranslateFeelingsOpen}
-        onClose={() => setIsTranslateFeelingsOpen(false)}
-      />
+        {isUntangleKnotOpen && (
+          <UntangleKnotModal
+            isOpen={isUntangleKnotOpen}
+            onClose={() => setIsUntangleKnotOpen(false)}
+          />
+        )}
 
-      <FactOrStoryGameModal
-        isOpen={isFactGameOpen}
-        onClose={() => setIsFactGameOpen(false)}
-      />
+        {isNesmaLaughsOpen && (
+          <NesmaLaughsModal
+            isOpen={isNesmaLaughsOpen}
+            onClose={() => setIsNesmaLaughsOpen(false)}
+          />
+        )}
 
-      <UntangleKnotModal
-        isOpen={isUntangleKnotOpen}
-        onClose={() => setIsUntangleKnotOpen(false)}
-      />
+        {isEmergencyHelpOpen && (
+          <EmergencyHelpModal
+            isOpen={isEmergencyHelpOpen}
+            onClose={() => setIsEmergencyHelpOpen(false)}
+          />
+        )}
 
-      <NesmaLaughsModal
-        isOpen={isNesmaLaughsOpen}
-        onClose={() => setIsNesmaLaughsOpen(false)}
-      />
+        {/* Universal Audio & Notification Modals */}
+        {isSafetyModalOpen && (
+          <SafetyFlagModal
+            isOpen={isSafetyModalOpen}
+            onClose={() => setIsSafetyModalOpen(false)}
+          />
+        )}
 
-      <EmergencyHelpModal
-        isOpen={isEmergencyHelpOpen}
-        onClose={() => setIsEmergencyHelpOpen(false)}
-      />
+        {audioModalState.isOpen && (
+          <AudioPlayerModal
+            isOpen={audioModalState.isOpen}
+            onClose={() => setAudioModalState(prev => ({ ...prev, isOpen: false }))}
+            title={audioModalState.title}
+            category={audioModalState.category}
+            durationMinutes={audioModalState.durationMinutes}
+            onFinishCheckin={handleFinishAudioCheckin}
+          />
+        )}
 
-      {/* Universal Audio & Notification Modals */}
-      <SafetyFlagModal
-        isOpen={isSafetyModalOpen}
-        onClose={() => setIsSafetyModalOpen(false)}
-      />
+        {isNotificationsOpen && (
+          <NotificationsModal
+            isOpen={isNotificationsOpen}
+            onClose={() => setIsNotificationsOpen(false)}
+            onNavigateToContent={() => handleNavigate('explore')}
+            onNavigateToBreathe={() => handleNavigate('breathe')}
+            onOpenMoodKitchen={() => setIsMoodKitchenOpen(true)}
+          />
+        )}
 
-      <AudioPlayerModal
-        isOpen={audioModalState.isOpen}
-        onClose={() => setAudioModalState(prev => ({ ...prev, isOpen: false }))}
-        title={audioModalState.title}
-        category={audioModalState.category}
-        durationMinutes={audioModalState.durationMinutes}
-        onFinishCheckin={handleFinishAudioCheckin}
-      />
+        {isThoughtReleaseOpen && (
+          <ThoughtReleaseModal
+            isOpen={isThoughtReleaseOpen}
+            onClose={() => setIsThoughtReleaseOpen(false)}
+          />
+        )}
 
-      <NotificationsModal
-        isOpen={isNotificationsOpen}
-        onClose={() => setIsNotificationsOpen(false)}
-        onNavigateToContent={() => setCurrentTab('explore')}
-        onNavigateToBreathe={() => setCurrentTab('breathe')}
-        onOpenMoodKitchen={() => setIsMoodKitchenOpen(true)}
-      />
+        {isSoundscapeOpen && (
+          <SoundscapeStudio
+            isOpen={isSoundscapeOpen}
+            onClose={() => setIsSoundscapeOpen(false)}
+          />
+        )}
 
-      <ThoughtReleaseModal
-        isOpen={isThoughtReleaseOpen}
-        onClose={() => setIsThoughtReleaseOpen(false)}
-      />
+        {isEmotionCompassOpen && (
+          <EmotionCompassModal
+            isOpen={isEmotionCompassOpen}
+            onClose={() => setIsEmotionCompassOpen(false)}
+          />
+        )}
 
-      <SoundscapeStudio
-        isOpen={isSoundscapeOpen}
-        onClose={() => setIsSoundscapeOpen(false)}
-      />
+        {isDailyWisdomOpen && (
+          <DailyWisdomModal
+            isOpen={isDailyWisdomOpen}
+            onClose={() => setIsDailyWisdomOpen(false)}
+          />
+        )}
 
-      <EmotionCompassModal
-        isOpen={isEmotionCompassOpen}
-        onClose={() => setIsEmotionCompassOpen(false)}
-      />
+        {isVoiceJournalOpen && (
+          <VoiceJournalModal
+            isOpen={isVoiceJournalOpen}
+            onClose={() => setIsVoiceJournalOpen(false)}
+          />
+        )}
 
-      <DailyWisdomModal
-        isOpen={isDailyWisdomOpen}
-        onClose={() => setIsDailyWisdomOpen(false)}
-      />
+        {isCompanionOpen && (
+          <CompanionModal
+            isOpen={isCompanionOpen}
+            onClose={() => setIsCompanionOpen(false)}
+            onNavigate={handleNavigate}
+            onOpenModal={handleOpenModalByName}
+            onOpenAudio={handleOpenAudio}
+          />
+        )}
 
-      <VoiceJournalModal
-        isOpen={isVoiceJournalOpen}
-        onClose={() => setIsVoiceJournalOpen(false)}
-      />
-
-      {/* 🌿 شخصية نسمة حياة — الحضور التفاعلي الدائم عبر كامل أقسام المنصة */}
-      <CompanionFloatingButton
-        onClick={() => setIsCompanionOpen(true)}
-        isOpen={isCompanionOpen}
-        currentTab={currentTab}
-        onNavigate={handleNavigate}
-        onOpenModalByName={handleOpenModalByName}
-      />
-
-      <CompanionModal
-        isOpen={isCompanionOpen}
-        onClose={() => setIsCompanionOpen(false)}
-        onNavigate={handleNavigate}
-        onOpenModal={handleOpenModalByName}
-        onOpenAudio={handleOpenAudio}
-      />
+        {/* 📑 Ten Screens Global Navigation Modal */}
+        {isTenScreensModalOpen && (
+          <TenScreensModal
+            isOpen={isTenScreensModalOpen}
+            onClose={() => setIsTenScreensModalOpen(false)}
+            currentTab={currentTab}
+            onNavigate={handleNavigate}
+            theme={theme}
+          />
+        )}
+      </Suspense>
 
       {/* 🔔 Floating In-App Reminder Toast for Mood Kitchen & Calming Activities */}
       {notificationToast && (

@@ -17,7 +17,9 @@ import {
   Mail, 
   Phone,
   FileCheck,
-  RotateCcw
+  RotateCcw,
+  Smartphone,
+  Zap
 } from 'lucide-react';
 import { storage } from '../services/storage';
 import { User, UserPreferences } from '../types';
@@ -30,6 +32,8 @@ interface ProfileScreenProps {
   setTheme: (t: 'dark' | 'light' | 'system') => void;
   fontSize: 'normal' | 'large' | 'extralarge';
   setFontSize: (f: 'normal' | 'large' | 'extralarge') => void;
+  isMobilePerformanceMode?: boolean;
+  onToggleMobilePerformanceMode?: () => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
@@ -39,7 +43,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   theme,
   setTheme,
   fontSize,
-  setFontSize
+  setFontSize,
+  isMobilePerformanceMode,
+  onToggleMobilePerformanceMode
 }) => {
   const [user, setUser] = useState<User>(storage.getUser());
   const [prefs, setPrefs] = useState<UserPreferences>(storage.getPreferences());
@@ -48,6 +54,35 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   >(null);
   const [exportNotice, setExportNotice] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
+
+  // Mobile Performance Mode state & persistence
+  const [internalPerfMode, setInternalPerfMode] = useState<boolean>(() => {
+    if (typeof isMobilePerformanceMode === 'boolean') return isMobilePerformanceMode;
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('nesmat_mobile_perf_mode');
+      if (saved !== null) return saved === 'true';
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      return isMobile || window.innerWidth < 768;
+    }
+    return false;
+  });
+
+  const effectivePerfMode = typeof isMobilePerformanceMode === 'boolean' ? isMobilePerformanceMode : internalPerfMode;
+
+  const handleTogglePerfMode = () => {
+    if (onToggleMobilePerformanceMode) {
+      onToggleMobilePerformanceMode();
+    } else {
+      const next = !effectivePerfMode;
+      setInternalPerfMode(next);
+      localStorage.setItem('nesmat_mobile_perf_mode', String(next));
+      if (next) {
+        document.documentElement.classList.add('mobile-low-perf');
+      } else {
+        document.documentElement.classList.remove('mobile-low-perf');
+      }
+    }
+  };
 
   // Edit profile state
   const [tempName, setTempName] = useState(user.name);
@@ -262,6 +297,52 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           </div>
           <ChevronLeft className="w-4 h-4 text-[#7D8F85]" />
         </button>
+
+        {/* وضع أداء الهاتف (Mobile Performance Mode) */}
+        <div className="w-full p-4 flex items-center justify-between hover:bg-white/80 transition-colors">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
+              effectivePerfMode 
+                ? 'bg-emerald-100 text-emerald-800' 
+                : 'bg-stone-200/60 text-stone-600'
+            }`}>
+              <Zap className="w-4 h-4" />
+            </div>
+            <div className="text-right min-w-0 pr-1">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-[#26332D]">وضع أداء الهاتف</span>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                  effectivePerfMode 
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                    : 'bg-stone-200 text-stone-600 border border-stone-300'
+                }`}>
+                  {effectivePerfMode ? 'مُفعّل' : 'معطّل'}
+                </span>
+              </div>
+              <div className="text-[11px] text-[#7D8F85] line-clamp-1">
+                تعطيل التأثيرات والرسوميات الثقيلة لتسريع الهاتف ومنع الوميض
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            dir="ltr"
+            role="switch"
+            aria-checked={effectivePerfMode}
+            aria-label="تبديل وضع أداء الهاتف"
+            onClick={handleTogglePerfMode}
+            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#174C3C] focus:ring-offset-1 ${
+              effectivePerfMode ? 'bg-[#174C3C]' : 'bg-stone-300'
+            }`}
+          >
+            <span
+              aria-hidden="true"
+              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                effectivePerfMode ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
 
         {/* 5. الخصوصية */}
         <button
@@ -776,6 +857,48 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   <span className="text-[10px] opacity-80">20px</span>
                 </button>
               </div>
+            </div>
+
+            {/* Mobile Performance Mode Section in Modal */}
+            <div className="p-3.5 bg-white rounded-2xl border border-[#E6E8D8] space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                    effectivePerfMode ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-600'
+                  }`}>
+                    <Zap className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-[#26332D]">وضع أداء الهاتف (منع الوميض)</span>
+                    <span className={`mr-2 text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                      effectivePerfMode ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-600'
+                    }`}>
+                      {effectivePerfMode ? 'مُفعّل' : 'معطّل'}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  dir="ltr"
+                  role="switch"
+                  aria-checked={effectivePerfMode}
+                  aria-label="تبديل وضع أداء الهاتف"
+                  onClick={handleTogglePerfMode}
+                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#174C3C] ${
+                    effectivePerfMode ? 'bg-[#174C3C]' : 'bg-stone-300'
+                  }`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      effectivePerfMode ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+              <p className="text-[11px] text-[#52645B] leading-relaxed">
+                يقوم بتعطيل الفلاتر المعقدة والظلال المركبة والتأثيرات الثقيلة لمنع وميض الشاشة وإعادة التحميل المتكررة على متصفح الهواتف.
+              </p>
             </div>
 
             {/* Live Preview Sample */}

@@ -22,14 +22,20 @@ import { BreathingSession, BreathingPhase } from '../types';
 import { ambientSound, SoundChannelId } from '../utils/audioSynth';
 import { storage } from '../services/storage';
 
+import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+
 interface BreatheScreenProps {
   onSessionFinished?: () => void;
   onOpenMusicLounge?: () => void;
+  onNavigate?: (tab: string) => void;
+  onOpenAllScreens?: () => void;
 }
 
 export const BreatheScreen: React.FC<BreatheScreenProps> = ({
   onSessionFinished,
-  onOpenMusicLounge
+  onOpenMusicLounge,
+  onNavigate,
+  onOpenAllScreens
 }) => {
   const sessions = INITIAL_BREATHING_SESSIONS;
   const [selectedSession, setSelectedSession] = useState<BreathingSession>(sessions[0]);
@@ -245,6 +251,14 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = ({
   return (
     <div className="pb-28 pt-4 px-4 sm:px-6 max-w-2xl mx-auto space-y-6">
       
+      {onNavigate && (
+        <ScreenBannerHeader 
+          screenId="breathe" 
+          onNavigate={onNavigate} 
+          onOpenAllScreens={onOpenAllScreens} 
+        />
+      )}
+
       {/* Header */}
       <div className="space-y-1 text-right">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#174C3C]/10 border border-[#174C3C]/20 rounded-full text-xs font-bold text-[#174C3C]">

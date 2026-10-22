@@ -15,31 +15,30 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
+import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+
 interface StartScreenProps {
   onNavigate: (tab: string) => void;
   onOpenBooklet: () => void;
   onOpenEmergencyHelp: () => void;
+  onOpenAllScreens?: () => void;
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({
   onNavigate,
   onOpenBooklet,
-  onOpenEmergencyHelp
+  onOpenEmergencyHelp,
+  onOpenAllScreens
 }) => {
   return (
     <div className="pb-28 pt-4 px-4 sm:px-6 max-w-5xl mx-auto space-y-8 animate-fade-in text-right">
       
-      {/* Breadcrumb Navigation */}
-      <nav aria-label="مسار التنقل" className="flex items-center gap-2 text-xs text-stone-400">
-        <button 
-          onClick={() => onNavigate('home')} 
-          className="hover:text-emerald-400 transition-colors"
-        >
-          الرئيسية
-        </button>
-        <span>/</span>
-        <span className="text-emerald-300 font-bold">ابدأ من هنا — التعرف على نسمة حياة</span>
-      </nav>
+      {/* Screen 2 Identifier Header */}
+      <ScreenBannerHeader 
+        screenId="start" 
+        onNavigate={onNavigate} 
+        onOpenAllScreens={onOpenAllScreens} 
+      />
 
       {/* Hero Welcome Card */}
       <section className="bg-gradient-to-br from-[#18231D] via-[#141C17] to-[#0E1511] border border-emerald-500/20 rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">

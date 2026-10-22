@@ -16,11 +16,14 @@ import { storage } from '../services/storage';
 import { ContentItem, ContentType } from '../types';
 import { PsychoeducationLibraryHub } from '../components/PsychoeducationLibraryHub';
 
+import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+
 interface ExploreScreenProps {
   onOpenContent: (contentId: string) => void;
   onOpenAudioModal: (title: string, category: string, durationMinutes: number) => void;
   onOpenBooklet?: () => void;
   onNavigate?: (tab: string) => void;
+  onOpenAllScreens?: () => void;
   onOpenWorkshopsHub?: () => void;
   onOpenPsychologicalER?: () => void;
   onOpenConflictWithoutWar?: () => void;
@@ -49,7 +52,8 @@ export const ExploreScreen: React.FC<ExploreScreenProps> = ({
   onOpenUntangleKnot,
   onOpenTranslateFeelings,
   onOpenEmergencyHelp,
-  onOpenMoodKitchen
+  onOpenMoodKitchen,
+  onOpenAllScreens
 }) => {
   const [activeTab, setActiveTab] = useState<'library' | 'booklet_and_workshops'>('library');
   const [searchQuery, setSearchQuery] = useState('');
@@ -139,18 +143,13 @@ export const ExploreScreen: React.FC<ExploreScreenProps> = ({
   return (
     <div className="pb-28 pt-4 px-4 sm:px-6 max-w-5xl mx-auto space-y-8 animate-fade-in text-right font-cairo">
       
-      {/* Breadcrumb Navigation */}
+      {/* Screen 5 Identifier Header */}
       {onNavigate && (
-        <nav aria-label="مسار التنقل" className="flex items-center gap-2 text-xs text-[#13251E]/60 dark:text-[#F7F3E9]/60 font-jetbrains">
-          <button 
-            onClick={() => onNavigate('home')} 
-            className="hover:text-[#D98F83] transition-colors cursor-pointer"
-          >
-            الرئيسية
-          </button>
-          <span>/</span>
-          <span className="text-[#D98F83] font-bold">تعلّم وطبّق — المكتبة والمعرفة النفسية</span>
-        </nav>
+        <ScreenBannerHeader 
+          screenId="explore" 
+          onNavigate={onNavigate} 
+          onOpenAllScreens={onOpenAllScreens} 
+        />
       )}
 
       {/* Top Header & Section Switcher */}

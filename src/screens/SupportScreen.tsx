@@ -15,9 +15,12 @@ import {
 import { storage } from '../services/storage';
 import { SupportRequest, SupportRequestType, SupportStatus } from '../types';
 
+import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+
 interface SupportScreenProps {
   onOpenSafetyModal: () => void;
   onNavigate?: (tab: string) => void;
+  onOpenAllScreens?: () => void;
 }
 
 const NEED_TYPES: { id: SupportRequestType; label: string; desc: string; icon: string }[] = [
@@ -36,7 +39,11 @@ const STATUS_LABELS: Record<SupportStatus, { label: string; color: string }> = {
   closed: { label: 'مغلق', color: 'bg-stone-300 text-stone-600' }
 };
 
-export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal, onNavigate }) => {
+export const SupportScreen: React.FC<SupportScreenProps> = ({ 
+  onOpenSafetyModal, 
+  onNavigate,
+  onOpenAllScreens 
+}) => {
   const [selectedType, setSelectedType] = useState<SupportRequestType>('listener');
   const [message, setMessage] = useState('');
   const [name, setName] = useState(storage.getUser().name || '');
@@ -74,18 +81,13 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({ onOpenSafetyModal,
   return (
     <div className="pb-28 pt-4 px-4 sm:px-6 max-w-2xl mx-auto space-y-6">
       
-      {/* Breadcrumb Navigation */}
+      {/* Screen 10 Identifier Header */}
       {onNavigate && (
-        <nav aria-label="مسار التنقل" className="flex items-center gap-2 text-xs text-stone-400">
-          <button 
-            onClick={() => onNavigate('home')} 
-            className="hover:text-emerald-400 transition-colors"
-          >
-            الرئيسية
-          </button>
-          <span>/</span>
-          <span className="text-emerald-400 font-bold">اطلب الدعم</span>
-        </nav>
+        <ScreenBannerHeader 
+          screenId="support" 
+          onNavigate={onNavigate} 
+          onOpenAllScreens={onOpenAllScreens} 
+        />
       )}
 
       {/* Header */}

@@ -63,16 +63,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   const navLinks = [
-    { id: 'home', label: t('nav.home', 'الرئيسية') },
-    { id: 'listen-to-yourself', label: '🧠 اسمع نفسك' },
-    { id: 'weekly-session', label: '📅 الجلسة الأسبوعية' },
-    { id: 'start', label: t('nav.start', 'ابدأ من هنا') },
-    { id: 'self-discovery', label: t('nav.selfDiscovery', 'افهم نفسك') },
-    { id: 'games', label: t('nav.games', 'خذ استراحة') },
-    { id: 'explore', label: t('nav.explore', 'تعلّم وطبّق') },
-    { id: 'practice', label: t('nav.practice', 'مارس المهارات') },
-    { id: 'rescue', label: t('nav.rescue', 'خطط المساندة') },
-    { id: 'support', label: t('nav.support', 'اطلب الدعم') },
+    { id: 'welcome', label: '🎡 العجلة الترحيبية' },
+    { id: 'home', label: '١. الرئيسية' },
+    { id: 'start', label: '٢. ابدأ هنا' },
+    { id: 'breathe', label: '٣. التنفس' },
+    { id: 'self-discovery', label: '٤. استكشاف الذات' },
+    { id: 'explore', label: '٥. مكتبة المعرفة' },
+    { id: 'games', label: '٦. بستان الألعاب' },
+    { id: 'practice', label: '٧. التمارين' },
+    { id: 'journey', label: '٨. مسار التشافي' },
+    { id: 'rescue', label: '٩. حقيبة النجاة' },
+    { id: 'support', label: '١٠. الدعم' },
   ];
 
   const handleMobileNav = (tabId: string) => {
@@ -130,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Zone 3: Actions & Quick Access */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           
           <div className="hidden xl:block font-jetbrains text-[10px] text-[#174C3C]/60 dark:text-[#A9C5A0]/60 uppercase tracking-widest px-1">
             🌿 واحة الأمان
@@ -143,7 +144,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {onToggleTheme && (
             <button
               onClick={onToggleTheme}
-              className="p-2 rounded-xl border border-[#174C3C]/15 dark:border-[#A9C5A0]/20 bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] hover:bg-[#E6E8D8]/50 dark:hover:bg-[#1B342A] transition-all cursor-pointer shadow-2xs"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-[#174C3C]/15 dark:border-[#A9C5A0]/20 bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] hover:bg-[#E6E8D8]/50 dark:hover:bg-[#1B342A] transition-all cursor-pointer shadow-2xs flex items-center justify-center shrink-0"
               title={isDark ? 'التبديل إلى الوضع النهاري الهادئ' : 'التبديل إلى الوضع الليلي الغابي'}
               aria-label="تبديل المظهر"
             >
@@ -151,14 +152,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          {/* Unified Language Toggle */}
-          <LanguageToggle />
+          {/* Unified Language Toggle (Desktop/Tablet) */}
+          <div className="hidden xs:block shrink-0">
+            <LanguageToggle />
+          </div>
 
-          {/* Digital Character Button (رفيقي) */}
+          {/* Digital Character Button (رفيقي) - Tablet/Desktop only */}
           {onOpenCompanion && (
             <button
               onClick={onOpenCompanion}
-              className="py-1.5 px-3 bg-[#174C3C] hover:bg-[#123C30] text-[#F7F3E9] dark:bg-[#A9C5A0] dark:hover:bg-[#BFD9B6] dark:text-[#0D1914] text-xs font-bold rounded-full border border-[#174C3C]/30 shadow-xs hover:translate-y-[-1px] active:translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer font-cairo"
+              className="hidden sm:flex py-1.5 px-3 bg-[#174C3C] hover:bg-[#123C30] text-[#F7F3E9] dark:bg-[#A9C5A0] dark:hover:bg-[#BFD9B6] dark:text-[#0D1914] text-xs font-bold rounded-full border border-[#174C3C]/30 shadow-xs hover:translate-y-[-1px] active:translate-y-0.5 transition-all items-center gap-1.5 cursor-pointer font-cairo shrink-0"
               title="تحدث مع رفيقي — المرشد المرافق"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#D5A65A] dark:text-[#174C3C]" />
@@ -169,17 +172,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Emergency Safety Protocol Button */}
           <button
             onClick={onOpenSafetyModal}
-            className="py-1.5 px-3 bg-[#D98F83] hover:bg-[#C97F73] text-white text-xs font-bold rounded-full border border-[#D98F83]/40 shadow-xs hover:translate-y-[-1px] active:translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer font-cairo"
+            className="h-9 px-2.5 sm:px-3 bg-[#D98F83] hover:bg-[#C97F73] text-white text-xs font-bold rounded-xl border border-[#D98F83]/40 shadow-xs hover:translate-y-[-1px] active:translate-y-0.5 transition-all flex items-center gap-1 cursor-pointer font-cairo shrink-0"
             title="أرقام الطوارئ والدعم النفسي العاجل"
           >
             <PhoneCall className="w-3.5 h-3.5" />
-            <span className="font-syne">طوارئ / SOS</span>
+            <span className="font-syne text-[11px] sm:text-xs">طوارئ</span>
           </button>
 
           {/* Notifications */}
           <button
             onClick={onOpenNotifications}
-            className="relative p-2 rounded-xl border border-[#174C3C]/15 dark:border-[#A9C5A0]/20 bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] hover:bg-[#E6E8D8]/50 dark:hover:bg-[#1B342A] transition-all cursor-pointer shadow-2xs"
+            className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-[#174C3C]/15 dark:border-[#A9C5A0]/20 bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] hover:bg-[#E6E8D8]/50 dark:hover:bg-[#1B342A] transition-all cursor-pointer shadow-2xs flex items-center justify-center shrink-0"
             aria-label="الإشعارات"
           >
             <Bell className="w-4 h-4 text-[#174C3C] dark:text-[#A9C5A0]" />
@@ -188,8 +191,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </button>
 
-          {/* Role Switcher */}
-          <div className="relative">
+          {/* Role Switcher (Hidden on small mobile headers to prevent overflow) */}
+          <div className="relative hidden md:block">
             <button
               onClick={() => setShowRoleMenu(!showRoleMenu)}
               className="flex items-center gap-1.5 py-1.5 px-2.5 text-xs font-bold rounded-xl border border-[#174C3C]/15 dark:border-[#A9C5A0]/20 bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] hover:bg-[#E6E8D8]/50 dark:hover:bg-[#1B342A] transition-all cursor-pointer font-jetbrains shadow-2xs"
@@ -245,7 +248,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Hamburger Menu Toggle */}
           <button
             onClick={() => setShowMobileMenu(!showMobileMenu)}
-            className="lg:hidden p-2 rounded-xl border border-[#174C3C]/15 dark:border-[#A9C5A0]/20 bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] transition-all cursor-pointer shadow-2xs"
+            className="lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-[#174C3C]/15 dark:border-[#A9C5A0]/20 bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] transition-all cursor-pointer shadow-2xs flex items-center justify-center shrink-0"
             aria-label="القائمة الرئيسية"
           >
             {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -301,16 +304,23 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <div className="pt-2 border-t border-[#174C3C]/10 dark:border-[#A9C5A0]/15 flex items-center justify-between text-xs">
             <button
+              onClick={() => handleMobileNav('welcome')}
+              className="text-emerald-700 dark:text-emerald-300 hover:underline font-bold flex items-center gap-1"
+            >
+              <span>👋</span>
+              <span>شاشة الترحيب</span>
+            </button>
+            <button
               onClick={() => handleMobileNav('journey')}
               className="text-[#174C3C] dark:text-[#A9C5A0] hover:underline font-bold"
             >
-              سجل رحلتي وعاداتي ←
+              سجل رحلتي ←
             </button>
             <button
               onClick={() => handleMobileNav('profile')}
               className="text-[#13251E]/70 dark:text-[#F7F3E9]/70 hover:underline"
             >
-              حسابي والأسئلة الشائعة
+              حسابي
             </button>
           </div>
         </div>

@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { RESCUE_KIT_PLANS, RescuePlan } from '../data/newPhaseData';
 
+import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+
 interface RescueScreenProps {
   onNavigate: (tab: string) => void;
   onOpenArticle?: (id: string) => void;
@@ -29,6 +31,7 @@ interface RescueScreenProps {
   onOpenEmergencyHelp?: () => void;
   onOpenUntangleKnot?: () => void;
   onOpenBatteryCheck?: () => void;
+  onOpenAllScreens?: () => void;
 }
 
 export const RescueScreen: React.FC<RescueScreenProps> = ({
@@ -40,7 +43,8 @@ export const RescueScreen: React.FC<RescueScreenProps> = ({
   onOpenSpecialistGuide,
   onOpenEmergencyHelp,
   onOpenUntangleKnot,
-  onOpenBatteryCheck
+  onOpenBatteryCheck,
+  onOpenAllScreens
 }) => {
   const [selectedPlanId, setSelectedPlanId] = useState<string>(RESCUE_KIT_PLANS[0]?.id || 'distress');
   const [expandedSteps, setExpandedSteps] = useState<Record<number, boolean>>({ 1: true, 2: true, 3: true, 4: true });
@@ -89,7 +93,14 @@ export const RescueScreen: React.FC<RescueScreenProps> = ({
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 pt-8 md:pt-12">
+      <div className="max-w-6xl mx-auto px-4 pt-4 md:pt-6">
+        {/* Screen 9 Identifier Header */}
+        <ScreenBannerHeader 
+          screenId="rescue" 
+          onNavigate={onNavigate} 
+          onOpenAllScreens={onOpenAllScreens} 
+        />
+
         {/* Section Header */}
         <div className="max-w-3xl mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium mb-3">

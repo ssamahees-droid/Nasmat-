@@ -14,6 +14,8 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
+import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+
 interface GamesScreenProps {
   onNavigate: (tab: string) => void;
   onOpenGwayaHekaya: () => void;
@@ -32,6 +34,7 @@ interface GamesScreenProps {
   onOpenInnerLabyrinth: () => void;
   onOpenDigitalRelease: () => void;
   onOpenRelationalEnergy: () => void;
+  onOpenAllScreens?: () => void;
 }
 
 export const GamesScreen: React.FC<GamesScreenProps> = ({
@@ -47,22 +50,18 @@ export const GamesScreen: React.FC<GamesScreenProps> = ({
   onOpenInnerBurdens,
   onOpenEmotionalBridge,
   onOpenGratitudeGarden,
-  onOpenInnerCompass
+  onOpenInnerCompass,
+  onOpenAllScreens
 }) => {
   return (
     <div className="pb-28 pt-4 px-4 sm:px-6 max-w-5xl mx-auto space-y-8 animate-fade-in text-right">
       
-      {/* Breadcrumb Navigation */}
-      <nav aria-label="مسار التنقل" className="flex items-center gap-2 text-xs text-stone-400">
-        <button 
-          onClick={() => onNavigate('home')} 
-          className="hover:text-emerald-400 transition-colors"
-        >
-          الرئيسية
-        </button>
-        <span>/</span>
-        <span className="text-emerald-300 font-bold">خذ استراحة — الألعاب والأنشطة النفسية التفاعلية</span>
-      </nav>
+      {/* Screen 6 Identifier Header */}
+      <ScreenBannerHeader 
+        screenId="games" 
+        onNavigate={onNavigate} 
+        onOpenAllScreens={onOpenAllScreens} 
+      />
 
       {/* Header Banner */}
       <section className="bg-gradient-to-br from-[#18231D] via-[#141C17] to-[#0E1511] border border-emerald-500/20 rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">

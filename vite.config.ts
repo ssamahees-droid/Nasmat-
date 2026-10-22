@@ -10,7 +10,10 @@ export default defineConfig(() => {
       react(),
       tailwindcss(),
       VitePWA({
-        registerType: 'prompt',
+        registerType: 'autoUpdate',
+        devOptions: {
+          enabled: false
+        },
         includeAssets: [
           'favicon.ico',
           'favicon.svg',
@@ -92,6 +95,8 @@ export default defineConfig(() => {
           ]
         },
         workbox: {
+          skipWaiting: true,
+          clientsClaim: true,
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,jpg}'],
           navigateFallback: '/index.html',
@@ -141,12 +146,36 @@ export default defineConfig(() => {
               }
             }
           ]
-        },
-        devOptions: {
-          enabled: false
         }
       })
     ],
+    build: {
+      target: 'es2020',
+      chunkSizeWarningLimit: 700,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('react/') || id.includes('react-dom/')) {
+                return 'vendor-react';
+              }
+              if (id.includes('motion')) {
+                return 'vendor-motion';
+              }
+              if (id.includes('firebase')) {
+                return 'vendor-firebase';
+              }
+              if (id.includes('recharts') || id.includes('d3-')) {
+                return 'vendor-charts';
+              }
+              if (id.includes('lucide-react')) {
+                return 'vendor-lucide';
+              }
+            }
+          }
+        }
+      }
+    },
     resolve: {
       alias: {
         '@': path.resolve(process.cwd(), '.'),

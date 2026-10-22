@@ -9,31 +9,51 @@ export const PWAUpdatePrompt: React.FC = () => {
   const [showGuideModal, setShowGuideModal] = useState(false);
 
   useEffect(() => {
-    // Check for service worker updates
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      let active = true;
+
+      // Auto check updates on online event / page focus
+      const checkForUpdates = () => {
+        navigator.serviceWorker.ready.then((reg) => {
+          reg.update().catch(() => {});
+        }).catch(() => {});
+      };
+
+      window.addEventListener('online', checkForUpdates);
+      window.addEventListener('focus', checkForUpdates);
+
       navigator.serviceWorker.ready.then((reg) => {
+        if (!active) return;
         setRegistration(reg);
+
+        // Auto trigger update when new worker is found
         reg.onupdatefound = () => {
           const installingWorker = reg.installing;
           if (installingWorker) {
             installingWorker.onstatechange = () => {
               if (installingWorker.state === 'installed') {
                 if (navigator.serviceWorker.controller) {
+                  // New update available -> apply immediately without requiring manual click
+                  if (installingWorker) {
+                    installingWorker.postMessage({ type: 'SKIP_WAITING' });
+                  }
                   setUpdateAvailable(true);
+                  // Refresh automatically to apply latest features instantly
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 1200);
                 }
               }
             };
           }
         };
-      });
+      }).catch(() => {});
 
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-          refreshing = true;
-          window.location.reload();
-        }
-      });
+      return () => {
+        active = false;
+        window.removeEventListener('online', checkForUpdates);
+        window.removeEventListener('focus', checkForUpdates);
+      };
     }
   }, []);
 

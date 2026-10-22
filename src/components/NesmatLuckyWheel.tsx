@@ -197,9 +197,9 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
         : 'bg-gradient-to-br from-[#FDFBF7] via-[#EAF3EC] to-[#DEEFE3] border-emerald-600/30 shadow-emerald-900/10'
     }`}>
       
-      {/* Immersive Background Auras */}
-      <div className="absolute -top-32 -right-32 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
-      <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-amber-500/15 rounded-full blur-[100px] pointer-events-none" />
+      {/* Immersive Background Auras (Static lightweight glow, zero GPU thrashing) */}
+      <div className="absolute -top-32 -right-32 w-80 h-80 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
 
       {!viewingDetailSection ? (
         <>
@@ -299,16 +299,16 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
               {/* Wheel Container with Pulsing Neon Rim */}
               <div className="relative w-80 h-80 sm:w-96 sm:h-96 flex items-center justify-center">
                 
-                {/* Outer Pulsing Halo */}
-                <div className={`absolute inset-0 rounded-full blur-2xl transition-all duration-700 pointer-events-none ${
-                  isSpinning ? 'bg-emerald-400/40 scale-110 animate-pulse' : 'bg-emerald-500/15'
+                {/* Outer Calming Halo */}
+                <div className={`absolute inset-0 rounded-full blur-xl transition-opacity duration-500 pointer-events-none ${
+                  isSpinning ? 'bg-emerald-400/25 opacity-100' : 'bg-emerald-500/10 opacity-70'
                 }`} />
 
                 {/* SVG Wheel Chassis */}
                 <div className="relative w-full h-full p-2 rounded-full flex items-center justify-center">
                   <svg 
                     viewBox="0 0 400 400" 
-                    className="w-full h-full overflow-visible drop-shadow-2xl select-none"
+                    className="w-full h-full overflow-visible drop-shadow-xl select-none"
                   >
                     <defs>
                       {sections.map((sec) => (
@@ -355,19 +355,16 @@ export const NesmatLuckyWheel: React.FC<NesmatLuckyWheelProps> = ({
                       strokeWidth="2.5"
                     />
 
-                    {/* Perimeter Glowing Studs */}
+                    {/* Perimeter Glowing Studs (Smooth, zero GPU thrashing) */}
                     {rimLights.map((light, i) => (
                       <circle
                         key={light.key}
                         cx={light.x}
                         cy={light.y}
-                        r={isSpinning ? 3.8 : 3}
+                        r={isSpinning ? 3.5 : 3}
                         fill={isSpinning ? (i % 2 === 0 ? '#FBBF24' : '#6EE7B7') : '#D5A65A'}
-                        className={`transition-all duration-300 ${isSpinning ? 'animate-ping' : 'opacity-90'}`}
-                        style={{
-                          filter: isSpinning ? 'drop-shadow(0 0 6px #34D399)' : undefined,
-                          animationDelay: `${(i * 50)}ms`
-                        }}
+                        className="transition-colors duration-200"
+                        opacity={isSpinning ? 1 : 0.85}
                       />
                     ))}
 

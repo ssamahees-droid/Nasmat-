@@ -19,6 +19,8 @@ import { RelaxationCalendarSection } from '../components/RelaxationCalendarSecti
 import { MoodJourneyChartSection } from '../components/MoodJourneyChartSection';
 import { MoodReportGenerator } from '../components/MoodReportGenerator';
 
+import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+
 interface JourneyScreenProps {
   onOpenAssessment: () => void;
   onNavigateToContent: () => void;
@@ -28,6 +30,8 @@ interface JourneyScreenProps {
   onOpenVoiceJournal?: () => void;
   onNavigateToBreathe?: () => void;
   onNavigateToListen?: () => void;
+  onNavigate?: (tab: string) => void;
+  onOpenAllScreens?: () => void;
 }
 
 const MOOD_MAP: Record<MoodValue, { label: string; emoji: string; color: string }> = {
@@ -46,7 +50,9 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
   onOpenMindfulnessStudio,
   onOpenVoiceJournal,
   onNavigateToBreathe,
-  onNavigateToListen
+  onNavigateToListen,
+  onNavigate,
+  onOpenAllScreens
 }) => {
   const [checkins, setCheckins] = useState<DailyCheckin[]>(storage.getDailyCheckins());
   const [notes, setNotes] = useState<PersonalNote[]>(storage.getNotes());
@@ -141,6 +147,15 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
   return (
     <div className="pb-28 pt-4 px-4 sm:px-6 max-w-2xl mx-auto space-y-6 text-right">
       
+      {/* Screen 8 Identifier Header */}
+      {onNavigate && (
+        <ScreenBannerHeader 
+          screenId="journey" 
+          onNavigate={onNavigate} 
+          onOpenAllScreens={onOpenAllScreens} 
+        />
+      )}
+
       {/* Header */}
       <div className="space-y-1.5">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#26332D]">

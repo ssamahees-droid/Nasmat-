@@ -70,12 +70,30 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@700;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
-    <!-- Google Search Console Verification -->
-    <meta name="google-site-verification" content="[الصقي هنا علامة meta tag التي أعطتكِ Google كاملة]" />
+    <!-- Theme Immediate Bootstrapper to prevent FOUC / light-dark flash -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('nesmat_theme');
+          var isDark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.removeAttribute('data-theme');
+          }
+          var savedPerf = localStorage.getItem('nesmat_mobile_perf_mode');
+          var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth < 768 && ('ontouchstart' in window || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0)));
+          if (savedPerf === 'true' || (savedPerf === null && isMobile)) {
+            document.documentElement.classList.add('mobile-low-perf');
+          }
+        } catch(e) {}
+      })();
+    </script>
   </head>
-  <body class="bg-[#F2EFEB] text-[#111113] antialiased selection:bg-[#E36E4D] selection:text-white">
+  <body class="antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

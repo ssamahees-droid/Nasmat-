@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
 @theme {
   --color-nesma-cream: #F7F3E9;
   --color-nesma-deep: #174C3C;
@@ -139,7 +141,6 @@
     overflow-x: hidden;
     background-color: var(--bg);
     color: var(--ink);
-    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   ::selection {
@@ -487,26 +488,25 @@
 
 @keyframes rim-pulse {
   0%, 100% {
-    opacity: 0.5;
-    transform: scale(0.95);
+    opacity: 0.7;
+    transform: scale(0.98);
   }
   50% {
     opacity: 1;
-    transform: scale(1.2);
-    filter: drop-shadow(0 0 6px #FBBF24);
+    transform: scale(1.05);
   }
 }
 
 .animate-rim-pulse {
-  animation: rim-pulse 1.8s infinite ease-in-out;
+  animation: rim-pulse 2s infinite ease-in-out;
 }
 
 @keyframes wheel-glow {
   0%, 100% {
-    box-shadow: 0 0 20px -5px rgba(23, 76, 60, 0.4), 0 0 40px -10px rgba(213, 166, 90, 0.25);
+    opacity: 0.6;
   }
   50% {
-    box-shadow: 0 0 35px 2px rgba(169, 197, 160, 0.55), 0 0 60px 8px rgba(213, 166, 90, 0.4);
+    opacity: 0.9;
   }
 }
 
@@ -579,3 +579,116 @@
   animation: breathe-glow-shimmer 2.5s ease-in-out infinite;
 }
 
+/* =========================================================================
+   Mobile Performance Mode (.mobile-low-perf)
+   Eliminates screen flicker, browser reloads, and GPU compositor crashes
+   on mobile devices (such as Android Chrome) by completely disabling
+   heavy backdrop filters, complex gradients, heavy box-shadows, ambient
+   blur orbs, and continuous GPU-bound keyframe animations.
+   ========================================================================= */
+
+html.mobile-low-perf,
+.mobile-low-perf,
+.mobile-low-perf * {
+  /* 1. Disable all expensive backdrop-filters that trigger Android Chrome compositor drops */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Fallback solid / clean surface for glassmorphism containers in low-perf mode */
+.mobile-low-perf [class*="backdrop-blur"],
+.mobile-low-perf .backdrop-blur-none,
+.mobile-low-perf .backdrop-blur-sm,
+.mobile-low-perf .backdrop-blur-md,
+.mobile-low-perf .backdrop-blur-lg,
+.mobile-low-perf .backdrop-blur-xl,
+.mobile-low-perf .backdrop-blur-2xl,
+.mobile-low-perf .backdrop-blur-3xl {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 2. Flatten heavy complex gradients and multi-stop mesh/radial backgrounds */
+.mobile-low-perf [class*="bg-gradient-to-"],
+.mobile-low-perf [class*="bg-[radial-gradient"],
+.mobile-low-perf [class*="bg-[conic-gradient"],
+.mobile-low-perf .nesma-dot-grid {
+  background-image: none !important;
+}
+
+/* 3. Strip heavy multi-layer box shadows and colored glow halos */
+.mobile-low-perf .shadow-2xl,
+.mobile-low-perf .shadow-xl,
+.mobile-low-perf .shadow-lg,
+.mobile-low-perf [class*="shadow-2xl"],
+.mobile-low-perf [class*="shadow-xl"],
+.mobile-low-perf [class*="shadow-[0_"],
+.mobile-low-perf [class*="drop-shadow"] {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+  filter: none !important;
+}
+
+.mobile-low-perf .stat-card,
+.mobile-low-perf .emergency-banner {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+}
+
+.mobile-low-perf .stat-card:hover,
+.mobile-low-perf .emergency-banner:hover {
+  transform: none !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* 4. Suppress decorative ambient blur blobs (e.g. blur-3xl colored background orbs) */
+.mobile-low-perf [class*="blur-3xl"],
+.mobile-low-perf [class*="blur-2xl"],
+.mobile-low-perf [class*="blur-xl"],
+.mobile-low-perf [class*="blur-lg"],
+.mobile-low-perf [class*="blur-[100px]"],
+.mobile-low-perf [class*="blur-[120px]"],
+.mobile-low-perf [class*="blur-[80px]"],
+.mobile-low-perf [class*="blur-[60px]"] {
+  filter: none !important;
+  opacity: 0 !important;
+  display: none !important;
+}
+
+/* 5. Suppress continuous keyframe animations on mobile to reduce CPU/GPU draw calls */
+.mobile-low-perf .animate-pulse,
+.mobile-low-perf .animate-ping,
+.mobile-low-perf .animate-bounce,
+.mobile-low-perf .animate-spin,
+.mobile-low-perf .animate-rim-pulse,
+.mobile-low-perf .animate-wheel-glow,
+.mobile-low-perf .animate-breathe-idle,
+.mobile-low-perf .animate-breathe-ripple,
+.mobile-low-perf .animate-breathe-shimmer {
+  animation: none !important;
+}
+
+/* 6. Prevent GPU memory exhaustion and layer thrashing */
+.mobile-low-perf * {
+  will-change: auto !important;
+}
+
+
+
+/* React Transition Group Screen Fades */
+.screen-fade-enter {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.screen-fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 220ms ease-out, transform 220ms ease-out;
+}
+.screen-fade-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+.screen-fade-exit-active {
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 180ms ease-in, transform 180ms ease-in;
+}
