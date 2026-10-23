@@ -3,88 +3,67 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
 
 @theme {
-  --color-nesma-cream: #F7F3E9;
-  --color-nesma-deep: #174C3C;
-  --color-nesma-deep-hover: #123C30;
-  --color-nesma-sage: #A9C5A0;
-  --color-nesma-sage-dark: #3E6353;
-  --color-nesma-gold: #D5A65A;
-  --color-nesma-gold-dark: #A77A2C;
-  --color-nesma-coral: #D98F83;
-  --color-nesma-coral-dark: #B56559;
-  --color-nesma-mist: #E6E8D8;
-  --color-nesma-charcoal: #13251E;
+  --color-nesma-cream: #F7F5EF;
+  --color-nesma-card: #FFFFFF;
+  --color-nesma-primary: #174F3F;
+  --color-nesma-deep: #174F3F;
+  --color-nesma-interactive: #23785B;
+  --color-nesma-lightgreen: #E2EFE7;
+  --color-nesma-text-main: #292F2B;
+  --color-nesma-text-muted: #515B55;
+  --color-nesma-border: #D5DED7;
+  --color-nesma-gold: #B78327;
+  --color-nesma-alert: #F8EED8;
 }
 
 :root {
-  /* Official Palette Tokens (Nesmat Hayat) */
-  --bg-nesma-cream: #F7F3E9;
-  --bg-nesma-mist: #E6E8D8;
-  --color-nesma-deep: #174C3C;
-  --color-nesma-sage: #A9C5A0;
-  --color-nesma-gold: #D5A65A;
-  --color-nesma-coral: #D98F83;
-  --color-nesma-mist: #E6E8D8;
-  --color-nesma-charcoal: #13251E;
-
-  /* Semantic Theme Mappings for Light Mode */
-  --bg: #F7F3E9;
-  --bg-secondary: #E6E8D8;
+  /* Official Palette Tokens (Nesmat Hayat - Redefined for maximum contrast & comfort) */
+  --bg: #F7F5EF;
+  --bg-secondary: #E2EFE7;
   --surface: #FFFFFF;
-  --surface-alt: #E6E8D8;
+  --surface-alt: #E2EFE7;
   --surface-card: #FFFFFF;
   --surface-hover: #F0EDE2;
-  --ink: #13251E;
-  --ink-dim: #263830;
-  --ink-faint: rgba(23, 76, 60, 0.08);
-  --primary: #174C3C;
+  --ink: #292F2B;
+  --ink-dim: #515B55;
+  --ink-faint: rgba(23, 79, 63, 0.08);
+  --primary: #174F3F;
   --primary-hover: #123C30;
-  --secondary: #A9C5A0;
-  --accent: #174C3C;
-  --gold: #D5A65A;
-  --coral: #D98F83;
-  --mist: #E6E8D8;
-  --border: rgba(23, 76, 60, 0.15);
-  --border-strong: #174C3C;
-  --shadow-soft: 0 4px 20px -2px rgba(23, 76, 60, 0.06);
-  --shadow-card: 0 8px 30px -4px rgba(23, 76, 60, 0.09);
+  --secondary: #23785B;
+  --accent: #23785B;
+  --gold: #B78327;
+  --mist: #E2EFE7;
+  --border: #D5DED7;
+  --border-strong: #174F3F;
+  --shadow-soft: 0 4px 20px -2px rgba(23, 79, 63, 0.06);
+  --shadow-card: 0 8px 30px -4px rgba(23, 79, 63, 0.09);
 
-  /* Centralized Status Colors (Light Mode) */
-  --status-success-bg: rgba(23, 76, 60, 0.1);
-  --status-success-text: #174C3C;
-  --status-success-border: rgba(23, 76, 60, 0.25);
+  /* Centralized Status Colors */
+  --status-success-bg: #E2EFE7;
+  --status-success-text: #174F3F;
+  --status-success-border: #23785B;
 
-  --status-warning-bg: rgba(213, 166, 90, 0.15);
-  --status-warning-text: #8C6219;
-  --status-warning-border: rgba(213, 166, 90, 0.35);
+  --status-warning-bg: #F8EED8;
+  --status-warning-text: #B78327;
+  --status-warning-border: #D5DED7;
 
-  --status-error-bg: rgba(217, 143, 131, 0.15);
-  --status-error-text: #A04436;
-  --status-error-border: rgba(217, 143, 131, 0.35);
+  --status-error-bg: #FCEBEA;
+  --status-error-text: #B42318;
+  --status-error-border: #FECDCA;
 
-  --status-info-bg: rgba(169, 197, 160, 0.18);
-  --status-info-text: #174C3C;
-  --status-info-border: rgba(169, 197, 160, 0.4);
+  --status-info-bg: #E2EFE7;
+  --status-info-text: #174F3F;
+  --status-info-border: #D5DED7;
 }
 
 [data-theme='dark'], .dark {
-  /* Semantic Theme Mappings for Dark Mode (Deep Forest & Soothing Night) */
-  --bg-nesma-cream: #0D1914;
-  --bg-nesma-mist: #12241D;
-  --color-nesma-deep: #A9C5A0;
-  --color-nesma-sage: #A9C5A0;
-  --color-nesma-gold: #E2B66C;
-  --color-nesma-coral: #E2998E;
-  --color-nesma-mist: #1B342A;
-  --color-nesma-charcoal: #F7F3E9;
-
   --bg: #0D1914;
   --bg-secondary: #12241D;
   --surface: #14271F;
   --surface-alt: #1B342A;
   --surface-card: #14271F;
   --surface-hover: #1E3A2E;
-  --ink: #F7F3E9;
+  --ink: #F7F5EF;
   --ink-dim: #D5DFD7;
   --ink-faint: rgba(169, 197, 160, 0.12);
   --primary: #A9C5A0;
@@ -92,48 +71,22 @@
   --secondary: #26493B;
   --accent: #A9C5A0;
   --gold: #E2B66C;
-  --coral: #E2998E;
   --mist: #1B342A;
   --border: rgba(169, 197, 160, 0.2);
   --border-strong: #A9C5A0;
   --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
   --shadow-card: 0 8px 30px -4px rgba(0, 0, 0, 0.6);
-
-  /* Centralized Status Colors (Dark Mode) */
-  --status-success-bg: rgba(169, 197, 160, 0.15);
-  --status-success-text: #A9C5A0;
-  --status-success-border: rgba(169, 197, 160, 0.3);
-
-  --status-warning-bg: rgba(226, 182, 108, 0.18);
-  --status-warning-text: #F3CA85;
-  --status-warning-border: rgba(226, 182, 108, 0.35);
-
-  --status-error-bg: rgba(226, 153, 142, 0.18);
-  --status-error-text: #F8B3A8;
-  --status-error-border: rgba(226, 153, 142, 0.35);
-
-  --status-info-bg: rgba(169, 197, 160, 0.18);
-  --status-info-text: #A9C5A0;
-  --status-info-border: rgba(169, 197, 160, 0.35);
 }
 
 @layer base {
   html {
-    font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Tajawal', 'IBM Plex Sans Arabic', 'Cairo', system-ui, -apple-system, sans-serif;
     color: var(--ink);
     background-color: var(--bg);
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
-  }
-
-  html.font-normal {
-    font-size: 16px;
-  }
-  html.font-large {
-    font-size: 18px;
-  }
-  html.font-extralarge {
-    font-size: 20px;
+    font-size: 18px; /* Mobile First: 18px base */
+    line-height: 1.6;
   }
 
   body {
@@ -141,11 +94,42 @@
     overflow-x: hidden;
     background-color: var(--bg);
     color: var(--ink);
+    font-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  /* Clear Arabic typography hierarchy */
+  h1 {
+    font-size: clamp(28px, 6vw, 34px);
+    font-weight: 800;
+    line-height: 1.3;
+    color: var(--primary);
+  }
+
+  h2 {
+    font-size: clamp(24px, 5vw, 28px);
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--primary);
+  }
+
+  h3 {
+    font-size: clamp(20px, 4.5vw, 24px);
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--primary);
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--ink);
   }
 
   ::selection {
-    background: var(--color-nesma-sage);
-    color: var(--color-nesma-deep);
+    background: #E2EFE7;
+    color: #174F3F;
   }
 }
 

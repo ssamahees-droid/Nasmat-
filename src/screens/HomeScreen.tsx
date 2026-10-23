@@ -1,122 +1,90 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ * 
+ * HomeScreen Component
+ * Mobile-First, high contrast, large legible typography, and 9 portal cards.
+ * Full bilingual (Arabic & English) i18n support.
+ */
+
 import React, { useState } from 'react';
-import { 
-  SimpleIconCompass,
-  SimpleIconWind,
-  SimpleIconSparkles,
-  SimpleIconCheck,
-  SimpleIconZap,
-  SimpleIconShieldCheck,
-  SimpleIconChevronLeft,
-  SimpleIconMessage,
-  SimpleIconBook,
-  SimpleIconGamepad
-} from '../components/common/SimpleSvgIcons';
 import { MoodValue } from '../types';
 import { storage } from '../services/storage';
+import { useLanguage } from '../context/LanguageContext';
+import { useTenScreens } from '../constants/tenScreens';
+import { GrowthTree } from '../components/GrowthTree';
+import { 
+  SimpleIconSparkles, 
+  SimpleIconCheck, 
+  SimpleIconChevronLeft,
+  SimpleIconChevronRight,
+  SimpleIconZap 
+} from '../components/common/SimpleSvgIcons';
 import { PWAInstallButton } from '../components/PWAInstallButton';
 import { PWAUpdatePrompt } from '../components/PWAUpdatePrompt';
-import { usePWAInstall } from '../hooks/usePWAInstall';
-import { useLanguage } from '../context/LanguageContext';
-import { TEN_SCREENS, TenScreenItem } from '../constants/tenScreens';
-import { GrowthTreeWidget } from '../components/GrowthTreeWidget';
+import { PWAInstallCard } from '../components/PWAInstallCard';
 
 interface HomeScreenProps {
   onNavigate: (tab: string) => void;
-  onOpenContent?: (contentId: string) => void;
-  onOpenAudioModal?: (title: string, category: string, durationMinutes: number) => void;
+  onOpenCompanion?: () => void;
+  onOpenEmergencyHelp?: () => void;
+  onOpenAllScreens?: () => void;
+  onOpenGratitudeGarden?: () => void;
+  onOpenContent?: (id: string) => void;
+  onOpenAudioModal?: (opts: { title: string; category: string; durationMinutes?: number }) => void;
   onOpenThoughtRelease?: () => void;
   onOpenSoundscapeStudio?: () => void;
   onOpenEmotionCompass?: () => void;
   onOpenDailyWisdom?: () => void;
-  // Interactive tools
   onOpenAnaDelwaqti?: () => void;
-  onOpenRescueKit?: (planId?: string) => void;
+  onOpenRescueKit?: () => void;
   onOpenBatteryCheck?: () => void;
   onOpenTranslateFeelings?: () => void;
   onOpenFactGame?: () => void;
   onOpenUntangleKnot?: () => void;
   onOpenNesmaLaughs?: () => void;
-  onOpenEmergencyHelp?: () => void;
-  onOpenMoodKitchen?: () => void;
-  // Booklet additions
   onOpenBooklet?: () => void;
   onOpenPersonalPlan?: () => void;
   onOpenEnergyBudget?: () => void;
   onOpenBoundaryBuilder?: () => void;
   onOpenSpecialistGuide?: () => void;
-  // Workshops
   onOpenWorkshopsHub?: () => void;
   onOpenPsychologicalER?: () => void;
   onOpenConflictWithoutWar?: () => void;
   onOpenHealingJourney?: () => void;
-  // Thought Journal & Mindfulness Studio
   onOpenThoughtJournal?: () => void;
   onOpenMindfulnessStudio?: () => void;
-  // Fun & Games
-  onOpenFunAndGames?: (tab?: 'jokes' | 'bubbles' | 'riddles' | 'wheel' | 'memory') => void;
+  onOpenFunAndGames?: (tab?: string) => void;
   onOpenGwayaHekaya?: () => void;
   onOpenFeker?: () => void;
   onOpenDiscoveryQuiz?: () => void;
   onOpenPersonalityTests?: () => void;
-  onOpenCompanion?: () => void;
+  onOpenMoodKitchen?: () => void;
   onOpenInnerBurdens?: () => void;
   onOpenEmotionalBridge?: () => void;
-  onOpenGratitudeGarden?: () => void;
-  onOpenInnerCompass?: () => void;
   onOpenDailyMiracle?: () => void;
   onOpenOrigamiGarden?: () => void;
   onOpenMusicLounge?: () => void;
-  onOpenEndlessPsychology?: (category: string) => void;
-  onOpenAllScreens?: () => void;
+  onOpenEndlessPsychology?: (cat?: string) => void;
   theme?: 'dark' | 'light' | 'system';
   isMobilePerformanceMode?: boolean;
   onToggleMobilePerformanceMode?: () => void;
 }
 
-const MOOD_OPTIONS: { id: MoodValue; label: string; emoji: string; tip: string; cheerfulColor: string }[] = [
-  { 
-    id: 'good', 
-    label: 'مبسوط وراضي', 
-    emoji: '😊', 
-    tip: 'ما شاء الله! احتفظ بهذا الرضا وشاركه بابتسامة لطيفة مع من تحب 🌱✨',
-    cheerfulColor: 'text-emerald-500 border-emerald-400 bg-emerald-500/10'
-  },
-  { 
-    id: 'fair', 
-    label: 'عادي ومستقر', 
-    emoji: '🍃', 
-    tip: 'يوم هادئ ومستقر، مساحة ممتازة للقراءة أو ممارسة تمرين تنفس ممتع 🌿',
-    cheerfulColor: 'text-teal-500 border-teal-400 bg-teal-500/10'
-  },
-  { 
-    id: 'confused', 
-    label: 'مشوش شوية', 
-    emoji: '🤔', 
-    tip: 'التشوش علامة على الرغبة في الفهم؛ مرآة الذات وبوصلة المشاعر بانتظارك 🧭',
-    cheerfulColor: 'text-amber-500 border-amber-400 bg-amber-500/10'
-  },
-  { 
-    id: 'not_good', 
-    label: 'مضغوط ومثقل', 
-    emoji: '😔', 
-    tip: 'سلامتك يا غالي؛ بستان الألعاب وفرقعة الأعباء صُمم خصيصاً لتخفيف هذا الحمل 🎈',
-    cheerfulColor: 'text-pink-500 border-pink-400 bg-pink-500/10'
-  },
-  { 
-    id: 'exhausted', 
-    label: 'طاقتي خلصت', 
-    emoji: '😫', 
-    tip: 'أنت مش مطلوب منك تكون بطل طول الوقت؛ خد استراحة دافية في واحة التنفس 🔋',
-    cheerfulColor: 'text-rose-500 border-rose-400 bg-rose-500/10'
-  },
-];
-
-const DAILY_CHEERFUL_QUOTES = [
-  { quote: 'كل خطوة صغيرة تخطوها نحو نفسك هي انتصار حقيقي.', author: 'نسمة حياة 🌿' },
-  { quote: 'السكينة ليست غياب العواصف، بل السلام الذي تبنيه في أعماقك.', author: 'واحة الوعي 🌸' },
-  { quote: 'أنت تستحق مساحة تفهمك بلا أحكام وتمنحك دفء الاحتواء.', author: 'رفيق الرحلة ✨' },
-  { quote: 'خذ نفساً عميقاً، أرخِ كتفيك، وتذكر أن اللحظة الحالية ملكك.', author: 'همسة اليوم 🍃' }
-];
+const DAILY_CHEERFUL_QUOTES = {
+  ar: [
+    { quote: 'كل خطوة صغيرة تخطوها نحو نفسك هي انتصار حقيقي.', author: 'نسمة حياة 🌿' },
+    { quote: 'السكينة ليست غياب العواصف، بل السلام الذي تبنيه في أعماقك.', author: 'واحة الوعي 🌸' },
+    { quote: 'أنت تستحق مساحة تفهمك بلا أحكام وتمنحك دفء الاحتواء.', author: 'رفيق الرحلة ✨' },
+    { quote: 'خذ نفساً عميقاً، أرخِ كتفيك، وتذكر أن اللحظة الحالية ملكك.', author: 'همسة اليوم 🍃' }
+  ],
+  en: [
+    { quote: 'Every small step you take towards yourself is a genuine victory.', author: 'Nesmat Al-Hayat 🌿' },
+    { quote: 'Serenity is not the absence of storms, but the peace you cultivate within.', author: 'Sanctuary of Peace 🌸' },
+    { quote: 'You deserve a space that validates you without judgment and embraces you warmly.', author: 'Mindful Companion ✨' },
+    { quote: 'Take a deep breath, soften your shoulders, and remember this moment is yours.', author: 'Daily Whisper 🍃' }
+  ]
+};
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onNavigate,
@@ -124,12 +92,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenEmergencyHelp,
   onOpenAllScreens,
   onOpenGratitudeGarden,
-  theme = 'dark',
   isMobilePerformanceMode = false,
   onToggleMobilePerformanceMode
 }) => {
-  const { t } = useLanguage();
-  const isDark = theme === 'dark';
+  const { t, language, isRTL } = useLanguage();
+  const screens = useTenScreens();
 
   const [selectedMood, setSelectedMood] = useState<MoodValue | null>(() => {
     const today = new Date().toISOString().split('T')[0];
@@ -138,9 +105,43 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   });
   const [justSavedCheckin, setJustSavedCheckin] = useState(false);
 
-  // Pick quote based on day
-  const todayDayIndex = new Date().getDate() % DAILY_CHEERFUL_QUOTES.length;
-  const todayQuote = DAILY_CHEERFUL_QUOTES[todayDayIndex];
+  const moodOptions: { id: MoodValue; label: string; emoji: string; tip: string }[] = [
+    { 
+      id: 'good', 
+      label: t('home.mood.good', 'مرتاح ومبسوط'), 
+      emoji: '😊', 
+      tip: t('home.mood.tip_good', 'يا رب دايماً في رضا وسلام! شارك امتنانك في حديقة الامتنان لتدوم البهجة 🌸')
+    },
+    { 
+      id: 'fair', 
+      label: t('home.mood.fair', 'هادي ومستقر'), 
+      emoji: '🍃', 
+      tip: t('home.mood.tip_fair', 'الهدوء نعمة جميلة؛ دقيقة تنفس عميق كفيلة بتثبيت هذا السلام في يومك 🍃')
+    },
+    { 
+      id: 'confused', 
+      label: t('home.mood.confused', 'مشوش شوية'), 
+      emoji: '🤔', 
+      tip: t('home.mood.tip_confused', 'التشوش علامة على الرغبة في الفهم؛ مرآة الذات وبوصلة المشاعر بانتظارك 🧭')
+    },
+    { 
+      id: 'not_good', 
+      label: t('home.mood.not_good', 'مضغوط ومثقل'), 
+      emoji: '😔', 
+      tip: t('home.mood.tip_not_good', 'سلامتك يا غالي؛ بستان الألعاب وفرقعة الأعباء صُمم خصيصاً لتخفيف هذا الحمل 🎈')
+    },
+    { 
+      id: 'exhausted', 
+      label: t('home.mood.exhausted', 'طاقتي خلصت'), 
+      emoji: '😫', 
+      tip: t('home.mood.tip_exhausted', 'أنت مش مطلوب منك تكون بطل طول الوقت؛ خذ استراحة دافية في واحة التنفس 🔋')
+    },
+  ];
+
+  // Pick quote based on day and language
+  const quotesList = DAILY_CHEERFUL_QUOTES[language] || DAILY_CHEERFUL_QUOTES.ar;
+  const todayDayIndex = new Date().getDate() % quotesList.length;
+  const todayQuote = quotesList[todayDayIndex];
 
   const handleMoodSelect = (mood: MoodValue) => {
     setSelectedMood(mood);
@@ -149,210 +150,191 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     setTimeout(() => setJustSavedCheckin(false), 4000);
   };
 
-  const activeMoodObj = MOOD_OPTIONS.find(m => m.id === selectedMood);
+  const activeMoodObj = moodOptions.find(m => m.id === selectedMood);
 
   // The 9 destination content screens (Screens 2 to 10)
-  const destinationScreens = TEN_SCREENS.filter(s => s.id !== 'home');
+  const destinationScreens = screens.filter(s => s.id !== 'home');
+
+  const ChevronIcon = isRTL ? SimpleIconChevronLeft : SimpleIconChevronRight;
 
   return (
-    <div className="space-y-6 sm:space-y-10 pb-28 px-3 sm:px-4 max-w-6xl mx-auto animate-fade-in text-right font-tajawal">
+    <div 
+      className={`space-y-6 sm:space-y-10 pb-28 px-3 sm:px-4 max-w-6xl mx-auto animate-fade-in font-tajawal ${
+        isRTL ? 'text-right' : 'text-left'
+      }`}
+      dir={isRTL ? 'rtl' : 'ltr'}
+    >
 
-      {/* 🌳 شجرة نمو الوعي والسكينة (تنمو بتفاعل المستخدم وتمارين اليوم) */}
-      <GrowthTreeWidget 
+      {/* 🌳 شجرة نمو الوعي والسكينة */}
+      <GrowthTree 
         onNavigate={onNavigate} 
         onOpenGratitudeGarden={onOpenGratitudeGarden} 
       />
 
+      {/* 📱 PWA Install Card */}
+      <PWAInstallCard />
+
       {/* 🎡 بانر شاشة الترحيب وعجلة نسمة حياة الدوارة السحرية */}
-      <section className="relative overflow-hidden p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-emerald-700 via-teal-700 to-emerald-800 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 border border-emerald-400/30">
-        <div className="flex items-center gap-3 text-right">
-          <div className="w-12 h-12 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center text-2xl shadow-inner shrink-0">
+      <section className="relative overflow-hidden p-5 sm:p-6 rounded-3xl bg-[#E2EFE7] text-[#292F2B] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 border-2 border-[#D5DED7]">
+        <div className="flex items-center gap-3.5">
+          <div className="w-13 h-13 rounded-2xl bg-[#FFFFFF] border border-[#23785B]/30 flex items-center justify-center text-3xl shadow-xs shrink-0">
             🎡
           </div>
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-200 border border-emerald-400/30 text-[10px] font-extrabold">
-              <span>شاشة الترحيب الجديدة 🌸</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFFFF] text-[#174F3F] border border-[#D5DED7] text-[15px] font-bold">
+              <span>{t('home.wheel_banner.badge', 'شاشة الترحيب الجديدة 🌸')}</span>
             </div>
-            <h3 className="text-sm sm:text-base font-black text-white mt-0.5">
-              عجلة نسمة حياة الدوارة السحرية (الواحات العشر)
+            <h3 className="text-[22px] sm:text-[24px] font-bold text-[#174F3F] mt-1 leading-snug">
+              {t('home.wheel_banner.title', 'عجلة نسمة حياة الدوارة السحرية (الواحات العشر)')}
             </h3>
-            <p className="text-[11px] sm:text-xs text-emerald-100/80 font-medium">
-              أدِر العجلة لاكتشاف محطتك المناسبة وتحديد مشاعرك بلمسة واحدة
+            <p className="text-[16px] text-[#515B55] font-medium mt-0.5 leading-relaxed">
+              {t('home.wheel_banner.desc', 'أدِر العجلة لاكتشاف محطتك المناسبة وتحديد مشاعرك بلمسة واحدة')}
             </p>
           </div>
         </div>
 
         <button
           onClick={() => onNavigate('welcome')}
-          className="w-full sm:w-auto px-4 py-2.5 bg-gradient-to-r from-emerald-400 to-teal-300 hover:from-emerald-300 hover:to-teal-200 text-stone-950 font-black text-xs sm:text-sm rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+          className="min-h-[48px] w-full sm:w-auto px-5 py-3 bg-[#174F3F] hover:bg-[#23785B] text-white font-bold text-[17px] rounded-2xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2 cursor-pointer shrink-0"
         >
-          <span>دخول شاشة الترحيب والعجلة 🎡</span>
-          <SimpleIconChevronLeft size={14} className="w-3.5 h-3.5" />
+          <span>{t('home.wheel_banner.button', 'دخول شاشة الترحيب والعجلة 🎡')}</span>
+          <ChevronIcon size={16} className="w-4 h-4" />
         </button>
       </section>
 
       {/* 🌸 الشاشة الأولى (الرئيسية) — واحة الترحيب المبهجة والدافئة */}
-      <section className={`relative overflow-hidden p-5 sm:p-9 rounded-3xl sm:rounded-4xl border shadow-lg transition-all ${
-        isDark 
-          ? 'bg-gradient-to-br from-[#132A20] via-[#0F2018] to-[#0A1610] border-emerald-500/30' 
-          : 'bg-gradient-to-br from-[#F5F9F6] via-[#EDF5F0] to-[#E5F0E8] border-emerald-600/20 shadow-emerald-900/5'
-      }`}>
-        {/* Joyful Ambient Glow */}
-        <div className="absolute top-0 right-0 w-72 h-72 bg-emerald-400/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
-        
+      <section className="relative overflow-hidden p-6 sm:p-9 rounded-3xl sm:rounded-4xl bg-[#FFFFFF] border-2 border-[#D5DED7] text-[#292F2B] shadow-sm transition-all">
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="space-y-3 sm:space-y-4 max-w-2xl w-full">
+          <div className="space-y-4 max-w-2xl w-full">
             
             {/* Joyful Badge Lockup */}
             <div className="flex items-center gap-2.5">
-              <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-500 text-black shadow-xs flex items-center gap-1.5">
+              <span className="px-3.5 py-1.5 rounded-full text-[15px] font-bold bg-[#E2EFE7] text-[#174F3F] border border-[#23785B]/30 flex items-center gap-1.5 shadow-xs">
                 <span>🌸</span>
-                <span>الشاشة الأولى • الرئيسية</span>
+                <span>{t('home.hero.badge', 'الشاشة الأولى • الرئيسية')}</span>
               </span>
-              <span className={`text-xs font-semibold ${isDark ? 'text-emerald-300' : 'text-emerald-800'}`}>
-                مبادرة نسمة حياة للصحة النفسية
+              <span className="text-[15px] font-bold text-[#515B55]">
+                {t('home.hero.sub_badge', 'مبادرة نسمة حياة للصحة النفسية')}
               </span>
             </div>
 
-            <h1 className={`text-2xl sm:text-4xl md:text-5xl font-black leading-tight tracking-tight drop-shadow-xs ${
-              isDark ? 'text-white' : 'text-stone-900'
-            }`}>
-              أهلاً بك في واحتك الدافية 🌿✨
+            <h1 className="text-[28px] sm:text-[36px] font-black leading-tight text-[#174F3F]">
+              {t('home.hero.title', 'أهلاً بك في واحتك الدافية 🌿✨')}
             </h1>
 
-            <p className={`text-xs sm:text-base leading-relaxed max-w-xl font-medium ${
-              isDark ? 'text-stone-200' : 'text-stone-700'
-            }`}>
-              مساحتك العربية الآمنة والمبهجة؛ قسّمنا لك كل المحتوى على <strong className="text-emerald-500 dark:text-emerald-300">عشر شاشات مستقلة</strong> لتتنقل بينها بكل حرية وسكينة دون تشتت.
+            <p className="text-[18px] leading-relaxed max-w-xl font-medium text-[#292F2B]">
+              {t('home.hero.desc', 'مساحتك العربية الآمنة والمبهجة؛ قسّمنا لك كل المحتوى على عشر شاشات مستقلة لتتنقل بينها بكل حرية وسكينة دون تشتت.')}
             </p>
 
             {/* Quick Action Buttons */}
-            <div className="flex flex-wrap items-center gap-2.5 pt-2">
+            <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
                 onClick={() => onNavigate('start')}
-                className="px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-black text-xs sm:text-sm font-extrabold rounded-2xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 cursor-pointer min-h-[46px]"
+                className="min-h-[48px] px-5 py-3 bg-[#174F3F] hover:bg-[#23785B] text-white text-[17px] font-bold rounded-2xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>🧭</span>
-                <span>ابدأ رحلتك (الشاشة ٢)</span>
+                <span>{t('home.hero.start_journey', 'ابدأ رحلتك (الشاشة ٢)')}</span>
               </button>
 
               <button
                 onClick={() => onNavigate('breathe')}
-                className={`px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold border transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 min-h-[46px] ${
-                  isDark 
-                    ? 'bg-white/10 hover:bg-white/15 text-white border-white/15' 
-                    : 'bg-white hover:bg-emerald-50 text-emerald-950 border-emerald-600/25 shadow-xs'
-                }`}
+                className="min-h-[48px] px-5 py-3 rounded-2xl text-[17px] font-bold bg-[#E2EFE7] hover:bg-[#d0e5d8] text-[#174F3F] border border-[#D5DED7] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-xs"
               >
                 <span>🌊</span>
-                <span>دقيقة تنفس هادئة</span>
+                <span>{t('home.hero.breathe_button', 'دقيقة تنفس هادئة')}</span>
               </button>
 
               <button
                 onClick={() => onNavigate('games')}
-                className={`px-4 py-3 rounded-2xl text-xs sm:text-sm font-bold border transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 min-h-[46px] ${
-                  isDark 
-                    ? 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-200 border-amber-500/30' 
-                    : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300 shadow-xs'
-                }`}
+                className="min-h-[48px] px-5 py-3 rounded-2xl text-[17px] font-bold bg-[#FFFFFF] hover:bg-[#F7F5EF] text-[#292F2B] border-2 border-[#D5DED7] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-xs"
               >
                 <span>🎈</span>
-                <span>ألعاب التهدئة والمرح</span>
+                <span>{t('home.hero.games_button', 'ألعاب التهدئة والمرح')}</span>
               </button>
 
               {onOpenCompanion && (
                 <button
                   onClick={onOpenCompanion}
-                  className="px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white text-xs sm:text-sm font-bold rounded-2xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 cursor-pointer min-h-[46px]"
+                  className="min-h-[48px] px-5 py-3 bg-[#23785B] hover:bg-[#174F3F] text-white text-[17px] font-bold rounded-2xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <SimpleIconSparkles size={16} className="w-4 h-4 text-amber-300" />
-                  <span>تحدث مع رفيقي</span>
+                  <SimpleIconSparkles size={18} className="w-4.5 h-4.5 text-[#F8EED8]" />
+                  <span>{t('home.hero.companion_button', 'تحدث مع رفيقي')}</span>
                 </button>
               )}
 
               <button
                 onClick={() => onNavigate('welcome')}
-                className={`px-3.5 py-3 rounded-2xl text-xs sm:text-sm font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 min-h-[46px] ${
-                  isDark 
-                    ? 'bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 border-emerald-500/30' 
-                    : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border-emerald-600/25 shadow-xs'
-                }`}
-                title="عرض شاشة الترحيب المستقلة"
+                className="min-h-[48px] px-4 py-3 rounded-2xl text-[17px] font-bold bg-[#E2EFE7] hover:bg-[#d0e5d8] text-[#174F3F] border border-[#23785B]/40 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-xs"
+                title={t('home.hero.welcome_screen_button', 'شاشة الترحيب')}
               >
                 <span>👋</span>
-                <span>شاشة الترحيب</span>
+                <span>{t('home.hero.welcome_screen_button', 'شاشة الترحيب')}</span>
               </button>
             </div>
           </div>
 
           {/* Welcoming Card with Daily Cheerful Quote */}
-          <div className={`w-full md:w-72 shrink-0 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border text-right space-y-2.5 ${
-            isDark 
-              ? 'bg-black/35 border-emerald-500/30 text-stone-200' 
-              : 'bg-white/85 border-emerald-600/20 text-stone-800 shadow-sm'
-          }`}>
-            <div className="flex items-center justify-between text-xs font-bold border-b pb-2 border-stone-200/50 dark:border-white/10">
-              <span className="text-emerald-500 dark:text-emerald-400 flex items-center gap-1.5">
+          <div className="w-full md:w-80 shrink-0 p-5 rounded-3xl bg-[#F7F5EF] border border-[#D5DED7] space-y-3">
+            <div className="flex items-center justify-between text-[15px] font-bold border-b pb-2 border-[#D5DED7]">
+              <span className="text-[#174F3F] flex items-center gap-1.5">
                 <span>✨</span>
-                <span>همسة طمأنينة لقلبك</span>
+                <span>{t('home.daily_whisper', 'همسة طمأنينة لقلبك')}</span>
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15">يومياً</span>
+              <span className="text-[13px] px-2.5 py-0.5 rounded-full bg-[#E2EFE7] text-[#174F3F] font-bold">
+                {t('common.daily', 'يومياً')}
+              </span>
             </div>
             
-            <p className="text-xs sm:text-sm leading-relaxed italic font-serif">
+            <p className="text-[18px] leading-relaxed italic text-[#292F2B] font-medium">
               "{todayQuote.quote}"
             </p>
 
-            <div className="text-[11px] font-bold text-stone-400 pt-1 text-left">
+            <div className={`text-[15px] font-bold text-[#515B55] pt-1 ${isRTL ? 'text-left' : 'text-right'}`}>
               — {todayQuote.author}
             </div>
           </div>
         </div>
       </section>
 
-      {/* 🌿 تفقد المشاعر اليومية — تصميم مرح ومبهج وسريع */}
-      <section className={`p-4 sm:p-7 border rounded-3xl sm:rounded-4xl space-y-3 sm:space-y-4 shadow-sm transition-all ${
-        isDark ? 'bg-[#12221A] border-emerald-500/25' : 'bg-white border-emerald-600/20'
-      }`}>
-        <div className="flex flex-wrap items-center justify-between gap-2">
+      {/* 🌿 تفقد المشاعر اليومية */}
+      <section className="p-5 sm:p-7 border-2 border-[#D5DED7] rounded-3xl sm:rounded-4xl space-y-4 shadow-sm bg-[#FFFFFF] text-[#292F2B]">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D5DED7] pb-3">
           <div>
-            <div className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-500 dark:text-emerald-400">
-              <span>🌱 رادار اللحظة الحالية</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E2EFE7] text-[#174F3F] text-[15px] font-bold">
+              <span>{t('home.mood.radar_badge', '🌱 رادار اللحظة الحالية')}</span>
             </div>
-            <h2 className={`text-base sm:text-xl font-black ${isDark ? 'text-white' : 'text-stone-900'}`}>
-              كيف حال قلبك ومشاعرك اليوم؟ 💖
+            <h2 className="text-[22px] sm:text-[26px] font-bold text-[#174F3F] mt-1">
+              {t('home.mood.question', 'كيف حال قلبك ومشاعرك اليوم؟ 💖')}
             </h2>
           </div>
 
           {justSavedCheckin && (
-            <span className="text-xs px-3 py-1.5 rounded-full bg-emerald-500 text-black font-extrabold animate-bounce flex items-center gap-1 shadow-xs">
-              <SimpleIconCheck size={14} className="w-3.5 h-3.5" /> تم تسجيل مشاعرك بكل حب 🌱
+            <span className="text-[15px] px-3.5 py-2 rounded-full bg-[#E2EFE7] text-[#174F3F] border border-[#23785B]/40 font-bold animate-bounce flex items-center gap-1.5 shadow-xs">
+              <SimpleIconCheck size={16} className="w-4 h-4 text-[#23785B]" /> 
+              <span>{t('home.mood.saved_toast', 'تم تسجيل مشاعرك بكل حب 🌱')}</span>
             </span>
           )}
         </div>
 
         {/* 5 Joyful Mood Buttons */}
-        <div className="grid grid-cols-5 gap-2 sm:gap-3">
-          {MOOD_OPTIONS.map((m) => {
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          {moodOptions.map((m) => {
             const isSelected = selectedMood === m.id;
             return (
               <button
                 key={m.id}
                 onClick={() => handleMoodSelect(m.id)}
-                className={`py-3 px-1 sm:p-4 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 min-h-[72px] sm:min-h-[86px] select-none active:scale-95 ${
+                className={`p-3.5 sm:p-4 rounded-2xl border-2 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 min-h-[82px] select-none active:scale-95 ${
                   isSelected 
-                    ? 'bg-emerald-500/20 border-emerald-400 text-white shadow-md ring-2 ring-emerald-400/50 scale-[1.02]' 
-                    : isDark 
-                      ? 'bg-black/25 border-white/10 text-stone-200 hover:border-emerald-500/40 hover:bg-white/5' 
-                      : 'bg-stone-50 border-stone-200 text-stone-800 hover:border-emerald-500/40 hover:bg-emerald-50/40'
+                    ? 'bg-[#E2EFE7] border-[#174F3F] text-[#174F3F] shadow-sm ring-2 ring-[#174F3F]/30 scale-[1.02]' 
+                    : 'bg-[#F7F5EF] border-[#D5DED7] text-[#292F2B] hover:border-[#23785B] hover:bg-[#FFFFFF]'
                 }`}
                 title={m.label}
               >
-                <span className="text-2xl sm:text-3xl leading-none transition-transform hover:scale-110">
+                <span className="text-3xl sm:text-4xl leading-none transition-transform hover:scale-110">
                   {m.emoji}
                 </span>
-                <span className="text-[10px] sm:text-xs font-bold block truncate max-w-full leading-tight">
+                <span className="text-[16px] sm:text-[17px] font-bold block truncate max-w-full leading-tight">
                   {m.label}
                 </span>
               </button>
@@ -362,31 +344,27 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Active Tip */}
         {activeMoodObj && (
-          <div className={`p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm flex items-center gap-3 animate-fade-in ${
-            isDark ? 'bg-emerald-950/40 border-emerald-500/35 text-emerald-100' : 'bg-emerald-50 border-emerald-600/25 text-emerald-950'
-          }`}>
-            <span className="text-xl sm:text-2xl shrink-0">💌</span>
-            <p className="font-semibold leading-relaxed">{activeMoodObj.tip}</p>
+          <div className="p-4 rounded-2xl border border-[#B78327]/30 bg-[#F8EED8] text-[#292F2B] flex items-center gap-3 animate-fade-in shadow-xs">
+            <span className="text-2xl sm:text-3xl shrink-0">💌</span>
+            <p className="font-medium text-[17px] sm:text-[18px] leading-relaxed">{activeMoodObj.tip}</p>
           </div>
         )}
       </section>
 
       {/* 🚀 وضع أداء الهاتف السريع */}
-      <div className={`p-3.5 sm:p-4 rounded-2xl border text-xs flex items-center justify-between gap-3 ${
-        isDark ? 'bg-[#0E1C15] border-emerald-500/20 text-emerald-200' : 'bg-emerald-50/70 border-emerald-600/20 text-emerald-950'
-      }`}>
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-            <SimpleIconZap size={16} className="w-4 h-4" />
+      <div className="p-4 sm:p-5 rounded-2xl border-2 border-[#D5DED7] bg-[#FFFFFF] text-[#292F2B] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-11 h-11 rounded-xl bg-[#E2EFE7] text-[#174F3F] border border-[#23785B]/30 flex items-center justify-center shrink-0">
+            <SimpleIconZap size={20} className="w-5 h-5 text-[#174F3F]" />
           </div>
           <div className="min-w-0">
-            <span className="font-bold text-xs sm:text-sm block truncate">
-              {isMobilePerformanceMode ? 'وضع أداء الهاتف (مُفعّل لمنع الوميض)' : 'الوضع الرسومي التفاعلي'}
+            <span className="font-bold text-[18px] text-[#174F3F] block truncate">
+              {isMobilePerformanceMode ? t('home.perf.active_title', 'وضع أداء الهاتف (مُفعّل لمنع الوميض)') : t('home.perf.inactive_title', 'الوضع الرسومي التفاعلي')}
             </span>
-            <span className={`text-[10px] sm:text-xs block truncate ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
+            <span className="text-[16px] text-[#515B55] block">
               {isMobilePerformanceMode 
-                ? 'استجابة فائقة وخفيفة ومثالية لشاشات الموبايل' 
-                : 'التأثيرات الجمالية والرسومية نشطة'}
+                ? t('home.perf.active_desc', 'استجابة فائقة وخفيفة ومثالية لشاشات الموبايل') 
+                : t('home.perf.inactive_desc', 'التأثيرات الجمالية والرسومية نشطة')}
             </span>
           </div>
         </div>
@@ -394,97 +372,80 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {onToggleMobilePerformanceMode && (
           <button
             onClick={onToggleMobilePerformanceMode}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold border shrink-0 transition-all cursor-pointer shadow-2xs active:scale-95 ${
-              isDark 
-                ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border-emerald-400/30' 
-                : 'bg-white hover:bg-emerald-100 text-emerald-900 border-emerald-600/30'
-            }`}
+            className="min-h-[48px] px-5 py-2.5 rounded-xl text-[16px] font-bold border-2 border-[#174F3F] bg-[#E2EFE7] hover:bg-[#174F3F] text-[#174F3F] hover:text-white shrink-0 transition-all cursor-pointer shadow-xs active:scale-95"
           >
-            {isMobilePerformanceMode ? 'العرض الكامل' : 'تسريع الهاتف'}
+            {isMobilePerformanceMode ? t('home.perf.btn_full', 'العرض الكامل 🎨') : t('home.perf.btn_speed', 'تسريع الهاتف ⚡')}
           </button>
         )}
       </div>
 
       {/* 🌟 بوابات شاشات المحتوى التسع الأخرى (شاشات ٢ إلى ١٠) */}
       <section className="space-y-4 sm:space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b pb-3 border-stone-200 dark:border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b-2 pb-4 border-[#D5DED7]">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-500 dark:text-emerald-400">
-              <span>🌸 المحتوى مقسّم بعناية</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15">كل شاشة تفتح لوحدها</span>
+            <div className="inline-flex items-center gap-2 text-[15px] font-bold text-[#174F3F] bg-[#E2EFE7] px-3.5 py-1 rounded-full border border-[#23785B]/25">
+              <span>{t('home.portals.badge', '🌸 المحتوى مقسّم بعناية')}</span>
+              <span>•</span>
+              <span>{t('home.portals.badge_sub', 'كل شاشة تفتح مستقلة')}</span>
             </div>
-            <h2 className={`text-xl sm:text-2xl font-black mt-0.5 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-              بوابات نسمة حياة التسع 🏛️
+            <h2 className="text-[26px] sm:text-[32px] font-black text-[#174F3F] mt-2">
+              {t('home.portals.title', 'بوابات نسمة حياة التسع 🏛️')}
             </h2>
-            <p className={`text-xs sm:text-sm ${isDark ? 'text-stone-300' : 'text-stone-600'}`}>
-              اختر الشاشة التي تود الدخول إليها، لتفتح لك كاملة بمحتواها وأدواتها المتخصصة:
+            <p className="text-[18px] text-[#515B55] font-medium leading-relaxed mt-1">
+              {t('home.portals.desc', 'اختر الشاشة التي تود الدخول إليها، لتفتح لك كاملة بمحتواها وأدواتها المتخصصة:')}
             </p>
           </div>
 
           {onOpenAllScreens && (
             <button
               onClick={onOpenAllScreens}
-              className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer self-start sm:self-auto ${
-                isDark 
-                  ? 'bg-white/5 hover:bg-white/10 text-emerald-300 border-white/10' 
-                  : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border-emerald-600/25'
-              }`}
+              className="min-h-[48px] px-4 py-2.5 rounded-xl text-[16px] font-bold border-2 border-[#D5DED7] bg-[#FFFFFF] hover:bg-[#F7F5EF] text-[#174F3F] transition-all flex items-center gap-2 cursor-pointer self-start sm:self-auto shadow-xs"
             >
-              <span>📑 عرض كفهرس سريع</span>
-              <SimpleIconChevronLeft size={14} className="w-3.5 h-3.5" />
+              <span>{t('home.portals.quick_index', '📑 عرض كفهرس سريع')}</span>
+              <ChevronIcon size={16} className="w-4 h-4 text-[#174F3F]" />
             </button>
           )}
         </div>
 
         {/* The 9 Portals Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {destinationScreens.map((screen) => {
             return (
               <div
                 key={screen.id}
-                className={`group p-4 sm:p-5 rounded-3xl border transition-all duration-200 flex flex-col justify-between gap-4 text-right shadow-sm hover:shadow-md ${
-                  isDark 
-                    ? `bg-[#102018] ${screen.borderDark} hover:bg-[#13261D]` 
-                    : `bg-white ${screen.borderLight} hover:bg-emerald-50/20`
-                }`}
+                className="group p-5 sm:p-6 rounded-3xl border-2 border-[#D5DED7] hover:border-[#23785B] bg-[#FFFFFF] transition-all duration-200 flex flex-col justify-between gap-5 shadow-xs hover:shadow-md"
               >
                 {/* Header of Card */}
-                <div className="space-y-3">
+                <div className="space-y-3.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className={`text-[11px] font-extrabold px-2.5 py-1 rounded-xl border flex items-center gap-1 ${screen.badgeColor}`}>
-                      <span>الشاشة {screen.numberArabic}</span>
+                    <span className="text-[14px] font-bold px-3 py-1.5 rounded-xl border border-[#23785B]/25 bg-[#E2EFE7] text-[#174F3F] flex items-center gap-1.5">
+                      <span>{language === 'en' ? `Screen ${screen.numberArabic}` : `الشاشة ${screen.numberArabic}`}</span>
                       <span>•</span>
                       <span>{screen.badge}</span>
                     </span>
 
-                    <span className="text-2xl sm:text-3xl p-1.5 rounded-2xl bg-black/10 dark:bg-white/5">
+                    <span className="text-3xl p-2 rounded-2xl bg-[#F7F5EF] border border-[#D5DED7]">
                       {screen.emoji}
                     </span>
                   </div>
 
                   <div>
-                    <h3 className={`text-base sm:text-lg font-black group-hover:text-emerald-500 transition-colors ${
-                      isDark ? 'text-white' : 'text-stone-900'
-                    }`}>
+                    <h3 className="text-[22px] sm:text-[24px] font-bold text-[#174F3F] group-hover:text-[#23785B] transition-colors">
                       {screen.title}
                     </h3>
-                    <p className={`text-xs leading-relaxed mt-1 line-clamp-2 ${
-                      isDark ? 'text-stone-300' : 'text-stone-600'
-                    }`}>
+                    <p className="text-[17px] sm:text-[18px] text-[#292F2B] font-medium leading-relaxed mt-1.5 line-clamp-2">
                       {screen.tagline}
                     </p>
                   </div>
 
                   {/* Bullet Highlights */}
-                  <div className="space-y-1 pt-1 border-t border-stone-200/50 dark:border-white/5">
+                  <div className="space-y-1.5 pt-2 border-t border-[#D5DED7]">
                     {screen.features.map((feature, fIdx) => (
                       <div 
                         key={fIdx} 
-                        className={`text-[11px] flex items-center gap-1.5 ${
-                          isDark ? 'text-stone-400' : 'text-stone-600'
-                        }`}
+                        className="text-[16px] text-[#515B55] flex items-center gap-2 font-medium"
                       >
-                        <span className="text-emerald-500 font-bold">•</span>
+                        <span className="text-[#23785B] font-bold text-lg">•</span>
                         <span className="truncate">{feature}</span>
                       </div>
                     ))}
@@ -497,10 +458,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     onNavigate(screen.id);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="w-full py-2.5 px-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500 text-emerald-700 hover:text-black dark:text-emerald-300 dark:hover:text-black text-xs font-extrabold border border-emerald-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 min-h-[42px]"
+                  className="w-full min-h-[48px] py-3 px-4 rounded-xl bg-[#174F3F] hover:bg-[#23785B] text-white text-[17px] font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-xs"
                 >
-                  <span>ادخل الشاشة {screen.numberArabic}</span>
-                  <SimpleIconChevronLeft size={14} className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+                  <span>{t('home.portals.enter', 'ادخل الشاشة {num}', { num: screen.numberArabic })}</span>
+                  <ChevronIcon size={16} className={`w-4 h-4 transition-transform ${isRTL ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
                 </button>
               </div>
             );
@@ -510,26 +471,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
       {/* 🛡️ شريط الطوارئ والمساعدة الفورية */}
       {onOpenEmergencyHelp && (
-        <section className={`p-4 sm:p-5 rounded-3xl border flex flex-col sm:flex-row items-center justify-between gap-3 ${
-          isDark ? 'bg-rose-950/25 border-rose-500/30 text-rose-200' : 'bg-rose-50 border-rose-200 text-rose-950 shadow-xs'
-        }`}>
-          <div className="flex items-center gap-3 text-right">
-            <span className="text-2xl sm:text-3xl shrink-0">🛟</span>
+        <section className="p-5 sm:p-6 rounded-3xl border-2 border-[#B78327]/30 bg-[#F8EED8] text-[#292F2B] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <span className="text-3xl sm:text-4xl shrink-0">🛟</span>
             <div>
-              <h4 className="text-xs sm:text-sm font-extrabold text-rose-600 dark:text-rose-400">
-                هل تمر بلحظة صعبة أو ضغط طارئ الآن؟
+              <h4 className="text-[19px] sm:text-[21px] font-bold text-[#991B1B]">
+                {t('home.sos.title', 'هل تمر بلحظة صعبة أو ضغط طارئ الآن؟')}
               </h4>
-              <p className="text-[11px] sm:text-xs opacity-90">
-                حقيبة النجاة (الشاشة ٩) والخطوط الساخنة المجانية متاحة على مدار الساعة لحمايتك.
+              <p className="text-[16px] sm:text-[17px] text-[#292F2B] font-medium mt-1 leading-relaxed">
+                {t('home.sos.desc', 'حقيبة النجاة (الشاشة ٩) والخطوط الساخنة المجانية متاحة على مدار الساعة لحمايتك.')}
               </p>
             </div>
           </div>
 
           <button
             onClick={onOpenEmergencyHelp}
-            className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-extrabold rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 min-h-[40px]"
+            className="w-full sm:w-auto min-h-[48px] px-6 py-3 bg-[#991B1B] hover:bg-[#7f1d1d] text-white text-[17px] font-bold rounded-xl transition-all shadow-xs active:scale-95 cursor-pointer shrink-0"
           >
-            فتح خطة الطوارئ 🛡️
+            {t('home.sos.button', 'فتح خطة الطوارئ 🛡️')}
           </button>
         </section>
       )}

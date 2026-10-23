@@ -42,6 +42,7 @@ import { CompanionEngine, COMPANION_PERSONAS } from '../services/companionEngine
 import { voiceService } from '../services/voiceService';
 import { stylizeImageToAnime } from '../utils/animeCanvasStylizer';
 import { TextAudioPlayer } from './TextAudioPlayer';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CompanionModalProps {
   isOpen: boolean;
@@ -51,13 +52,22 @@ interface CompanionModalProps {
   onOpenAudio: (title: string, category: string, durationMinutes: number) => void;
 }
 
-const QUICK_STARTER_PROMPTS = [
+const AR_QUICK_STARTER_PROMPTS = [
   { label: 'حاسس بقلق وتوتر شديد 🌪️', text: 'أنا حاسس بقلق وتوتر ومش عارف أوقفه' },
   { label: 'طاقتي مستنزفة ومخنوق 🔋', text: 'طاقتي مستنزفة تماماً وحاسس بإرهاق كبير' },
   { label: 'دماغي مش بتبطل تفكير 🤯', text: 'عندي زحمة أفكار وتفكير مفرط مش مخليني أرتاح' },
   { label: 'عايز لعبة أو فرفشة تخرجني من المود 🎮', text: 'محتاج لعبة أو حاجة تخرجني من المود وتسليني' },
   { label: 'مش عارف أحدد مشاعري 🧭', text: 'مشاعري متلخبطة ومش عارف أترجم أنا حاسس بإيه' },
   { label: 'محتاج تمرين تنفس مهدئ 🌬️', text: 'محتاج تمرين تنفس يساعدني أهدى شوية' }
+];
+
+const EN_QUICK_STARTER_PROMPTS = [
+  { label: 'Feeling deep anxiety or stress 🌪️', text: 'I feel intense anxiety and stress and want help grounding myself.' },
+  { label: 'Energy is totally drained 🔋', text: 'My energy is completely depleted and I feel exhausted.' },
+  { label: 'Mind will not stop overthinking 🤯', text: 'I have racing thoughts and overthinking is keeping me restless.' },
+  { label: 'Mindful distraction or game 🎮', text: 'I need a mindful game or exercise to lift my spirits and shift my mood.' },
+  { label: 'Confused about what I feel 🧭', text: 'My feelings are tangled and I want help understanding them.' },
+  { label: 'Need a calming breath session 🌬️', text: 'I need a soothing breathing exercise to relax my nervous system.' }
 ];
 
 const MIRROR_REFLECTION_JOURNEYS = [
@@ -112,6 +122,8 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
   onOpenModal,
   onOpenAudio
 }) => {
+  const { t, isRTL, dir, language } = useLanguage();
+  const quickStarterPrompts = language === 'en' ? EN_QUICK_STARTER_PROMPTS : AR_QUICK_STARTER_PROMPTS;
   const [settings, setSettings] = useState<CompanionUserSettings>(() => CompanionEngine.getSettings());
   const [messages, setMessages] = useState<CompanionMessage[]>(() => CompanionEngine.getHistory());
   const [inputText, setInputText] = useState('');
@@ -656,7 +668,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
   return (
     <div 
       className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-stone-900/60 backdrop-blur-md transition-all duration-300 animate-fadeIn" 
-      dir="rtl"
+      dir={dir}
       onClick={onClose}
     >
       <div 
@@ -672,10 +684,10 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
             </div>
             <div>
               <h3 className="font-black text-base sm:text-lg text-[#26332D] dark:text-[#E6E8D8] leading-tight flex items-center gap-2">
-                <span>رفيقي — المرشد الدائم</span>
+                <span>{t('companion.title', 'رفيقي — المرشد المرافق 🤍')}</span>
               </h3>
               <p className="text-[11px] text-[#52645B] dark:text-stone-400">
-                مساحتك الآمنة للاستماع والدعم العاطفي اليومي
+                {t('companion.subtitle', 'مساحتك الآمنة للاستماع والدعم العاطفي اليومي')}
               </p>
             </div>
           </div>
@@ -689,8 +701,8 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800'
                   : 'bg-stone-100 text-stone-500 border-transparent dark:bg-stone-800 dark:text-stone-400'
               }`}
-              title={settings.isVoiceAutoPlay ? 'تعطيل نطق الردود تلقائياً' : 'تفعيل نطق الردود صوتياً'}
-              aria-label="تبديل النطق الصوتي"
+              title={settings.isVoiceAutoPlay ? t('companion.voice_autoplay_disable', 'تعطيل نطق الردود تلقائياً') : t('companion.voice_autoplay_enable', 'تفعيل نطق الردود صوتياً')}
+              aria-label={t('companion.voice_autoplay_enable', 'تبديل النطق الصوتي')}
             >
               {settings.isVoiceAutoPlay ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
@@ -699,8 +711,8 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
             <button
               onClick={handleClearHistory}
               className="p-2 rounded-xl bg-stone-100 hover:bg-rose-50 text-stone-500 hover:text-rose-600 dark:bg-stone-800 dark:text-stone-400 dark:hover:text-rose-400 transition-colors cursor-pointer"
-              title="بدء جلسة جديدة ومسح المحادثة السابقة"
-              aria-label="مسح المحادثة"
+              title={t('companion.clear_history', 'بدء جلسة جديدة ومسح المحادثة')}
+              aria-label={t('companion.clear_history', 'بدء جلسة جديدة')}
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -709,7 +721,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
             <button
               onClick={onClose}
               className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 transition-colors cursor-pointer"
-              aria-label="إغلاق"
+              aria-label={t('common.close', 'إغلاق')}
             >
               <X className="w-5 h-5" />
             </button>
@@ -728,7 +740,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>محادثة رفيقي المرافق</span>
+              <span>{t('companion.tab_chat', 'محادثة رفيقي المرافق')}</span>
             </button>
             <button
               onClick={() => setModalViewTab('mirror')}
@@ -739,7 +751,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
               }`}
             >
               <Camera className="w-3.5 h-3.5 text-amber-500" />
-              <span>قابل نفسك وصوتي أنا 🪞🎙️</span>
+              <span>{t('companion.tab_mirror', 'قابل نفسك وصوتي أنا 🪞🎙️')}</span>
             </button>
           </div>
         </div>
@@ -1407,9 +1419,9 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
         {modalViewTab === 'chat' && (
           <div className="px-4 py-2 bg-stone-50 dark:bg-[#141C19] border-t border-[#E6E8D8]/60 dark:border-stone-800 overflow-x-auto whitespace-nowrap scrollbar-none flex items-center gap-2">
             <span className="text-[11px] font-bold text-[#52645B] dark:text-stone-400 shrink-0">
-              بدايات سريعة:
+              {t('companion.quick_starters_title', 'بدايات سريعة:')}
             </span>
-            {QUICK_STARTER_PROMPTS.map((p, idx) => (
+            {quickStarterPrompts.map((p, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSendMessage(p.text)}
@@ -1433,7 +1445,7 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
               type="button"
               onClick={() => setToastMessage(null)}
               className="p-1 hover:bg-amber-100 dark:hover:bg-amber-900 rounded-md cursor-pointer text-amber-700 dark:text-amber-300"
-              aria-label="إغلاق التنبيه"
+              aria-label={t('common.close', 'إغلاق التنبيه')}
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -1458,8 +1470,8 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                     ? 'bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/30 ring-2 ring-rose-400'
                     : 'bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-[#174C3C] dark:text-emerald-400'
                 }`}
-                title={isListeningMic ? 'جارِ الاستماع لصوتك.. اضغط للإيقاف' : 'تحدث بصوتك مباشرة'}
-                aria-label="تسجيل صوتي"
+                title={isListeningMic ? (isRTL ? 'جارِ الاستماع لصوتك.. اضغط للإيقاف' : 'Listening to your voice.. click to stop') : (isRTL ? 'تحدث بصوتك مباشرة' : 'Speak using your voice')}
+                aria-label={isListeningMic ? t('companion.mic_stop', 'إيقاف التسجيل') : t('companion.mic_start', 'تسجيل صوتي')}
               >
                 <Mic className="w-5 h-5" />
               </button>
@@ -1470,8 +1482,8 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={
                   isListeningMic 
-                    ? 'رفيقي يستمع لصوتك الآن.. تحدث براحتك...' 
-                    : 'فضفض لرفيقك بما تشعر به أو يدور في ذهنك الآن...'
+                    ? t('companion.listening', 'رفيقي يستمع لصوتك الآن.. تحدث براحتك...') 
+                    : t('companion.placeholder', 'فضفض لرفيقك بما تشعر به أو يدور في ذهنك الآن...')
                 }
                 className="flex-1 px-4 py-3 rounded-2xl bg-stone-50 dark:bg-stone-800/80 border border-[#E6E8D8] dark:border-stone-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#174C3C] dark:focus:ring-emerald-500 text-stone-900 dark:text-stone-100 placeholder:text-stone-400"
                 disabled={isThinking}
@@ -1481,15 +1493,15 @@ export const CompanionModal: React.FC<CompanionModalProps> = ({
                 type="submit"
                 disabled={!inputText.trim() || isThinking}
                 className="p-3 rounded-2xl bg-[#174C3C] hover:bg-[#2A493B] text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
-                aria-label="إرسال"
+                aria-label={t('companion.send', 'إرسال')}
               >
-                <Send className="w-5 h-5 rtl:rotate-180" />
+                <Send className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} />
               </button>
             </form>
 
             <div className="mt-2 text-center">
               <p className="text-[10px] text-stone-500 dark:text-stone-400 leading-tight">
-                «شخصية نسمة حياة» وسيلة للتأمل الذاتي والوعي النفسي، وليست بديلاً عن العلاج النفسي الطبي المتخصص.
+                {t('footer.disclaimer', '«شخصية نسمة حياة» وسيلة للتأمل الذاتي والوعي النفسي، وليست بديلاً عن العلاج النفسي الطبي المتخصص.')}
               </p>
             </div>
           </div>

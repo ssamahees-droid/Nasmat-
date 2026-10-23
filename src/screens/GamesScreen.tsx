@@ -34,6 +34,7 @@ interface GamesScreenProps {
   onOpenInnerLabyrinth: () => void;
   onOpenDigitalRelease: () => void;
   onOpenRelationalEnergy: () => void;
+  onOpenNesmatCipher?: () => void;
   onOpenAllScreens?: () => void;
 }
 
@@ -51,6 +52,7 @@ export const GamesScreen: React.FC<GamesScreenProps> = ({
   onOpenEmotionalBridge,
   onOpenGratitudeGarden,
   onOpenInnerCompass,
+  onOpenNesmatCipher,
   onOpenAllScreens
 }) => {
   return (
@@ -78,6 +80,44 @@ export const GamesScreen: React.FC<GamesScreenProps> = ({
           <p className="text-sm sm:text-base text-stone-300 leading-relaxed">
             الاستراحة ليست إضاعة للوقت، بل ضرورة بيولوجية لراحة جهازك العصبي. هنا تجد ألعاباً تفاعلية حقيقية صُممت بمبادئ علم النفس الإدراكي والسلوكي، لمساعدتك على فك التفكير المفرط، التمييز بين الحقائق والأوهام، والضحك اللطيف مع نفسك.
           </p>
+        </div>
+      </section>
+
+      {/* Flagship Game: شفرة نسمة الكبرى */}
+      <section className="bg-gradient-to-r from-[#174F3F] via-[#123E32] to-[#0D2C24] border-2 border-amber-500/50 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <span className="text-xs px-3 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
+                ⭐ الألغاز والمغامرة الكبرى
+              </span>
+              <span className="text-xs text-stone-300">٣٠ مرحلة · ٣ عوالم · أسرار مخفية</span>
+            </div>
+
+            <h2 className="text-xl sm:text-2xl font-extrabold text-white">
+              لعبة «شفرة نسمة» — حلّ اللغز واكتشف اللي جواك 🧩
+            </h2>
+
+            <div className="text-xs sm:text-sm text-emerald-100 space-y-1.5 leading-relaxed">
+              <p>
+                <strong>الهدف:</strong> رحلة ملحمية عبر 3 عوالم (حديقة البدايات، مكتبة الأسرار، كهف التفكير) لحل 30 لغزاً نفسياً متطوراً.
+              </p>
+              <p>
+                <strong>كيف تلعب:</strong> خريطة تفاعلية، تلميحات بوصلة نسمة المتدرجة، أدلة مخفية، وتحديات كبرى تختبر فهمك للرفق بالذات والحدود الشخصية.
+              </p>
+              <p>
+                <strong>الجوائز:</strong> افتح الأسرار الثلاثة المخفية، و«السر الأكبر»، واجمع خزانتك الخاصة من المقتنيات والاقتباسات النفسية.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={onOpenNesmatCipher}
+            className="px-6 py-3.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold text-sm rounded-2xl transition-all shadow-lg active:scale-95 shrink-0 flex items-center gap-2 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>ابدأ لعبة «شفرة نسمة» 🧩</span>
+          </button>
         </div>
       </section>
 

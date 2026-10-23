@@ -104,6 +104,34 @@ export default defineConfig(() => {
           navigateFallbackDenylist: [/^\/api\//, /^https:\/\/(identitytoolkit|securetoken|firestore)\.googleapis\.com/],
           runtimeCaching: [
             {
+              urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|svgz|ico)$/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'nesmat-images-cache',
+                expiration: {
+                  maxEntries: 60,
+                  maxAgeSeconds: 60 * 60 * 24 * 60
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            {
+              urlPattern: /\.(?:js|css)$/i,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'nesmat-static-resources-cache',
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 60 * 60 * 24 * 30
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            {
               urlPattern: /^\/audio\/.*\.mp3$/i,
               handler: 'CacheFirst',
               options: {

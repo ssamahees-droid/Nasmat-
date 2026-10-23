@@ -358,6 +358,7 @@ export class CompanionEngine {
         text: m.text
       }));
 
+      const currentLang = (typeof window !== 'undefined' ? localStorage.getItem('nesma_lang') : 'ar') || 'ar';
       const response = await fetch('/api/companion/chat', {
         method: 'POST',
         headers: {
@@ -366,7 +367,8 @@ export class CompanionEngine {
         body: JSON.stringify({
           message: trimmed,
           persona,
-          history: historyForApi
+          history: historyForApi,
+          language: currentLang
         })
       });
 
@@ -391,6 +393,9 @@ export class CompanionEngine {
       // Proceed to deterministic local engine seamlessly if backend is offline or unconfigured
     }
 
+    const currentLang = (typeof window !== 'undefined' ? localStorage.getItem('nesma_lang') : 'ar') || 'ar';
+    const isEnglish = currentLang === 'en';
+
     // 3. Local Contextual Conversation Engine (Fast, privacy-first, deterministic fallback)
     const norm = normalizeArabicText(trimmed);
 
@@ -399,25 +404,31 @@ export class CompanionEngine {
     const lastCompanionText = lastCompanionMsg?.text || '';
 
     // Handle short answers and contextual continuity (e.g. user says: اه, لا, مش عارف, تعبان)
-    const isShortAffirmation = /^(اه|ايوه|ايوة|نعم|بالظبط|فعلا|حصل|تمام)$/.test(norm);
-    const isShortNegation = /^(لا|مش اوي|مش قوي|ابدا|مظنش|مش حاصل)$/.test(norm);
-    const isShortUncertainty = /^(مش عارف|مش متاكد|محتار|تائه|مش فاهم|مش عارف مالي)$/.test(norm);
-    const isShortExhaustion = /^(تعبان|مرهق|طاقتي خلصت|منهك|زهقان)$/.test(norm);
+    const isShortAffirmation = /^(اه|ايوه|ايوة|نعم|بالظبط|فعلا|حصل|تمام|yes|yeah|sure|ok|okay)$/i.test(trimmed) || /^(اه|ايوه|ايوة|نعم|بالظبط|فعلا|حصل|تمام)$/.test(norm);
+    const isShortNegation = /^(لا|مش اوي|مش قوي|ابدا|مظنش|مش حاصل|no|nope|not really)$/i.test(trimmed) || /^(لا|مش اوي|مش قوي|ابدا|مظنش|مش حاصل)$/.test(norm);
+    const isShortUncertainty = /^(مش عارف|مش متاكد|محتار|تائه|مش فاهم|مش عارف مالي|i don't know|not sure|confused)$/i.test(trimmed) || /^(مش عارف|مش متاكد|محتار|تائه|مش فاهم|مش عارف مالي)$/.test(norm);
+    const isShortExhaustion = /^(تعبان|مرهق|طاقتي خلصت|منهك|زهقان|tired|exhausted|drained)$/i.test(trimmed) || /^(تعبان|مرهق|طاقتي خلصت|منهك|زهقان)$/.test(norm);
 
     if (isShortAffirmation) {
       return {
         id: `comp-${Date.now()}`,
         sender: 'companion',
-        text: persona === 'child'
-          ? 'أنا فاهمك وسامعك كويس.. وجودك معايا واعترافك بشعورك ده في حد ذاته أمان وخطوة حلوة أوي. تحب نحكي أكتر عن اللي حاسس بيه دلوقتي، ولا نسيب نفسنا نرتاح شوية؟'
-          : persona === 'father'
-          ? 'أحسنت في وضوحك وثباتك.. الاعتراف بالواقع هو البداية الحقيقية لأي أمان أو خطوة صحيحة. أنا في ظهرك، وسنرتب كل شيء بهدوء ودون استعجال.'
-          : 'مفهوم تماماً ومقدر لوضوحك.. إدراك الشعور وتسميته هو نصف المسافة لاستعادة الاتزان. ما الخطوة البسيطة التي تشعر أنك بحاجة إليها في هذه اللحظة؟',
+        text: isEnglish
+          ? (persona === 'child'
+              ? 'I hear you and understand you gently.. Being here and acknowledging what you feel is a brave, beautiful step. Would you like to share a bit more, or just rest for a moment?'
+              : persona === 'father'
+              ? 'Well done on your honesty and steadiness.. Acknowledging reality is where genuine healing begins. I have your back, and we will take it step by step.'
+              : 'Understood and appreciated. Naming your state is half the journey to regaining balance. What small, comfortable step do you feel you need right now?')
+          : (persona === 'child'
+              ? 'أنا فاهمك وسامعك كويس.. وجودك معايا واعترافك بشعورك ده في حد ذاته أمان وخطوة حلوة أوي. تحب نحكي أكتر عن اللي حاسس بيه دلوقتي، ولا نسيب نفسنا نرتاح شوية؟'
+              : persona === 'father'
+              ? 'أحسنت في وضوحك وثباتك.. الاعتراف بالواقع هو البداية الحقيقية لأي أمان أو خطوة صحيحة. أنا في ظهرك، وسنرتب كل شيء بهدوء ودون استعجال.'
+              : 'مفهوم تماماً ومقدر لوضوحك.. إدراك الشعور وتسميته هو نصف المسافة لاستعادة الاتزان. ما الخطوة البسيطة التي تشعر أنك بحاجة إليها في هذه اللحظة؟'),
         timestamp: Date.now(),
         expression: 'listening',
         suggestedActions: [
-          { id: 'act-feelings', label: 'تحديد الشعور (أنا دلوقتي)', icon: '🧭', actionType: 'modal', target: 'ana_delwaqti' },
-          { id: 'act-knot', label: 'تفكيك الفكرة (فك العقدة)', icon: '🧶', actionType: 'modal', target: 'untangle_knot' }
+          { id: 'act-feelings', label: isEnglish ? 'Name Feeling (Ana Delwaqti)' : 'تحديد الشعور (أنا دلوقتي)', icon: '🧭', actionType: 'modal', target: 'ana_delwaqti' },
+          { id: 'act-knot', label: isEnglish ? 'Deconstruct Thought' : 'تفكيك الفكرة (فك العقدة)', icon: '🧶', actionType: 'modal', target: 'untangle_knot' }
         ]
       };
     }

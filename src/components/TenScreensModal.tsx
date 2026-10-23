@@ -1,6 +1,12 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useState } from 'react';
-import { TEN_SCREENS, TenScreenItem } from '../constants/tenScreens';
-import { SimpleIconChevronLeft, SimpleIconCheck } from './common/SimpleSvgIcons';
+import { useTenScreens, TenScreenItem } from '../constants/tenScreens';
+import { SimpleIconChevronLeft, SimpleIconChevronRight, SimpleIconCheck } from './common/SimpleSvgIcons';
+import { useLanguage } from '../context/LanguageContext';
 
 interface TenScreensModalProps {
   isOpen: boolean;
@@ -17,16 +23,18 @@ export const TenScreensModal: React.FC<TenScreensModalProps> = ({
   onNavigate,
   theme = 'dark'
 }) => {
+  const { t, language, isRTL } = useLanguage();
+  const screens = useTenScreens();
   const [filterQuery, setFilterQuery] = useState('');
   if (!isOpen) return null;
 
   const isDark = theme === 'dark';
 
-  const filteredScreens = TEN_SCREENS.filter(s => 
-    s.title.includes(filterQuery) || 
-    s.tagline.includes(filterQuery) || 
-    s.shortTitle.includes(filterQuery) ||
-    s.features.some(f => f.includes(filterQuery))
+  const filteredScreens = screens.filter(s => 
+    s.title.toLowerCase().includes(filterQuery.toLowerCase()) || 
+    s.tagline.toLowerCase().includes(filterQuery.toLowerCase()) || 
+    s.shortTitle.toLowerCase().includes(filterQuery.toLowerCase()) ||
+    s.features.some(f => f.toLowerCase().includes(filterQuery.toLowerCase()))
   );
 
   const handleSelectScreen = (screenId: string) => {
@@ -35,14 +43,19 @@ export const TenScreensModal: React.FC<TenScreensModalProps> = ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const ChevronIcon = isRTL ? SimpleIconChevronLeft : SimpleIconChevronRight;
+
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-xs animate-fade-in">
       <div 
-        className={`w-full max-w-2xl max-h-[88vh] flex flex-col rounded-t-3xl sm:rounded-3xl border shadow-2xl overflow-hidden transition-all text-right font-tajawal ${
+        className={`w-full max-w-2xl max-h-[88vh] flex flex-col rounded-t-3xl sm:rounded-3xl border shadow-2xl overflow-hidden transition-all font-tajawal ${
+          isRTL ? 'text-right' : 'text-left'
+        } ${
           isDark 
             ? 'bg-[#0F1E17] border-emerald-500/30 text-stone-100' 
             : 'bg-[#FCFBF8] border-emerald-600/20 text-stone-900'
         }`}
+        dir={isRTL ? 'rtl' : 'ltr'}
       >
         {/* Header */}
         <div className={`p-4 sm:p-5 border-b flex items-center justify-between gap-3 ${
@@ -50,11 +63,13 @@ export const TenScreensModal: React.FC<TenScreensModalProps> = ({
         }`}>
           <div>
             <div className="inline-flex items-center gap-1.5 text-emerald-500 dark:text-emerald-400 text-xs font-bold">
-              <span>🌿 خريطة المحتوى الشاملة</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 font-extrabold">١٠ شاشات</span>
+              <span>{t('ten_screens.modal_badge', '🌿 خريطة المحتوى الشاملة')}</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 font-extrabold">
+                {t('ten_screens.ten_screens_count', '١٠ شاشات')}
+              </span>
             </div>
             <h2 className="text-base sm:text-xl font-extrabold mt-0.5">
-              بوابات نسمة حياة العشرة 🌸
+              {t('ten_screens.modal_title', 'بوابات نسمة حياة العشرة 🌸')}
             </h2>
           </div>
 
@@ -65,7 +80,7 @@ export const TenScreensModal: React.FC<TenScreensModalProps> = ({
                 ? 'bg-white/5 hover:bg-white/10 border-white/10 text-stone-300' 
                 : 'bg-white hover:bg-stone-100 border-stone-200 text-stone-700 shadow-2xs'
             }`}
-            aria-label="إغلاق النافذة"
+            aria-label="Close"
           >
             ✕
           </button>
@@ -77,7 +92,7 @@ export const TenScreensModal: React.FC<TenScreensModalProps> = ({
             type="text"
             value={filterQuery}
             onChange={(e) => setFilterQuery(e.target.value)}
-            placeholder="ابحث عن شاشة (تنفس، ألعاب، استكشاف الذات، طوارئ...)"
+            placeholder={t('ten_screens.search_placeholder', 'ابحث عن شاشة (تنفس، ألعاب، استكشاف الذات، طوارئ...)')}
             className={`w-full px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm font-tajawal focus:outline-hidden transition-all ${
               isDark 
                 ? 'bg-black/30 border-white/10 text-white placeholder-stone-400 focus:border-emerald-400' 
@@ -100,9 +115,11 @@ export const TenScreensModal: React.FC<TenScreensModalProps> = ({
           >
             <div className="flex items-center gap-2">
               <span className="text-base">👋</span>
-              <span>شاشة الترحيب المستقلة (رسالة المبادرة والخصوصية)</span>
+              <span>{language === 'en' ? 'Welcome & Rotary Wheel Screen' : 'شاشة الترحيب والعجلة الدوارة'}</span>
             </div>
-            <span className="text-[11px] font-bold">عرض لوحدها ←</span>
+            <span className="text-[11px] font-bold">
+              {language === 'en' ? 'Open Oasis →' : 'عرض لوحدها ←'}
+            </span>
           </button>
         </div>
 
@@ -138,14 +155,15 @@ export const TenScreensModal: React.FC<TenScreensModalProps> = ({
                           ? 'bg-emerald-500 text-black' 
                           : isDark ? 'bg-white/10 text-stone-300' : 'bg-stone-100 text-stone-700'
                       }`}>
-                        الشاشة {screen.numberArabic}
+                        {language === 'en' ? `Screen ${screen.numberArabic}` : `الشاشة ${screen.numberArabic}`}
                       </span>
                       <h3 className="text-xs sm:text-sm font-bold truncate">
                         {screen.title}
                       </h3>
                       {isCurrent && (
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold flex items-center gap-1">
-                          <SimpleIconCheck size={10} className="w-2.5 h-2.5" /> أنت هنا الآن
+                          <SimpleIconCheck size={10} className="w-2.5 h-2.5" /> 
+                          {language === 'en' ? 'You are here' : 'أنت هنا الآن'}
                         </span>
                       )}
                     </div>
@@ -181,8 +199,12 @@ export const TenScreensModal: React.FC<TenScreensModalProps> = ({
                           : 'bg-emerald-100/70 hover:bg-emerald-200 text-emerald-900'
                     }`}
                   >
-                    <span>{isCurrent ? 'الشاشة الحالية' : 'ادخل الشاشة'}</span>
-                    <SimpleIconChevronLeft size={14} className="w-3.5 h-3.5" />
+                    <span>
+                      {isCurrent 
+                        ? (language === 'en' ? 'Current Oasis' : 'الشاشة الحالية') 
+                        : (language === 'en' ? 'Enter Oasis' : 'ادخل الشاشة')}
+                    </span>
+                    <ChevronIcon size={14} className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -194,7 +216,9 @@ export const TenScreensModal: React.FC<TenScreensModalProps> = ({
         <div className={`p-3 sm:p-4 border-t text-center text-xs ${
           isDark ? 'border-white/10 bg-black/20 text-stone-400' : 'border-stone-200 bg-stone-50 text-stone-600'
         }`}>
-          نسمة حياة مساحة حرة ومفتوحة — تنقّل بين الشاشات العشر وفق ما تشعر به في كل لحظة 🌿
+          {language === 'en' 
+            ? 'Nesmat Al-Hayat is a free, open space — navigate between the ten screens according to your present emotional needs 🌿' 
+            : 'نسمة حياة مساحة حرة ومفتوحة — تنقّل بين الشاشات العشر وفق ما تشعر به في كل لحظة 🌿'}
         </div>
       </div>
     </div>

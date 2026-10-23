@@ -10,6 +10,8 @@ import { Navbar } from './components/Navbar';
 import { BottomNav } from './components/BottomNav';
 import { Footer } from './components/Footer';
 import { PWAFloatingInstallBadge } from './components/PWAFloatingInstallBadge';
+import { OfflineBanner } from './components/OfflineBanner';
+import { PWAUpdatePrompt } from './components/PWAUpdatePrompt';
 import { CompanionFloatingButton } from './components/CompanionFloatingButton';
 import { ScreenLoader } from './components/ScreenLoader';
 import { localNotificationService } from './services/localNotificationService';
@@ -93,6 +95,7 @@ const MusicPrototypeTester = lazy(() => import('./components/MusicPrototypeTeste
 const SampledMusicTester = lazy(() => import('./components/SampledMusicTester').then(m => ({ default: m.SampledMusicTester })));
 const AudioEngineComparisonModal = lazy(() => import('./components/AudioEngineComparisonModal').then(m => ({ default: m.AudioEngineComparisonModal })));
 const ActivityRatingModal = lazy(() => import('./components/ActivityRatingModal').then(m => ({ default: m.ActivityRatingModal })));
+const NesmatCipherModal = lazy(() => import('./components/NesmatCipherModal').then(m => ({ default: m.NesmatCipherModal })));
 
 const VALID_TABS: Record<string, string> = {
   '': 'welcome',
@@ -419,6 +422,7 @@ export default function App() {
   });
 
   const [isGwayaHekayaOpen, setIsGwayaHekayaOpen] = useState(false);
+  const [isNesmatCipherOpen, setIsNesmatCipherOpen] = useState(false);
   const [isDiscoveryQuizOpen, setIsDiscoveryQuizOpen] = useState(false);
   const [isFekerModalOpen, setIsFekerModalOpen] = useState(false);
   const [isCompanionOpen, setIsCompanionOpen] = useState(false);
@@ -658,9 +662,11 @@ export default function App() {
   return (
     <div className={`min-h-screen flex flex-col font-cairo transition-colors duration-300 ${
       theme === 'dark' 
-        ? 'bg-[#0D1914] text-[#F7F3E9] selection:bg-[#A9C5A0] selection:text-[#0D1914]' 
-        : 'bg-[#F7F3E9] text-[#13251E] selection:bg-[#A9C5A0] selection:text-[#174C3C]'
+        ? 'bg-[#0D1914] text-[#F7F5EF] selection:bg-[#23785B] selection:text-[#FFFFFF]' 
+        : 'bg-[#F7F5EF] text-[#292F2B] selection:bg-[#E2EFE7] selection:text-[#174F3F]'
     }`}>
+      <OfflineBanner />
+      <PWAUpdatePrompt />
       
       {/* Top Navbar */}
       <Navbar
@@ -696,7 +702,7 @@ export default function App() {
               onNavigate={handleNavigate}
               onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
               onOpenContent={handleOpenContent}
-              onOpenAudioModal={handleOpenAudio}
+              onOpenAudioModal={({ title, category, durationMinutes }) => handleOpenAudio(title, category, durationMinutes || 5)}
               onOpenThoughtRelease={() => setIsThoughtReleaseOpen(true)}
               onOpenSoundscapeStudio={() => setIsSoundscapeOpen(true)}
               onOpenEmotionCompass={() => setIsEmotionCompassOpen(true)}
@@ -725,7 +731,7 @@ export default function App() {
               onOpenThoughtJournal={() => setIsThoughtJournalOpen(true)}
               onOpenMindfulnessStudio={() => setIsMindfulnessStudioOpen(true)}
               // Fun, Jokes & Mind Games
-              onOpenFunAndGames={(tab = 'jokes') => setFunAndGamesState({ isOpen: true, tab })}
+              onOpenFunAndGames={(tab = 'jokes') => setFunAndGamesState({ isOpen: true, tab: (tab as any) || 'jokes' })}
               // Gwaya Hekaya Interactive Game
               onOpenGwayaHekaya={() => setIsGwayaHekayaOpen(true)}
               // Feker App Integration
@@ -741,7 +747,7 @@ export default function App() {
               onOpenDailyMiracle={() => setIsDailyMiracleOpen(true)}
               onOpenOrigamiGarden={() => setIsOrigamiGardenOpen(true)}
               onOpenMusicLounge={() => setIsMusicLoungeOpen(true)}
-              onOpenEndlessPsychology={(cat) => setEndlessPsychologyState({ isOpen: true, category: cat })}
+              onOpenEndlessPsychology={(cat) => setEndlessPsychologyState({ isOpen: true, category: cat || 'all' })}
             />
           )}
 
@@ -788,6 +794,7 @@ export default function App() {
               onOpenInnerLabyrinth={() => setIsInnerLabyrinthOpen(true)}
               onOpenDigitalRelease={() => setIsDigitalReleaseOpen(true)}
               onOpenRelationalEnergy={() => setIsRelationalEnergyOpen(true)}
+              onOpenNesmatCipher={() => setIsNesmatCipherOpen(true)}
             />
           )}
 
@@ -1410,6 +1417,14 @@ export default function App() {
             onNavigate={handleNavigate}
             onOpenModal={handleOpenModalByName}
             onOpenAudio={handleOpenAudio}
+          />
+        )}
+
+        {/* 🧩 Nesmat Cipher Game Modal */}
+        {isNesmatCipherOpen && (
+          <NesmatCipherModal
+            isOpen={isNesmatCipherOpen}
+            onClose={() => setIsNesmatCipherOpen(false)}
           />
         )}
 

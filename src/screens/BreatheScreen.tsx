@@ -23,6 +23,7 @@ import { ambientSound, SoundChannelId } from '../utils/audioSynth';
 import { storage } from '../services/storage';
 
 import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+import { useLanguage } from '../context/LanguageContext';
 
 interface BreatheScreenProps {
   onSessionFinished?: () => void;
@@ -37,6 +38,7 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = ({
   onNavigate,
   onOpenAllScreens
 }) => {
+  const { t, language, isRTL } = useLanguage();
   const sessions = INITIAL_BREATHING_SESSIONS;
   const [selectedSession, setSelectedSession] = useState<BreathingSession>(sessions[0]);
   const [isActive, setIsActive] = useState(false);
@@ -201,11 +203,12 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = ({
 
   // Phase color theme config
   const getPhaseTheme = () => {
+    const isEn = language === 'en';
     switch (currentInstruction.phase) {
       case 'inhale':
         return {
-          title: 'شهيق ... امتداد وتوسع',
-          subtitle: 'املأ رئتيك بهدوء ولطف',
+          title: isEn ? 'Inhale ... Expansion & Fill' : 'شهيق ... امتداد وتوسع',
+          subtitle: isEn ? 'Fill your lungs gently & softly' : 'املأ رئتيك بهدوء ولطف',
           ringColor: '#10B981',
           bgGradient: 'from-emerald-500/30 via-teal-500/20 to-emerald-700/25',
           glowColor: 'rgba(16, 185, 129, 0.45)',
@@ -214,8 +217,8 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = ({
         };
       case 'hold':
         return {
-          title: 'حبس النفس ... ثبات وسكون',
-          subtitle: 'احتفظ بالهواء واستشعر الهدوء',
+          title: isEn ? 'Hold ... Stillness & Calm' : 'حبس النفس ... ثبات وسكون',
+          subtitle: isEn ? 'Retain air and feel serenity' : 'احتفظ بالهواء واستشعر الهدوء',
           ringColor: '#F59E0B',
           bgGradient: 'from-amber-500/30 via-yellow-500/20 to-amber-700/25',
           glowColor: 'rgba(245, 158, 11, 0.45)',
@@ -224,8 +227,8 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = ({
         };
       case 'exhale':
         return {
-          title: 'زفير ... تحرر وتفريغ',
-          subtitle: 'أخرج كل التوتر والأثقال ببطء',
+          title: isEn ? 'Exhale ... Release & Let Go' : 'زفير ... تحرر وتفريغ',
+          subtitle: isEn ? 'Release all tension and burden slowly' : 'أخرج كل التوتر والأثقال ببطء',
           ringColor: '#06B6D4',
           bgGradient: 'from-sky-500/30 via-teal-500/20 to-cyan-700/25',
           glowColor: 'rgba(6, 182, 212, 0.45)',
@@ -235,8 +238,8 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = ({
       case 'rest':
       default:
         return {
-          title: 'راحة ... استرخاء وسكينة',
-          subtitle: 'استرخِ تماماً واستعد للدورة القادمة',
+          title: isEn ? 'Rest ... Soft Recovery' : 'راحة ... استرخاء وسكينة',
+          subtitle: isEn ? 'Relax completely for the next cycle' : 'استرخِ تماماً واستعد للدورة القادمة',
           ringColor: '#A9C5A0',
           bgGradient: 'from-[#A9C5A0]/30 via-[#174C3C]/20 to-[#A9C5A0]/25',
           glowColor: 'rgba(169, 197, 160, 0.35)',
@@ -249,7 +252,12 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = ({
   const phaseTheme = getPhaseTheme();
 
   return (
-    <div className="pb-28 pt-4 px-4 sm:px-6 max-w-2xl mx-auto space-y-6">
+    <div 
+      className={`pb-28 pt-4 px-4 sm:px-6 max-w-2xl mx-auto space-y-6 ${
+        isRTL ? 'text-right' : 'text-left'
+      }`}
+      dir={isRTL ? 'rtl' : 'ltr'}
+    >
       
       {onNavigate && (
         <ScreenBannerHeader 
@@ -260,16 +268,22 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = ({
       )}
 
       {/* Header */}
-      <div className="space-y-1 text-right">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#174C3C]/10 border border-[#174C3C]/20 rounded-full text-xs font-bold text-[#174C3C]">
+      <div className="space-y-1">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#174C3C]/10 border border-[#174C3C]/20 rounded-full text-xs font-bold text-[#174F3F]">
           <Wind className="w-3.5 h-3.5" />
-          <span>تمرين التنفس البصري المهدئ للعصب الحائر</span>
+          <span>
+            {language === 'en' 
+              ? 'Vagus Nerve Soothing Breathwork' 
+              : 'تمرين التنفس البصري المهدئ للعصب الحائر'}
+          </span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#26332D]">
-          خد نفس ... 🍃
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#174F3F]">
+          {language === 'en' ? 'Take a Breath ... 🍃' : 'خد نفس ... 🍃'}
         </h1>
-        <p className="text-base font-bold text-[#174C3C]">
-          مش لازم تحل كل حاجة دلوقتي؛ تنفس وسيب عقلك يرتاح.
+        <p className="text-base font-bold text-[#23785B]">
+          {language === 'en' 
+            ? 'You do not have to solve everything right now; breathe and let your mind rest.' 
+            : 'مش لازم تحل كل حاجة دلوقتي؛ تنفس وسيب عقلك يرتاح.'}
         </p>
       </div>
 
@@ -379,24 +393,28 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = ({
               {/* Phase Badge & Emoji */}
               <span className={`text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full border mb-0.5 flex items-center gap-1 ${phaseTheme.badgeBg}`}>
                 <span>{phaseTheme.icon}</span>
-                <span>{isActive ? currentInstruction.label : 'جاهز للبدء'}</span>
+                <span>{isActive ? currentInstruction.label : (language === 'en' ? 'Ready to Start' : 'جاهز للبدء')}</span>
               </span>
 
               {/* Countdown Numbers for current phase */}
               <span className="font-mono text-3xl sm:text-4xl font-black text-[#26332D] leading-none my-0.5 tracking-tight">
-                {isActive ? phaseSecondsLeft : 'ابدأ'}
+                {isActive ? phaseSecondsLeft : (language === 'en' ? 'Start' : 'ابدأ')}
               </span>
 
               {/* Subtitle guidance */}
               <span className="text-[9px] sm:text-[10px] text-[#52645B] font-medium leading-tight line-clamp-1 max-w-[125px]">
-                {isActive ? phaseTheme.subtitle : 'اضغط زر التشغيل'}
+                {isActive ? phaseTheme.subtitle : (language === 'en' ? 'Tap play below' : 'اضغط زر التشغيل')}
               </span>
 
               {/* ⏱️ Subtle Session Remaining Timer & Progress Bar inside the breathing circle */}
               <div className="mt-1 pt-1 border-t border-[#E6E8D8]/90 flex flex-col items-center gap-0.5 w-24 sm:w-28">
                 <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-mono text-[#52645B] leading-none">
                   <Clock className="w-2.5 h-2.5 text-[#7D8F85] shrink-0" />
-                  <span className="text-[8.5px] text-[#7D8F85]">{isActive ? 'متبقي:' : 'المدة:'}</span>
+                  <span className="text-[8.5px] text-[#7D8F85]">
+                    {isActive 
+                      ? (language === 'en' ? 'Left:' : 'متبقي:') 
+                      : (language === 'en' ? 'Total:' : 'المدة:')}
+                  </span>
                   <span className="font-bold text-[#174C3C]">
                     {formatTimer(isActive ? sessionSecondsRemaining : totalSessionSeconds)}
                   </span>

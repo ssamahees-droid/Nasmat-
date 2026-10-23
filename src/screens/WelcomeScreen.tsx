@@ -1,21 +1,32 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ * 
+ * WelcomeScreen Component
+ * Mobile-First, high contrast, large legible typography, and the 10-slice Rotary Wheel system.
+ * Full Bilingual (Arabic & English) i18n support with reactive RTL/LTR alignment.
+ */
+
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   RotateCw, 
   Sparkles, 
   Volume2, 
   VolumeX, 
   ArrowLeft, 
+  ArrowRight,
   ChevronRight, 
   ChevronLeft, 
   Info, 
   X, 
-  Leaf, 
   ShieldCheck, 
   Heart,
-  Compass
+  Check
 } from 'lucide-react';
-import { TEN_SCREENS, TenScreenItem } from '../constants/tenScreens';
+import { useTenScreens, TenScreenItem } from '../constants/tenScreens';
 import { chimeService } from '../services/chimeService';
+import { useLanguage } from '../context/LanguageContext';
+import { LanguageToggle } from '../components/LanguageToggle';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -24,32 +35,34 @@ interface WelcomeScreenProps {
   onNavigate?: (tab: string) => void;
 }
 
-// Mood triggers that rotate the wheel to a tailored destination
-const MOOD_SHORTCUTS = [
-  { label: 'متوتر وعاوز أهدى', emoji: '🌊', targetId: 'breathe' },
-  { label: 'أفكاري زحمة ومخنوق', emoji: '🎈', targetId: 'games' },
-  { label: 'عاوز أفهم نفسي', emoji: '🪞', targetId: 'self-discovery' },
-  { label: 'محتاج بداية هادية', emoji: '🧭', targetId: 'start' },
-  { label: 'في لحظة طارئة وصعبة', emoji: '🛡️', targetId: 'rescue' },
-];
-
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ 
   onStart, 
-  onSkip, 
   onNavigate 
 }) => {
-  const [selectedIndex, setSelectedIndex] = useState(0); // 0 corresponds to HomeScreen (١)
+  const { t, language, isRTL } = useLanguage();
+  const screens = useTenScreens();
+
+  const [selectedIndex, setSelectedIndex] = useState(0); // 0 corresponds to HomeScreen (١ / 1)
   const [rotationAngle, setRotationAngle] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [isMuted, setIsMuted] = useState(() => chimeService.isMuted());
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [needleBumping, setNeedleBumping] = useState(false);
 
-  const numSlices = TEN_SCREENS.length; // 10 screens
+  const numSlices = screens.length; // 10 screens
   const sliceAngle = 360 / numSlices; // 36 degrees per slice
   const tickTimersRef = useRef<NodeJS.Timeout[]>([]);
 
-  const activeScreen: TenScreenItem = TEN_SCREENS[selectedIndex] || TEN_SCREENS[0];
+  const activeScreen: TenScreenItem = screens[selectedIndex] || screens[0];
+
+  // Mood shortcuts with dynamic translations
+  const moodShortcuts = [
+    { label: t('welcome.mood.tense', 'متوتر وعاوز أهدى'), emoji: '🌊', targetId: 'breathe' },
+    { label: t('welcome.mood.overwhelmed', 'أفكاري زحمة ومخنوق'), emoji: '🎈', targetId: 'games' },
+    { label: t('welcome.mood.self', 'عاوز أفهم نفسي'), emoji: '🪞', targetId: 'self-discovery' },
+    { label: t('welcome.mood.gentle', 'محتاج بداية هادية'), emoji: '🧭', targetId: 'start' },
+    { label: t('welcome.mood.emergency', 'في لحظة طارئة وصعبة'), emoji: '🛡️', targetId: 'rescue' },
+  ];
 
   useEffect(() => {
     return () => {
@@ -78,22 +91,16 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     if (isSpinning) return;
     setIsSpinning(true);
 
-    // Calculate target angle so pointer at top (270 deg or 0 deg offset) points to target slice
-    // Pointer is located at top (0 degrees).
-    // Target slice center needs to align with 0 deg.
     const targetSliceCenter = targetIndex * sliceAngle;
     const currentNormalized = ((rotationAngle % 360) + 360) % 360;
     
-    // We want: (targetAngle + targetSliceCenter) % 360 === 0
-    // => targetAngle = 360 - targetSliceCenter
     const desiredNormalized = (360 - targetSliceCenter) % 360;
     let delta = desiredNormalized - currentNormalized;
     if (delta <= 0) delta += 360;
 
     const totalRotation = rotationAngle + delta + (extraSpins * 360);
-    const spinDuration = 3200; // ms
+    const spinDuration = 3000; // ms
 
-    // Schedule audio ticks as wheel passes slices
     tickTimersRef.current.forEach(clearTimeout);
     tickTimersRef.current = [];
 
@@ -124,7 +131,6 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   // Random spin
   const handleRandomSpin = () => {
     if (isSpinning) return;
-    // Pick a random target index different from current
     let nextIndex = Math.floor(Math.random() * numSlices);
     if (nextIndex === selectedIndex) {
       nextIndex = (nextIndex + 1) % numSlices;
@@ -141,18 +147,18 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     rotateToIndex(nextIdx, 1);
   };
 
-  // Color palettes for the 10 slices
+  // Rich slice colors
   const sliceColors = [
-    { fill: '#10B981', darkFill: '#0D4B37', text: '#FFFFFF', num: '١' }, // 1 Home
-    { fill: '#14B8A6', darkFill: '#0C443E', text: '#FFFFFF', num: '٢' }, // 2 Start
-    { fill: '#0EA5E9', darkFill: '#093E58', text: '#FFFFFF', num: '٣' }, // 3 Breathe
-    { fill: '#8B5CF6', darkFill: '#381E6D', text: '#FFFFFF', num: '٤' }, // 4 Self Discovery
-    { fill: '#6366F1', darkFill: '#22285E', text: '#FFFFFF', num: '٥' }, // 5 Explore
-    { fill: '#EC4899', darkFill: '#5E1B3E', text: '#FFFFFF', num: '٦' }, // 6 Games
-    { fill: '#F59E0B', darkFill: '#5C3806', text: '#FFFFFF', num: '٧' }, // 7 Practice
-    { fill: '#10B981', darkFill: '#0E4432', text: '#FFFFFF', num: '٨' }, // 8 Journey
-    { fill: '#F43F5E', darkFill: '#5C1422', text: '#FFFFFF', num: '٩' }, // 9 Rescue
-    { fill: '#0D9488', darkFill: '#0A3B37', text: '#FFFFFF', num: '١٠' } // 10 Support
+    { fill: '#1B6A52' }, // 1 Home
+    { fill: '#0E7A6E' }, // 2 Start
+    { fill: '#0284C7' }, // 3 Breathe
+    { fill: '#7C3AED' }, // 4 Self Discovery
+    { fill: '#4F46E5' }, // 5 Explore
+    { fill: '#DB2777' }, // 6 Games
+    { fill: '#D97706' }, // 7 Practice
+    { fill: '#15803D' }, // 8 Journey
+    { fill: '#E11D48' }, // 9 Rescue
+    { fill: '#0F766E' }  // 10 Support
   ];
 
   // SVG parameters for rotary wheel
@@ -176,72 +182,86 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
     return `M ${center} ${center} L ${x1} ${y1} A ${wheelRadius} ${wheelRadius} 0 0 1 ${x2} ${y2} Z`;
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-[#09120D] via-[#0E1A14] to-[#070D0A] text-[#EDE8DF] flex flex-col justify-between p-3 sm:p-6 font-tajawal antialiased text-right selection:bg-emerald-500 selection:text-black relative overflow-x-hidden">
-      
-      {/* Ambient background aura (subtle, tranquil, optimized) */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[500px] h-[340px] sm:h-[500px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+  const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
 
+  return (
+    <div 
+      className={`min-h-screen bg-[#F7F5EF] text-[#292F2B] flex flex-col justify-between p-4 sm:p-7 font-tajawal antialiased relative overflow-x-hidden selection:bg-[#E2EFE7] selection:text-[#174F3F] ${
+        isRTL ? 'text-right' : 'text-left'
+      }`}
+      dir={isRTL ? 'rtl' : 'ltr'}
+    >
+      
       {/* Top Header Bar */}
-      <header className="max-w-xl mx-auto w-full flex items-center justify-between pt-1 pb-3 text-xs z-10">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 p-1 flex items-center justify-center">
-            <img src="/logo.jpg" alt="شعار نسمة حياة" className="w-full h-full object-cover rounded-lg" />
+      <header className="max-w-xl mx-auto w-full flex items-center justify-between pb-4 border-b border-[#D5DED7] z-10 gap-2">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-2xl bg-[#E2EFE7] border border-[#23785B]/30 p-1 flex items-center justify-center shrink-0">
+            <img src="/logo.jpg" alt="Logo" className="w-full h-full object-cover rounded-xl" />
           </div>
           <div>
-            <h1 className="font-extrabold text-white text-sm tracking-tight leading-tight">نسمة حياة</h1>
-            <p className="text-[10px] text-emerald-300/80 font-medium">مبادرة الاسترخاء والدعم النفسي</p>
+            <h1 className="font-bold text-[#174F3F] text-[20px] sm:text-[22px] leading-tight">
+              {t('brand.title', 'نسمة حياة')}
+            </h1>
+            <p className="text-[15px] text-[#515B55] font-medium">
+              {t('brand.subtitle', 'مبادرة الاسترخاء والدعم النفسي')}
+            </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Language Toggle in Header */}
+          <LanguageToggle />
+
           <button
             onClick={toggleSound}
-            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10 transition-colors cursor-pointer"
-            title={isMuted ? 'تشغيل المؤثرات الصوتية الهادئة' : 'كتم الصوت'}
+            className="min-h-[48px] min-w-[48px] p-2.5 rounded-2xl bg-[#FFFFFF] hover:bg-[#E2EFE7] text-[#174F3F] border border-[#D5DED7] transition-colors cursor-pointer flex items-center justify-center shadow-xs"
+            title={isMuted ? t('welcome.sound_toggle_on', 'تشغيل المؤثرات الصوتية الهادئة') : t('welcome.sound_toggle_off', 'كتم الصوت')}
+            aria-label="Toggle Sound"
           >
-            {isMuted ? <VolumeX className="w-4 h-4 text-stone-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+            {isMuted ? <VolumeX className="w-5 h-5 text-[#515B55]" /> : <Volume2 className="w-5 h-5 text-[#23785B]" />}
           </button>
 
           <button
             onClick={() => setShowAboutModal(true)}
-            className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10 transition-colors flex items-center gap-1.5 cursor-pointer text-xs"
+            className="min-h-[48px] px-3.5 py-2 rounded-2xl bg-[#FFFFFF] hover:bg-[#E2EFE7] text-[#174F3F] border border-[#D5DED7] transition-colors flex items-center gap-1.5 cursor-pointer text-[16px] font-bold shadow-xs"
           >
-            <Info className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="hidden xs:inline">عن المبادرة</span>
+            <Info className="w-4 h-4 text-[#23785B]" />
+            <span className="hidden xs:inline">{t('welcome.about_initiative', 'عن المبادرة')}</span>
           </button>
 
           <button
             onClick={() => handleNavigateToScreen('home')}
-            className="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold transition-all cursor-pointer text-xs flex items-center gap-1"
+            className="min-h-[48px] px-4 py-2 rounded-2xl bg-[#174F3F] hover:bg-[#23785B] text-white font-bold transition-all cursor-pointer text-[17px] flex items-center gap-1.5 shadow-sm active:scale-95"
           >
-            <span>تخطي للرئيسية</span>
-            <ArrowLeft className="w-3 h-3" />
+            <span>{t('welcome.skip_to_home', 'تخطي للرئيسية')}</span>
+            <ArrowIcon className="w-4 h-4" />
           </button>
         </div>
       </header>
 
       {/* Main Rotary Centerpiece */}
-      <main className="max-w-xl mx-auto w-full my-auto flex flex-col items-center text-center space-y-4 py-2 z-10">
+      <main className="max-w-xl mx-auto w-full my-auto flex flex-col items-center text-center space-y-5 py-4 z-10">
         
-        {/* Poetic Greeting & Instructions */}
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
-            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-            <span>عجلة نسمة حياة الدوارة السحرية 🎡</span>
+        {/* Poetic Greeting & Instructions with High Contrast */}
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#E2EFE7] border border-[#23785B]/30 text-[#174F3F] text-[15px] font-bold">
+            <Sparkles className="w-4 h-4 text-[#B78327]" />
+            <span>{t('welcome.badge', 'عجلة نسمة حياة الدوارة السحرية 🎡')}</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white leading-tight">
-            أهلاً بك.. اختر واحتك المفضلة اليوم
+
+          <h2 className="text-[28px] sm:text-[34px] font-extrabold text-[#174F3F] leading-tight">
+            {t('welcome.heading', 'أهلاً بك.. اختر واحتك المفضلة اليوم')}
           </h2>
-          <p className="text-xs sm:text-sm text-stone-300 max-w-md mx-auto">
-            أدِر العجلة لاكتشاف محطتك المناسبة، أو اضغط على ما تشعر به ليقودك التطبيق لوجهتك:
+
+          <p className="text-[18px] text-[#515B55] leading-relaxed max-w-lg mx-auto font-medium">
+            {t('welcome.subheading', 'أدِر العجلة لاكتشاف محطتك المناسبة، أو اضغط على ما تشعر به ليقودك التطبيق لوجهتك:')}
           </p>
         </div>
 
-        {/* Quick Mood Direction Chips */}
-        <div className="flex flex-wrap items-center justify-center gap-1.5 max-w-lg mx-auto px-1">
-          {MOOD_SHORTCUTS.map((mood) => {
-            const targetIndex = TEN_SCREENS.findIndex(s => s.id === mood.targetId);
+        {/* Quick Mood Direction Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-2 max-w-lg mx-auto px-1">
+          {moodShortcuts.map((mood) => {
+            const targetIndex = screens.findIndex(s => s.id === mood.targetId);
             return (
               <button
                 key={mood.targetId}
@@ -251,9 +271,9 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                   }
                 }}
                 disabled={isSpinning}
-                className="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-emerald-500/20 border border-white/10 hover:border-emerald-400/40 text-stone-200 hover:text-emerald-200 text-xs font-bold transition-all cursor-pointer active:scale-95 disabled:opacity-50 flex items-center gap-1"
+                className="min-h-[48px] px-4 py-2.5 rounded-2xl bg-[#FFFFFF] hover:bg-[#E2EFE7] border-2 border-[#D5DED7] text-[#292F2B] hover:text-[#174F3F] text-[16px] font-bold transition-all cursor-pointer active:scale-95 disabled:opacity-50 flex items-center gap-2 shadow-xs"
               >
-                <span>{mood.emoji}</span>
+                <span className="text-[20px]">{mood.emoji}</span>
                 <span>{mood.label}</span>
               </button>
             );
@@ -261,51 +281,42 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         </div>
 
         {/* Rotary Wheel Area */}
-        <div className="relative flex flex-col items-center justify-center my-2">
+        <div className="relative flex flex-col items-center justify-center my-3">
           
           {/* Top Pointer Needle with tactile bump */}
           <div className="absolute -top-3 z-30 flex flex-col items-center pointer-events-none">
-            <div className={`w-0 h-0 border-l-[11px] border-l-transparent border-r-[11px] border-r-transparent border-t-[20px] border-t-amber-400 drop-shadow-[0_4px_8px_rgba(251,191,36,0.5)] transition-transform duration-75 ${needleBumping ? '-rotate-12 scale-110' : 'rotate-0'}`} />
-            <div className="w-2.5 h-2.5 rounded-full bg-amber-300 ring-2 ring-amber-500 shadow-sm -mt-1" />
+            <div className={`w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-t-[24px] border-t-[#B78327] drop-shadow-md transition-transform duration-75 ${needleBumping ? '-rotate-12 scale-110' : 'rotate-0'}`} />
+            <div className="w-3.5 h-3.5 rounded-full bg-[#B78327] ring-2 ring-white shadow-sm -mt-1.5" />
           </div>
 
           {/* SVG Rotating Wheel */}
-          <div className="relative p-2 rounded-full border-4 border-emerald-500/30 bg-[#0B1510] shadow-[0_0_40px_rgba(16,185,129,0.15)]">
+          <div className="relative p-2 rounded-full border-4 border-[#174F3F]/30 bg-[#FFFFFF] shadow-xl">
             <svg
               width={viewBoxSize}
               height={viewBoxSize}
               viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
-              className="w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] max-w-full drop-shadow-xl"
+              className="w-[290px] h-[290px] sm:w-[330px] sm:h-[330px] max-w-full drop-shadow-md"
               style={{
                 transform: `rotate(${rotationAngle}deg)`,
                 transition: isSpinning 
-                  ? 'transform 3.2s cubic-bezier(0.18, 0.89, 0.32, 1.05)' 
+                  ? 'transform 3.0s cubic-bezier(0.18, 0.89, 0.32, 1.05)' 
                   : 'transform 0.4s ease-out'
               }}
             >
-              <defs>
-                <radialGradient id="hubGradient" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#1B342A" />
-                  <stop offset="100%" stopColor="#0B1712" />
-                </radialGradient>
-              </defs>
-
-              {/* Outer Golden/Emerald Rim */}
+              {/* Outer Border Rim */}
               <circle
                 cx={center}
                 cy={center}
                 r={wheelRadius + 4}
                 fill="none"
-                stroke="#10B981"
+                stroke="#174F3F"
                 strokeWidth="4"
-                strokeOpacity="0.4"
-                strokeDasharray="4 6"
+                strokeOpacity="0.8"
               />
 
-              {/* 10 Slices */}
-              {TEN_SCREENS.map((screen, index) => {
+              {/* 10 Slices with Rich Palette */}
+              {screens.map((screen, index) => {
                 const color = sliceColors[index] || sliceColors[0];
-                const isSelected = selectedIndex === index;
 
                 // Angle to position slice text / icon
                 const midAngleDeg = index * sliceAngle - 90;
@@ -322,12 +333,12 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                   >
                     <path
                       d={generateSlicePath(index)}
-                      fill={color.darkFill}
-                      stroke="#142B21"
-                      strokeWidth="2"
+                      fill={color.fill}
+                      stroke="#FFFFFF"
+                      strokeWidth="2.5"
                     />
 
-                    {/* Arabic Number & Screen Emoji inside slice */}
+                    {/* Number & Screen Emoji inside slice with drop shadow */}
                     <g transform={`translate(${tx}, ${ty}) rotate(${midAngleDeg + 90})`}>
                       <text
                         x="0"
@@ -335,21 +346,21 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                         textAnchor="middle"
                         dominantBaseline="central"
                         fill="#FFFFFF"
-                        fontSize="14"
+                        fontSize="17"
                         fontWeight="bold"
-                        className="font-tajawal pointer-events-none select-none"
+                        className="pointer-events-none select-none drop-shadow-sm"
                       >
                         {screen.emoji}
                       </text>
                       <text
                         x="0"
-                        y="12"
+                        y="14"
                         textAnchor="middle"
                         dominantBaseline="central"
-                        fill="#A9C5A0"
-                        fontSize="10"
-                        fontWeight="800"
-                        className="font-tajawal pointer-events-none select-none"
+                        fill="#FFFFFF"
+                        fontSize="13"
+                        fontWeight="900"
+                        className="pointer-events-none select-none font-bold"
                       >
                         {screen.numberArabic}
                       </text>
@@ -358,15 +369,14 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 );
               })}
 
-              {/* Center Decorative Disc */}
+              {/* Center Decorative Border */}
               <circle
                 cx={center}
                 cy={center}
-                r="46"
-                fill="url(#hubGradient)"
-                stroke="#10B981"
-                strokeWidth="3"
-                className="drop-shadow-md"
+                r="48"
+                fill="#174F3F"
+                stroke="#FFFFFF"
+                strokeWidth="4"
               />
             </svg>
 
@@ -374,106 +384,104 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             <button
               onClick={handleRandomSpin}
               disabled={isSpinning}
-              className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-700 hover:from-emerald-400 hover:to-teal-600 text-stone-950 font-black text-xs flex flex-col items-center justify-center gap-1 shadow-2xl border-2 border-white/40 cursor-pointer active:scale-95 transition-all z-20 disabled:opacity-80"
-              title="اضغط لتدوير العجلة"
+              className="absolute inset-0 m-auto w-24 h-24 rounded-full bg-[#174F3F] hover:bg-[#23785B] text-white font-extrabold text-[16px] flex flex-col items-center justify-center gap-1 shadow-2xl border-3 border-white cursor-pointer active:scale-95 transition-all z-20 disabled:opacity-80"
+              title={t('welcome.spin_button', 'اضغط لتدوير العجلة')}
             >
-              <RotateCw className={`w-5 h-5 ${isSpinning ? 'animate-spin' : ''}`} />
-              <span className="text-[11px] leading-tight font-tajawal">
-                {isSpinning ? 'تدور...' : 'دوّر العجلة'}
+              <RotateCw className={`w-6 h-6 text-white ${isSpinning ? 'animate-spin' : ''}`} />
+              <span className="leading-tight text-white drop-shadow-xs">
+                {isSpinning ? t('welcome.spinning', 'تدور...') : t('welcome.spin_button', 'دوّر العجلة')}
               </span>
             </button>
           </div>
 
           {/* Stepper buttons (prev / next) */}
-          <div className="flex items-center justify-between w-full max-w-[310px] mt-2 px-2 text-xs">
+          <div className="flex items-center justify-between w-full max-w-[340px] mt-3 px-1">
             <button
               onClick={() => handleStep('prev')}
               disabled={isSpinning}
-              className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10 flex items-center gap-1 cursor-pointer transition-colors active:scale-95 disabled:opacity-40"
+              className="min-h-[48px] px-4 py-2 rounded-2xl bg-[#FFFFFF] hover:bg-[#E2EFE7] text-[#174F3F] border border-[#D5DED7] flex items-center gap-1.5 cursor-pointer text-[16px] font-bold transition-colors active:scale-95 disabled:opacity-40 shadow-xs"
             >
-              <ChevronRight className="w-3.5 h-3.5" />
-              <span>الواحة السابقة</span>
+              <ChevronRight className="w-4 h-4 text-[#23785B]" />
+              <span>{t('welcome.prev_oasis', 'الواحة السابقة')}</span>
             </button>
 
-            <span className="text-[11px] text-emerald-400 font-bold">
-              {activeScreen.numberArabic} من ١٠
+            <span className="text-[18px] text-[#174F3F] font-bold font-mono px-2">
+              {activeScreen.numberArabic} {t('welcome.of_ten', 'من ١٠')}
             </span>
 
             <button
               onClick={() => handleStep('next')}
               disabled={isSpinning}
-              className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10 flex items-center gap-1 cursor-pointer transition-colors active:scale-95 disabled:opacity-40"
+              className="min-h-[48px] px-4 py-2 rounded-2xl bg-[#FFFFFF] hover:bg-[#E2EFE7] text-[#174F3F] border border-[#D5DED7] flex items-center gap-1.5 cursor-pointer text-[16px] font-bold transition-colors active:scale-95 disabled:opacity-40 shadow-xs"
             >
-              <span>الواحة التالية</span>
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <span>{t('welcome.next_oasis', 'الواحة التالية')}</span>
+              <ChevronLeft className="w-4 h-4 text-[#23785B]" />
             </button>
           </div>
         </div>
 
-        {/* 
-          🌟 SINGLE ACTIVE PREVIEW CARD (Strictly One Card, NOT stacked screens underneath)
-          "ولا يكون تحتها كل الشاشات"
-        */}
+        {/* 🌟 SINGLE ACTIVE PREVIEW CARD */}
         <div className="w-full max-w-md mx-auto">
-          <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-[#12221A] to-[#0A140F] border-2 border-emerald-500/40 text-stone-100 shadow-2xl relative overflow-hidden transition-all duration-300 text-right space-y-3">
+          <div className={`p-5 sm:p-6 rounded-3xl bg-[#FFFFFF] border-2 border-[#D5DED7] text-[#292F2B] shadow-md transition-all duration-300 space-y-4 ${
+            isRTL ? 'text-right' : 'text-left'
+          }`}>
             
-            {/* Ambient accent strip */}
-            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-emerald-400 via-teal-400 to-amber-400" />
-
-            {/* Badge & Title */}
-            <div className="flex items-start justify-between gap-3 pt-1">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-2xl shadow-inner shrink-0">
+            {/* Top Indicator */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3.5">
+                <div className="w-13 h-13 rounded-2xl bg-[#E2EFE7] border border-[#23785B]/30 flex items-center justify-center text-3xl shadow-xs shrink-0">
                   {activeScreen.emoji}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                      الشاشة {activeScreen.numberArabic}
+                    <span className="px-3 py-1 rounded-xl text-[15px] font-bold bg-[#E2EFE7] text-[#174F3F] border border-[#D5DED7]">
+                      {language === 'en' ? `Screen ${activeScreen.numberArabic}` : `الشاشة ${activeScreen.numberArabic}`}
                     </span>
-                    <span className="text-[11px] text-stone-400">{activeScreen.badge}</span>
+                    <span className="text-[15px] font-bold text-[#515B55]">{activeScreen.badge}</span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-black text-white mt-0.5">
+                  
+                  <h3 className="text-[24px] sm:text-[26px] font-bold text-[#174F3F] mt-1.5 leading-snug">
                     {activeScreen.title}
                   </h3>
                 </div>
               </div>
             </div>
 
-            {/* Tagline / Psychological Benefit */}
-            <p className="text-xs text-stone-300 leading-relaxed font-medium">
+            {/* Tagline */}
+            <p className="text-[18px] text-[#292F2B] leading-relaxed font-medium">
               {activeScreen.tagline}
             </p>
 
             {/* Highlights */}
-            <div className="flex flex-wrap gap-1.5 pt-1">
+            <div className="flex flex-wrap gap-2 pt-1">
               {activeScreen.features.map((feat, idx) => (
                 <span 
                   key={idx}
-                  className="px-2.5 py-1 rounded-xl bg-white/5 border border-white/10 text-[11px] text-emerald-200/90 font-medium"
+                  className="px-3 py-1.5 rounded-xl bg-[#F7F5EF] border border-[#D5DED7] text-[16px] text-[#292F2B] font-medium flex items-center gap-1.5"
                 >
-                  ✓ {feat}
+                  <Check className="w-4 h-4 text-[#23785B] shrink-0" />
+                  <span>{feat}</span>
                 </span>
               ))}
             </div>
 
-            {/* Primary Action: Direct Entry into this exact selected screen */}
-            <div className="pt-2 flex flex-col sm:flex-row gap-2">
+            {/* Action Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
               <button
                 onClick={() => handleNavigateToScreen(activeScreen.id)}
-                className="flex-1 py-3 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-stone-950 font-black text-xs sm:text-sm rounded-2xl transition-all shadow-lg shadow-emerald-950/50 active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 min-h-[50px] py-3.5 px-5 bg-[#174F3F] hover:bg-[#23785B] text-white font-bold text-[18px] rounded-2xl transition-all shadow-md active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>ادخل {activeScreen.shortTitle} فقط الآن</span>
-                <ArrowLeft className="w-4 h-4" />
+                <span>{t('welcome.enter_screen_now', 'ادخل {screen} فقط الآن', { screen: activeScreen.shortTitle })}</span>
+                <ArrowIcon className="w-5 h-5" />
               </button>
 
               {activeScreen.id !== 'home' && (
                 <button
                   onClick={() => handleNavigateToScreen('home')}
-                  className="py-3 px-3 rounded-2xl bg-white/5 hover:bg-white/10 text-stone-300 border border-white/10 text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
+                  className="min-h-[50px] py-3.5 px-4 rounded-2xl bg-[#E2EFE7] hover:bg-[#d0e5d8] text-[#174F3F] border border-[#D5DED7] text-[17px] font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5 shrink-0"
                   title="الذهاب للرئيسية العامة"
                 >
-                  <span>🏠 الرئيسية (١)</span>
+                  <span>{t('welcome.enter_home_main', '🏠 الرئيسية (١)')}</span>
                 </button>
               )}
             </div>
@@ -484,62 +492,72 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
       </main>
 
       {/* Footer reassurance bar */}
-      <footer className="max-w-xl mx-auto w-full text-center pt-3 pb-1 text-[11px] text-stone-500 border-t border-white/10 z-10 flex items-center justify-between">
-        <div className="flex items-center gap-1.5 text-stone-400">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          <span>خصوصية وسرية تامة وبلا أحكام</span>
+      <footer className="max-w-xl mx-auto w-full text-center pt-4 pb-2 text-[15px] text-[#515B55] border-t border-[#D5DED7] z-10 flex items-center justify-between font-medium">
+        <div className="flex items-center gap-1.5 text-[#174F3F] font-bold">
+          <ShieldCheck className="w-4 h-4 text-[#23785B]" />
+          <span>{t('brand.confidentiality', 'خصوصية وسرية تامة وبلا أحكام')}</span>
         </div>
-        <span>مبادرة نسمة حياة 🌿</span>
+        <span>{t('brand.title', 'نسمة حياة')} 🌿</span>
       </footer>
 
       {/* About Modal */}
       {showAboutModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in text-right">
-          <div className="w-full max-w-lg bg-[#12221A] border border-emerald-500/40 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-stone-200">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className={`w-full max-w-lg bg-[#FFFFFF] border-2 border-[#D5DED7] rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto text-[#292F2B] ${
+            isRTL ? 'text-right' : 'text-left'
+          }`}>
+            <div className="flex items-center justify-between pb-3 border-b border-[#D5DED7]">
               <div className="flex items-center gap-2.5">
-                <Leaf className="w-5 h-5 text-emerald-400" />
-                <h3 className="font-bold text-lg text-white font-tajawal">عن مبادرة نسمة حياة</h3>
+                <Heart className="w-6 h-6 text-[#23785B]" />
+                <h3 className="font-bold text-[24px] text-[#174F3F]">{t('welcome.about_title', 'عن مبادرة نسمة حياة')}</h3>
               </div>
               <button 
                 onClick={() => setShowAboutModal(false)}
-                className="p-1.5 text-stone-400 hover:text-white rounded-full hover:bg-white/10 transition-colors cursor-pointer"
-                aria-label="إغلاق"
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 text-[#515B55] hover:text-[#174F3F] rounded-xl hover:bg-[#E2EFE7] transition-colors cursor-pointer"
+                aria-label="Close"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6" />
               </button>
             </div>
 
-            <div className="space-y-3.5 text-xs sm:text-sm text-stone-300 leading-relaxed">
+            <div className="space-y-4 text-[18px] text-[#292F2B] leading-relaxed font-medium">
               <p>
-                <strong>«نسمة حياة»</strong> مبادرة عربية تسعى لنشر الوعي الصحي النفسي وتقديم مساحة هادئة للاسترخاء والفهم الذاتي بعيداً عن التعقيد والوصمة المجتمعية.
+                {t('welcome.about_p1', '«نسمة حياة» مبادرة عربية تسعى لنشر الوعي الصحي النفسي وتقديم مساحة هادئة للاسترخاء والفهم الذاتي بعيداً عن التعقيد والوصمة المجتمعية.')}
               </p>
 
-              <div className="p-3 bg-white/5 rounded-2xl border border-emerald-500/20 space-y-1">
-                <strong className="text-emerald-300">نظام الواحات العشر المستقلة:</strong>
-                <p className="text-stone-300">
-                  تم تقسيم محتوى التطبيق إلى ١٠ شاشات مستقلة تماماً، بحيث يمكنك دخول أي شاشة بمفردها والاستمتاع بتجربتها بتركيز وراحة دون تشتت أو ازدحام.
+              <div className="p-4 bg-[#E2EFE7] rounded-2xl border border-[#D5DED7] space-y-1.5">
+                <strong className="text-[18px] text-[#174F3F] block">
+                  {t('welcome.about_ten_title', 'نظام الواحات العشر المستقلة:')}
+                </strong>
+                <p className="text-[17px] text-[#292F2B]">
+                  {t('welcome.about_ten_desc', 'تم تقسيم محتوى التطبيق إلى ١٠ شاشات مستقلة تماماً، بحيث يمكنك دخول أي شاشة بمفردها والاستمتاع بتجربتها بتركيز وراحة دون تشتت أو ازدحام.')}
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span><strong>أمان وخصوصية:</strong> بياناتك محفوظة محلياً على جهازك ولا نطلب أذونات كاميرا أو جهات اتصال.</span>
+              <div className="space-y-3 pt-1">
+                <div className="flex items-start gap-2.5">
+                  <ShieldCheck className="w-5 h-5 text-[#23785B] shrink-0 mt-1" />
+                  <span>
+                    <strong>{t('welcome.about_safety_title', 'أمان وخصوصية:')} </strong>
+                    {t('welcome.about_safety_desc', 'بياناتك محفوظة محلياً على جهازك ولا نطلب أذونات كاميرا أو جهات اتصال.')}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Heart className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span><strong>مساندة إنسانية:</strong> مساحة استماع حقيقية وأدلة استرشادية دون تنظير أو أحكام.</span>
+                <div className="flex items-start gap-2.5">
+                  <Heart className="w-5 h-5 text-[#23785B] shrink-0 mt-1" />
+                  <span>
+                    <strong>{t('welcome.about_support_title', 'مساندة إنسانية:')} </strong>
+                    {t('welcome.about_support_desc', 'مساحة استماع حقيقية وأدلة استرشادية دون تنظير أو أحكام.')}
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-white/10">
+            <div className="pt-3 border-t border-[#D5DED7]">
               <button
                 onClick={() => setShowAboutModal(false)}
-                className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-bold text-xs rounded-xl transition cursor-pointer"
+                className="w-full min-h-[48px] py-3 bg-[#174F3F] hover:bg-[#23785B] text-white font-bold text-[18px] rounded-2xl transition cursor-pointer"
               >
-                حسناً، فهمت
+                {t('common.understood', 'حسناً، فهمت')}
               </button>
             </div>
           </div>

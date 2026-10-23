@@ -89,15 +89,19 @@ const COMPANION_SYSTEM_PROMPT = `
 // Companion Chat API Route
 app.post('/api/companion/chat', async (req, res) => {
   try {
-    const { message, history, persona = 'adult', userName = '' } = req.body;
+    const { message, history, persona = 'adult', userName = '', language = 'ar' } = req.body;
 
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Message is required' });
     }
 
+    const isEnglish = language === 'en';
+
     if (!aiClient) {
       return res.status(503).json({
-        reply: 'أهلاً بك يا صديقي في «نسمة حياة». سعيد بوجودك هنا، تقدر تشاركني اللي حاسس بيه في أي وقت. (ملاحظة: خدمة المحادثة الذكية تحتاج ضبط مفتاح API في البيئة).',
+        reply: isEnglish 
+          ? 'Welcome, my friend, to Nesmat Al-Hayat. I am glad you are here; feel free to share what is on your mind anytime.'
+          : 'أهلاً بك يا صديقي في «نسمة حياة». سعيد بوجودك هنا، تقدر تشاركني اللي حاسس بيه في أي وقت.',
         expression: 'welcome',
         suggestedTools: ['breathe', 'soundscape']
       });
@@ -121,7 +125,10 @@ app.post('/api/companion/chat', async (req, res) => {
 
     const personaNote = PERSONA_SYSTEM_INSTRUCTIONS[persona] || PERSONA_SYSTEM_INSTRUCTIONS.adult;
 
-    const userGreeting = userName ? `اسم المستخدم: ${userName}.` : '';
+    const userGreeting = userName ? `User name: ${userName}.` : '';
+    const langInstruction = isEnglish 
+      ? `CRITICAL LANGUAGE DIRECTIVE: The user interface is in English. You MUST respond entirely in fluent, comforting, warm English without mixing Arabic words. Maintain your empathetic, therapeutic tone according to the chosen persona.` 
+      : `توجيه لغوي: أجب باللغة العربية الدافئة والميسرة والداعمة نفسياً دون تعقيد مصطلحات.`;
 
     const formattedHistory = Array.isArray(history)
       ? history.slice(-6).map((h: { role: string; text: string }) => ({
@@ -142,13 +149,17 @@ app.post('/api/companion/chat', async (req, res) => {
       model: 'gemini-3.1-flash-lite',
       contents,
       config: {
-        systemInstruction: `${COMPANION_SYSTEM_PROMPT}\n${personaNote}\n${userGreeting}`,
+        systemInstruction: `${COMPANION_SYSTEM_PROMPT}\n${personaNote}\n${userGreeting}\n${langInstruction}`,
         temperature: 0.7,
         maxOutputTokens: 500
       }
     });
 
-    const rawReply = response.text || 'أنا جنبك وسامعك، إيه اللي في بالك دلوقتي؟';
+    const defaultReply = isEnglish
+      ? 'I am right here with you, listening closely. What is on your mind right now?'
+      : 'أنا جنبك وسامعك، إيه اللي في بالك دلوقتي؟';
+
+    const rawReply = response.text || defaultReply;
 
     // Extract expression tag if present
     let expression: 'welcome' | 'listening' | 'thinking' | 'empathy' | 'encouraging' = 'listening';
@@ -174,8 +185,11 @@ app.post('/api/companion/chat', async (req, res) => {
   } catch (err: unknown) {
     const error = err as Error;
     console.error('Error in companion chat endpoint:', error);
+    const isEnglish = req.body?.language === 'en';
     res.status(500).json({
-      reply: 'أنا سامعك وحاسس بيك.. حصلت مشكلة تقنية بسيطة في الاتصال، بس أنا جنبك. تحب ناخد نفس سوا دلوقتي؟',
+      reply: isEnglish
+        ? 'I am right here with you. We experienced a minor temporary connection glitch, but I am by your side. Would you like to take a mindful breath together?'
+        : 'أنا سامعك وحاسس بيك.. حصلت مشكلة تقنية بسيطة في الاتصال، بس أنا جنبك. تحب ناخد نفس سوا دلوقتي؟',
       expression: 'empathy',
       suggestedTools: ['breathe']
     });
