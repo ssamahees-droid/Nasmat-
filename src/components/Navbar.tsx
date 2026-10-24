@@ -32,8 +32,11 @@ interface NavbarProps {
   onOpenNotifications: () => void;
   onOpenSafetyModal: () => void;
   onOpenCompanion?: () => void;
+  onOpenGardenWelcome?: () => void;
   theme?: 'dark' | 'light' | 'system';
   onToggleTheme?: () => void;
+  isMobilePerformanceMode?: boolean;
+  onToggleMobilePerformanceMode?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -45,8 +48,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenNotifications,
   onOpenSafetyModal,
   onOpenCompanion,
+  onOpenGardenWelcome,
   theme = 'dark',
-  onToggleTheme
+  onToggleTheme,
+  isMobilePerformanceMode = false,
+  onToggleMobilePerformanceMode
 }) => {
   const { language, toggleLanguage, t } = useLanguage();
   const [showRoleMenu, setShowRoleMenu] = useState(false);
@@ -285,6 +291,41 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <div className="pt-2 space-y-2.5">
+            {onOpenGardenWelcome && (
+              <button
+                onClick={() => {
+                  setShowMobileMenu(false);
+                  onOpenGardenWelcome();
+                }}
+                className="w-full p-3 rounded-xl text-[15px] font-bold text-right transition-all flex items-center justify-between border-2 border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950 text-emerald-900 dark:text-emerald-200 hover:border-emerald-600 cursor-pointer shadow-xs"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🌿</span>
+                  <span>رسالة الترحيب الوجدانية («حديقتك الجميلة»)</span>
+                </div>
+                <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              </button>
+            )}
+
+            {onToggleMobilePerformanceMode && (
+              <button
+                onClick={onToggleMobilePerformanceMode}
+                className={`w-full p-3 rounded-xl text-[15px] font-bold text-right transition-all flex items-center justify-between border-2 cursor-pointer ${
+                  isMobilePerformanceMode
+                    ? 'bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200 border-amber-400'
+                    : 'bg-[#F7F5EF] dark:bg-stone-800 text-[#292F2B] dark:text-stone-200 border-[#D5DED7] dark:border-stone-700'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">⚡</span>
+                  <span>وضع تسريع الموبايل (Speed Boost)</span>
+                </div>
+                <span className="text-xs px-2.5 py-1 rounded-full font-black bg-white dark:bg-stone-900 text-[#174F3F] dark:text-emerald-300 shadow-xs">
+                  {isMobilePerformanceMode ? 'مفعل ⚡' : 'تشغيل'}
+                </span>
+              </button>
+            )}
+
             {onOpenCompanion && (
               <button
                 onClick={() => {
@@ -299,7 +340,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
             <PWAInstallButton variant="full" />
             <div className="flex items-center justify-between pt-1">
-              <span className="text-[15px] font-bold text-[#515B55]">اللغة / Language:</span>
+              <span className="text-[15px] font-bold text-[#515B55] dark:text-stone-300">اللغة / Language:</span>
               <LanguageToggle variant="pill" />
             </div>
           </div>

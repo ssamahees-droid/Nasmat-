@@ -96,6 +96,7 @@ const SampledMusicTester = lazy(() => import('./components/SampledMusicTester').
 const AudioEngineComparisonModal = lazy(() => import('./components/AudioEngineComparisonModal').then(m => ({ default: m.AudioEngineComparisonModal })));
 const ActivityRatingModal = lazy(() => import('./components/ActivityRatingModal').then(m => ({ default: m.ActivityRatingModal })));
 const NesmatCipherModal = lazy(() => import('./components/NesmatCipherModal').then(m => ({ default: m.NesmatCipherModal })));
+const GardenWelcomeModal = lazy(() => import('./components/GardenWelcomeModal').then(m => ({ default: m.GardenWelcomeModal })));
 
 const VALID_TABS: Record<string, string> = {
   '': 'welcome',
@@ -344,6 +345,10 @@ export default function App() {
   }, []);
 
   // Universal and Creative Modals state
+  const [isGardenWelcomeOpen, setIsGardenWelcomeOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return !localStorage.getItem('nesma_welcome_seen');
+  });
   const [isSafetyModalOpen, setIsSafetyModalOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isThoughtReleaseOpen, setIsThoughtReleaseOpen] = useState(false);
@@ -682,8 +687,11 @@ export default function App() {
         onOpenNotifications={() => setIsNotificationsOpen(true)}
         onOpenSafetyModal={() => setIsEmergencyHelpOpen(true)}
         onOpenCompanion={() => setIsCompanionOpen(true)}
+        onOpenGardenWelcome={() => setIsGardenWelcomeOpen(true)}
         theme={theme}
         onToggleTheme={handleToggleTheme}
+        isMobilePerformanceMode={isMobilePerformanceMode}
+        onToggleMobilePerformanceMode={handleToggleMobilePerformanceMode}
       />
 
       {/* Main View Router */}
@@ -908,6 +916,7 @@ export default function App() {
               onNavigate={handleNavigate}
               onOpenContent={handleOpenContent}
               onRestartOnboarding={handleRestartOnboarding}
+              onOpenGardenWelcome={() => setIsGardenWelcomeOpen(true)}
               theme={theme}
               setTheme={setTheme}
               fontSize={fontSize}
@@ -1440,6 +1449,16 @@ export default function App() {
             currentTab={currentTab}
             onNavigate={handleNavigate}
             theme={theme}
+          />
+        )}
+
+        {/* 🌿 Garden Welcome Opening Modal («حديقتك الجميلة») */}
+        {isGardenWelcomeOpen && (
+          <GardenWelcomeModal
+            isOpen={isGardenWelcomeOpen}
+            onStart={() => setIsGardenWelcomeOpen(false)}
+            onSkip={() => setIsGardenWelcomeOpen(false)}
+            onClose={() => setIsGardenWelcomeOpen(false)}
           />
         )}
       </Suspense>

@@ -151,6 +151,19 @@ class StorageService {
   private habitListeners: ((habit: WellnessHabit, operation: 'upsert' | 'delete') => void)[] = [];
   private assessmentListeners: ((assessment: AssessmentRecord, operation: 'upsert' | 'delete') => void)[] = [];
 
+  constructor() {
+    // Run automatic cleanup of old data (older than 90 days) on app start
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        try {
+          this.autoCleanupOldData(90);
+        } catch (err) {
+          console.warn('Auto cleanup initialization warning:', err);
+        }
+      }, 2000);
+    }
+  }
+
   onFavoriteChanged(listener: (contentId: string, isFavorited: boolean) => void): () => void {
     this.favoriteListeners.push(listener);
     return () => {
@@ -1266,6 +1279,173 @@ class StorageService {
     } catch {
       return [];
     }
+  }
+
+  // --- Auto Cleanup for Performance & LocalStorage Quota Management ---
+  /**
+   * Automatic Cleanup Function for Old & Non-Essential Data (Threshold: 90 Days by default)
+   * Prevents LocalStorage quota exhaustion, cleans up stale logs, and accelerates mobile performance.
+   */
+  autoCleanupOldData(daysThreshold: number = 90): { cleanedKeysCount: number; removedItemsCount: number } {
+    if (typeof localStorage === 'undefined') {
+      return { cleanedKeysCount: 0, removedItemsCount: 0 };
+    }
+
+    const now = Date.now();
+    const thresholdMs = daysThreshold * 24 * 60 * 60 * 1000;
+    const cutoffTimestamp = now - thresholdMs;
+
+    let removedItemsCount = 0;
+    let cleanedKeysCount = 0;
+
+    const isOlderThanCutoff = (dateStr?: string | number): boolean => {
+      if (!dateStr) return false;
+      const timeMs = typeof dateStr === 'number' ? dateStr : new Date(dateStr).getTime();
+      return !isNaN(timeMs) && timeMs < cutoffTimestamp;
+    };
+
+    // 1. Daily Check-ins Cleanup (Keep recent 90 days)
+    try {
+      const checkins = this.getDailyCheckins();
+      const initialCount = checkins.length;
+      const filtered = checkins.filter(c => !isOlderThanCutoff(c.date || (c as any).createdAt));
+      if (filtered.length < initialCount) {
+        localStorage.setItem(KEYS.CHECKINS, JSON.stringify(filtered));
+        removedItemsCount += (initialCount - filtered.length);
+        cleanedKeysCount++;
+      }
+    } catch (e) {
+      console.warn('Checkins cleanup notice:', e);
+    }
+
+    // 2. Notifications Cleanup (Remove read notifications older than cutoff)
+    try {
+      const notifs = this.getNotifications();
+      const initialCount = notifs.length;
+      const filtered = notifs.filter(n => !n.read || !isOlderThanCutoff(n.createdAt));
+      if (filtered.length < initialCount) {
+        localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(filtered));
+        removedItemsCount += (initialCount - filtered.length);
+        cleanedKeysCount++;
+      }
+    } catch (e) {
+      console.warn('Notifications cleanup notice:', e);
+    }
+
+    // 3. Audit Logs Cleanup
+    try {
+      const raw = localStorage.getItem(KEYS.AUDIT_LOGS);
+      if (raw) {
+        const logs = JSON.parse(raw);
+        if (Array.isArray(logs)) {
+          const initialCount = logs.length;
+          const filtered = logs.filter(l => !isOlderThanCutoff(l.timestamp || l.createdAt));
+          if (filtered.length < initialCount) {
+            localStorage.setItem(KEYS.AUDIT_LOGS, JSON.stringify(filtered));
+            removedItemsCount += (initialCount - filtered.length);
+            cleanedKeysCount++;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Audit logs cleanup notice:', e);
+    }
+
+    // 4. Activity Ratings Cleanup
+    try {
+      const ratings = this.getActivityRatings();
+      const initialCount = ratings.length;
+      const filtered = ratings.filter(r => !isOlderThanCutoff(r.timestamp || r.createdAt));
+      if (filtered.length < initialCount) {
+        localStorage.setItem(KEYS.ACTIVITY_RATINGS, JSON.stringify(filtered));
+        removedItemsCount += (initialCount - filtered.length);
+        cleanedKeysCount++;
+      }
+    } catch (e) {
+      console.warn('Activity ratings cleanup notice:', e);
+    }
+
+    // 5. Mood Kitchen Meal Logs Cleanup
+    try {
+      const logs = this.getMoodKitchenLogs();
+      const initialCount = logs.length;
+      const filtered = logs.filter(l => !isOlderThanCutoff(l.timestamp || l.createdAt));
+      if (filtered.length < initialCount) {
+        this.saveMoodKitchenLogs(filtered);
+        removedItemsCount += (initialCount - filtered.length);
+        cleanedKeysCount++;
+      }
+    } catch (e) {
+      console.warn('Mood kitchen logs cleanup notice:', e);
+    }
+
+    // 6. Personality Test Results Cleanup (Keep at least 1 latest per testType)
+    try {
+      const testResults = this.getPersonalityTestResults();
+      const initialCount = testResults.length;
+      const latestByType = new Set<string>();
+
+      const filtered = testResults.filter(r => {
+        const typeKey = r.testType || 'generic';
+        if (!latestByType.has(typeKey)) {
+          latestByType.add(typeKey);
+          return true; // Preserve at least 1 recent test result per category
+        }
+        return !isOlderThanCutoff(r.createdAt || r.timestamp);
+      });
+
+      if (filtered.length < initialCount) {
+        localStorage.setItem(KEYS.PERSONALITY_TEST_RESULTS, JSON.stringify(filtered));
+        removedItemsCount += (initialCount - filtered.length);
+        cleanedKeysCount++;
+      }
+    } catch (e) {
+      console.warn('Personality test results cleanup notice:', e);
+    }
+
+    // 7. Mindfulness & Relaxation Session Records
+    try {
+      const raw = localStorage.getItem(KEYS.MINDFULNESS_SESSIONS);
+      if (raw) {
+        const sessions = JSON.parse(raw);
+        if (Array.isArray(sessions)) {
+          const initialCount = sessions.length;
+          const filtered = sessions.filter(s => !isOlderThanCutoff(s.completedAt || s.createdAt));
+          if (filtered.length < initialCount) {
+            localStorage.setItem(KEYS.MINDFULNESS_SESSIONS, JSON.stringify(filtered));
+            removedItemsCount += (initialCount - filtered.length);
+            cleanedKeysCount++;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Mindfulness sessions cleanup notice:', e);
+    }
+
+    // 8. Sleep Logs
+    try {
+      const raw = localStorage.getItem(KEYS.SLEEP_LOGS);
+      if (raw) {
+        const logs = JSON.parse(raw);
+        if (Array.isArray(logs)) {
+          const initialCount = logs.length;
+          const filtered = logs.filter(sl => !isOlderThanCutoff(sl.date || sl.createdAt));
+          if (filtered.length < initialCount) {
+            localStorage.setItem(KEYS.SLEEP_LOGS, JSON.stringify(filtered));
+            removedItemsCount += (initialCount - filtered.length);
+            cleanedKeysCount++;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Sleep logs cleanup notice:', e);
+    }
+
+    try {
+      localStorage.setItem('nesmat_last_auto_cleanup_at', new Date().toISOString());
+    } catch (_) {}
+
+    return { cleanedKeysCount, removedItemsCount };
   }
 
   // --- Privacy & Egyptian Data Law 151 / 2020 Compliance ---

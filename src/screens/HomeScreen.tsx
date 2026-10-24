@@ -174,6 +174,26 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* 📱 PWA Install Card */}
       <PWAInstallCard />
 
+      {/* ⚡ Mobile Speed Booster Notice */}
+      {onToggleMobilePerformanceMode && (
+        <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-center justify-between text-xs sm:text-sm font-bold text-amber-900 dark:text-amber-200 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <span className="text-base">⚡</span>
+            <span>
+              {isMobilePerformanceMode 
+                ? 'وضع السرعة الخفيفة للهواتف مفعل (خالي من الضبابية والأعباء) 🚀'
+                : 'هل تشعر ببطء على هاتفك؟ اضغطي هنا لتفعيل وضع السرعة الفائقة للهواتف'}
+            </span>
+          </div>
+          <button
+            onClick={onToggleMobilePerformanceMode}
+            className="px-3 py-1.5 rounded-xl bg-[#174F3F] hover:bg-[#23785B] text-white font-black text-xs transition-all cursor-pointer shadow-xs shrink-0"
+          >
+            {isMobilePerformanceMode ? 'تعديل ⚡' : 'تسريع الآن ⚡'}
+          </button>
+        </div>
+      )}
+
       {/* 🎡 بانر شاشة الترحيب وعجلة نسمة حياة الدوارة السحرية */}
       <section className="relative overflow-hidden p-5 sm:p-6 rounded-3xl bg-[#E2EFE7] text-[#292F2B] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 border-2 border-[#D5DED7]">
         <div className="flex items-center gap-3.5">

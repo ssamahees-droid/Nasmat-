@@ -1,3 +1,8 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useState, useMemo } from 'react';
 import { 
   Search, 
@@ -13,30 +18,62 @@ import {
   Heart,
   SlidersHorizontal,
   Compass,
-  X
+  X,
+  ExternalLink,
+  Award,
+  Layers,
+  HelpCircle,
+  BarChart3
 } from 'lucide-react';
 import { 
   getPsychoeducationTracks, 
   getPsychoeducationTopics, 
   searchPsychoeducationTopics 
 } from '../data/psychoeducationLibraryData';
-import { PsychoeducationTopic, PsychoeducationTrack } from '../types';
+import { 
+  PSYCHOEDUCATION_BOOKS, 
+  VALIDATED_ASSESSMENT_SCALES, 
+  PSYCHOEDUCATION_PATHS 
+} from '../data/psychoeducationBooksData';
+import { FULL_TEXT_BOOKS } from '../data/fullTextBooksData';
+import { 
+  PsychoeducationTopic, 
+  PsychoeducationTrack, 
+  PsychoeducationBook, 
+  ValidatedAssessmentScale, 
+  PsychoeducationPath,
+  FullTextPsychoeducationBook 
+} from '../types';
 import { PsychoeducationTopicModal } from './PsychoeducationTopicModal';
+import { PsychoeducationBookModal } from './PsychoeducationBookModal';
+import { ValidatedAssessmentScaleModal } from './ValidatedAssessmentScaleModal';
+import { FullBookReaderModal } from './FullBookReaderModal';
 
 interface PsychoeducationLibraryHubProps {
   onNavigateToTool?: (toolId: string) => void;
+  onOpenEmergencyHelp?: () => void;
   className?: string;
 }
 
 export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps> = ({
   onNavigateToTool,
+  onOpenEmergencyHelp,
   className = ''
 }) => {
+  // Main Sub-Tab: 'full_books' | 'books' | 'topics' | 'scales' | 'paths'
+  const [activeSubTab, setActiveSubTab] = useState<'full_books' | 'books' | 'topics' | 'scales' | 'paths'>('full_books');
+
   const [selectedTrackId, setSelectedTrackId] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedTag, setSelectedTag] = useState<string>('all');
   const [showBookmarksOnly, setShowBookmarksOnly] = useState<boolean>(false);
+
+  // Modals state
   const [activeTopic, setActiveTopic] = useState<PsychoeducationTopic | null>(null);
+  const [selectedBook, setSelectedBook] = useState<PsychoeducationBook | null>(null);
+  const [selectedFullBook, setSelectedFullBook] = useState<FullTextPsychoeducationBook | null>(null);
+  const [selectedScale, setSelectedScale] = useState<ValidatedAssessmentScale | null>(null);
+
 
   // Bookmarks from localStorage
   const [bookmarks, setBookmarks] = useState<string[]>(() => {
@@ -49,27 +86,26 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
 
   const tracks = useMemo(() => getPsychoeducationTracks(), []);
   const allTopics = useMemo(() => getPsychoeducationTopics(), []);
+  const allBooks = PSYCHOEDUCATION_BOOKS;
+  const allScales = VALIDATED_ASSESSMENT_SCALES;
+  const allPaths = PSYCHOEDUCATION_PATHS;
 
   // Filter topics
   const filteredTopics = useMemo(() => {
     let result = allTopics;
 
-    // Bookmarks only filter
     if (showBookmarksOnly) {
       result = result.filter(t => bookmarks.includes(t.id));
     }
 
-    // Track filter
     if (selectedTrackId !== 'all') {
       result = result.filter(t => t.trackId === selectedTrackId);
     }
 
-    // Tag filter
     if (selectedTag !== 'all') {
       result = result.filter(t => t.tags.includes(selectedTag));
     }
 
-    // Search query
     if (searchQuery.trim()) {
       const q = searchQuery.trim().toLowerCase();
       result = result.filter(t => 
@@ -84,6 +120,50 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
     return result;
   }, [allTopics, selectedTrackId, selectedTag, searchQuery, showBookmarksOnly, bookmarks]);
 
+  const allFullBooks = FULL_TEXT_BOOKS;
+
+  // Filter full-text books
+  const filteredFullBooks = useMemo(() => {
+    let result = allFullBooks;
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      result = result.filter(b => 
+        b.title.toLowerCase().includes(q) ||
+        (b.originalTitle && b.originalTitle.toLowerCase().includes(q)) ||
+        b.authors.some(a => a.toLowerCase().includes(q)) ||
+        b.summary.toLowerCase().includes(q) ||
+        b.categoryLabel.toLowerCase().includes(q)
+      );
+    }
+
+    return result;
+  }, [allFullBooks, searchQuery]);
+
+  const [selectedBookCategory, setSelectedBookCategory] = useState<string>('all');
+
+  // Filter reference books
+  const filteredBooks = useMemo(() => {
+    let result = allBooks;
+
+    if (selectedBookCategory !== 'all') {
+      result = result.filter(b => b.category === selectedBookCategory);
+    }
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      result = result.filter(b => 
+        b.title.toLowerCase().includes(q) ||
+        (b.originalTitle && b.originalTitle.toLowerCase().includes(q)) ||
+        b.authors.some(a => a.toLowerCase().includes(q)) ||
+        b.summaryArabic.toLowerCase().includes(q) ||
+        b.categoryLabel.toLowerCase().includes(q)
+      );
+    }
+
+    return result;
+  }, [allBooks, selectedBookCategory, searchQuery]);
+
   const toggleBookmark = (e: React.MouseEvent, topicId: string) => {
     e.stopPropagation();
     try {
@@ -96,7 +176,6 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
     }
   };
 
-  // Common emotional status tags
   const POPULAR_TAGS = [
     'المشاعر', 
     'القلق', 
@@ -132,251 +211,595 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
       <div className="p-6 sm:p-8 rounded-3xl bg-[#F7F3E9] dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 shadow-sm relative overflow-hidden">
         <div className="relative z-10 space-y-2.5 max-w-2xl">
           <div className="font-jetbrains text-[10px] sm:text-xs font-bold text-[#D98F83] uppercase tracking-wider">
-            MOUBADARA_01 · PSYCHOEDUCATION_LIBRARY
+            MOUBADARA_01 · PSYCHOEDUCATION_LIBRARY_V2
           </div>
           <h2 className="font-cairo font-black text-2xl sm:text-4xl text-[#13251E] dark:text-[#F7F3E9] leading-tight">
-            مكتبة التثقيف النفسي المتكاملة 🌿
+            مكتبة الكتب والتثقيف النفسي المعتمدة 📚🌿
           </h2>
           <p className="text-xs sm:text-sm text-[#13251E]/80 dark:text-[#F7F3E9]/80 leading-relaxed">
-            ٣٠ موضوعاً أصلياً وموثقاً في ٦ مسارات إنسانية؛ لشرح ما يجري بداخلك بتبسيط دقيق، وتفكيك التشوهات الفكرية، واكتساب مهارات عملية وبدائل مرنة تناسب وتيرتك دون أحكام.
+            قسم متكامل يضم كتباً كاملة مع قارئ متطور داخلي، أدلة منظمة الصحة العالمية (WHO)، وإرشادات NICE السريرية، ومراجع CBT، ومقاييس PHQ-9 و GAD-7 الموثقة.
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-jetbrains text-[#13251E]/70 dark:text-[#F7F3E9]/70">
-            <span className="flex items-center gap-1 font-bold">
-              <BookOpen className="w-3.5 h-3.5 text-[#D98F83]" />
-              <span>30 موضوعاً مكتملاً</span>
+            <span className="flex items-center gap-1 font-bold text-amber-700 dark:text-amber-400">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>{allFullBooks.length} كتب كاملة مع قارئ متطور</span>
             </span>
             <span>·</span>
             <span className="flex items-center gap-1 font-bold">
-              <Compass className="w-3.5 h-3.5 text-[#D98F83]" />
-              <span>6 مسارات متدرجة</span>
+              <BookOpen className="w-3.5 h-3.5 text-[#D98F83]" />
+              <span>{allBooks.length} مراجع وملخصات</span>
             </span>
             <span>·</span>
             <span className="flex items-center gap-1 font-bold text-emerald-700 dark:text-emerald-400">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>مراجع علمية معتمدة (WHO, APA, NICE)</span>
+              <span>ترخيص وحقوق موثقة</span>
             </span>
           </div>
         </div>
       </div>
 
-      {/* Search & Filter Toolbar */}
-      <div className="space-y-3">
-        
-        {/* Search Bar */}
-        <div className="relative">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="ابحث في موضوعات المكتبة (مثال: نوبات الهلع، الاحتراق، التفكير الكارثي، الأدوية، الحدود)..."
-            className="w-full py-3.5 pr-11 pl-10 bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-2xl text-xs sm:text-sm text-[#13251E] dark:text-[#F7F3E9] placeholder-[#13251E]/40 dark:placeholder-white/40 focus:outline-hidden focus:shadow-xs transition-all"
-          />
-          <Search className="w-5 h-5 text-[#D98F83] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-[#13251E]/60 hover:text-[#13251E] p-1 cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
+      {/* Main Sub-Tab Switcher */}
+      <div className="flex items-center gap-2 p-1.5 bg-[#E2EFE7]/80 dark:bg-stone-800/60 rounded-2xl border border-[#D5DED7] dark:border-stone-700 overflow-x-auto text-xs font-bold">
+        <button
+          onClick={() => setActiveSubTab('full_books')}
+          className={`flex-1 py-2.5 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 ${
+            activeSubTab === 'full_books'
+              ? 'bg-[#174F3F] text-white shadow-xs'
+              : 'text-[#515B55] dark:text-stone-300 hover:bg-white/60 dark:hover:bg-stone-700/60'
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-amber-400" />
+          <span>الكتب الكاملة للقراءة ({allFullBooks.length})</span>
+        </button>
 
-        {/* Six Tracks Filter Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
-          <button
-            onClick={() => {
-              setSelectedTrackId('all');
-              setShowBookmarksOnly(false);
-            }}
-            className={`px-3.5 py-2 rounded-xl border-[1.5px] font-bold whitespace-nowrap transition-all cursor-pointer ${
-              selectedTrackId === 'all' && !showBookmarksOnly
-                ? 'bg-[#13251E] text-white border-[#13251E] shadow-xs'
-                : 'bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] border-[#13251E]/20 hover:border-[#13251E]'
-            }`}
-          >
-            جميع المسارات ({allTopics.length})
-          </button>
+        <button
+          onClick={() => setActiveSubTab('books')}
+          className={`flex-1 py-2.5 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 ${
+            activeSubTab === 'books'
+              ? 'bg-[#174F3F] text-white shadow-xs'
+              : 'text-[#515B55] dark:text-stone-300 hover:bg-white/60 dark:hover:bg-stone-700/60'
+          }`}
+        >
+          <BookOpen className="w-4 h-4 text-emerald-400" />
+          <span>المراجع والملخصات المعتمدة ({allBooks.length})</span>
+        </button>
 
-          {tracks.map((track) => {
-            const isSelected = selectedTrackId === track.id && !showBookmarksOnly;
-            return (
-              <button
-                key={track.id}
-                onClick={() => {
-                  setSelectedTrackId(track.id);
-                  setShowBookmarksOnly(false);
-                }}
-                className={`px-3.5 py-2 rounded-xl border-[1.5px] font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
-                  isSelected
-                    ? 'bg-[#13251E] text-white border-[#13251E] shadow-xs'
-                    : 'bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] border-[#13251E]/20 hover:border-[#13251E]'
-                }`}
-              >
-                <span>{track.icon}</span>
-                <span>{track.title}</span>
-                <span className="font-jetbrains text-[10px] opacity-70">({track.topicsCount})</span>
-              </button>
-            );
-          })}
+        <button
+          onClick={() => setActiveSubTab('topics')}
+          className={`flex-1 py-2.5 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 ${
+            activeSubTab === 'topics'
+              ? 'bg-[#174F3F] text-white shadow-xs'
+              : 'text-[#515B55] dark:text-stone-300 hover:bg-white/60 dark:hover:bg-stone-700/60'
+          }`}
+        >
+          <Layers className="w-4 h-4 text-sky-400" />
+          <span>المقالات والمواضيع ({allTopics.length})</span>
+        </button>
 
-          {/* Bookmarks Filter */}
-          <button
-            onClick={() => setShowBookmarksOnly(true)}
-            className={`px-3.5 py-2 rounded-xl border-[1.5px] font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
-              showBookmarksOnly
-                ? 'bg-[#D98F83] text-white border-[#13251E] shadow-sm'
-                : 'bg-white dark:bg-[#14271F] text-[#13251E] dark:text-[#F7F3E9] border-[#13251E]/20 hover:border-[#13251E]'
-            }`}
-          >
-            <Bookmark className="w-3.5 h-3.5" />
-            <span>المحفوظات ({bookmarks.length})</span>
-          </button>
-        </div>
+        <button
+          onClick={() => setActiveSubTab('scales')}
+          className={`flex-1 py-2.5 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 ${
+            activeSubTab === 'scales'
+              ? 'bg-[#174F3F] text-white shadow-xs'
+              : 'text-[#515B55] dark:text-stone-300 hover:bg-white/60 dark:hover:bg-stone-700/60'
+          }`}
+        >
+          <BarChart3 className="w-4 h-4 text-amber-400" />
+          <span>المقاييس الموثقة (PHQ-9 / GAD-7)</span>
+        </button>
 
-        {/* Quick Tag Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-[11px]">
-          <span className="text-[#13251E]/50 dark:text-[#F7F3E9]/50 font-bold shrink-0">وسوم سريعة:</span>
-          {POPULAR_TAGS.map((tag) => {
-            const isTagSelected = selectedTag === tag;
-            return (
-              <button
-                key={tag}
-                onClick={() => setSelectedTag(isTagSelected ? 'all' : tag)}
-                className={`px-2.5 py-1 rounded-full border transition-all cursor-pointer whitespace-nowrap ${
-                  isTagSelected
-                    ? 'bg-[#D98F83] text-white border-[#13251E] font-bold'
-                    : 'bg-white/80 dark:bg-[#1B342A] text-[#13251E]/70 dark:text-[#F7F3E9]/70 border-[#13251E]/15 hover:border-[#13251E]'
-                }`}
-              >
-                #{tag}
-              </button>
-            );
-          })}
-        </div>
-
+        <button
+          onClick={() => setActiveSubTab('paths')}
+          className={`flex-1 py-2.5 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 ${
+            activeSubTab === 'paths'
+              ? 'bg-[#174F3F] text-white shadow-xs'
+              : 'text-[#515B55] dark:text-stone-300 hover:bg-white/60 dark:hover:bg-stone-700/60'
+          }`}
+        >
+          <Compass className="w-4 h-4 text-rose-400" />
+          <span>المسارات التثقيفية الموجهة</span>
+        </button>
       </div>
 
-      {/* Topics Counter Bar */}
-      <div className="flex items-center justify-between text-xs text-[#13251E]/70 dark:text-[#F7F3E9]/70 pt-2 border-t border-[#13251E]/10">
-        <div>
-          <span>الموضوعات المعروضة: </span>
-          <span className="font-jetbrains font-bold text-[#D98F83]">{filteredTopics.length}</span>
-          <span> من أصل 30 موضوعاً</span>
-        </div>
-        {(selectedTrackId !== 'all' || selectedTag !== 'all' || searchQuery || showBookmarksOnly) && (
+
+      {/* Global Search Bar */}
+      <div className="relative">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="ابحث في الكتب والمراجع والمقالات (مثال: منظمة الصحة العالمية، NICE، الاكتئاب، الحدود، PHQ-9)..."
+          className="w-full py-3.5 pr-11 pl-10 bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-2xl text-xs sm:text-sm text-[#13251E] dark:text-[#F7F5EF] placeholder-[#13251E]/40 dark:placeholder-white/40 focus:outline-hidden focus:shadow-xs transition-all"
+        />
+        <Search className="w-5 h-5 text-[#D98F83] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        {searchQuery && (
           <button
-            onClick={() => {
-              setSelectedTrackId('all');
-              setSelectedTag('all');
-              setSearchQuery('');
-              setShowBookmarksOnly(false);
-            }}
-            className="text-[#D98F83] hover:underline font-bold cursor-pointer"
+            onClick={() => setSearchQuery('')}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-[#13251E]/60 hover:text-[#13251E] p-1 cursor-pointer"
           >
-            إعادة تعيين الفلاتر ↺
+            <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
-      {/* Grid of Topics (Cards in Variation 6 style) */}
-      {filteredTopics.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          {filteredTopics.map((topic) => {
-            const isFav = bookmarks.includes(topic.id);
-            return (
-              <article
-                key={topic.id}
-                onClick={() => setActiveTopic(topic)}
-                className="bg-white dark:bg-[#14271F] border border-[#174C3C]/20 dark:border-white/20 rounded-2xl p-5 shadow-sm dark:shadow-[4px_4px_0_rgba(255,255,255,0.1)] hover:translate-y-[-2px] hover:shadow-sm transition-all cursor-pointer flex flex-col justify-between group"
+      {/* =========================================================================
+         TAB 0: FULL-TEXT READABLE BOOKS (مكتبة الكتب الكاملة للقراءة)
+         ========================================================================= */}
+      {activeSubTab === 'full_books' && (
+        <div className="space-y-4 animate-fade-in">
+          <div className="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200 font-bold">
+              <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+              <span>مكتبة الكتب النفسية الكاملة (قراءة شاملة كاملة داخل التطبيق)</span>
+            </div>
+            <span className="text-[11px] text-amber-800 dark:text-amber-300 font-medium">
+              نصوص كاملة حقيقية موثقة ومجتازة لفحص الترخيص المفتوح
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {filteredFullBooks.map((fBook) => (
+              <div
+                key={fBook.id}
+                onClick={() => setSelectedFullBook(fBook)}
+                className="p-6 rounded-3xl bg-white dark:bg-[#14271F] border-2 border-[#D5DED7] dark:border-stone-700/80 shadow-md hover:border-[#174F3F] dark:hover:border-emerald-400 transition-all cursor-pointer flex flex-col justify-between space-y-5 group relative overflow-hidden"
               >
-                <div className="space-y-3">
-                  
-                  {/* Track kicker & Bookmark */}
-                  <div className="flex items-center justify-between">
-                    <span className="font-jetbrains text-[10px] text-[#D98F83] font-bold tracking-wider uppercase">
-                      المسار {topic.trackNumber} · الموضوع {topic.topicNumber}
-                    </span>
-                    <button
-                      onClick={(e) => toggleBookmark(e, topic.id)}
-                      className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
-                        isFav 
-                          ? 'bg-[#D98F83] text-white border-[#13251E]' 
-                          : 'bg-[#F7F3E9] dark:bg-[#1B342A] text-[#13251E]/50 border-transparent hover:border-[#13251E]'
-                      }`}
-                      title={isFav ? 'محفوظ في المفضلة' : 'حفظ في المفضلة'}
-                    >
-                      <Bookmark className={`w-3.5 h-3.5 ${isFav ? 'fill-white' : ''}`} />
-                    </button>
+                {/* Decorative Top Bar */}
+                <div className={`h-2.5 w-full bg-gradient-to-r ${fBook.coverGradient} absolute top-0 inset-x-0`} />
+
+                <div className="space-y-3 pt-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="w-12 h-12 rounded-2xl bg-[#E2EFE7] dark:bg-emerald-950 flex items-center justify-center text-2xl shadow-xs shrink-0">
+                      {fBook.icon}
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      {fBook.isFullTextVerified ? (
+                        <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 border border-emerald-300 dark:border-emerald-800">
+                          <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                          دليل رسمي موثق (WHO)
+                        </span>
+                      ) : (
+                        <span className="text-[10px] bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 border border-amber-300 dark:border-amber-800">
+                          ⏳ قيد التوثيق المكتبي المستقل
+                        </span>
+                      )}
+                      <span className="text-[10px] text-stone-500 font-bold">
+                        {fBook.totalChaptersCount} فصول · {fBook.totalReadingTimeMinutes} دقيقة
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Title */}
-                  <h3 className="font-cairo font-bold text-base sm:text-lg text-[#13251E] dark:text-[#F7F3E9] group-hover:text-[#D98F83] transition-colors leading-snug">
-                    {topic.title}
-                  </h3>
+                  <div>
+                    <span className="text-[10px] font-black text-[#23785B] dark:text-emerald-400 block mb-1 uppercase tracking-wider">
+                      {fBook.categoryLabel}
+                    </span>
+                    <h3 className="text-base sm:text-lg font-black text-[#174F3F] dark:text-white group-hover:text-[#23785B] transition-colors leading-snug font-tajawal">
+                      {fBook.title}
+                    </h3>
+                    <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1">
+                      بقلم: {fBook.authors.join('، ')} ({fBook.publisher} - {fBook.publicationYear})
+                    </p>
+                  </div>
 
-                  {/* Subtitle / Teaser */}
-                  <p className="text-xs text-[#13251E]/70 dark:text-[#F7F3E9]/70 line-clamp-2 leading-relaxed">
-                    {topic.subtitle}
+                  <p className="text-xs text-[#515B55] dark:text-stone-300 leading-relaxed line-clamp-3 font-medium">
+                    {fBook.summary}
                   </p>
 
-                  {/* Exercise Teaser */}
-                  <div className="p-2.5 rounded-xl bg-[#F7F3E9] dark:bg-[#1B342A] border border-[#13251E]/10 text-[11px] text-[#13251E]/80 dark:text-[#F7F3E9]/80">
-                    <span className="font-bold text-[#D98F83]">تمرين عملي: </span>
-                    <span>{topic.practicalExercise.title}</span>
+                  <div className="p-3 rounded-2xl bg-stone-50 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-800 text-[11px] space-y-1">
+                    <div className="font-bold text-stone-700 dark:text-stone-300">من ينفعهم هذا الكتاب؟</div>
+                    <div className="text-stone-500 dark:text-stone-400 line-clamp-2">{fBook.whoIsThisFor}</div>
                   </div>
-
                 </div>
 
-                {/* Card Footer: Metadata & Read button */}
-                <div className="pt-4 mt-4 border-t border-[#13251E]/10 flex items-center justify-between text-xs">
-                  <span className="font-jetbrains text-[11px] text-[#13251E]/60 dark:text-[#F7F3E9]/60 flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-[#D98F83]" />
-                    <span>{topic.estimatedReadTimeMinutes} د قراءة</span>
+                <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-bold text-[#174F3F] dark:text-emerald-400">
+                  <span className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
+                    <BookOpen className="w-4 h-4 text-amber-500" />
+                    <span>افتح القارئ وابدأ القراءة الآن 📖</span>
                   </span>
-
-                  <span className="font-bold text-xs text-[#13251E] dark:text-white group-hover:text-[#D98F83] flex items-center gap-1 transition-colors">
-                    <span>قراءة الموضوع</span>
-                    <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
-                  </span>
+                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                 </div>
-
-              </article>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="p-10 rounded-2xl bg-white dark:bg-[#14271F] border border-[#174C3C]/20 text-center space-y-3">
-          <div className="text-3xl">🔍</div>
-          <h4 className="font-bold text-base">لم نعثر على موضوع يطابق بحثك</h4>
-          <p className="text-xs text-[#13251E]/60 dark:text-[#F7F3E9]/60">
-            جرب كلمات بحث أخرى أو أعد تعيين الفلاتر لتصفح موضوعات المكتبة الـ 30.
-          </p>
-          <button
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedTrackId('all');
-              setSelectedTag('all');
-              setShowBookmarksOnly(false);
-            }}
-            className="px-4 py-2 bg-[#13251E] text-white rounded-full text-xs font-bold"
-          >
-            عرض كل الموضوعات
-          </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Reader Modal */}
-      <PsychoeducationTopicModal
-        topic={activeTopic}
-        isOpen={!!activeTopic}
-        onClose={() => setActiveTopic(null)}
-        onNavigateToTool={onNavigateToTool}
-        onOpenNextTopic={handleOpenNext}
-        onOpenPrevTopic={handleOpenPrev}
-      />
+      {/* =========================================================================
+         TAB 1: VERIFIED BOOKS & OFFICIAL GUIDELINES (الكتب والمراجع)
+         ========================================================================= */}
+      {activeSubTab === 'books' && (
+        <div className="space-y-4 animate-fade-in">
+          
+          {/* Category Filter Pills for Reference Books */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
+            <button
+              onClick={() => setSelectedBookCategory('all')}
+              className={`px-3.5 py-2 rounded-xl border font-bold whitespace-nowrap transition-all cursor-pointer ${
+                selectedBookCategory === 'all'
+                  ? 'bg-[#174F3F] text-white border-[#174F3F] shadow-xs'
+                  : 'bg-white dark:bg-[#14271F] text-stone-700 dark:text-stone-200 border-stone-200 dark:border-stone-700'
+              }`}
+            >
+              جميع المراجع الموصى بها ({allBooks.length})
+            </button>
+            <button
+              onClick={() => setSelectedBookCategory('relationships_comm')}
+              className={`px-3.5 py-2 rounded-xl border font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                selectedBookCategory === 'relationships_comm'
+                  ? 'bg-[#174F3F] text-white border-[#174F3F] shadow-xs'
+                  : 'bg-white dark:bg-[#14271F] text-stone-700 dark:text-stone-200 border-stone-200 dark:border-stone-700'
+              }`}
+            >
+              <span>🤝</span>
+              <span>العلاقات والتواصل (6)</span>
+            </button>
+            <button
+              onClick={() => setSelectedBookCategory('self_emotions')}
+              className={`px-3.5 py-2 rounded-xl border font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                selectedBookCategory === 'self_emotions'
+                  ? 'bg-[#174F3F] text-white border-[#174F3F] shadow-xs'
+                  : 'bg-white dark:bg-[#14271F] text-stone-700 dark:text-stone-200 border-stone-200 dark:border-stone-700'
+              }`}
+            >
+              <span>🧠</span>
+              <span>فهم النفس والمشاعر (4)</span>
+            </button>
+            <button
+              onClick={() => setSelectedBookCategory('stress_resilience')}
+              className={`px-3.5 py-2 rounded-xl border font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                selectedBookCategory === 'stress_resilience'
+                  ? 'bg-[#174F3F] text-white border-[#174F3F] shadow-xs'
+                  : 'bg-white dark:bg-[#14271F] text-stone-700 dark:text-stone-200 border-stone-200 dark:border-stone-700'
+              }`}
+            >
+              <span>🛡️</span>
+              <span>الضغط والتعافي والمرونة (4)</span>
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between text-xs font-bold text-[#174F3F] dark:text-emerald-400 px-1">
+            <span>كتب ومراجع حقيقية موصى بقراءتها ({filteredBooks.length})</span>
+            <span className="text-stone-500">يتضمن إحالة حصرية للمصادر الرسمية والناشرين</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredBooks.map((book) => (
+              <div
+                key={book.id}
+                onClick={() => setSelectedBook(book)}
+                className="p-5 rounded-3xl bg-white dark:bg-[#14271F] border border-[#D5DED7] dark:border-stone-700/80 shadow-xs hover:border-[#174F3F] dark:hover:border-emerald-500 transition-all cursor-pointer flex flex-col justify-between space-y-4 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-xl shadow-xs shrink-0 ${book.coverColor}`}>
+                      {book.icon}
+                    </div>
+                    <span className="text-[10px] bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded-full font-bold">
+                      {book.reviewStatusLabel}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-bold text-[#23785B] dark:text-emerald-400 block mb-1">
+                      {book.categoryLabel}
+                    </span>
+                    <h3 className="text-sm sm:text-base font-black text-[#174F3F] dark:text-white group-hover:text-[#23785B] transition-colors leading-snug line-clamp-2">
+                      {book.title}
+                    </h3>
+                    <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1">
+                      بقلم: {book.authors.join(', ')} ({book.publicationYear})
+                    </p>
+                  </div>
+
+                  <p className="text-xs text-[#515B55] dark:text-stone-300 leading-relaxed line-clamp-3">
+                    {book.summaryArabic}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-bold text-[#174F3F] dark:text-emerald-400 group-hover:translate-x-1 transition-transform">
+                  <span>اقرأ الملخص والمفاهيم 📖</span>
+                  <ArrowLeft className="w-4 h-4" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+         TAB 2: ARTICLES & TRACKS (المقالات والمواضيع)
+         ========================================================================= */}
+      {activeSubTab === 'topics' && (
+        <div className="space-y-4 animate-fade-in">
+          
+          {/* Tracks Selector */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
+            <button
+              onClick={() => {
+                setSelectedTrackId('all');
+                setShowBookmarksOnly(false);
+              }}
+              className={`px-3.5 py-2 rounded-xl border font-bold whitespace-nowrap transition-all cursor-pointer ${
+                selectedTrackId === 'all' && !showBookmarksOnly
+                  ? 'bg-[#174F3F] text-white border-[#174F3F] shadow-xs'
+                  : 'bg-white dark:bg-[#14271F] text-stone-700 dark:text-stone-200 border-stone-200 dark:border-stone-700'
+              }`}
+            >
+              جميع المسارات ({allTopics.length})
+            </button>
+
+            {tracks.map((track) => {
+              const isSelected = selectedTrackId === track.id && !showBookmarksOnly;
+              return (
+                <button
+                  key={track.id}
+                  onClick={() => {
+                    setSelectedTrackId(track.id);
+                    setShowBookmarksOnly(false);
+                  }}
+                  className={`px-3.5 py-2 rounded-xl border font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                    isSelected
+                      ? 'bg-[#174F3F] text-white border-[#174F3F] shadow-xs'
+                      : 'bg-white dark:bg-[#14271F] text-stone-700 dark:text-stone-200 border-stone-200 dark:border-stone-700'
+                  }`}
+                >
+                  <span>{track.icon}</span>
+                  <span>{track.title}</span>
+                </button>
+              );
+            })}
+
+            <button
+              onClick={() => setShowBookmarksOnly(true)}
+              className={`px-3.5 py-2 rounded-xl border font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                showBookmarksOnly
+                  ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                  : 'bg-white dark:bg-[#14271F] text-stone-700 dark:text-stone-200 border-stone-200 dark:border-stone-700'
+              }`}
+            >
+              <Bookmark className="w-3.5 h-3.5 text-amber-400" />
+              <span>المحفوظات ({bookmarks.length})</span>
+            </button>
+          </div>
+
+          {/* Quick Tag Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-[11px]">
+            <span className="text-stone-500 font-bold shrink-0">وسوم شائعة:</span>
+            {POPULAR_TAGS.map((tag) => {
+              const isTagSelected = selectedTag === tag;
+              return (
+                <button
+                  key={tag}
+                  onClick={() => setSelectedTag(isTagSelected ? 'all' : tag)}
+                  className={`px-2.5 py-1 rounded-full border transition-all cursor-pointer whitespace-nowrap ${
+                    isTagSelected
+                      ? 'bg-[#B78327] text-white border-[#B78327] font-bold'
+                      : 'bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700'
+                  }`}
+                >
+                  #{tag}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Topics Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+            {filteredTopics.map((topic) => {
+              const isBookmarked = bookmarks.includes(topic.id);
+
+              return (
+                <div
+                  key={topic.id}
+                  onClick={() => setActiveTopic(topic)}
+                  className="p-5 rounded-3xl bg-white dark:bg-[#14271F] border border-[#D5DED7] dark:border-stone-700/80 shadow-xs hover:border-[#174F3F] transition-all cursor-pointer flex flex-col justify-between space-y-4 group"
+                >
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#E2EFE7] text-[#174F3F] dark:bg-emerald-950 dark:text-emerald-300">
+                        مسار {topic.trackNumber} · موضوع {topic.topicNumber}
+                      </span>
+
+                      <button
+                        onClick={(e) => toggleBookmark(e, topic.id)}
+                        className="p-1.5 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-400 hover:text-amber-500 transition-colors"
+                        title={isBookmarked ? 'إزالة من المحفوظات' : 'حفظ الموضوع'}
+                      >
+                        <Bookmark className={`w-4 h-4 ${isBookmarked ? 'text-amber-500 fill-amber-500' : ''}`} />
+                      </button>
+                    </div>
+
+                    <h3 className="text-sm sm:text-base font-black text-[#174F3F] dark:text-white group-hover:text-[#23785B] transition-colors leading-snug line-clamp-2">
+                      {topic.title}
+                    </h3>
+
+                    <p className="text-xs text-[#515B55] dark:text-stone-300 leading-relaxed line-clamp-3">
+                      {topic.introduction}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-bold text-[#174F3F] dark:text-emerald-400">
+                    <span className="flex items-center gap-1 text-[11px] text-stone-500">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>قراءة {topic.estimatedReadTimeMinutes} دقائق</span>
+                    </span>
+
+                    <span className="group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                      <span>اقرأ الموضوع</span>
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+         TAB 3: VALIDATED ASSESSMENT SCALES (المقاييس النفسية)
+         ========================================================================= */}
+      {activeSubTab === 'scales' && (
+        <div className="space-y-4 animate-fade-in">
+          <div className="flex items-center justify-between text-xs font-bold text-[#174F3F] dark:text-emerald-400 px-1">
+            <span>المقاييس النفسية الموثقة علمياً ({allScales.length})</span>
+            <span className="text-stone-500">للمتابعة والاسترشاد الذاتي دون إعطاء تشخيص نهائي</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {allScales.map((scale) => (
+              <div
+                key={scale.id}
+                onClick={() => setSelectedScale(scale)}
+                className="p-6 rounded-3xl bg-white dark:bg-[#14271F] border border-[#D5DED7] dark:border-stone-700/80 shadow-xs hover:border-[#174F3F] transition-all cursor-pointer space-y-4 group"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300 flex items-center justify-center font-black text-sm shadow-xs shrink-0">
+                    {scale.abbreviation}
+                  </div>
+                  <span className="text-[10px] bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 px-2.5 py-0.5 rounded-full font-bold">
+                    مقياس عالمي موثق
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-base font-black text-[#174F3F] dark:text-white group-hover:text-[#23785B] transition-colors leading-snug">
+                    {scale.title}
+                  </h3>
+                  <p className="text-xs text-[#515B55] dark:text-stone-300 mt-1 leading-relaxed">
+                    {scale.subtitle}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-bold text-[#174F3F] dark:text-emerald-400">
+                  <span>بدء التقييم الاسترشادي ({scale.estimatedTimeMinutes} دقائق)</span>
+                  <ArrowLeft className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+         TAB 4: PSYCHOEDUCATION PATHS (المسارات الموجهة)
+         ========================================================================= */}
+      {activeSubTab === 'paths' && (
+        <div className="space-y-4 animate-fade-in">
+          <div className="flex items-center justify-between text-xs font-bold text-[#174F3F] dark:text-emerald-400 px-1">
+            <span>المسارات التثقيفية الموجهة ({allPaths.length})</span>
+            <span className="text-stone-500">تسلسل متكامل يربط المراجع والمقالات والمقاييس والتمارين</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {allPaths.map((path) => (
+              <div
+                key={path.id}
+                className="p-6 rounded-3xl bg-white dark:bg-[#14271F] border border-[#D5DED7] dark:border-stone-700/80 shadow-xs space-y-4"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl p-2 rounded-2xl bg-[#E2EFE7] dark:bg-stone-800">{path.icon}</span>
+                  <div>
+                    <h3 className="text-base font-black text-[#174F3F] dark:text-white leading-snug">
+                      {path.title}
+                    </h3>
+                    <span className="text-[11px] text-stone-500">مدورة تقريبية: {path.estimatedMinutes} دقيقة</span>
+                  </div>
+                </div>
+
+                <p className="text-xs text-[#515B55] dark:text-stone-300 leading-relaxed font-medium">
+                  {path.description}
+                </p>
+
+                <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex flex-wrap gap-2">
+                  {path.topicIds.length > 0 && (
+                    <button
+                      onClick={() => {
+                        const t = allTopics.find(x => x.id === path.topicIds[0]);
+                        if (t) setActiveTopic(t);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-[#174F3F] text-white text-xs font-bold hover:bg-[#23785B] transition-all cursor-pointer shadow-xs"
+                    >
+                      بدء مقالات المسار 📖
+                    </button>
+                  )}
+
+                  {path.bookIds.length > 0 && (
+                    <button
+                      onClick={() => {
+                        const b = allBooks.find(x => x.id === path.bookIds[0]);
+                        if (b) setSelectedBook(b);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 text-xs font-bold transition-all cursor-pointer"
+                    >
+                      استعراض مرجع المسار 📚
+                    </button>
+                  )}
+
+                  {path.assessmentScaleId && (
+                    <button
+                      onClick={() => {
+                        const s = allScales.find(x => x.id === path.assessmentScaleId);
+                        if (s) setSelectedScale(s);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 text-xs font-bold transition-all cursor-pointer"
+                    >
+                      إجراء مقياس المسار 📊
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Modals */}
+      {activeTopic && (
+        <PsychoeducationTopicModal
+          topic={activeTopic}
+          isOpen={Boolean(activeTopic)}
+          onClose={() => setActiveTopic(null)}
+          onOpenNextTopic={handleOpenNext}
+          onOpenPrevTopic={handleOpenPrev}
+          onNavigateToTool={onNavigateToTool}
+        />
+      )}
+
+      {selectedBook && (
+        <PsychoeducationBookModal
+          book={selectedBook}
+          isOpen={Boolean(selectedBook)}
+          onClose={() => setSelectedBook(null)}
+          onOpenTopicById={(topicId) => {
+            setSelectedBook(null);
+            const topic = allTopics.find(t => t.id === topicId);
+            if (topic) setActiveTopic(topic);
+          }}
+          onNavigateToTool={onNavigateToTool}
+        />
+      )}
+
+      {selectedScale && (
+        <ValidatedAssessmentScaleModal
+          scale={selectedScale}
+          isOpen={Boolean(selectedScale)}
+          onClose={() => setSelectedScale(null)}
+          onOpenEmergencyHelp={onOpenEmergencyHelp}
+        />
+      )}
+
+      {selectedFullBook && (
+        <FullBookReaderModal
+          book={selectedFullBook}
+          isOpen={Boolean(selectedFullBook)}
+          onClose={() => setSelectedFullBook(null)}
+          onOpenEmergencyHelp={onOpenEmergencyHelp}
+        />
+      )}
 
     </section>
   );
 };
+

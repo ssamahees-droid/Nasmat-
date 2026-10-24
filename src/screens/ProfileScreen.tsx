@@ -28,6 +28,7 @@ interface ProfileScreenProps {
   onNavigate: (tab: string) => void;
   onOpenContent: (contentId: string) => void;
   onRestartOnboarding: () => void;
+  onOpenGardenWelcome?: () => void;
   theme: 'dark' | 'light' | 'system';
   setTheme: (t: 'dark' | 'light' | 'system') => void;
   fontSize: 'normal' | 'large' | 'extralarge';
@@ -40,6 +41,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onNavigate,
   onOpenContent,
   onRestartOnboarding,
+  onOpenGardenWelcome,
   theme,
   setTheme,
   fontSize,
@@ -297,6 +299,29 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           </div>
           <ChevronLeft className="w-4 h-4 text-[#7D8F85]" />
         </button>
+
+        {/* إعادة مشاهدة رسالة الترحيب «حديقتك الجميلة» */}
+        {onOpenGardenWelcome && (
+          <button
+            onClick={onOpenGardenWelcome}
+            className="w-full p-4 flex items-center justify-between hover:bg-emerald-50/50 transition-colors group border-t border-stone-100"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-bold text-[#26332D] group-hover:text-[#174C3C]">
+                  رسالة الترحيب «حديقتك الجميلة» 🌿
+                </div>
+                <div className="text-[11px] text-[#7D8F85]">
+                  إعادة قراءة الرسالة الوجدانية الافتتاحية
+                </div>
+              </div>
+            </div>
+            <ChevronLeft className="w-4 h-4 text-[#7D8F85]" />
+          </button>
+        )}
 
         {/* وضع أداء الهاتف (Mobile Performance Mode) */}
         <div className="w-full p-4 flex items-center justify-between hover:bg-white/80 transition-colors">
@@ -907,6 +932,26 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <p className="text-xs text-[#26332D] leading-relaxed">
                 «هذا النص يوضح شكل الخط والمظهر المختار في تطبيق نسمة حياة لتجربة مريحة وآمنة.»
               </p>
+            </div>
+
+            {/* Manual LocalStorage Cleanup Button */}
+            <div className="p-3.5 bg-white rounded-2xl border border-[#E6E8D8] space-y-2">
+              <div className="flex items-center justify-between gap-3">
+                <div className="text-right">
+                  <div className="text-xs font-bold text-[#26332D]">تنظيف البيانات القديمة تلقائياً (٩٠ يوماً)</div>
+                  <p className="text-[11px] text-[#52645B] leading-relaxed">حذف السجلات والإشعارات القديمة التي تجاوزت ٩٠ يوماً لتقليل حجم التخزين المحلي وتسريع الهاتف.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const res = storage.autoCleanupOldData(90);
+                    alert(`تم تنظيف التخزين المحلي بنجاح! تم إزالة ${res.removedItemsCount} سجلاً قديمًا عبر ${res.cleanedKeysCount} تفضيلاً.`);
+                  }}
+                  className="px-3 py-2 bg-[#174C3C] text-white text-xs font-bold rounded-xl shrink-0 cursor-pointer hover:bg-[#23785B] transition-colors shadow-xs"
+                >
+                  تنظيف الآن 🧹
+                </button>
+              </div>
             </div>
 
             <div className="pt-3 border-t border-[#E6E8D8]">

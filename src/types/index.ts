@@ -280,6 +280,84 @@ export interface PsychoeducationTrack {
 }
 
 // ==========================================
+// Verified Psychological Books & References (الكتب والمراجع المعتمدة)
+// ==========================================
+
+export type BookReviewBadge = 
+  | 'WHO_GUIDELINE' 
+  | 'NICE_GUIDELINE' 
+  | 'CLINICALLY_VERIFIED' 
+  | 'SELF_HELP_STANDARD';
+
+export interface PsychoeducationBook {
+  id: string;
+  title: string;
+  originalTitle?: string;
+  authors: string[];
+  category: 'relationships_comm' | 'self_emotions' | 'stress_resilience' | 'anxiety_stress' | 'depression_mood' | 'trauma' | 'boundaries' | 'mindfulness_act' | 'self_compassion' | 'general_psychoeducation';
+  categoryLabel: string;
+  publicationYear: string;
+  publisher: string;
+  language: string;
+  reviewStatus: BookReviewBadge;
+  reviewStatusLabel: string;
+  directSourceUrl?: string; // Direct Publisher / Author legal link
+  summaryArabic: string;
+  keyTakeaways: string[];
+  whoIsThisFor: string;
+  criticalReadingNote?: string; // Scientific & critical reading notes
+  relatedTopicIds: string[];
+  relatedToolActionIds?: ('breathe' | 'feker' | 'battery' | 'compass' | 'knot' | 'translate' | 'rescue' | 'emergency')[];
+  licenseNotice: string;
+  coverColor: string;
+  icon: string;
+}
+
+// ==========================================
+// Validated Assessment Scales (المقاييس النفسية الموثقة)
+// ==========================================
+
+export interface ValidatedAssessmentScale {
+  id: string;
+  title: string;
+  abbreviation: 'PHQ-9' | 'GAD-7' | 'PSS-10' | 'QOLI';
+  subtitle: string;
+  purpose: string;
+  clinicalSource: string;
+  estimatedTimeMinutes: number;
+  questions: {
+    id: number;
+    text: string;
+    options: { label: string; score: number }[];
+  }[];
+  scoringRanges: {
+    minScore: number;
+    maxScore: number;
+    levelTitle: string;
+    levelDescription: string;
+    recommendation: string;
+    requiresProfessionalAttention?: boolean;
+  }[];
+  disclaimer: string;
+}
+
+// ==========================================
+// Psychoeducation Guided Paths (المسارات التثقيفية)
+// ==========================================
+
+export interface PsychoeducationPath {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  estimatedMinutes: number;
+  topicIds: string[];
+  bookIds: string[];
+  assessmentScaleId?: string;
+  toolActionId?: 'breathe' | 'feker' | 'battery' | 'compass' | 'knot' | 'translate' | 'rescue' | 'emergency';
+}
+
+// ==========================================
 // Inner Safety Space Types (مساحة أمانك الداخلي)
 // ==========================================
 export interface InnerSafetySummary {
@@ -315,4 +393,61 @@ export interface ScheduledRelaxationSession {
   notes?: string;
   createdAt: string;
 }
+
+// ==========================================
+// Full-Text Psychological Books (مكتبة الكتب النفسية الكاملة)
+// ==========================================
+
+export interface FullBookSection {
+  heading?: string;
+  paragraphs: string[];
+  bulletPoints?: string[];
+  calloutBox?: {
+    title?: string;
+    content: string;
+    type?: 'info' | 'exercise' | 'warning' | 'quote';
+  };
+}
+
+export interface FullBookChapter {
+  id: string;
+  chapterNumber: number;
+  title: string;
+  subtitle?: string;
+  readingTimeMinutes: number;
+  sections: FullBookSection[];
+}
+
+export interface FullTextPsychoeducationBook {
+  id: string;
+  title: string;
+  originalTitle?: string;
+  authors: string[];
+  translator?: string;
+  publisher: string;
+  publicationYear: string;
+  edition?: string;
+  language: 'ar' | 'ar_translated';
+  category: 'anxiety_stress' | 'depression_mood' | 'trauma' | 'boundaries' | 'mindfulness_act' | 'self_compassion' | 'general_psychoeducation';
+  categoryLabel: string;
+  
+  // Strict Licensing & Rights Verification
+  licenseType: 'PUBLIC_DOMAIN' | 'CC_BY_NC_SA_3_0_IGO' | 'CC_BY_4_0' | 'WHO_OPEN_ACCESS' | 'OPEN_EDUCATIONAL_RESOURCE';
+  licenseLabel: string;
+  licenseUrl?: string;
+  licenseVerificationNotes: string;
+  sourceUrl: string;
+  attributionText: string;
+  
+  summary: string;
+  whoIsThisFor: string;
+  coverGradient: string;
+  icon: string;
+  
+  isFullTextVerified: boolean;
+  totalChaptersCount: number;
+  totalReadingTimeMinutes: number;
+  chapters: FullBookChapter[];
+}
+
 

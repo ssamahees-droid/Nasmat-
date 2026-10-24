@@ -655,6 +655,43 @@ html.mobile-low-perf,
   will-change: auto !important;
 }
 
+/* =========================================================================
+   Automatic Mobile Viewport Performance Booster (<768px & Touchscreens)
+   Instantly removes GPU bottlenecks for mobile browsers by default
+   ========================================================================= */
+@media (max-width: 768px), (pointer: coarse) {
+  /* Disable heavy backdrop blurs on mobile screens for instant 60fps scrolling */
+  [class*="backdrop-blur"],
+  .backdrop-blur-none,
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Suppress decorative background blur blobs on mobile */
+  [class*="blur-3xl"],
+  [class*="blur-2xl"],
+  [class*="blur-xl"],
+  [class*="blur-[100px]"],
+  [class*="blur-[120px]"] {
+    display: none !important;
+  }
+
+  /* Hardware acceleration hint & touch momentum scroll */
+  body, html {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .stat-card, .nesma-card, [role="dialog"], header {
+    contain: layout paint style;
+  }
+}
+
 
 
 /* React Transition Group Screen Fades */
