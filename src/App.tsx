@@ -460,6 +460,10 @@ export default function App() {
         setIsInnerCompassOpen(true);
         break;
       case 'reframing_puzzle':
+      case 'real_puzzles':
+      case 'jigsaw_puzzle':
+      case 'puzzle':
+      case 'puzzles':
         setIsReframingPuzzleOpen(true);
         break;
       case 'inner_labyrinth':

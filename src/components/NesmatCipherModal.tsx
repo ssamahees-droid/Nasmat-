@@ -10,9 +10,7 @@ import {
   Compass, 
   Lock, 
   CheckCircle2, 
-  ArrowRight, 
   ArrowLeft, 
-  HelpCircle, 
   Lightbulb, 
   Trophy, 
   Gift, 
@@ -21,9 +19,26 @@ import {
   BookOpen, 
   Flame,
   Shield,
-  Star
+  Star,
+  Layers,
+  Award
 } from 'lucide-react';
-import { CIPHER_LEVELS, CIPHER_WORLDS, CIPHER_SECRETS, CipherLevel } from '../data/nesmatCipherData';
+import { 
+  CIPHER_LEVELS, 
+  CIPHER_WORLDS, 
+  CIPHER_SECRETS, 
+  CipherLevel, 
+  SecretItem,
+  GRAND_SECRET_SYNTHESIS 
+} from '../data/nesmatCipherData';
+import { 
+  runNesmatCipherGrandStationsTest, 
+  runGameJourneyTest,
+  runGrandSecretSynthesisTest 
+} from '../utils/nesmatCipherTestRunner';
+import { CipherSecretModal } from './CipherSecretModal';
+import { CipherMap } from './CipherMap';
+import { nesmaCipherStorage } from '../utils/nesmaCipherStorage';
 
 interface NesmatCipherModalProps {
   isOpen: boolean;
@@ -31,33 +46,17 @@ interface NesmatCipherModalProps {
 }
 
 export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, onClose }) => {
-  // Storage keys
-  const PROGRESS_KEY = 'nesma_cipher_progress_v1';
-  const SOUND_KEY = 'nesma_cipher_sound_enabled';
-
-  // Game state
+  // Game progression & storage state
   const [completedLevels, setCompletedLevels] = useState<number[]>(() => {
-    try {
-      const saved = localStorage.getItem(PROGRESS_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-      }
-    } catch (_) {}
-    return [];
+    return nesmaCipherStorage.getCompletedLevels();
   });
 
   const [currentSelectedLevelId, setCurrentSelectedLevelId] = useState<number>(() => {
-    try {
-      const saved = localStorage.getItem(PROGRESS_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const next = Math.max(...parsed) + 1;
-          return next <= 30 ? next : 30;
-        }
-      }
-    } catch (_) {}
+    const saved = nesmaCipherStorage.getCompletedLevels();
+    if (saved.length > 0) {
+      const next = Math.max(...saved) + 1;
+      return next <= 30 ? next : 30;
+    }
     return 1;
   });
 
@@ -70,33 +69,40 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
     return list;
   });
 
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
-    return localStorage.getItem(SOUND_KEY) !== 'false';
+  const [solvedSecrets, setSolvedSecrets] = useState<string[]>(() => {
+    return nesmaCipherStorage.getSolvedSecrets();
   });
 
-  // Active view tab inside game: 'map' | 'level' | 'secrets' | 'cabinet' | 'grand_secret'
+  const [grandSecretSolved, setGrandSecretSolved] = useState<boolean>(() => {
+    return nesmaCipherStorage.isGrandSecretSolved();
+  });
+
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+    return nesmaCipherStorage.isSoundEnabled();
+  });
+
+  // Active view tab: 'map' | 'level' | 'secrets' | 'cabinet' | 'grand_secret'
   const [activeTab, setActiveTab] = useState<'map' | 'level' | 'secrets' | 'cabinet' | 'grand_secret'>('map');
   const [selectedWorldId, setSelectedWorldId] = useState<1 | 2 | 3>(1);
+  const [showTestModal, setShowTestModal] = useState<boolean>(false);
+  const [testModalTab, setTestModalTab] = useState<'stations' | 'grand' | 'journey'>('stations');
 
   // Level play state
   const [userAnswer, setUserAnswer] = useState<string>('');
-  const [hintTier, setHintTier] = useState<number>(0); // 0: none, 1: direction, 2: thought process, 3: clear help
+  const [hintTier, setHintTier] = useState<number>(0);
   const [levelStatus, setLevelStatus] = useState<'playing' | 'success' | 'retry'>('playing');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Secret solve modal state
-  const [activeSecretId, setActiveSecretId] = useState<string | null>(null);
-  const [secretAnswerInput, setSecretAnswerInput] = useState<string>('');
+  // Secret Discovery Modal state
+  const [selectedSecretForModal, setSelectedSecretForModal] = useState<SecretItem | null>(null);
+  const [isSecretModalOpen, setIsSecretModalOpen] = useState<boolean>(false);
 
-  // Grand secret input state
-  const [grandSecretInput, setGrandSecretInput] = useState<string>('');
-  const [grandSecretSolved, setGrandSecretSolved] = useState<boolean>(() => {
-    return localStorage.getItem('nesma_cipher_grand_solved') === 'true';
-  });
+  // Grand Secret Synthesis State
+  const [selectedGrandOption, setSelectedGrandOption] = useState<number | null>(null);
+  const [grandFeedbackError, setGrandFeedbackError] = useState<string | null>(null);
 
   useEffect(() => {
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify(completedLevels));
-    // Update unlocked secrets dynamically
+    nesmaCipherStorage.saveCompletedLevels(completedLevels);
     const maxC = completedLevels.length > 0 ? Math.max(...completedLevels) : 0;
     const newSecrets: string[] = [];
     if (maxC >= 5) newSecrets.push('secret_1');
@@ -106,17 +112,25 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
   }, [completedLevels]);
 
   useEffect(() => {
-    localStorage.setItem(SOUND_KEY, String(soundEnabled));
+    nesmaCipherStorage.saveSolvedSecrets(solvedSecrets);
+  }, [solvedSecrets]);
+
+  useEffect(() => {
+    nesmaCipherStorage.setGrandSecretSolved(grandSecretSolved);
+  }, [grandSecretSolved]);
+
+  useEffect(() => {
+    nesmaCipherStorage.setSoundEnabled(soundEnabled);
   }, [soundEnabled]);
 
   if (!isOpen) return null;
 
   const activeLevel: CipherLevel = CIPHER_LEVELS.find(l => l.id === currentSelectedLevelId) || CIPHER_LEVELS[0];
   const activeWorld = CIPHER_WORLDS.find(w => w.id === activeLevel.worldId) || CIPHER_WORLDS[0];
+  const maxCompleted = completedLevels.length > 0 ? Math.max(...completedLevels) : 0;
+  const isGameFinished = maxCompleted >= 30;
 
   const handleSelectLevel = (lvlId: number) => {
-    // Can play if it's completed, current, or previous completed + 1
-    const maxCompleted = completedLevels.length > 0 ? Math.max(...completedLevels) : 0;
     if (lvlId <= maxCompleted + 1) {
       setCurrentSelectedLevelId(lvlId);
       setUserAnswer('');
@@ -124,7 +138,7 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
       setLevelStatus('playing');
       setActiveTab('level');
     } else {
-      setToastMessage('أكمل المراحل السابقة أولاً لتفتح هذه المرحلة 🔒');
+      setToastMessage('أكملي المراحل السابقة أولاً لتفتحي هذه المحطة 🔒');
     }
   };
 
@@ -137,7 +151,6 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
     const correct = String(activeLevel.puzzleData.correctAnswer).trim().toLowerCase();
     const given = userAnswer.trim().toLowerCase();
 
-    // Flexible matching
     if (given === correct || given.includes(correct) || correct.includes(given)) {
       setLevelStatus('success');
       if (!completedLevels.includes(activeLevel.id)) {
@@ -147,7 +160,7 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
       setToastMessage('إجابة صحيحة وموفقة جداً! 🌟');
     } else {
       setLevelStatus('retry');
-      setToastMessage('محاولة دافئة.. فكر مجدداً أو استعن بتلميحات بوصلة نسمة 🍃');
+      setToastMessage('محاولة دافئة.. فكري مجدداً أو استعيني بتلميحات بوصلة نسمة 🍃');
     }
   };
 
@@ -160,34 +173,46 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
       setLevelStatus('playing');
     } else {
       setActiveTab('map');
-      setToastMessage('لقد أكملت جميع مراحل شفرة نسمة بنجاح تام! 🎉');
+      setToastMessage('لقد أكملتِ جميع مراحل شفرة نسمة بنجاح تام! 🎉');
     }
+  };
+
+  const handleOpenSecret = (secretId: string) => {
+    const sec = CIPHER_SECRETS.find(s => s.id === secretId);
+    if (sec) {
+      setSelectedSecretForModal(sec);
+      setIsSecretModalOpen(true);
+    }
+  };
+
+  const handleCloseSecret = () => {
+    setIsSecretModalOpen(false);
+    setSelectedSecretForModal(null);
   };
 
   const handleSolveSecret = (secretId: string) => {
-    const sec = CIPHER_SECRETS.find(s => s.id === secretId);
-    if (!sec) return;
-    if (secretAnswerInput.trim().toLowerCase() === sec.secretAnswer.trim().toLowerCase()) {
-      setToastMessage(`تهانينا! لقد اكتشفت ${sec.name} بنجاح ✨`);
-      setActiveSecretId(null);
-      setSecretAnswerInput('');
-    } else {
-      setToastMessage('الإجابة غير دقيقة.. تأمل السؤال وتأمل معنى السر مجدداً.');
+    if (!solvedSecrets.includes(secretId)) {
+      const updated = [...solvedSecrets, secretId];
+      setSolvedSecrets(updated);
+      const sec = CIPHER_SECRETS.find(s => s.id === secretId);
+      setToastMessage(`تهانينا! لقد اكتشفتِ سر «${sec?.name || secretId}» وحصلتِ على مقتناه وشظيته ✨`);
     }
   };
 
-  const handleSolveGrandSecret = () => {
-    if (grandSecretInput.includes('الرفق') || grandSecretInput.includes('الحدود') || grandSecretInput.includes('سلام')) {
+  const handleVerifyGrandSecret = () => {
+    setGrandFeedbackError(null);
+    if (selectedGrandOption === null) {
+      setGrandFeedbackError('يرجى اختيار العبارة التي تجسد تركيب المعاني الثلاثة أولاً.');
+      return;
+    }
+
+    if (selectedGrandOption === GRAND_SECRET_SYNTHESIS.correctAnswerIndex) {
       setGrandSecretSolved(true);
-      localStorage.setItem('nesma_cipher_grand_solved', 'true');
-      setToastMessage('🎉 لقد فتحت «السر الأكبر» وحققت السكينة التامة في نسمة حياة!');
+      setToastMessage('🎉 مبارك! لقد جمعتِ الخيوط الثلاثة واكتملت لديكِ تميمة السكينة الجامعة!');
     } else {
-      setToastMessage('حاول ربط المعاني الثلاثة الكبرى: الرفق بالذات، صون الحدود، ومراقبة الأفكار.');
+      setGrandFeedbackError('محاولة دافئة.. تأملي كيف يجتمع الرفق وصون الحدود والمراقبة الهادئة معاً لصنع سلام الحاضر.');
     }
   };
-
-  const maxCompleted = completedLevels.length > 0 ? Math.max(...completedLevels) : 0;
-  const isGameFinished = maxCompleted >= 30;
 
   return (
     <div 
@@ -210,8 +235,13 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                   شفرة نسمة — حلّ اللغز واكتشف اللي جواك
                 </h2>
                 <span className="text-[10px] bg-[#23785B]/15 text-[#23785B] dark:bg-emerald-500/20 dark:text-emerald-300 px-2.5 py-0.5 rounded-full font-bold">
-                  {completedLevels.length} / 30 مرحلة مكتملة
+                  {completedLevels.length} / 30 مرحلة
                 </span>
+                {solvedSecrets.length > 0 && (
+                  <span className="text-[10px] bg-amber-500/15 text-amber-700 dark:text-amber-300 px-2.5 py-0.5 rounded-full font-bold">
+                    {solvedSecrets.length} / 3 أسرار
+                  </span>
+                )}
               </div>
               <p className="text-xs text-[#515B55] dark:text-stone-400 mt-0.5">
                 مغامرة تفاعلية هادئة لتفكيك الأفكار واكتشاف المعاني النفسية بوعي
@@ -250,7 +280,7 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
               }`}
             >
               <Compass className="w-3.5 h-3.5" />
-              <span>خريطة العوالم والمراحل</span>
+              <span>خريطة العوالم</span>
             </button>
 
             {completedLevels.length > 0 && (
@@ -276,7 +306,7 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
               }`}
             >
               <Gift className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-              <span>الأسرار المخفية ({unlockedSecrets.length}/3)</span>
+              <span>الأسرار المخفية ({solvedSecrets.length}/3)</span>
             </button>
 
             <button
@@ -288,7 +318,7 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span>خزانة المعاني والرسائل</span>
+              <span>خزانة المعاني</span>
             </button>
 
             {isGameFinished && (
@@ -296,14 +326,21 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                 onClick={() => setActiveTab('grand_secret')}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                   activeTab === 'grand_secret'
-                    ? 'bg-amber-600 text-white shadow-sm animate-pulse'
+                    ? 'bg-amber-600 text-white shadow-sm'
                     : 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200 hover:bg-amber-200'
                 }`}
               >
                 <Trophy className="w-3.5 h-3.5 text-amber-500" />
-                <span>السر الأكبر 🌟</span>
+                <span>السر الأعظم 🌟</span>
               </button>
             )}
+
+            <button
+              onClick={() => setShowTestModal(true)}
+              className="px-3.5 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
+            >
+              <span>🧪 اختبار القبول</span>
+            </button>
           </div>
         </div>
 
@@ -328,111 +365,63 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
           
           {/* TAB 1: MAP VIEW */}
           {activeTab === 'map' && (
-            <div className="space-y-8 max-w-3xl mx-auto">
-              
-              {/* World selector header */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {CIPHER_WORLDS.map(world => {
-                  const isCurrentWorld = activeWorld.id === world.id;
-                  const [minL, maxL] = world.levelsRange;
-                  const worldCompletedCount = completedLevels.filter(id => id >= minL && id <= maxL).length;
-                  return (
+            <div className="space-y-6 max-w-3xl mx-auto">
+              <CipherMap
+                completedLevels={completedLevels}
+                currentSelectedLevelId={currentSelectedLevelId}
+                selectedWorldId={selectedWorldId}
+                onSelectWorld={setSelectedWorldId}
+                onSelectLevel={handleSelectLevel}
+                onOpenSecret={handleOpenSecret}
+                solvedSecrets={solvedSecrets}
+              />
+
+              {/* End game notification banners */}
+              {isGameFinished && (
+                solvedSecrets.length === 3 ? (
+                  <div className="p-5 rounded-3xl bg-gradient-to-r from-amber-500/20 via-emerald-500/10 to-amber-500/20 border-2 border-amber-400/60 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-500 flex items-center justify-center text-2xl shadow-inner shrink-0">
+                        🌟
+                      </div>
+                      <div>
+                        <h4 className="text-sm sm:text-base font-black text-[#174F3F] dark:text-amber-300">
+                          اكتملت الشظايا الثلاث (3 / 3) — السر الأعظم بانتظارك!
+                        </h4>
+                        <p className="text-xs text-[#515B55] dark:text-stone-300 mt-0.5">
+                          لقد عثرتِ على ندى البدايات ومخطوطة الحدود وبلورة المراقب. حان وقت تركيب المعنى الشامل.
+                        </p>
+                      </div>
+                    </div>
                     <button
-                      key={world.id}
-                      onClick={() => setSelectedWorldId(world.id)}
-                      className={`p-4 rounded-2xl border text-right transition-all cursor-pointer ${
-                        selectedWorldId === world.id
-                          ? 'bg-white dark:bg-[#1E2B24] border-[#23785B] shadow-md ring-2 ring-[#23785B]/20'
-                          : 'bg-white/60 dark:bg-stone-800/60 border-[#D5DED7] dark:border-stone-700 hover:bg-white'
-                      }`}
+                      onClick={() => setActiveTab('grand_secret')}
+                      className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black transition-all cursor-pointer shadow-md shrink-0 animate-pulse"
                     >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[11px] font-bold text-[#23785B] dark:text-emerald-400">
-                          {world.subtitle}
-                        </span>
-                        <span className="text-xs bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full font-bold">
-                          {worldCompletedCount} / 10
-                        </span>
-                      </div>
-                      <h3 className="text-base font-black text-[#174F3F] dark:text-white">
-                        {world.name}
-                      </h3>
-                      <p className="text-[11px] text-[#515B55] dark:text-stone-300 mt-1 line-clamp-2">
-                        {world.description}
-                      </p>
+                      تركيب السر الأعظم 🔓
                     </button>
-                  );
-                })}
-              </div>
-
-              {/* Active World Details & Levels Grid */}
-              {(() => {
-                const world = CIPHER_WORLDS.find(w => w.id === selectedWorldId) || CIPHER_WORLDS[0];
-                const worldLevels = CIPHER_LEVELS.filter(l => l.worldId === world.id);
-                return (
-                  <div className="bg-white dark:bg-[#1A2520] border border-[#D5DED7] dark:border-stone-700 rounded-3xl p-6 shadow-sm space-y-6">
-                    <div className="border-b border-[#D5DED7] dark:border-stone-700 pb-4">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#E2EFE7] dark:bg-emerald-950 text-[#174F3F] dark:text-emerald-300 text-xs font-bold rounded-full mb-2">
-                        <Flame className="w-3.5 h-3.5 text-[#B78327]" />
-                        <span>نهاية العالم: {world.finaleTitle}</span>
-                      </div>
-                      <h3 className="text-xl font-extrabold text-[#174F3F] dark:text-white">
-                        {world.name} — خريطة المراحل
-                      </h3>
-                      <p className="text-xs text-[#515B55] dark:text-stone-300 mt-1">
-                        اضغط على أي مرحلة مفتوحة لبدء التحدي واستكشاف المعنى النفسي.
-                      </p>
-                    </div>
-
-                    {/* Levels Serpentine Grid */}
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
-                      {worldLevels.map(lvl => {
-                        const isCompleted = completedLevels.includes(lvl.id);
-                        const maxC = completedLevels.length > 0 ? Math.max(...completedLevels) : 0;
-                        const isUnlocked = lvl.id <= maxC + 1;
-                        const isCurrent = lvl.id === currentSelectedLevelId;
-
-                        return (
-                          <button
-                            key={lvl.id}
-                            onClick={() => handleSelectLevel(lvl.id)}
-                            disabled={!isUnlocked}
-                            className={`p-4 rounded-2xl border text-right transition-all flex flex-col justify-between min-h-[110px] cursor-pointer ${
-                              isCompleted
-                                ? 'bg-[#E2EFE7] dark:bg-emerald-950/60 border-[#23785B] text-[#174F3F] dark:text-emerald-200 shadow-xs'
-                                : isCurrent
-                                ? 'bg-white dark:bg-[#202C26] border-[#B78327] ring-2 ring-[#B78327]/30 text-[#174F3F] dark:text-white shadow-md'
-                                : isUnlocked
-                                ? 'bg-white dark:bg-stone-800 border-[#D5DED7] dark:border-stone-700 text-[#292F2B] dark:text-stone-200 hover:border-[#23785B]'
-                                : 'bg-stone-100 dark:bg-stone-900/50 border-stone-200 dark:border-stone-800 text-stone-400 opacity-60 cursor-not-allowed'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs font-black px-2 py-0.5 rounded-md bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200">
-                                #{lvl.id}
-                              </span>
-                              {isCompleted ? (
-                                <CheckCircle2 className="w-4 h-4 text-[#23785B]" />
-                              ) : isUnlocked ? (
-                                <Sparkles className="w-4 h-4 text-[#B78327]" />
-                              ) : (
-                                <Lock className="w-4 h-4 text-stone-400" />
-                              )}
-                            </div>
-
-                            <div className="mt-2">
-                              <h4 className="text-xs font-bold leading-tight line-clamp-2">
-                                {lvl.title}
-                              </h4>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
                   </div>
-                );
-              })()}
-
+                ) : (
+                  <div className="p-4 rounded-2xl bg-[#E2EFE7]/80 dark:bg-emerald-950/60 border border-[#23785B]/30 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs animate-fade-in">
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-xl">🌿</span>
+                      <div>
+                        <span className="font-extrabold text-[#174F3F] dark:text-emerald-300 block">
+                          أتممتِ مسار المراحل الثلاثين بنجاح وسلام!
+                        </span>
+                        <span className="text-stone-600 dark:text-stone-300 text-[11px]">
+                          تذكري أن هناك أسراراً اختيارية في العوالم السابقة ({solvedSecrets.length} من 3). يمكنك العودة إليها متى رغبتِ في اكتشافها برفق.
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('secrets')}
+                      className="px-4 py-2 rounded-xl bg-[#23785B] hover:bg-[#174F3F] text-white font-bold shrink-0 cursor-pointer text-xs"
+                    >
+                      استعراض الأسرار ({solvedSecrets.length}/3)
+                    </button>
+                  </div>
+                )
+              )}
             </div>
           )}
 
@@ -440,7 +429,7 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
           {activeTab === 'level' && activeLevel && (
             <div className="max-w-2xl mx-auto space-y-6">
               
-              {/* Breadcrumb / Header */}
+              {/* Header */}
               <div className="flex items-center justify-between bg-white dark:bg-[#1A2520] p-4 rounded-2xl border border-[#D5DED7] dark:border-stone-700">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold bg-[#174F3F] text-white px-2.5 py-1 rounded-xl">
@@ -458,7 +447,7 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                 </button>
               </div>
 
-              {/* Story & Companion Intro Card */}
+              {/* Story & Companion Card */}
               <div className="bg-white dark:bg-[#1A2520] p-6 rounded-3xl border border-[#D5DED7] dark:border-stone-700 shadow-xs space-y-4">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#E2EFE7] dark:bg-emerald-950 text-[#174F3F] dark:text-emerald-300 flex items-center justify-center font-black shrink-0 text-lg shadow-inner">
@@ -474,15 +463,22 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-[#F7F5EF] dark:bg-[#121A16] border border-[#D5DED7] dark:border-stone-700 text-xs text-[#515B55] dark:text-stone-300 leading-relaxed">
-                  <span className="font-bold text-[#174F3F] dark:text-emerald-400 block mb-1">
-                    📖 الفصل القصصي:
-                  </span>
-                  {activeLevel.storyChapter}
+                <div className="p-3.5 rounded-2xl bg-[#F7F5EF] dark:bg-[#121A16] border border-[#D5DED7] dark:border-stone-700 text-xs text-[#515B55] dark:text-stone-300 leading-relaxed space-y-2">
+                  <div>
+                    <span className="font-bold text-[#174F3F] dark:text-emerald-400 block mb-1">
+                      📖 الفصل القصصي:
+                    </span>
+                    {activeLevel.storyChapter}
+                  </div>
+                  {activeLevel.narrativeIntro && (
+                    <div className="pt-2 border-t border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 italic font-medium">
+                      ✨ {activeLevel.narrativeIntro}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Puzzle Interaction Card */}
+              {/* Puzzle Card */}
               <div className="bg-white dark:bg-[#1A2520] p-6 rounded-3xl border-2 border-[#23785B]/30 shadow-md space-y-5">
                 <div>
                   <span className="text-[11px] font-bold px-3 py-1 bg-[#23785B]/15 text-[#23785B] dark:bg-emerald-500/20 dark:text-emerald-300 rounded-full">
@@ -496,7 +492,6 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                   </p>
                 </div>
 
-                {/* Multiple choice options if available */}
                 {activeLevel.puzzleData.options ? (
                   <div className="space-y-2.5">
                     {activeLevel.puzzleData.options.map((opt, idx) => (
@@ -522,13 +517,12 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                       type="text"
                       value={userAnswer}
                       onChange={(e) => setUserAnswer(e.target.value)}
-                      placeholder="اكتب إجابتك هنا..."
+                      placeholder="اكتبي إجابتك هنا..."
                       className="w-full px-4 py-3 rounded-2xl bg-[#F7F5EF] dark:bg-stone-800 border border-[#D5DED7] dark:border-stone-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#23785B]"
                     />
                   </div>
                 )}
 
-                {/* Submit button */}
                 <div className="pt-2 flex items-center justify-between">
                   <button
                     onClick={handleSubmitAnswer}
@@ -538,7 +532,6 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                     تحقق من الحل 🔍
                   </button>
 
-                  {/* Progressive Hint Button */}
                   <button
                     onClick={() => setHintTier(prev => (prev < 3 ? prev + 1 : prev))}
                     className="px-4 py-2.5 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
@@ -548,7 +541,6 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                   </button>
                 </div>
 
-                {/* Display Hints if requested */}
                 {hintTier > 0 && (
                   <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 text-xs text-amber-900 dark:text-amber-200 space-y-1.5 animate-fade-in">
                     <span className="font-bold block text-[11px] text-amber-700 dark:text-amber-400">
@@ -560,7 +552,7 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                   </div>
                 )}
 
-                {/* Success Banner & Psychological Takeaway */}
+                {/* Level Success Card */}
                 {levelStatus === 'success' && (
                   <div className="p-5 rounded-2xl bg-[#E2EFE7] dark:bg-emerald-950/80 border border-[#23785B]/40 text-[#174F3F] dark:text-emerald-200 space-y-3 animate-fade-in">
                     <div className="flex items-center gap-2">
@@ -572,21 +564,64 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                     <p className="text-xs sm:text-sm leading-relaxed font-medium">
                       {activeLevel.psychologicalTakeaway.message}
                     </p>
-                    <div className="pt-2 flex items-center justify-end">
-                      <button
-                        onClick={handleNextLevel}
-                        className="px-5 py-2.5 rounded-xl bg-[#23785B] hover:bg-[#174F3F] text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
-                      >
-                        <span>المرحلة التالية</span>
-                        <ArrowLeft className="w-4 h-4" />
-                      </button>
-                    </div>
+                    {activeLevel.narrativeOutro && (
+                      <p className="text-xs text-[#174F3F] dark:text-emerald-300 pt-2 border-t border-emerald-500/20 italic font-medium">
+                        🌿 {activeLevel.narrativeOutro}
+                      </p>
+                    )}
+
+                    {/* Stage 30 Special Synthesis or Gentle Guide */}
+                    {activeLevel.id === 30 ? (
+                      solvedSecrets.length === 3 ? (
+                        <div className="mt-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-400 text-amber-950 dark:text-amber-200 space-y-2">
+                          <div className="flex items-center gap-2 font-black text-xs text-amber-800 dark:text-amber-300">
+                            <Sparkles className="w-4 h-4" />
+                            <span>اكتملت شظايا الأسرار الثلاثة!</span>
+                          </div>
+                          <p className="text-xs leading-relaxed">
+                            لقد جمعتِ ندى البدايات ومخطوطة الحدود وبلورة المراقب. تحدي «السر الأعظم» متاح لكِ الآن لتركيب المعنى الشامل لسكينتكِ.
+                          </p>
+                          <div className="pt-2 flex justify-end">
+                            <button
+                              onClick={() => setActiveTab('grand_secret')}
+                              className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black transition-all cursor-pointer shadow-sm"
+                            >
+                              الانتقال إلى السر الأعظم 🌟
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mt-3 p-4 rounded-xl bg-emerald-100/60 dark:bg-emerald-900/40 border border-emerald-300 text-emerald-900 dark:text-emerald-200 space-y-2">
+                          <p className="text-xs leading-relaxed font-medium">
+                            🌿 مبارك إتمام الرحلة الأساسية لشفرة نسمة بنجاح تام! تذكري أن عوالم الحديقة والمكتبة والكهف تحتفظ بأسرار دافئة ({solvedSecrets.length} من 3). يمكنكِ العودة للخريطة متى رغبتِ في اكتشافها برفق وبلا أي استعجال.
+                          </p>
+                          <div className="pt-2 flex justify-end">
+                            <button
+                              onClick={() => setActiveTab('map')}
+                              className="px-4 py-2 rounded-xl bg-[#174F3F] text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
+                            >
+                              العودة لخريطة العوالم 🗺️
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    ) : (
+                      <div className="pt-2 flex items-center justify-end">
+                        <button
+                          onClick={handleNextLevel}
+                          className="px-5 py-2.5 rounded-xl bg-[#23785B] hover:bg-[#174F3F] text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+                        >
+                          <span>المرحلة التالية</span>
+                          <ArrowLeft className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
 
                 {levelStatus === 'retry' && (
                   <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 text-rose-800 dark:text-rose-200 text-xs font-medium animate-fade-in">
-                    محاولة دافئة! اقرأ التلميح أعلى أو جرب خياراً آخر برفق.
+                    محاولة دافئة! اقرئي التلميح أعلى أو جربي خياراً آخر برفق.
                   </div>
                 )}
 
@@ -599,116 +634,183 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
           {activeTab === 'secrets' && (
             <div className="max-w-2xl mx-auto space-y-6">
               <div className="bg-white dark:bg-[#1A2520] p-6 rounded-3xl border border-[#D5DED7] dark:border-stone-700 shadow-sm space-y-2">
-                <h3 className="text-lg font-black text-[#174F3F] dark:text-white flex items-center gap-2">
-                  <span>🎁 الأسرار الثلاثة المخفية في رحلة نسمة</span>
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-black text-[#174F3F] dark:text-white flex items-center gap-2">
+                    <span>🎁 الأسرار الثلاثة المخفية في رحلة نسمة</span>
+                  </h3>
+                  <span className="text-xs bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold px-3 py-1 rounded-full">
+                    المكتشف: {solvedSecrets.length} / 3
+                  </span>
+                </div>
                 <p className="text-xs text-[#515B55] dark:text-stone-300 leading-relaxed">
-                  تُفتح هذه الأسرار كلما تقدمت في عوالم شفرة نسمة. أجب عن التحدي الخاص بكل سر لاكتشافه نهائياً.
+                  تُفتح هذه الأسرار تدريجياً في عوالم الحديقة والمكتبة والكهف. تفاعلي مع لغز الاكتشاف لكل سر لتجمعي شظايا السكينة وتفتحي السر الأعظم.
                 </p>
               </div>
 
               <div className="space-y-4">
                 {CIPHER_SECRETS.map(sec => {
                   const isUnlocked = unlockedSecrets.includes(sec.id);
+                  const isSolved = solvedSecrets.includes(sec.id);
+
                   return (
                     <div 
                       key={sec.id}
                       className={`p-5 rounded-3xl border transition-all ${
-                        isUnlocked 
-                          ? 'bg-white dark:bg-[#1A2520] border-[#23785B] shadow-sm' 
+                        isSolved
+                          ? 'bg-[#E2EFE7]/50 dark:bg-emerald-950/30 border-[#23785B] shadow-sm'
+                          : isUnlocked 
+                          ? 'bg-white dark:bg-[#1A2520] border-amber-400/70 shadow-sm' 
                           : 'bg-stone-100 dark:bg-stone-900/60 border-stone-200 dark:border-stone-800 opacity-70'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl shadow-inner">
+                          <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl shadow-inner shrink-0">
                             {sec.icon}
                           </div>
                           <div>
                             <h4 className="text-base font-black text-[#174F3F] dark:text-white">
                               {sec.name}
                             </h4>
+                            <span className="text-[11px] font-bold text-[#B78327] block">
+                              {sec.puzzleTitle}
+                            </span>
                             <p className="text-xs text-[#515B55] dark:text-stone-300 mt-1 leading-relaxed">
                               {sec.description}
                             </p>
                           </div>
                         </div>
 
-                        {isUnlocked ? (
-                          <span className="text-xs px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold rounded-full">
-                            مكتشف ✨
+                        {isSolved ? (
+                          <span className="text-xs px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold rounded-full shrink-0">
+                            مكتشف ومتأمل ✨
+                          </span>
+                        ) : isUnlocked ? (
+                          <span className="text-xs px-3 py-1 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold rounded-full shrink-0 animate-pulse">
+                            متاح للاكتشاف 🌟
                           </span>
                         ) : (
-                          <span className="text-xs px-3 py-1 bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-400 font-bold rounded-full flex items-center gap-1">
+                          <span className="text-xs px-3 py-1 bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-400 font-bold rounded-full flex items-center gap-1 shrink-0">
                             <Lock className="w-3.5 h-3.5" /> مقفل
                           </span>
                         )}
                       </div>
 
-                      {isUnlocked && activeSecretId !== sec.id && (
-                        <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800 flex justify-end">
-                          <button
-                            onClick={() => setActiveSecretId(sec.id)}
-                            className="px-4 py-2 rounded-xl bg-[#174F3F] text-white text-xs font-bold cursor-pointer"
-                          >
-                            تأمل السر وحله 🔍
-                          </button>
+                      {/* Solved collectible card */}
+                      {isSolved && (
+                        <div className="mt-4 p-3.5 rounded-2xl bg-white/80 dark:bg-stone-800/80 border border-emerald-500/20 space-y-1.5 text-xs">
+                          <div className="flex items-center gap-2 font-bold text-[#174F3F] dark:text-emerald-300">
+                            <span>🎁 المقتنى: {sec.collectibleItem}</span>
+                          </div>
+                          <p className="text-stone-600 dark:text-stone-300 text-[11px]">
+                            {sec.keystonePiece}
+                          </p>
                         </div>
                       )}
 
-                      {isUnlocked && activeSecretId === sec.id && (
-                        <div className="mt-4 pt-4 border-t border-stone-200 dark:border-stone-700 space-y-3 animate-fade-in">
-                          <p className="text-xs font-bold text-[#174F3F] dark:text-emerald-300">
-                            سؤال التأمل: {sec.secretPrompt}
-                          </p>
-                          <input
-                            type="text"
-                            value={secretAnswerInput}
-                            onChange={(e) => setSecretAnswerInput(e.target.value)}
-                            placeholder="اكتب إجابتك هنا..."
-                            className="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs"
-                          />
-                          <div className="flex justify-end gap-2">
-                            <button
-                              onClick={() => setActiveSecretId(null)}
-                              className="px-3 py-1.5 rounded-xl bg-stone-200 dark:bg-stone-700 text-xs font-bold cursor-pointer"
-                            >
-                              إلغاء
-                            </button>
-                            <button
-                              onClick={() => handleSolveSecret(sec.id)}
-                              className="px-4 py-1.5 rounded-xl bg-[#23785B] text-white text-xs font-bold cursor-pointer"
-                            >
-                              تأكيد الحل
-                            </button>
-                          </div>
-                        </div>
-                      )}
+                      {/* Action buttons */}
+                      <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800 flex justify-end gap-2">
+                        {isUnlocked && (
+                          <button
+                            onClick={() => handleOpenSecret(sec.id)}
+                            className={`px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all ${
+                              isSolved
+                                ? 'bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-700 dark:text-stone-200'
+                                : 'bg-[#174F3F] hover:bg-[#11382C] text-white shadow-sm'
+                            }`}
+                          >
+                            {isSolved ? 'عرض تفاصيل السر 🔍' : 'ابدأ لغز الاكتشاف 🔍'}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
               </div>
+
+              {/* Grand Secret Status Link */}
+              <div className="p-5 rounded-3xl bg-white dark:bg-[#1A2520] border border-[#D5DED7] dark:border-stone-700 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-500 flex items-center justify-center text-xl shrink-0">
+                    🌟
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-[#174F3F] dark:text-white">
+                      شظايا السر الأعظم ({solvedSecrets.length} / 3)
+                    </h4>
+                    <p className="text-xs text-[#515B55] dark:text-stone-300">
+                      {solvedSecrets.length === 3 
+                        ? 'اكتملت الشظايا الثلاث! يمكنكِ الآن تركيب السر الأعظم.' 
+                        : 'اكتشفي أسرار العوالم الثلاثة لتفتحي السر الأعظم في نهاية الرحلة.'}
+                    </p>
+                  </div>
+                </div>
+
+                {isGameFinished && solvedSecrets.length === 3 && (
+                  <button
+                    onClick={() => setActiveTab('grand_secret')}
+                    className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black transition-all cursor-pointer shadow-sm shrink-0"
+                  >
+                    الانتقال للسر الأعظم 🌟
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
-          {/* TAB 4: CABINET OF QUOTATIONS */}
+          {/* TAB 4: CABINET VIEW */}
           {activeTab === 'cabinet' && (
             <div className="max-w-2xl mx-auto space-y-6">
               <div className="bg-white dark:bg-[#1A2520] p-6 rounded-3xl border border-[#D5DED7] dark:border-stone-700 shadow-sm space-y-2">
                 <h3 className="text-lg font-black text-[#174F3F] dark:text-white flex items-center gap-2">
-                  <span>📖 خزانة المقتنيات والاقتباسات النفسية</span>
+                  <span>📖 خزانة المعاني والمقتنيات النفسية</span>
                 </h3>
                 <p className="text-xs text-[#515B55] dark:text-stone-300 leading-relaxed">
-                  كل مرحلة أكملتها أضافت درساً عميقاً إلى خزانتك. هذه الاقتباسات مراجعك الدائمة لسلام الحاضر.
+                  كل مرحلة وسر أكملتِه أضاف درساً ومقتنى فريداً إلى خزانتكِ ليظل رفيقاً لسلامكِ الداخلي.
                 </p>
               </div>
 
+              {/* Discovered Secrets Showcase */}
+              {solvedSecrets.length > 0 && (
+                <div className="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-amber-500/10 p-5 rounded-3xl border border-amber-300 dark:border-amber-800 space-y-3">
+                  <div className="flex items-center gap-2 font-black text-xs text-[#174F3F] dark:text-amber-300">
+                    <Award className="w-4 h-4 text-amber-500" />
+                    <span>مقتنيات الأسرار وشظايا السكينة المكتشفة ({solvedSecrets.length} / 3)</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {CIPHER_SECRETS.filter(s => solvedSecrets.includes(s.id)).map(sec => (
+                      <div key={sec.id} className="p-3 bg-white dark:bg-stone-900 rounded-2xl border border-amber-200 dark:border-amber-900/50 space-y-1 text-center">
+                        <span className="text-2xl block">{sec.icon}</span>
+                        <h5 className="text-xs font-bold text-[#174F3F] dark:text-white">
+                          {sec.collectibleItem}
+                        </h5>
+                        <p className="text-[10px] text-stone-500 dark:text-stone-400">
+                          {sec.keystoneMeaning}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {grandSecretSolved && (
+                    <div className="p-4 rounded-2xl bg-amber-500/20 border border-amber-400/60 text-center space-y-1.5 animate-fade-in mt-3">
+                      <span className="text-xs font-black text-amber-800 dark:text-amber-200 block">
+                        👑 {GRAND_SECRET_SYNTHESIS.finalRevelation.amuletName}
+                      </span>
+                      <p className="text-xs text-amber-900 dark:text-amber-100 font-bold">
+                        {GRAND_SECRET_SYNTHESIS.finalRevelation.goldenMotto}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Levels Takeaways Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {CIPHER_LEVELS.filter(l => completedLevels.includes(l.id)).map(lvl => (
                   <div key={lvl.id} className="bg-white dark:bg-[#1A2520] p-5 rounded-2xl border border-[#D5DED7] dark:border-stone-700 space-y-2 shadow-xs flex flex-col justify-between">
                     <div>
                       <span className="text-[10px] font-bold text-[#23785B] dark:text-emerald-400">
-                        مرحلة #{lvl.id} · {lvl.title}
+                        محطة #{lvl.id} · {lvl.title}
                       </span>
                       <h4 className="text-sm font-black text-[#174F3F] dark:text-white mt-1">
                         {lvl.psychologicalTakeaway.title}
@@ -726,65 +828,369 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
 
                 {completedLevels.length === 0 && (
                   <div className="col-span-2 text-center py-12 text-stone-500 text-sm">
-                    لم تكمل أي مرحلة بعد. ابدأ اللعب من الخريطة لتتجمع اقتباساتك هنا! 🌿
+                    لم تكملي أي مرحلة بعد. ابدئي اللعب من الخريطة لتتجمع اقتباساتك هنا! 🌿
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* TAB 5: GRAND SECRET */}
+          {/* TAB 5: GRAND SECRET (Phase 8 Synthesis) */}
           {activeTab === 'grand_secret' && (
             <div className="max-w-2xl mx-auto space-y-6">
-              <div className="bg-gradient-to-br from-amber-900/90 via-stone-900 to-[#141816] p-6 sm:p-8 rounded-3xl border-2 border-amber-500/40 text-white shadow-xl space-y-6">
-                <div className="text-center space-y-3">
-                  <div className="w-16 h-16 rounded-3xl bg-amber-500/20 text-amber-400 mx-auto flex items-center justify-center text-3xl shadow-inner">
-                    🌟
-                  </div>
+              
+              {/* Header Lore */}
+              <div className="bg-gradient-to-br from-amber-950 via-stone-900 to-[#121A16] p-6 sm:p-8 rounded-3xl border-2 border-amber-500/40 text-white shadow-xl space-y-5 text-center">
+                <div className="w-16 h-16 rounded-3xl bg-amber-500/20 text-amber-400 mx-auto flex items-center justify-center text-3xl shadow-inner">
+                  🌟
+                </div>
+                <div className="space-y-1.5">
                   <h3 className="text-2xl font-black text-amber-300">
-                    السر الأكبر — شفرة نسمة الكبرى
+                    {GRAND_SECRET_SYNTHESIS.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-stone-300 leading-relaxed max-w-lg mx-auto">
-                    لقد طوّفت في حديقة البدايات ومكتبة الأسرار وكهف التفكير. اربط المعاني الثلاثة الكبرى في جملة واحدة واكتبها أدناه لتتوج بالخاتمة الكبرى.
+                  <p className="text-xs font-bold text-amber-400/80">
+                    {GRAND_SECRET_SYNTHESIS.subtitle}
+                  </p>
+                  <p className="text-xs sm:text-sm text-stone-300 leading-relaxed max-w-lg mx-auto pt-2">
+                    {GRAND_SECRET_SYNTHESIS.lore}
                   </p>
                 </div>
 
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    value={grandSecretInput}
-                    onChange={(e) => setGrandSecretInput(e.target.value)}
-                    placeholder="مثال: الرفق بالذات، وصون الحدود، ومراقبة الأفكار..."
-                    className="w-full px-4 py-3 rounded-2xl bg-stone-800 border border-stone-700 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  />
-                  <button
-                    onClick={handleSolveGrandSecret}
-                    className="w-full py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-black transition-all cursor-pointer shadow-md"
-                  >
-                    تأكيد السر الأكبر واكتشاف النهاية 🔓
-                  </button>
+                {/* 3 Keystones Status */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-right">
+                  {CIPHER_SECRETS.map(sec => {
+                    const isCollected = solvedSecrets.includes(sec.id);
+                    return (
+                      <div 
+                        key={sec.id}
+                        className={`p-3.5 rounded-2xl border text-xs space-y-1.5 transition-all ${
+                          isCollected
+                            ? 'bg-amber-500/20 border-amber-400/70 text-amber-100'
+                            : 'bg-stone-800/50 border-stone-700 text-stone-400'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg">{sec.icon}</span>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                            isCollected ? 'bg-amber-400/30 text-amber-300' : 'bg-stone-700 text-stone-400'
+                          }`}>
+                            {isCollected ? 'مكتشفة ✓' : 'مفقودة'}
+                          </span>
+                        </div>
+                        <h5 className="font-bold text-xs text-white">
+                          {sec.collectibleItem}
+                        </h5>
+                        <p className="text-[10px] leading-relaxed line-clamp-2">
+                          {isCollected ? sec.keystonePiece : sec.discoveryHint}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
-
-                {grandSecretSolved && (
-                  <div className="p-6 rounded-2xl bg-black/50 border border-amber-500/50 space-y-4 text-center animate-fade-in">
-                    <span className="text-xs font-bold text-amber-400 block">
-                      📜 خاتمة «نسمة حياة» الكبرى:
-                    </span>
-                    <p className="text-sm sm:text-base font-extrabold text-amber-100 leading-relaxed">
-                      «الرفق بالذات في خطواتك الصغيرة، وصون حدودك الشخصية بوعي، والمراقبة الهادئة لأفكارك العابرة... تصنع معًا سلام الحاضر وسكينة الروح».
-                    </p>
-                    <p className="text-xs text-stone-300">
-                      ألف مبارك لك هذا الإنجاز الوعي العظيم! 🌿✨
-                    </p>
-                  </div>
-                )}
               </div>
+
+              {/* Synthesis Challenge OR Missing Secrets Guidance */}
+              {solvedSecrets.length === 3 ? (
+                !grandSecretSolved ? (
+                  <div className="bg-white dark:bg-[#1A2520] p-6 sm:p-7 rounded-3xl border-2 border-amber-400 shadow-md space-y-5">
+                    <div className="space-y-1">
+                      <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 block">
+                        تحدي التركيب الختامي:
+                      </span>
+                      <h4 className="text-base font-extrabold text-[#174F3F] dark:text-white">
+                        {GRAND_SECRET_SYNTHESIS.prompt}
+                      </h4>
+                      <p className="text-xs text-[#515B55] dark:text-stone-300">
+                        اجمعي الخيوط الثلاثة باختيار العبارة التي تعبر عن التناغم الكامل لرحلتك:
+                      </p>
+                    </div>
+
+                    <div className="space-y-3">
+                      {GRAND_SECRET_SYNTHESIS.options.map((opt, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setSelectedGrandOption(idx)}
+                          className={`w-full p-4 rounded-2xl border text-right text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-between ${
+                            selectedGrandOption === idx
+                              ? 'bg-amber-600 text-white border-amber-600 shadow-md'
+                              : 'bg-[#F7F5EF] dark:bg-stone-800 text-[#292F2B] dark:text-stone-200 border-[#D5DED7] dark:border-stone-700 hover:border-amber-500'
+                          }`}
+                        >
+                          <span className="leading-relaxed">{opt}</span>
+                          <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mr-3 ${
+                            selectedGrandOption === idx ? 'bg-white text-amber-600' : 'border-stone-400'
+                          }`}>
+                            {selectedGrandOption === idx && <div className="w-2.5 h-2.5 rounded-full bg-amber-600" />}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+
+                    {grandFeedbackError && (
+                      <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 text-amber-900 dark:text-amber-200 text-xs font-medium animate-fade-in">
+                        {grandFeedbackError}
+                      </div>
+                    )}
+
+                    <div className="pt-2 flex justify-end">
+                      <button
+                        onClick={handleVerifyGrandSecret}
+                        className="px-6 py-3 rounded-2xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black transition-all cursor-pointer shadow-md"
+                      >
+                        تركيب شفرة السر الأعظم 🔓
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* Grand Finale Scene when solved */
+                  <div className="bg-gradient-to-br from-amber-900/90 via-stone-900 to-[#141816] p-7 rounded-3xl border-2 border-amber-400/80 text-white shadow-2xl space-y-6 animate-fade-in text-center">
+                    <div className="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-400 text-amber-300 mx-auto flex items-center justify-center text-4xl shadow-inner">
+                      👑
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <span className="text-xs font-black uppercase tracking-wider text-amber-400">
+                        اكتمل التحام الخيوط الثلاثة
+                      </span>
+                      <h4 className="text-xl sm:text-2xl font-black text-amber-200">
+                        {GRAND_SECRET_SYNTHESIS.finalRevelation.amuletName}
+                      </h4>
+                      <p className="text-xs text-stone-300">
+                        {GRAND_SECRET_SYNTHESIS.finalRevelation.amuletDescription}
+                      </p>
+                    </div>
+
+                    <div className="p-5 rounded-2xl bg-black/40 border border-amber-500/40 text-right space-y-3">
+                      <div className="flex items-center gap-2 text-xs font-bold text-amber-400">
+                        <Sparkles className="w-4 h-4" />
+                        <span>رسالة بوصلة نسمة الختامية:</span>
+                      </div>
+                      <p className="text-xs sm:text-sm text-stone-200 leading-relaxed font-medium">
+                        {GRAND_SECRET_SYNTHESIS.finalRevelation.narrativeEpilogue}
+                      </p>
+                    </div>
+
+                    <div className="p-5 rounded-2xl bg-amber-500/20 border-2 border-amber-400/80 text-center space-y-2">
+                      <span className="text-[11px] font-bold text-amber-300 block">
+                        الرسالة الجامعة لرحلة «نسمة حياة»:
+                      </span>
+                      <p className="text-sm sm:text-base font-extrabold text-amber-100 leading-relaxed">
+                        {GRAND_SECRET_SYNTHESIS.finalRevelation.goldenMotto}
+                      </p>
+                    </div>
+
+                    <div className="pt-2 flex justify-center gap-3">
+                      <button
+                        onClick={() => setActiveTab('cabinet')}
+                        className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black cursor-pointer shadow-md"
+                      >
+                        عرض في خزانة المعاني 📖
+                      </button>
+                      <button
+                        onClick={() => setActiveTab('map')}
+                        className="px-5 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-bold cursor-pointer"
+                      >
+                        العودة للخريطة 🗺️
+                      </button>
+                    </div>
+                  </div>
+                )
+              ) : (
+                /* Gentle Guidance when < 3 secrets found */
+                <div className="bg-white dark:bg-[#1A2520] p-6 sm:p-7 rounded-3xl border border-[#D5DED7] dark:border-stone-700 shadow-sm space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-[#E2EFE7] dark:bg-emerald-950 text-[#174F3F] dark:text-emerald-300 flex items-center justify-center text-xl shrink-0">
+                      🌿
+                    </div>
+                    <div>
+                      <h4 className="text-base font-black text-[#174F3F] dark:text-white">
+                        رحلتكِ الأساسية مكتملة بسلام!
+                      </h4>
+                      <p className="text-xs text-[#515B55] dark:text-stone-300 mt-0.5">
+                        لقد أنجزتِ جميع مراحل اللعبة الأساسية الثلاثين.
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-[#292F2B] dark:text-stone-200 leading-relaxed font-medium">
+                    «السر الأعظم» هو خاتمة تأملية اختيارية تلتحم فيها أسرار العوالم الثلاثة: ندى البدايات (الحديقة)، ومخطوطة الحدود (المكتبة)، وبلورة المراقب (الكهف). يمكنكِ العودة لخريطة العوالم في أي وقت لاستكشاف الأسرار المتبقية برفق ودون أي استعجال.
+                  </p>
+
+                  <div className="pt-2 flex justify-end">
+                    <button
+                      onClick={() => setActiveTab('map')}
+                      className="px-5 py-2.5 rounded-xl bg-[#174F3F] text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
+                    >
+                      العودة لخريطة العوالم 🗺️
+                    </button>
+                  </div>
+                </div>
+              )}
+
             </div>
           )}
 
         </div>
 
       </div>
+
+      {/* Discovery Puzzle Modal for Secrets */}
+      <CipherSecretModal
+        isOpen={isSecretModalOpen}
+        secret={selectedSecretForModal}
+        onClose={handleCloseSecret}
+        onSolve={handleSolveSecret}
+        isSolved={selectedSecretForModal ? solvedSecrets.includes(selectedSecretForModal.id) : false}
+      />
+
+      {/* Comprehensive Test Report Modal */}
+      {showTestModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in font-cairo" dir="rtl">
+          <div className="bg-white dark:bg-[#1A2520] border border-[#D5DED7] dark:border-stone-700 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 pb-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-[#B78327]" />
+                <h3 className="text-base sm:text-lg font-black text-[#174F3F] dark:text-white">
+                  لوحة اختبار القبول والتحقق الداخلي
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowTestModal(false)}
+                className="w-8 h-8 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-500 hover:text-stone-800 flex items-center justify-center cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Test Tabs */}
+            <div className="flex items-center gap-2 border-b border-stone-100 dark:border-stone-800 pb-3 text-xs font-bold">
+              <button
+                onClick={() => setTestModalTab('stations')}
+                className={`px-3 py-1.5 rounded-xl cursor-pointer transition-all ${
+                  testModalTab === 'stations' ? 'bg-[#174F3F] text-white' : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300'
+                }`}
+              >
+                المحطات الكبرى (10، 20، 30)
+              </button>
+              <button
+                onClick={() => setTestModalTab('grand')}
+                className={`px-3 py-1.5 rounded-xl cursor-pointer transition-all ${
+                  testModalTab === 'grand' ? 'bg-[#174F3F] text-white' : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300'
+                }`}
+              >
+                السر الأعظم (مسارا النهاية)
+              </button>
+              <button
+                onClick={() => setTestModalTab('journey')}
+                className={`px-3 py-1.5 rounded-xl cursor-pointer transition-all ${
+                  testModalTab === 'journey' ? 'bg-[#174F3F] text-white' : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300'
+                }`}
+              >
+                محاكاة رحلة المرحلة 10
+              </button>
+            </div>
+
+            <div className="space-y-4 max-h-[55vh] overflow-y-auto pr-1">
+              {/* Tab 1: Grand Stations */}
+              {testModalTab === 'stations' && (
+                <div className="space-y-3">
+                  {runNesmatCipherGrandStationsTest().map(res => (
+                    <div key={res.levelId} className="p-4 rounded-2xl bg-[#F7F5EF] dark:bg-[#121A16] border border-[#D5DED7] dark:border-stone-700 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black px-2.5 py-1 rounded-lg bg-[#174F3F] text-white">
+                          المحطة الكبرى #{res.levelId} ({res.title})
+                        </span>
+                        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                          {res.passed ? '✅ اجتاز الاختبار بنجاح' : '❌ يحتاج مراجعة'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-700 dark:text-stone-300">
+                        <strong>الإجابة:</strong> {res.expectedAnswer}
+                      </p>
+                      <p className="text-xs text-stone-700 dark:text-stone-300">
+                        <strong>المقولة النفسية:</strong> «{res.takeawayTitle}»: {res.takeawayMessage}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Tab 2: Grand Secret & End Paths */}
+              {testModalTab === 'grand' && (() => {
+                const grandRes = runGrandSecretSynthesisTest();
+                return (
+                  <div className="space-y-3 text-xs">
+                    <div className="p-4 rounded-2xl bg-[#E2EFE7] dark:bg-emerald-950/70 border border-[#23785B]/40 space-y-2">
+                      <div className="flex items-center justify-between font-black text-[#174F3F] dark:text-emerald-300">
+                        <span>المسار (أ): إكمال 30 مرحلة مع جميع الأسرار الثلاثة</span>
+                        <span>{grandRes.pathA_fullSecrets.passed ? '✅ ناجح' : '❌'}</span>
+                      </div>
+                      <p className="text-stone-700 dark:text-stone-300 leading-relaxed">
+                        {grandRes.pathA_fullSecrets.details}
+                      </p>
+                      <div className="text-[11px] text-[#23785B] dark:text-emerald-400 font-bold space-y-0.5">
+                        <div>✓ جمع الشظايا الثلاث: متاح</div>
+                        <div>✓ تحدي تركيب السر الأعظم: فعال مع التحقق المنطقي</div>
+                        <div>✓ إظهار تميمة السكينة والخاتمة الجامعة دون تكرار للنجوم أو النِقاط</div>
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-[#F8EED8] dark:bg-amber-950/50 border border-amber-300 dark:border-amber-800 space-y-2">
+                      <div className="flex items-center justify-between font-black text-amber-900 dark:text-amber-200">
+                        <span>المسار (ب): إكمال 30 مرحلة دون جمع كافة الأسرار</span>
+                        <span>{grandRes.pathB_partialSecrets.passed ? '✅ ناجح' : '❌'}</span>
+                      </div>
+                      <p className="text-stone-700 dark:text-stone-300 leading-relaxed">
+                        {grandRes.pathB_partialSecrets.details}
+                      </p>
+                      <div className="text-[11px] text-amber-800 dark:text-amber-300 font-bold space-y-0.5">
+                        <div>✓ إتمام اللعبة الأساسية بنجاح تام</div>
+                        <div>✓ ظهور رسالة توجيهية دافئة للاستكشاف دون إشعار بالنقص</div>
+                        <div>✓ إبقاء الخريطة مفتوحة للتنقل والعودة لأسرار العوالم السابقة</div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Tab 3: Journey Test Level 10 */}
+              {testModalTab === 'journey' && (() => {
+                const journeyRes = runGameJourneyTest(10);
+                return (
+                  <div className="space-y-3 text-xs">
+                    <div className="p-4 rounded-2xl bg-[#F7F5EF] dark:bg-[#121A16] border border-[#D5DED7] dark:border-stone-700 space-y-2">
+                      <div className="flex items-center justify-between font-black text-[#174F3F] dark:text-emerald-300">
+                        <span>محاكاة رحلة المرحلة 10</span>
+                        <span>{journeyRes.success ? '✅ ناجحة' : '❌'}</span>
+                      </div>
+                      <p className="text-stone-700 dark:text-stone-300">
+                        {journeyRes.summary}
+                      </p>
+                      <div className="space-y-1 pt-1">
+                        {journeyRes.steps.map((st, i) => (
+                          <div key={i} className="flex items-center justify-between text-[11px] text-stone-600 dark:text-stone-400">
+                            <span>{st.stepName}: {st.description}</span>
+                            <span className="font-bold text-emerald-600">{st.passed ? '✓' : '✗'}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={() => setShowTestModal(false)}
+                className="px-5 py-2.5 rounded-xl bg-[#174F3F] text-white text-xs font-bold cursor-pointer"
+              >
+                إغلاق التقرير
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

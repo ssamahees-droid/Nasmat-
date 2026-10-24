@@ -1,3 +1,8 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import React, { useState, useEffect } from 'react';
 import { 
   X, 
@@ -5,20 +10,22 @@ import {
   RotateCcw, 
   Check, 
   ArrowLeft, 
-  ArrowRight, 
   Palette, 
   Copy, 
   BookOpen, 
-  Award, 
-  Layers, 
-  Volume2, 
-  VolumeX, 
   Image as ImageIcon,
-  Heart
+  Heart,
+  Search,
+  Brain,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { chimeService } from '../services/chimeService';
 import { storage } from '../services/storage';
 import { TextAudioPlayer } from './TextAudioPlayer';
+import { JigsawPuzzleView } from './puzzles/JigsawPuzzleView';
+import { SpotDifferenceView } from './puzzles/SpotDifferenceView';
+import { LogicPuzzlesView } from './puzzles/LogicPuzzlesView';
 
 interface PuzzleChallenge {
   id: string;
@@ -29,7 +36,7 @@ interface PuzzleChallenge {
     id: string;
     text: string;
     isCorrect: boolean;
-    slotIndex: number; // 0, 1, 2, 3
+    slotIndex: number;
   }[];
   distractorPieces: {
     id: string;
@@ -154,7 +161,13 @@ const PUZZLE_CHALLENGES: PuzzleChallenge[] = [
 export const CognitiveReframingPuzzleModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
-}> = ({ isOpen, onClose }) => {
+  initialSection?: 'jigsaw' | 'spot' | 'logic' | 'cbt_art';
+}> = ({ isOpen, onClose, initialSection = 'jigsaw' }) => {
+  // Master Section Tab
+  const [activeSection, setActiveSection] = useState<'jigsaw' | 'spot' | 'logic' | 'cbt_art'>(initialSection);
+  const [isMuted, setIsMuted] = useState(chimeService.isMuted());
+
+  // CBT Reframing Internal State
   const [activePuzzleIdx, setActivePuzzleIdx] = useState(0);
   const [placedSlots, setPlacedSlots] = useState<(string | null)[]>([null, null, null, null]);
   const [availablePieces, setAvailablePieces] = useState<{ id: string; text: string; isCorrect: boolean }[]>([]);
@@ -174,7 +187,7 @@ export const CognitiveReframingPuzzleModal: React.FC<{
 
   const currentPuzzle = PUZZLE_CHALLENGES[activePuzzleIdx];
 
-  const initPuzzle = (idx: number) => {
+  const initCbtPuzzle = (idx: number) => {
     const p = PUZZLE_CHALLENGES[idx];
     const all = [
       ...p.pieces.map(pc => ({ id: pc.id, text: pc.text, isCorrect: true })),
@@ -189,14 +202,13 @@ export const CognitiveReframingPuzzleModal: React.FC<{
 
   useEffect(() => {
     if (isOpen) {
-      initPuzzle(activePuzzleIdx);
+      initCbtPuzzle(activePuzzleIdx);
     }
   }, [isOpen, activePuzzleIdx]);
 
   if (!isOpen) return null;
 
   const handlePlacePiece = (piece: { id: string; text: string; isCorrect: boolean }) => {
-    // Find next empty slot
     const emptyIndex = placedSlots.findIndex(s => s === null);
     if (emptyIndex === -1) return;
 
@@ -207,7 +219,6 @@ export const CognitiveReframingPuzzleModal: React.FC<{
       return;
     }
 
-    // Check if it fits the current slot order
     const expectedPiece = currentPuzzle.pieces[emptyIndex];
     if (expectedPiece.id === piece.id) {
       chimeService.playPuzzleSnapChime();
@@ -216,15 +227,12 @@ export const CognitiveReframingPuzzleModal: React.FC<{
       newSlots[emptyIndex] = piece.text;
       setPlacedSlots(newSlots);
 
-      // Remove from pool
       setAvailablePieces(prev => prev.filter(p => p.id !== piece.id));
 
-      // If all 4 slots filled
       if (emptyIndex === 3) {
         chimeService.playSuccessChime();
         setIsArtworkUnlocked(true);
 
-        // Save to unlocked gallery
         if (!unlockedGallery.includes(currentPuzzle.id)) {
           const nextGallery = [...unlockedGallery, currentPuzzle.id];
           setUnlockedGallery(nextGallery);
@@ -239,11 +247,11 @@ export const CognitiveReframingPuzzleModal: React.FC<{
     }
   };
 
-  const handleResetPuzzle = () => {
-    initPuzzle(activePuzzleIdx);
+  const handleResetCbtPuzzle = () => {
+    initCbtPuzzle(activePuzzleIdx);
   };
 
-  const handleNextPuzzle = () => {
+  const handleNextCbtPuzzle = () => {
     const next = (activePuzzleIdx + 1) % PUZZLE_CHALLENGES.length;
     setActivePuzzleIdx(next);
   };
@@ -268,258 +276,271 @@ export const CognitiveReframingPuzzleModal: React.FC<{
     setTimeout(() => setSavedJournalSuccess(false), 2500);
   };
 
+  const handleToggleMute = () => {
+    const next = chimeService.toggleMute();
+    setIsMuted(next);
+  };
+
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/75 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-stone-900/80 backdrop-blur-md animate-fade-in font-cairo"
+      dir="rtl"
       role="dialog"
       aria-modal="true"
     >
-      <div className="relative w-full max-w-4xl bg-[#0F1713] border border-emerald-500/30 rounded-3xl p-5 sm:p-7 shadow-[0_15px_50px_rgba(16,185,129,0.2)] overflow-hidden text-right max-h-[94vh] flex flex-col">
+      <div className="relative w-full max-w-4xl h-[94vh] max-h-[900px] bg-[#F7F5EF] dark:bg-[#141C18] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-[#D5DED7] dark:border-stone-700">
         
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-white/10 shrink-0">
+        {/* Master Header */}
+        <div className="px-5 py-3.5 bg-white/95 dark:bg-[#1A2520]/95 border-b border-[#D5DED7] dark:border-stone-800 flex items-center justify-between z-10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-700 text-white flex items-center justify-center text-2xl shadow-lg shadow-purple-950/40">
+            <div className="w-11 h-11 rounded-2xl bg-[#174F3F]/15 dark:bg-emerald-500/20 text-[#174F3F] dark:text-emerald-400 flex items-center justify-center text-xl shadow-xs">
               🧩
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-black text-white font-tajawal">
-                  لعبة «صانع الأنماط: فك شفرة الأفكار»
+                <h2 className="text-base sm:text-lg font-black text-[#174F3F] dark:text-emerald-300 font-tajawal">
+                  واحة الألغاز التفاعلية الحقيقية
                 </h2>
-                <span className="text-[11px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2.5 py-0.5 rounded-full font-bold">
-                  ترميم فني للأفكار التلقائية (CBT)
+                <span className="text-[10px] bg-[#23785B]/15 text-[#23785B] dark:bg-emerald-500/20 dark:text-emerald-300 px-2.5 py-0.5 rounded-full font-bold">
+                  ٤ أنماط متنوعة
                 </span>
               </div>
-              <p className="text-xs text-stone-400 mt-0.5">
-                فكك شفرة الفكرة المشوهة، وركّب قطع التعاطف لتصنع لوحة فكرية متزنة تنير معرضك الداخلي 🎨
+              <p className="text-xs text-[#515B55] dark:text-stone-400 mt-0.5">
+                ألعاب تركيب صور حقيقية، اكتشاف التفاصيل والفروق، والتفكير المنطقي وترميم الأفكار
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setShowGalleryView(!showGalleryView)}
-              className={`p-2 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 ${
-                showGalleryView 
-                  ? 'bg-purple-500 text-black border-purple-400' 
-                  : 'bg-white/5 hover:bg-white/10 border-white/10 text-stone-300'
-              }`}
-              title="معرض اللوحات المرممة"
+              onClick={handleToggleMute}
+              className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 transition-colors cursor-pointer"
+              title={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
             >
-              <ImageIcon className="w-4 h-4" />
-              <span className="hidden sm:inline">معرض اللوحات ({unlockedGallery.length})</span>
+              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             </button>
-            <button 
-              onClick={handleResetPuzzle}
-              className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-stone-300 hover:text-white transition-all"
-              title="إعادة المحاولة"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </button>
-            <button 
-              onClick={onClose} 
-              className="p-2 text-stone-400 hover:text-white rounded-xl hover:bg-white/10 transition-colors"
+
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 transition-colors cursor-pointer"
+              aria-label="إغلاق"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Gallery View Overlay */}
-        {showGalleryView ? (
-          <div className="flex-1 py-4 overflow-y-auto space-y-4 animate-fade-in">
-            <div className="flex items-center justify-between pb-2 border-b border-white/10">
-              <h3 className="text-sm font-black text-white flex items-center gap-2">
-                <Palette className="w-4 h-4 text-purple-400" />
-                <span>معرض اللوحات الفكرية المرممة</span>
-              </h3>
-              <span className="text-xs text-stone-400">
-                أنجزت {unlockedGallery.length} من {PUZZLE_CHALLENGES.length} لوحات
-              </span>
-            </div>
+        {/* Master Navigation Tabs */}
+        <div className="bg-[#E2EFE7]/60 dark:bg-[#1A2520]/60 py-2.5 px-5 border-b border-[#D5DED7] dark:border-stone-800 flex items-center gap-2 shrink-0 overflow-x-auto">
+          <button
+            onClick={() => setActiveSection('jigsaw')}
+            className={`px-3.5 py-2 rounded-2xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+              activeSection === 'jigsaw'
+                ? 'bg-[#174F3F] text-white shadow-sm'
+                : 'bg-white dark:bg-stone-800 text-[#515B55] dark:text-stone-300 hover:bg-stone-100'
+            }`}
+          >
+            <ImageIcon className="w-4 h-4 text-emerald-400" />
+            <span>١. تركيب الصور (Jigsaw)</span>
+          </button>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {PUZZLE_CHALLENGES.map((p, idx) => {
-                const isUnlocked = unlockedGallery.includes(p.id);
-                return (
-                  <div
-                    key={p.id}
-                    className={`p-4 rounded-2xl border transition-all ${
-                      isUnlocked
-                        ? 'bg-gradient-to-br from-[#16251E] to-[#0E1712] border-emerald-500/40 shadow-lg'
-                        : 'bg-white/5 border-dashed border-white/10 opacity-50'
-                    }`}
+          <button
+            onClick={() => setActiveSection('spot')}
+            className={`px-3.5 py-2 rounded-2xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+              activeSection === 'spot'
+                ? 'bg-[#174F3F] text-white shadow-sm'
+                : 'bg-white dark:bg-stone-800 text-[#515B55] dark:text-stone-300 hover:bg-stone-100'
+            }`}
+          >
+            <Search className="w-4 h-4 text-amber-500" />
+            <span>٢. اكتشاف التفاصيل والفروق</span>
+          </button>
+
+          <button
+            onClick={() => setActiveSection('logic')}
+            className={`px-3.5 py-2 rounded-2xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+              activeSection === 'logic'
+                ? 'bg-[#174F3F] text-white shadow-sm'
+                : 'bg-white dark:bg-stone-800 text-[#515B55] dark:text-stone-300 hover:bg-stone-100'
+            }`}
+          >
+            <Brain className="w-4 h-4 text-sky-400" />
+            <span>٣. المنطق وأعواد الثقاب</span>
+          </button>
+
+          <button
+            onClick={() => setActiveSection('cbt_art')}
+            className={`px-3.5 py-2 rounded-2xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+              activeSection === 'cbt_art'
+                ? 'bg-[#174F3F] text-white shadow-sm'
+                : 'bg-white dark:bg-stone-800 text-[#515B55] dark:text-stone-300 hover:bg-stone-100'
+            }`}
+          >
+            <Palette className="w-4 h-4 text-purple-400" />
+            <span>٤. صانع الأنماط (CBT)</span>
+          </button>
+        </div>
+
+        {/* Content Body */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#F7F5EF] dark:bg-[#141C18]">
+          <div className="max-w-4xl mx-auto">
+            {activeSection === 'jigsaw' && <JigsawPuzzleView />}
+            {activeSection === 'spot' && <SpotDifferenceView />}
+            {activeSection === 'logic' && <LogicPuzzlesView />}
+            
+            {/* Section 4: Classic CBT Reframing Art Pieces */}
+            {activeSection === 'cbt_art' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between bg-white dark:bg-[#1A2520] p-4 rounded-2xl border border-[#D5DED7] dark:border-stone-700">
+                  <div>
+                    <h3 className="text-sm font-black text-[#174F3F] dark:text-white">
+                      ترميم الأفكار المشوهة بالتعاطف الذاتي (CBT)
+                    </h3>
+                    <p className="text-xs text-[#515B55] dark:text-stone-400">
+                      رتبي قطع البدائل المنطقية لتصنعي لوحة فكرية متزنة
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowGalleryView(!showGalleryView)}
+                    className="px-3 py-1.5 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-300 text-xs font-bold cursor-pointer flex items-center gap-1"
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-2xl">{isUnlocked ? p.artworkSymbol : '🔒'}</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-stone-300 font-bold">
-                        {isUnlocked ? 'مرممة بنجاح ✨' : 'بانتظار الترميم'}
+                    <Palette className="w-3.5 h-3.5" />
+                    <span>معرض اللوحات ({unlockedGallery.length})</span>
+                  </button>
+                </div>
+
+                {showGalleryView ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 animate-fade-in">
+                    {PUZZLE_CHALLENGES.map((p) => {
+                      const isUnlocked = unlockedGallery.includes(p.id);
+                      return (
+                        <div
+                          key={p.id}
+                          className={`p-4 rounded-2xl border transition-all ${
+                            isUnlocked
+                              ? 'bg-white dark:bg-stone-900 border-emerald-500/50 shadow-sm'
+                              : 'bg-stone-100 dark:bg-stone-900/40 border-stone-200 dark:border-stone-800 opacity-60'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-2xl">{isUnlocked ? p.artworkSymbol : '🔒'}</span>
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold">
+                              {isUnlocked ? 'مرممة بنجاح ✨' : 'بانتظار الترميم'}
+                            </span>
+                          </div>
+                          <h4 className="text-xs sm:text-sm font-black text-[#174F3F] dark:text-white">{p.artworkTitle}</h4>
+                          {isUnlocked ? (
+                            <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-1 font-medium leading-relaxed">
+                              {p.restoredMessage}
+                            </p>
+                          ) : (
+                            <p className="text-[11px] text-stone-500 mt-1">
+                              فك شفرة لغز «{p.distortionType}» لإضاءة هذه اللوحة.
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Distortion banner */}
+                    <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 text-xs space-y-1">
+                      <span className="font-bold text-[#B78327] block">
+                        التشوه الفكري: {currentPuzzle.distortionType}
                       </span>
+                      <p className="text-stone-800 dark:text-amber-100 font-black">
+                        «{currentPuzzle.originalDistortedThought}»
+                      </p>
+                      <p className="text-stone-600 dark:text-stone-400 text-[11px]">
+                        {currentPuzzle.distortionExplanation}
+                      </p>
                     </div>
-                    <h4 className="text-xs sm:text-sm font-black text-white">{p.artworkTitle}</h4>
-                    {isUnlocked ? (
-                      <p className="text-xs text-emerald-300 mt-1 font-medium leading-relaxed">
-                        {p.restoredMessage}
-                      </p>
-                    ) : (
-                      <p className="text-[11px] text-stone-500 mt-1">
-                        فك شفرة لغز «{p.distortionType}» لإضاءة هذه اللوحة.
-                      </p>
+
+                    {/* Slots or Unlocked Artwork */}
+                    <div className="p-6 rounded-3xl bg-white dark:bg-[#1A2520] border-2 border-emerald-500/30 text-center space-y-4 shadow-sm">
+                      {isArtworkUnlocked ? (
+                        <div className="space-y-3 animate-fade-in max-w-lg mx-auto">
+                          <div className="text-4xl animate-bounce">{currentPuzzle.artworkSymbol}</div>
+                          <h4 className="text-base font-black text-[#174F3F] dark:text-emerald-300">{currentPuzzle.artworkTitle}</h4>
+                          <p className="text-sm font-bold text-stone-800 dark:text-stone-100 leading-relaxed">
+                            {currentPuzzle.restoredMessage}
+                          </p>
+                          <div className="pt-2 flex justify-center gap-2">
+                            <button
+                              onClick={handleCopyArtwork}
+                              className="px-4 py-2 rounded-xl bg-stone-100 dark:bg-stone-800 text-xs font-bold hover:bg-stone-200 cursor-pointer"
+                            >
+                              {copiedSuccess ? 'تم النسخ!' : 'نسخ الفكرة'}
+                            </button>
+                            <button
+                              onClick={handleSaveToJournal}
+                              className="px-4 py-2 rounded-xl bg-[#23785B] text-white text-xs font-bold hover:bg-[#174F3F] cursor-pointer"
+                            >
+                              {savedJournalSuccess ? 'حُفظت 🌿' : 'حفظ في الدفتر'}
+                            </button>
+                            <button
+                              onClick={handleNextCbtPuzzle}
+                              className="px-4 py-2 rounded-xl bg-[#174F3F] text-white text-xs font-bold hover:bg-[#11382C] cursor-pointer"
+                            >
+                              التالي ←
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <span className="text-xs font-bold text-stone-500 block">
+                            لوحة الترميم — اختاري ٤ قطع بالترتيب الصحيح لتوليد الفكرة البديلة:
+                          </span>
+                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                            {placedSlots.map((slotText, sIdx) => (
+                              <div
+                                key={sIdx}
+                                className={`min-h-[50px] p-2 rounded-xl border-2 flex items-center justify-center text-center text-xs font-bold ${
+                                  slotText
+                                    ? 'bg-emerald-100 dark:bg-emerald-950 border-emerald-500 text-[#174F3F] dark:text-emerald-200'
+                                    : 'bg-stone-100 dark:bg-stone-800 border-dashed border-stone-300 dark:border-stone-700 text-stone-400'
+                                }`}
+                              >
+                                {slotText || `قطعة ${sIdx + 1}`}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {errorFeedback && (
+                      <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 text-rose-800 dark:text-rose-200 text-xs">
+                        {errorFeedback}
+                      </div>
+                    )}
+
+                    {!isArtworkUnlocked && (
+                      <div className="space-y-2">
+                        <span className="text-xs font-bold text-stone-600 dark:text-stone-400 block">
+                          القطع المتاحة — انقري لاختيار القطعة التالية:
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                          {availablePieces.map((p) => (
+                            <button
+                              key={p.id}
+                              onClick={() => handlePlacePiece(p)}
+                              className="p-3 rounded-xl bg-white dark:bg-stone-800 hover:bg-emerald-50 dark:hover:bg-emerald-950 border border-stone-200 dark:border-stone-700 text-right text-xs font-bold text-stone-800 dark:text-stone-200 transition-all cursor-pointer shadow-xs"
+                            >
+                              {p.text}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          /* Main Puzzle Game Experience */
-          <div className="flex-1 py-3 flex flex-col justify-between overflow-y-auto space-y-3">
-            
-            {/* Distortion Banner */}
-            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-purple-950/40 via-stone-900 to-indigo-950/40 border border-purple-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shrink-0">
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-bold text-purple-300 bg-purple-500/15 px-2 py-0.5 rounded-md inline-block">
-                  نوع التشوه الفكري: {currentPuzzle.distortionType}
-                </span>
-                <h3 className="text-xs sm:text-sm font-black text-rose-200">
-                  الفكرة المشوهة: {currentPuzzle.originalDistortedThought}
-                </h3>
-              </div>
-              <p className="text-[11px] text-stone-400 max-w-xs leading-relaxed">
-                {currentPuzzle.distortionExplanation}
-              </p>
-            </div>
-
-            {/* Puzzle Canvas: Luminous Board */}
-            <div 
-              className="relative p-5 sm:p-7 rounded-3xl border-2 transition-all duration-700 flex flex-col items-center justify-center text-center overflow-hidden min-h-[200px]"
-              style={{
-                background: isArtworkUnlocked 
-                  ? `radial-gradient(ellipse at center, ${currentPuzzle.artworkPalette.bgFrom}, ${currentPuzzle.artworkPalette.bgTo})` 
-                  : 'radial-gradient(ellipse at center, #141C17, #0B100D)',
-                borderColor: isArtworkUnlocked 
-                  ? currentPuzzle.artworkPalette.accent 
-                  : 'rgba(255, 255, 255, 0.15)',
-                boxShadow: isArtworkUnlocked 
-                  ? `0 0 40px ${currentPuzzle.artworkPalette.glow}` 
-                  : 'none'
-              }}
-            >
-              {isArtworkUnlocked ? (
-                /* Unlocked Luminous Artwork Screen */
-                <div className="space-y-3 animate-fade-in max-w-lg z-10">
-                  <div className="text-4xl sm:text-5xl animate-bounce">
-                    {currentPuzzle.artworkSymbol}
-                  </div>
-                  <span className="text-xs font-black text-amber-300 tracking-wider uppercase px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 inline-block">
-                    {currentPuzzle.artworkTitle}
-                  </span>
-                  <p className="text-sm sm:text-base font-extrabold text-white leading-relaxed drop-shadow-md">
-                    {currentPuzzle.restoredMessage}
-                  </p>
-                  <div className="flex items-center justify-center pt-1">
-                    <TextAudioPlayer
-                      text={currentPuzzle.restoredMessage}
-                      id={`puzzle_reframe_${currentPuzzle.id}`}
-                      variant="inline"
-                      label="اسمع الفكرة المرممة"
-                    />
-                  </div>
-                  <span className="text-[11px] text-emerald-300 block font-bold">
-                    ✨ حُفظت اللوحة في معرض إنجازاتك الشخصي!
-                  </span>
-                </div>
-              ) : (
-                /* Puzzle Frame Slots */
-                <div className="w-full space-y-3 z-10">
-                  <span className="text-xs font-bold text-stone-400 block mb-2">
-                    لوحة الترميم (رتّب ٤ قطع لتوليد الفكرة البديلة):
-                  </span>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                    {placedSlots.map((slotText, sIdx) => (
-                      <div
-                        key={sIdx}
-                        className={`min-h-[55px] p-2.5 rounded-2xl border-2 flex items-center justify-center text-center text-xs font-bold transition-all duration-300 ${
-                          slotText
-                            ? 'bg-emerald-950/80 border-emerald-400 text-emerald-100 shadow-md scale-100'
-                            : 'bg-white/5 border-dashed border-white/20 text-stone-600 scale-95'
-                        }`}
-                      >
-                        {slotText ? (
-                          <span className="leading-snug">{slotText}</span>
-                        ) : (
-                          <span className="text-[10px] text-stone-500">قطعة {sIdx + 1} 🧩</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Error Feedback */}
-            {errorFeedback && (
-              <div className="p-2.5 rounded-xl bg-rose-950/50 border border-rose-500/30 text-rose-200 text-xs animate-fade-in flex items-center gap-2">
-                <span>⚠️</span>
-                <span>{errorFeedback}</span>
-              </div>
-            )}
-
-            {/* Bottom Actions / Piece Bank */}
-            {isArtworkUnlocked ? (
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 flex flex-wrap items-center justify-between gap-2 shrink-0 animate-fade-in">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleCopyArtwork}
-                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all flex items-center gap-1.5 border border-white/15"
-                  >
-                    {copiedSuccess ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copiedSuccess ? 'تم النسخ!' : 'نسخ اللوحة'}</span>
-                  </button>
-
-                  <button
-                    onClick={handleSaveToJournal}
-                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 transition-all flex items-center gap-1.5 border border-purple-500/30"
-                  >
-                    {savedJournalSuccess ? <Check className="w-3.5 h-3.5 text-teal-400" /> : <BookOpen className="w-3.5 h-3.5" />}
-                    <span>{savedJournalSuccess ? 'حُفظت 🌿' : 'حفظ في الدفتر'}</span>
-                  </button>
-                </div>
-
-                <button
-                  onClick={handleNextPuzzle}
-                  className="px-4 py-1.5 rounded-xl text-xs font-black bg-emerald-500 hover:bg-emerald-400 text-black shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                  <span>اللغز التالي</span>
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ) : (
-              /* Pieces Bank */
-              <div className="space-y-1.5 shrink-0">
-                <span className="text-[11px] font-bold text-stone-300 block">
-                  اختر القطعة المناسبة تلو الأخرى لبناء الجملة المتزنة:
-                </span>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {availablePieces.map((piece) => (
-                    <button
-                      key={piece.id}
-                      onClick={() => handlePlacePiece(piece)}
-                      className="p-3 rounded-2xl bg-white/5 hover:bg-purple-950/40 border border-white/10 hover:border-purple-400/50 text-right text-xs font-bold text-stone-200 transition-all active:scale-95 cursor-pointer flex items-center justify-between"
-                    >
-                      <span className="leading-snug">{piece.text}</span>
-                      <span className="text-stone-500 text-[10px] shrink-0 mr-1">➕</span>
-                    </button>
-                  ))}
-                </div>
+                )}
               </div>
             )}
 
           </div>
-        )}
+        </div>
 
       </div>
     </div>

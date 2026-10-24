@@ -52,6 +52,7 @@ export const GamesScreen: React.FC<GamesScreenProps> = ({
   onOpenEmotionalBridge,
   onOpenGratitudeGarden,
   onOpenInnerCompass,
+  onOpenReframingPuzzle,
   onOpenNesmatCipher,
   onOpenAllScreens
 }) => {
@@ -117,6 +118,41 @@ export const GamesScreen: React.FC<GamesScreenProps> = ({
           >
             <Sparkles className="w-4 h-4" />
             <span>ابدأ لعبة «شفرة نسمة» 🧩</span>
+          </button>
+        </div>
+      </section>
+
+      {/* Flagship Game: واحة الألغاز التفاعلية الحقيقية */}
+      <section className="bg-gradient-to-r from-[#1A3328] via-[#14261E] to-[#0E1A15] border-2 border-emerald-400/50 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <span className="text-xs px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                ⭐ واحة الألغاز الحقيقية (جديد ومطور)
+              </span>
+              <span className="text-xs text-stone-300">تركيب صور Jigsaw · اكتشاف التفاصيل · المنطق وأعواد الثقاب</span>
+            </div>
+
+            <h2 className="text-xl sm:text-2xl font-extrabold text-white">
+              لعبة الألغاز التفاعلية — تحديات بصرية ومنطقية متكاملة 🧩
+            </h2>
+
+            <div className="text-xs sm:text-sm text-emerald-100 space-y-1.5 leading-relaxed">
+              <p>
+                <strong>أنماط اللعب:</strong> تركيب الصور الحقيقية المقسمة (مستويات 3×3 و 4×4 و 5×5 مع سحب وإفلات وتحقق وتوقيت)، ألغاز اكتشاف الفروق والتفاصيل الخفية، وألغاز أعواد الثقاب ومسارات النور.
+              </p>
+              <p>
+                <strong>المزايا:</strong> تشغيل 100% دون إنترنت، أصوات رقيقة مع خيار كتم الصوت، وتلميحات متدرجة لكل لغز.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={onOpenReframingPuzzle}
+            className="px-6 py-3.5 bg-emerald-400 hover:bg-emerald-300 text-stone-950 font-extrabold text-sm rounded-2xl transition-all shadow-lg active:scale-95 shrink-0 flex items-center gap-2 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>ابدأ واحة الألغاز 🧩</span>
           </button>
         </div>
       </section>
@@ -200,6 +236,38 @@ export const GamesScreen: React.FC<GamesScreenProps> = ({
       {/* Games & Activities Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         
+        {/* Game: واحة الألغاز التفاعلية الحقيقية */}
+        <div className="p-6 bg-gradient-to-br from-[#1B2B22] to-[#121E17] border-2 border-emerald-400/50 hover:border-emerald-300 rounded-3xl transition-all shadow-lg flex flex-col justify-between group relative overflow-hidden">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="text-3xl p-2.5 rounded-2xl bg-emerald-500/20 text-emerald-300 inline-block">🧩</div>
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                ✨ جديد / ٤ أنماط ألغاز
+              </span>
+            </div>
+            
+            <h3 className="text-base font-extrabold text-white group-hover:text-emerald-300 transition-colors">
+              واحة الألغاز التفاعلية (Jigsaw & Logic)
+            </h3>
+
+            <div className="text-xs text-stone-300 space-y-1.5 leading-relaxed">
+              <p><strong>الهدف:</strong> ألعاب ألغاز حقيقية بصرية ومنطقية تجمع بين متعة التحدي وتهدئة العقل.</p>
+              <p><strong>الأنماط:</strong> تركيب الصور الفعلية المقسمة (3x3، 4x4، 5x5)، اكتشاف التفاصيل والفروق الدقيقة، وألغاز أعواد الثقاب ومسارات النور.</p>
+              <p><strong>المزايا:</strong> سحب وإفلات باللمس والماوس، تحقق برمجي حقيقي، توقيت، تلميحات متدرجة، وتشغيل كامل دون إنترنت.</p>
+            </div>
+          </div>
+
+          <div className="mt-5 pt-3 border-t border-white/10">
+            <button
+              onClick={onOpenReframingPuzzle}
+              className="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>دخول واحة الألغاز 🧩</span>
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
         {/* Game: فرقعة الفقاعات النفسية */}
         <div className="p-6 bg-gradient-to-br from-[#1A261F] to-[#121A15] border-2 border-emerald-500/40 hover:border-emerald-400 rounded-3xl transition-all shadow-lg flex flex-col justify-between group relative overflow-hidden">
           <div className="space-y-3">
