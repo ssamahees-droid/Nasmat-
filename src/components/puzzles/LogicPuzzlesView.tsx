@@ -169,20 +169,28 @@ export const LogicPuzzlesView: React.FC = () => {
 
       {/* Puzzles Mode Selector Bar */}
       <div className="bg-white dark:bg-[#1A2520] p-4 rounded-3xl border border-[#D5DED7] dark:border-stone-700 shadow-sm flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          {LOGIC_PUZZLES.map((pz, idx) => (
-            <button
-              key={pz.id}
-              onClick={() => handleSelectPuzzle(idx)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
-                puzzleIndex === idx
-                  ? 'bg-[#174F3F] text-white shadow-xs'
-                  : 'bg-[#F7F5EF] dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200'
-              }`}
-            >
-              <span>{idx === 0 ? '🔥 أعواد الثقاب' : idx === 1 ? '⚡ مسار النور' : '📐 مصفوفة الأنماط'}</span>
-            </button>
-          ))}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
+          {LOGIC_PUZZLES.map((pz, idx) => {
+            const shortLabel = pz.type === 'matchstick'
+              ? `🔥 ثقاب ${pz.id === 'logic_match_1' ? '١' : '٢'}`
+              : pz.type === 'light_path'
+              ? `⚡ مسار ${pz.id === 'logic_path_1' ? '١' : '٢'}`
+              : `📐 مصفوفة ${pz.id === 'logic_matrix_1' ? '١' : pz.id === 'logic_matrix_2' ? '٢' : '٣'}`;
+
+            return (
+              <button
+                key={pz.id}
+                onClick={() => handleSelectPuzzle(idx)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1 ${
+                  puzzleIndex === idx
+                    ? 'bg-[#174F3F] text-white shadow-xs'
+                    : 'bg-[#F7F5EF] dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200'
+                }`}
+              >
+                <span>{shortLabel}</span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="flex items-center gap-2">
@@ -290,21 +298,47 @@ export const LogicPuzzlesView: React.FC = () => {
                   className={`cursor-pointer transition-all ${activeStickIds.includes(9) ? (pickedStickId === 9 ? 'stroke-amber-400 stroke-[8]' : 'stroke-amber-500 stroke-[6]') : 'stroke-stone-700 stroke-[4] stroke-dashed'}`} 
                 />
 
-                {/* Digit 2 (4): (x: 270) */}
-                <line x1="280" y1="40" x2="280" y2="100" stroke="#F59E0B" strokeWidth="6" />
-                <line x1="340" y1="40" x2="340" y2="100" stroke="#F59E0B" strokeWidth="6" />
-                <line x1="290" y1="110" x2="330" y2="110" stroke="#F59E0B" strokeWidth="6" />
-                <line x1="340" y1="120" x2="340" y2="180" stroke="#F59E0B" strokeWidth="6" />
+                {/* Digit 2 */}
+                {matchPuzzle.id === 'logic_match_2' ? (
+                  // Digit 2 is 7
+                  <g stroke="#F59E0B" strokeWidth="6">
+                    <line x1="280" y1="30" x2="340" y2="30" />
+                    <line x1="340" y1="40" x2="340" y2="100" />
+                    <line x1="340" y1="120" x2="340" y2="180" />
+                  </g>
+                ) : (
+                  // Digit 2 is 4
+                  <g stroke="#F59E0B" strokeWidth="6">
+                    <line x1="280" y1="40" x2="280" y2="100" />
+                    <line x1="340" y1="40" x2="340" y2="100" />
+                    <line x1="290" y1="110" x2="330" y2="110" />
+                    <line x1="340" y1="120" x2="340" y2="180" />
+                  </g>
+                )}
 
                 {/* Equal sign (=): (x: 390) */}
                 <line x1="390" y1="95" x2="430" y2="95" stroke="#F59E0B" strokeWidth="6" />
                 <line x1="390" y1="125" x2="430" y2="125" stroke="#F59E0B" strokeWidth="6" />
 
-                {/* Digit 3 (4): (x: 470) */}
-                <line x1="480" y1="40" x2="480" y2="100" stroke="#F59E0B" strokeWidth="6" />
-                <line x1="540" y1="40" x2="540" y2="100" stroke="#F59E0B" strokeWidth="6" />
-                <line x1="490" y1="110" x2="530" y2="110" stroke="#F59E0B" strokeWidth="6" />
-                <line x1="540" y1="120" x2="540" y2="180" stroke="#F59E0B" strokeWidth="6" />
+                {/* Digit 3 */}
+                {matchPuzzle.id === 'logic_match_2' ? (
+                  // Digit 3 is 2
+                  <g stroke="#F59E0B" strokeWidth="6">
+                    <line x1="480" y1="30" x2="540" y2="30" />
+                    <line x1="540" y1="40" x2="540" y2="100" />
+                    <line x1="480" y1="110" x2="540" y2="110" />
+                    <line x1="470" y1="120" x2="470" y2="180" />
+                    <line x1="480" y1="190" x2="540" y2="190" />
+                  </g>
+                ) : (
+                  // Digit 3 is 4
+                  <g stroke="#F59E0B" strokeWidth="6">
+                    <line x1="480" y1="40" x2="480" y2="100" />
+                    <line x1="540" y1="40" x2="540" y2="100" />
+                    <line x1="490" y1="110" x2="530" y2="110" />
+                    <line x1="540" y1="120" x2="540" y2="180" />
+                  </g>
+                )}
               </svg>
             </div>
 
@@ -410,6 +444,16 @@ export const LogicPuzzlesView: React.FC = () => {
                         ))}
                       </div>
                     )}
+                    {item.shape === 'triangle' && (
+                      <div className="w-8 h-8 flex items-center justify-center">
+                        <svg viewBox="0 0 40 40" className="w-8 h-8">
+                          <polygon points="20,4 36,34 4,34" fill="none" stroke={item.color} strokeWidth="3" />
+                          {Array.from({ length: item.dotsCount }).map((_, i) => (
+                            <circle key={i} cx={14 + i * 6} cy="26" r="2.5" fill={item.color} />
+                          ))}
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -442,7 +486,16 @@ export const LogicPuzzlesView: React.FC = () => {
                       className="w-10 h-10 flex items-center justify-center"
                       style={{ transform: `rotate(${opt.rotation}deg)` }}
                     >
-                      {opt.shape === 'diamond' ? (
+                      {opt.shape === 'triangle' ? (
+                        <div className="w-8 h-8 flex items-center justify-center">
+                          <svg viewBox="0 0 40 40" className="w-8 h-8">
+                            <polygon points="20,4 36,34 4,34" fill="none" stroke={opt.color} strokeWidth="3" />
+                            {Array.from({ length: opt.dotsCount }).map((_, i) => (
+                              <circle key={i} cx={14 + i * 6} cy="26" r="2.5" fill={opt.color} />
+                            ))}
+                          </svg>
+                        </div>
+                      ) : opt.shape === 'diamond' ? (
                         <div className="w-7 h-7 rotate-45 border-3 flex items-center justify-center gap-0.5" style={{ borderColor: opt.color }}>
                           {Array.from({ length: opt.dotsCount }).map((_, i) => (
                             <div key={i} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: opt.color }} />

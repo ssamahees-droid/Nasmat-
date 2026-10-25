@@ -39,6 +39,13 @@ import {
 import { CipherSecretModal } from './CipherSecretModal';
 import { CipherMap } from './CipherMap';
 import { nesmaCipherStorage } from '../utils/nesmaCipherStorage';
+import { SequenceOrderBoard } from './cipher/SequenceOrderBoard';
+import { CipherWheelStation } from './cipher/CipherWheelStation';
+import { LetterTileScramble } from './cipher/LetterTileScramble';
+import { LabyrinthPathBoard } from './cipher/LabyrinthPathBoard';
+import { MissingPieceBoard } from './cipher/MissingPieceBoard';
+import { BurdenEliminationBoard } from './cipher/BurdenEliminationBoard';
+import { chimeService } from '../services/chimeService';
 
 interface NesmatCipherModalProps {
   isOpen: boolean;
@@ -92,6 +99,24 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
   const [hintTier, setHintTier] = useState<number>(0);
   const [levelStatus, setLevelStatus] = useState<'playing' | 'success' | 'retry'>('playing');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [interactiveMode, setInteractiveMode] = useState<boolean>(true);
+
+  const handleSound = (type: 'click' | 'snap' | 'success') => {
+    if (!soundEnabled) return;
+    if (type === 'click') chimeService.playBubblePopChime();
+    else if (type === 'snap') chimeService.playPuzzleSnapChime();
+    else if (type === 'success') chimeService.playSuccessChime();
+  };
+
+  const handleInteractiveSolve = (answer: string) => {
+    setUserAnswer(answer);
+    setLevelStatus('success');
+    if (!completedLevels.includes(activeLevel.id)) {
+      const updated = [...completedLevels, activeLevel.id];
+      setCompletedLevels(updated);
+    }
+    setToastMessage('إجابة صحيحة وموفقة جداً! 🌟');
+  };
 
   // Secret Discovery Modal state
   const [selectedSecretForModal, setSelectedSecretForModal] = useState<SecretItem | null>(null);
@@ -152,6 +177,7 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
     const given = userAnswer.trim().toLowerCase();
 
     if (given === correct || given.includes(correct) || correct.includes(given)) {
+      handleSound('success');
       setLevelStatus('success');
       if (!completedLevels.includes(activeLevel.id)) {
         const updated = [...completedLevels, activeLevel.id];
@@ -159,12 +185,14 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
       }
       setToastMessage('إجابة صحيحة وموفقة جداً! 🌟');
     } else {
+      handleSound('click');
       setLevelStatus('retry');
       setToastMessage('محاولة دافئة.. فكري مجدداً أو استعيني بتلميحات بوصلة نسمة 🍃');
     }
   };
 
   const handleNextLevel = () => {
+    handleSound('snap');
     if (currentSelectedLevelId < 30) {
       const nextId = currentSelectedLevelId + 1;
       setCurrentSelectedLevelId(nextId);
@@ -480,11 +508,41 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
 
               {/* Puzzle Card */}
               <div className="bg-white dark:bg-[#1A2520] p-6 rounded-3xl border-2 border-[#23785B]/30 shadow-md space-y-5">
+                <div className="flex items-center justify-between gap-2 border-b border-stone-100 dark:border-stone-800 pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold px-3 py-1 bg-[#23785B]/15 text-[#23785B] dark:bg-emerald-500/20 dark:text-emerald-300 rounded-full">
+                      تحدي اللغز #{activeLevel.id}
+                    </span>
+                    <span className="text-xs text-stone-500 dark:text-stone-400 font-medium">
+                      {activeLevel.puzzleType === 'logical_sequence' || activeLevel.puzzleType === 'event_ordering'
+                        ? '🔄 ترتيب متسلسل'
+                        : activeLevel.puzzleType === 'cipher_decode'
+                        ? '🔐 فك شفرة'
+                        : activeLevel.puzzleType === 'word_scramble'
+                        ? '🔤 تجميع حروف'
+                        : activeLevel.puzzleType === 'maze_path'
+                        ? '🌿 متاهة ومسار'
+                        : activeLevel.puzzleType === 'missing_piece' || activeLevel.puzzleType === 'visual_pattern'
+                        ? '🧩 القطعة الناقصة'
+                        : '⚖️ تخفيف الأعباء'}
+                    </span>
+                  </div>
+
+                  {/* Mode switch */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setInteractiveMode(!interactiveMode);
+                      handleSound('click');
+                    }}
+                    className="text-xs font-bold text-[#23785B] dark:text-emerald-400 hover:underline cursor-pointer flex items-center gap-1"
+                  >
+                    <span>{interactiveMode ? '⚡ النمط المساعد' : '🎮 اللوحة التفاعلية'}</span>
+                  </button>
+                </div>
+
                 <div>
-                  <span className="text-[11px] font-bold px-3 py-1 bg-[#23785B]/15 text-[#23785B] dark:bg-emerald-500/20 dark:text-emerald-300 rounded-full">
-                    تحدي اللغز #{activeLevel.id}
-                  </span>
-                  <h3 className="text-base sm:text-lg font-black text-[#174F3F] dark:text-white mt-2">
+                  <h3 className="text-base sm:text-lg font-black text-[#174F3F] dark:text-white mt-1">
                     {activeLevel.title}
                   </h3>
                   <p className="text-xs sm:text-sm text-[#292F2B] dark:text-stone-200 mt-1 leading-relaxed">
@@ -492,48 +550,117 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                   </p>
                 </div>
 
-                {activeLevel.puzzleData.options ? (
-                  <div className="space-y-2.5">
-                    {activeLevel.puzzleData.options.map((opt, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setUserAnswer(opt)}
-                        className={`w-full p-3.5 rounded-2xl border text-right text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-between ${
-                          userAnswer === opt
-                            ? 'bg-[#174F3F] text-white border-[#174F3F] shadow-sm'
-                            : 'bg-[#F7F5EF] dark:bg-stone-800 text-[#292F2B] dark:text-stone-200 border-[#D5DED7] dark:border-stone-700 hover:border-[#23785B]'
-                        }`}
-                      >
-                        <span>{opt}</span>
-                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${userAnswer === opt ? 'bg-white text-[#174F3F]' : 'border-stone-400'}`}>
-                          {userAnswer === opt && <div className="w-2.5 h-2.5 rounded-full bg-[#174F3F]" />}
-                        </div>
-                      </button>
-                    ))}
+                {/* Interactive Boards Dispatch */}
+                {interactiveMode && levelStatus !== 'success' ? (
+                  <div className="pt-2">
+                    {(activeLevel.puzzleType === 'logical_sequence' || activeLevel.puzzleType === 'event_ordering') && (
+                      <SequenceOrderBoard
+                        level={activeLevel}
+                        onSolve={handleInteractiveSolve}
+                        isSolved={false}
+                        onSound={handleSound}
+                      />
+                    )}
+                    {activeLevel.puzzleType === 'cipher_decode' && (
+                      <CipherWheelStation
+                        level={activeLevel}
+                        onSolve={handleInteractiveSolve}
+                        isSolved={false}
+                        onSound={handleSound}
+                      />
+                    )}
+                    {activeLevel.puzzleType === 'word_scramble' && (
+                      <LetterTileScramble
+                        level={activeLevel}
+                        onSolve={handleInteractiveSolve}
+                        isSolved={false}
+                        onSound={handleSound}
+                      />
+                    )}
+                    {activeLevel.puzzleType === 'maze_path' && (
+                      <LabyrinthPathBoard
+                        level={activeLevel}
+                        onSolve={handleInteractiveSolve}
+                        isSolved={false}
+                        onSound={handleSound}
+                      />
+                    )}
+                    {(activeLevel.puzzleType === 'missing_piece' || activeLevel.puzzleType === 'visual_pattern') && (
+                      <MissingPieceBoard
+                        level={activeLevel}
+                        onSolve={handleInteractiveSolve}
+                        isSolved={false}
+                        onSound={handleSound}
+                      />
+                    )}
+                    {(activeLevel.puzzleType === 'probability_elimination' || activeLevel.puzzleType === 'composite_challenge' || activeLevel.puzzleType === 'hidden_clues') && (
+                      <BurdenEliminationBoard
+                        level={activeLevel}
+                        onSolve={handleInteractiveSolve}
+                        isSolved={false}
+                        onSound={handleSound}
+                      />
+                    )}
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    <input
-                      type="text"
-                      value={userAnswer}
-                      onChange={(e) => setUserAnswer(e.target.value)}
-                      placeholder="اكتبي إجابتك هنا..."
-                      className="w-full px-4 py-3 rounded-2xl bg-[#F7F5EF] dark:bg-stone-800 border border-[#D5DED7] dark:border-stone-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#23785B]"
-                    />
+                  /* Classic Accessible Mode */
+                  <div className="space-y-4">
+                    {activeLevel.puzzleData.options ? (
+                      <div className="space-y-2.5">
+                        {activeLevel.puzzleData.options.map((opt, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              handleSound('click');
+                              setUserAnswer(opt);
+                            }}
+                            className={`w-full p-3.5 rounded-2xl border text-right text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-between ${
+                              userAnswer === opt
+                                ? 'bg-[#174F3F] text-white border-[#174F3F] shadow-sm'
+                                : 'bg-[#F7F5EF] dark:bg-stone-800 text-[#292F2B] dark:text-stone-200 border-[#D5DED7] dark:border-stone-700 hover:border-[#23785B]'
+                            }`}
+                          >
+                            <span>{opt}</span>
+                            <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${userAnswer === opt ? 'bg-white text-[#174F3F]' : 'border-stone-400'}`}>
+                              {userAnswer === opt && <div className="w-2.5 h-2.5 rounded-full bg-[#174F3F]" />}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          value={userAnswer}
+                          onChange={(e) => setUserAnswer(e.target.value)}
+                          placeholder="اكتبي إجابتك هنا..."
+                          className="w-full px-4 py-3 rounded-2xl bg-[#F7F5EF] dark:bg-stone-800 border border-[#D5DED7] dark:border-stone-700 text-sm focus:outline-none focus:ring-2 focus:ring-[#23785B]"
+                        />
+                      </div>
+                    )}
+
+                    <div className="pt-2 flex items-center justify-between">
+                      <button
+                        onClick={handleSubmitAnswer}
+                        disabled={!userAnswer.trim() || levelStatus === 'success'}
+                        className="px-6 py-3 rounded-2xl bg-[#174F3F] hover:bg-[#11382C] text-white text-sm font-bold transition-all cursor-pointer disabled:opacity-50 shadow-sm"
+                      >
+                        تحقق من الحل 🔍
+                      </button>
+                    </div>
                   </div>
                 )}
 
                 <div className="pt-2 flex items-center justify-between">
-                  <button
-                    onClick={handleSubmitAnswer}
-                    disabled={!userAnswer.trim() || levelStatus === 'success'}
-                    className="px-6 py-3 rounded-2xl bg-[#174F3F] hover:bg-[#11382C] text-white text-sm font-bold transition-all cursor-pointer disabled:opacity-50 shadow-sm"
-                  >
-                    تحقق من الحل 🔍
-                  </button>
+                  <div className="text-xs text-stone-500 font-medium">
+                    {levelStatus === 'playing' ? 'تأملي عناصر اللغز بهدوء...' : ''}
+                  </div>
 
                   <button
-                    onClick={() => setHintTier(prev => (prev < 3 ? prev + 1 : prev))}
+                    onClick={() => {
+                      handleSound('click');
+                      setHintTier(prev => (prev < 3 ? prev + 1 : prev));
+                    }}
                     className="px-4 py-2.5 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
                   >
                     <Lightbulb className="w-4 h-4 text-amber-600" />
@@ -544,7 +671,7 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                 {hintTier > 0 && (
                   <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 text-xs text-amber-900 dark:text-amber-200 space-y-1.5 animate-fade-in">
                     <span className="font-bold block text-[11px] text-amber-700 dark:text-amber-400">
-                      💡 تلميح رقم {hintTier}:
+                      💡 تلميح رقم {hintTier} ({hintTier === 1 ? 'توجيه عام' : hintTier === 2 ? 'فكرة كاشفة' : 'كشف الحل المباشر'}):
                     </span>
                     <p className="leading-relaxed">
                       {activeLevel.puzzleData.hints[hintTier - 1]}
@@ -555,11 +682,23 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                 {/* Level Success Card */}
                 {levelStatus === 'success' && (
                   <div className="p-5 rounded-2xl bg-[#E2EFE7] dark:bg-emerald-950/80 border border-[#23785B]/40 text-[#174F3F] dark:text-emerald-200 space-y-3 animate-fade-in">
-                    <div className="flex items-center gap-2">
-                      <Trophy className="w-5 h-5 text-[#B78327]" />
-                      <h4 className="font-extrabold text-base">
-                        {activeLevel.psychologicalTakeaway.title}
-                      </h4>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Trophy className="w-5 h-5 text-[#B78327]" />
+                        <h4 className="font-extrabold text-base">
+                          {activeLevel.psychologicalTakeaway.title}
+                        </h4>
+                      </div>
+                      
+                      {/* Stars badge */}
+                      <div className="flex items-center gap-1 text-amber-500 bg-white/70 dark:bg-stone-800/70 px-2.5 py-1 rounded-full text-xs font-bold shadow-xs">
+                        <Star className={`w-3.5 h-3.5 ${hintTier <= 2 ? 'fill-amber-400 text-amber-500' : 'text-stone-300'}`} />
+                        <Star className={`w-3.5 h-3.5 ${hintTier <= 1 ? 'fill-amber-400 text-amber-500' : 'text-stone-300'}`} />
+                        <Star className={`w-3.5 h-3.5 ${hintTier === 0 ? 'fill-amber-400 text-amber-500' : 'text-stone-300'}`} />
+                        <span className="text-[10px] text-stone-700 dark:text-stone-200 mr-1">
+                          {hintTier === 0 ? '٣ نجوم' : hintTier <= 2 ? 'نجمتان' : 'نجمة واحدة'}
+                        </span>
+                      </div>
                     </div>
                     <p className="text-xs sm:text-sm leading-relaxed font-medium">
                       {activeLevel.psychologicalTakeaway.message}

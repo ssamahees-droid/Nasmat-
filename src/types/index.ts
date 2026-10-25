@@ -447,7 +447,32 @@ export interface FullTextPsychoeducationBook {
   isFullTextVerified: boolean;
   totalChaptersCount: number;
   totalReadingTimeMinutes: number;
+  pdfDownloadUrl?: string;
+  contentTier?: 'full_book' | 'psychoeducation_summary' | 'scientific_reference';
   chapters: FullBookChapter[];
+}
+
+export interface ScientificReference {
+  id: string;
+  title: string;
+  originalTitle: string;
+  organization: string;
+  publicationYear: string;
+  category: string;
+  categoryLabel: string;
+  officialUrl: string;
+  irisIdentifier?: string;
+  isbn?: string;
+  licenseType: string;
+  licenseLabel: string;
+  tier: 'scientific_reference';
+  scopeAndRelevance: string;
+  keyClinicalFindings: string[];
+  appIntegrationAreas: string[];
+  limitationsAndSafety: string;
+  fileAvailability: 'available_local_pdf' | 'official_who_repository_link';
+  localPdfPath?: string;
+  targetAudience: string;
 }
 
 

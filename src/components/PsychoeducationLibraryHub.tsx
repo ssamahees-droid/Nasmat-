@@ -36,18 +36,21 @@ import {
   PSYCHOEDUCATION_PATHS 
 } from '../data/psychoeducationBooksData';
 import { FULL_TEXT_BOOKS } from '../data/fullTextBooksData';
+import { SCIENTIFIC_REFERENCES } from '../data/scientificReferencesData';
 import { 
   PsychoeducationTopic, 
   PsychoeducationTrack, 
   PsychoeducationBook, 
   ValidatedAssessmentScale, 
   PsychoeducationPath,
-  FullTextPsychoeducationBook 
+  FullTextPsychoeducationBook,
+  ScientificReference
 } from '../types';
 import { PsychoeducationTopicModal } from './PsychoeducationTopicModal';
 import { PsychoeducationBookModal } from './PsychoeducationBookModal';
 import { ValidatedAssessmentScaleModal } from './ValidatedAssessmentScaleModal';
 import { FullBookReaderModal } from './FullBookReaderModal';
+import { ScientificReferenceModal } from './ScientificReferenceModal';
 
 interface PsychoeducationLibraryHubProps {
   onNavigateToTool?: (toolId: string) => void;
@@ -60,8 +63,8 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
   onOpenEmergencyHelp,
   className = ''
 }) => {
-  // Main Sub-Tab: 'full_books' | 'books' | 'topics' | 'scales' | 'paths'
-  const [activeSubTab, setActiveSubTab] = useState<'full_books' | 'books' | 'topics' | 'scales' | 'paths'>('full_books');
+  // Main Sub-Tab: 'full_books' | 'books' | 'scientific_refs' | 'topics' | 'scales' | 'paths'
+  const [activeSubTab, setActiveSubTab] = useState<'full_books' | 'books' | 'scientific_refs' | 'topics' | 'scales' | 'paths'>('full_books');
 
   const [selectedTrackId, setSelectedTrackId] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -73,6 +76,7 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
   const [selectedBook, setSelectedBook] = useState<PsychoeducationBook | null>(null);
   const [selectedFullBook, setSelectedFullBook] = useState<FullTextPsychoeducationBook | null>(null);
   const [selectedScale, setSelectedScale] = useState<ValidatedAssessmentScale | null>(null);
+  const [selectedScientificRef, setSelectedScientificRef] = useState<ScientificReference | null>(null);
 
 
   // Bookmarks from localStorage
@@ -139,6 +143,25 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
 
     return result;
   }, [allFullBooks, searchQuery]);
+
+  const allScientificRefs = SCIENTIFIC_REFERENCES;
+
+  // Filter scientific references
+  const filteredScientificRefs = useMemo(() => {
+    let result = allScientificRefs;
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      result = result.filter(r => 
+        r.title.toLowerCase().includes(q) ||
+        r.originalTitle.toLowerCase().includes(q) ||
+        r.organization.toLowerCase().includes(q) ||
+        r.scopeAndRelevance.toLowerCase().includes(q) ||
+        r.categoryLabel.toLowerCase().includes(q) ||
+        r.keyClinicalFindings.some(f => f.toLowerCase().includes(q))
+      );
+    }
+    return result;
+  }, [allScientificRefs, searchQuery]);
 
   const [selectedBookCategory, setSelectedBookCategory] = useState<string>('all');
 
@@ -226,14 +249,14 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
               <span>{allFullBooks.length} كتب كاملة مع قارئ متطور</span>
             </span>
             <span>·</span>
-            <span className="flex items-center gap-1 font-bold">
-              <BookOpen className="w-3.5 h-3.5 text-[#D98F83]" />
-              <span>{allBooks.length} مراجع وملخصات</span>
-            </span>
-            <span>·</span>
             <span className="flex items-center gap-1 font-bold text-emerald-700 dark:text-emerald-400">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>ترخيص وحقوق موثقة</span>
+              <span>{allScientificRefs.length} مراجع علمية وسريرية معتمدة</span>
+            </span>
+            <span>·</span>
+            <span className="flex items-center gap-1 font-bold">
+              <BookOpen className="w-3.5 h-3.5 text-[#D98F83]" />
+              <span>{allBooks.length} ملخصات ومواد تثقيفية</span>
             </span>
           </div>
         </div>
@@ -254,6 +277,18 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
         </button>
 
         <button
+          onClick={() => setActiveSubTab('scientific_refs')}
+          className={`flex-1 py-2.5 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 ${
+            activeSubTab === 'scientific_refs'
+              ? 'bg-[#174F3F] text-white shadow-xs'
+              : 'text-[#515B55] dark:text-stone-300 hover:bg-white/60 dark:hover:bg-stone-700/60'
+          }`}
+        >
+          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <span>المراجع العلمية والسريرية ({allScientificRefs.length})</span>
+        </button>
+
+        <button
           onClick={() => setActiveSubTab('books')}
           className={`flex-1 py-2.5 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 ${
             activeSubTab === 'books'
@@ -261,8 +296,8 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
               : 'text-[#515B55] dark:text-stone-300 hover:bg-white/60 dark:hover:bg-stone-700/60'
           }`}
         >
-          <BookOpen className="w-4 h-4 text-emerald-400" />
-          <span>المراجع والملخصات المعتمدة ({allBooks.length})</span>
+          <BookOpen className="w-4 h-4 text-[#D98F83]" />
+          <span>الملخصات والمواد التثقيفية ({allBooks.length})</span>
         </button>
 
         <button
@@ -392,10 +427,123 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-bold text-[#174F3F] dark:text-emerald-400">
+                <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-[#174F3F] dark:text-emerald-400">
                   <span className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
                     <BookOpen className="w-4 h-4 text-amber-500" />
-                    <span>افتح القارئ وابدأ القراءة الآن 📖</span>
+                    <span>افتح القارئ المتقدم وابدأ القراءة الآن 📖</span>
+                  </span>
+                  
+                  {fBook.pdfDownloadUrl && (
+                    <a
+                      href={fBook.pdfDownloadUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="px-2.5 py-1 rounded-xl bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/25 transition-colors text-[10px] font-bold flex items-center gap-1"
+                      title="فتح أو تنزيل ملف PDF العربي الرسمي الأصلي (132 صفحة)"
+                    >
+                      <span>PDF الأصلي</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+         TAB: SCIENTIFIC & CLINICAL REFERENCES (المراجع العلمية والسريرية المعتمدة)
+         ========================================================================= */}
+      {activeSubTab === 'scientific_refs' && (
+        <div className="space-y-4 animate-fade-in">
+          {/* Explanation Banner */}
+          <div className="p-4 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 flex items-start sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-start gap-2.5 text-emerald-950 dark:text-emerald-200 font-bold">
+              <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5 sm:mt-0" />
+              <div>
+                <span className="block font-black text-sm">أدلة منظمة الصحة العالمية (WHO) والمراجع السريرية المعتمدة</span>
+                <span className="text-[11px] font-medium opacity-90">
+                  مراجع علمية وأدلة توجيهية تم الاستناد إليها في تدقيق التمارين والتدخلات النفسية داخل نسمة حياة، مع الروابط الرسمية بمستودع WHO IRIS.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Scientific References Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {filteredScientificRefs.map((ref) => (
+              <div
+                key={ref.id}
+                onClick={() => setSelectedScientificRef(ref)}
+                className="p-6 rounded-3xl bg-white dark:bg-[#14271F] border-2 border-[#D5DED7] dark:border-stone-700/80 shadow-md hover:border-emerald-600 dark:hover:border-emerald-400 transition-all cursor-pointer flex flex-col justify-between space-y-4 group relative overflow-hidden"
+              >
+                {/* Header Row */}
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-800 dark:text-emerald-300 shadow-xs shrink-0 border border-emerald-300/40">
+                      <ShieldCheck className="w-5 h-5" />
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 border ${
+                        ref.fileAvailability === 'available_local_pdf'
+                          ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border-emerald-300'
+                          : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-300 dark:border-stone-700'
+                      }`}>
+                        {ref.fileAvailability === 'available_local_pdf' ? 'ملف PDF أصلي متاح محلياً' : 'موثق بمستودع WHO IRIS'}
+                      </span>
+                      <span className="text-[10px] text-stone-500 font-bold">
+                        {ref.organization} · {ref.publicationYear}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-400 block mb-1 uppercase tracking-wider">
+                      {ref.categoryLabel}
+                    </span>
+                    <h3 className="text-base font-black text-[#174F3F] dark:text-white group-hover:text-emerald-600 transition-colors leading-snug font-tajawal">
+                      {ref.title}
+                    </h3>
+                    <p className="text-[10px] font-mono text-stone-500 dark:text-stone-400 mt-0.5 dir-ltr text-right line-clamp-1">
+                      {ref.originalTitle}
+                    </p>
+                  </div>
+
+                  <p className="text-xs text-[#515B55] dark:text-stone-300 leading-relaxed line-clamp-3 font-medium">
+                    {ref.scopeAndRelevance}
+                  </p>
+
+                  {/* App Integration Badges */}
+                  <div className="space-y-1.5 pt-1">
+                    <span className="text-[10px] font-bold text-stone-600 dark:text-stone-400 block">
+                      مواضع الاستفادة داخل التطبيق:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {ref.appIntegrationAreas.slice(0, 3).map((area, aIdx) => (
+                        <span 
+                          key={aIdx} 
+                          className="text-[10px] px-2 py-0.5 rounded-lg bg-stone-100 dark:bg-stone-800/80 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700/60 font-medium"
+                        >
+                          {area}
+                        </span>
+                      ))}
+                      {ref.appIntegrationAreas.length > 3 && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-lg text-emerald-600 dark:text-emerald-400 font-bold">
+                          +{ref.appIntegrationAreas.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Action Bar */}
+                <div className="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-bold text-[#174F3F] dark:text-emerald-400">
+                  <span className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300">
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>استعراض بيانات المرجع والأدلة السريرية</span>
                   </span>
                   <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                 </div>
@@ -796,6 +944,21 @@ export const PsychoeducationLibraryHub: React.FC<PsychoeducationLibraryHubProps>
           isOpen={Boolean(selectedFullBook)}
           onClose={() => setSelectedFullBook(null)}
           onOpenEmergencyHelp={onOpenEmergencyHelp}
+        />
+      )}
+
+      {selectedScientificRef && (
+        <ScientificReferenceModal
+          reference={selectedScientificRef}
+          isOpen={Boolean(selectedScientificRef)}
+          onClose={() => setSelectedScientificRef(null)}
+          onOpenFullBookReader={(bookId) => {
+            const fBook = allFullBooks.find(b => b.id === bookId);
+            if (fBook) {
+              setSelectedScientificRef(null);
+              setSelectedFullBook(fBook);
+            }
+          }}
         />
       )}
 

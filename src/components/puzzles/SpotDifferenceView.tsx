@@ -289,6 +289,91 @@ export const SpotDifferenceView: React.FC = () => {
               </svg>
             )}
 
+            {/* SVG Visual Scene for Crystal Pond / Twilight Oasis */}
+            {challenge.sceneTheme === 'crystal_pond' && (
+              <svg viewBox="0 0 800 600" className="w-full h-full">
+                <defs>
+                  <linearGradient id="twilightSky" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#1E1B4B" />
+                    <stop offset="45%" stopColor="#312E81" />
+                    <stop offset="70%" stopColor="#831843" />
+                    <stop offset="100%" stopColor="#C2410C" />
+                  </linearGradient>
+                  <linearGradient id="twilightWater" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#431407" />
+                    <stop offset="35%" stopColor="#1E293B" />
+                    <stop offset="100%" stopColor="#0F172A" />
+                  </linearGradient>
+                </defs>
+
+                {/* Sky */}
+                <rect x="0" y="0" width="800" height="360" fill="url(#twilightSky)" />
+
+                {/* Twilight Stars */}
+                <circle cx="120" cy="60" r="1.5" fill="#FEF08A" opacity="0.8" />
+                <circle cx="280" cy="40" r="2" fill="#FEF08A" opacity="0.9" />
+                <circle cx="450" cy="70" r="1.5" fill="#FEF08A" opacity="0.7" />
+                <circle cx="680" cy="50" r="2" fill="#FEF08A" opacity="0.9" />
+
+                {/* Distant Hills on Horizon */}
+                <path d="M0,360 Q180,310 380,340 T800,320 L800,400 L0,400 Z" fill="#18181B" opacity="0.85" />
+
+                {/* Water Body */}
+                <rect x="0" y="340" width="800" height="260" fill="url(#twilightWater)" />
+
+                {/* Target 2: Lighthouse on the Hill at (x=78%, y=28% -> 624, 168) */}
+                <g transform="translate(624, 168)">
+                  {/* Hill mound */}
+                  <ellipse cx="0" cy="140" rx="90" ry="30" fill="#09090B" />
+                  {/* Tower */}
+                  <polygon points="-12,120 12,120 7,20 -7,20" fill="#F8FAFC" stroke="#334155" strokeWidth="2" />
+                  <rect x="-10" y="45" width="20" height="12" fill="#DC2626" />
+                  <rect x="-9" y="85" width="18" height="12" fill="#DC2626" />
+                  {/* Lantern Room */}
+                  <rect x="-10" y="0" width="20" height="20" rx="3" fill="#F59E0B" filter="drop-shadow(0 0 16px #FDE047)" />
+                  <polygon points="-14,0 14,0 0,-15" fill="#0F172A" />
+                  {/* Light beam */}
+                  <polygon points="10,10 180,-30 180,60" fill="#FEF08A" opacity="0.25" />
+                </g>
+
+                {/* Crescent Moon in Sky */}
+                <g transform="translate(416, 80)">
+                  <circle cx="0" cy="0" r="24" fill="#FEF08A" filter="drop-shadow(0 0 10px #FDE047)" />
+                  <circle cx="10" cy="-4" r="20" fill="#312E81" />
+                </g>
+
+                {/* Target 3: Moon Reflection on Water at (x=52%, y=62% -> 416, 372) */}
+                <g transform="translate(416, 372)">
+                  <ellipse cx="0" cy="0" rx="28" ry="7" fill="#FEF08A" opacity="0.6" filter="drop-shadow(0 0 8px #FBBF24)" />
+                  <ellipse cx="-5" cy="14" rx="20" ry="5" fill="#FEF08A" opacity="0.45" />
+                  <ellipse cx="4" cy="26" rx="14" ry="4" fill="#FEF08A" opacity="0.3" />
+                </g>
+
+                {/* Foreground Shorelines */}
+                <path d="M0,450 C120,440 260,510 320,600 L0,600 Z" fill="#0C1F17" />
+                <path d="M580,600 C640,510 720,480 800,470 L800,600 Z" fill="#0C1F17" />
+
+                {/* Target 1: Resting Wooden Boat on Shore at (x=28%, y=72% -> 224, 432) */}
+                <g transform="translate(224, 432) rotate(8)">
+                  <path d="M-45,0 Q0,26 45,0 C35,-14 -35,-14 -45,0 Z" fill="#78350F" stroke="#451A03" strokeWidth="2.5" />
+                  <polygon points="-40,-1 40,-1 30,12 -30,12" fill="#92400E" />
+                  <line x1="-15" y1="-8" x2="25" y2="18" stroke="#D97706" strokeWidth="3" />
+                  <circle cx="-38" cy="-2" r="3" fill="#FEF08A" />
+                </g>
+
+                {/* Target 4: Night Jasmine Bush on Right at (x=84%, y=76% -> 672, 456) */}
+                <g transform="translate(672, 456)">
+                  <ellipse cx="0" cy="0" rx="42" ry="26" fill="#064E3B" stroke="#047857" strokeWidth="2" />
+                  {/* Little white fragrant blossoms */}
+                  <circle cx="-16" cy="-8" r="4" fill="#FFFFFF" />
+                  <circle cx="-5" cy="6" r="3.5" fill="#FFFFFF" />
+                  <circle cx="14" cy="-10" r="4" fill="#FFFFFF" />
+                  <circle cx="20" cy="8" r="3" fill="#FFFFFF" />
+                  <circle cx="0" cy="-14" r="3" fill="#FEF08A" />
+                </g>
+              </svg>
+            )}
+
             {/* Found Targets Rings Highlight */}
             {challenge.targets.map(tgt => {
               if (!foundTargetIds.includes(tgt.id)) return null;
