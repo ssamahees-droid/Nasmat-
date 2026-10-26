@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
   Sparkles, 
@@ -134,9 +135,41 @@ export const RealPuzzlesModal: React.FC<RealPuzzlesModalProps> = ({
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#F7F5EF] dark:bg-[#141C18]">
           <div className="max-w-4xl mx-auto">
-            {activeTab === 'jigsaw' && <JigsawPuzzleView />}
-            {activeTab === 'spot' && <SpotDifferenceView />}
-            {activeTab === 'logic' && <LogicPuzzlesView />}
+            <AnimatePresence mode="wait">
+              {activeTab === 'jigsaw' && (
+                <motion.div
+                  key="tab-jigsaw"
+                  initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98, y: -8 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <JigsawPuzzleView />
+                </motion.div>
+              )}
+              {activeTab === 'spot' && (
+                <motion.div
+                  key="tab-spot"
+                  initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98, y: -8 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <SpotDifferenceView />
+                </motion.div>
+              )}
+              {activeTab === 'logic' && (
+                <motion.div
+                  key="tab-logic"
+                  initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98, y: -8 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <LogicPuzzlesView />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 

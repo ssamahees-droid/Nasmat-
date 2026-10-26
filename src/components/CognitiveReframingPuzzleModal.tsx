@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
   Sparkles, 
@@ -384,13 +385,51 @@ export const CognitiveReframingPuzzleModal: React.FC<{
         {/* Content Body */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#F7F5EF] dark:bg-[#141C18]">
           <div className="max-w-4xl mx-auto">
-            {activeSection === 'jigsaw' && <JigsawPuzzleView />}
-            {activeSection === 'spot' && <SpotDifferenceView />}
-            {activeSection === 'logic' && <LogicPuzzlesView />}
-            
-            {/* Section 4: Classic CBT Reframing Art Pieces */}
-            {activeSection === 'cbt_art' && (
-              <div className="space-y-4">
+            <AnimatePresence mode="wait">
+              {activeSection === 'jigsaw' && (
+                <motion.div
+                  key="cbt-jigsaw"
+                  initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98, y: -8 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <JigsawPuzzleView />
+                </motion.div>
+              )}
+              {activeSection === 'spot' && (
+                <motion.div
+                  key="cbt-spot"
+                  initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98, y: -8 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <SpotDifferenceView />
+                </motion.div>
+              )}
+              {activeSection === 'logic' && (
+                <motion.div
+                  key="cbt-logic"
+                  initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98, y: -8 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <LogicPuzzlesView />
+                </motion.div>
+              )}
+              
+              {/* Section 4: Classic CBT Reframing Art Pieces */}
+              {activeSection === 'cbt_art' && (
+                <motion.div
+                  key="cbt-art"
+                  initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98, y: -8 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                  className="space-y-4"
+                >
                 <div className="flex items-center justify-between bg-white dark:bg-[#1A2520] p-4 rounded-2xl border border-[#D5DED7] dark:border-stone-700">
                   <div>
                     <h3 className="text-sm font-black text-[#174F3F] dark:text-white">
@@ -536,8 +575,9 @@ export const CognitiveReframingPuzzleModal: React.FC<{
                     )}
                   </div>
                 )}
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
           </div>
         </div>

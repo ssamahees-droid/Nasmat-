@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
   Sparkles, 
@@ -390,10 +391,17 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
 
         {/* Main Content Area */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#F7F5EF] dark:bg-[#141C18]">
-          
-          {/* TAB 1: MAP VIEW */}
-          {activeTab === 'map' && (
-            <div className="space-y-6 max-w-3xl mx-auto">
+          <AnimatePresence mode="wait">
+            {/* TAB 1: MAP VIEW */}
+            {activeTab === 'map' && (
+              <motion.div
+                key="cipher-tab-map"
+                initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.98, y: -8 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                className="space-y-6 max-w-3xl mx-auto"
+              >
               <CipherMap
                 completedLevels={completedLevels}
                 currentSelectedLevelId={currentSelectedLevelId}
@@ -450,12 +458,19 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                   </div>
                 )
               )}
-            </div>
+            </motion.div>
           )}
 
-          {/* TAB 2: LEVEL PLAY VIEW */}
-          {activeTab === 'level' && activeLevel && (
-            <div className="max-w-2xl mx-auto space-y-6">
+            {/* TAB 2: LEVEL PLAY VIEW */}
+            {activeTab === 'level' && activeLevel && (
+              <motion.div
+                key={`cipher-tab-level-${activeLevel.id}`}
+                initial={{ opacity: 0, scale: 0.97, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.97, y: -8 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                className="max-w-2xl mx-auto space-y-6"
+              >
               
               {/* Header */}
               <div className="flex items-center justify-between bg-white dark:bg-[#1A2520] p-4 rounded-2xl border border-[#D5DED7] dark:border-stone-700">
@@ -680,83 +695,91 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                 )}
 
                 {/* Level Success Card */}
-                {levelStatus === 'success' && (
-                  <div className="p-5 rounded-2xl bg-[#E2EFE7] dark:bg-emerald-950/80 border border-[#23785B]/40 text-[#174F3F] dark:text-emerald-200 space-y-3 animate-fade-in">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Trophy className="w-5 h-5 text-[#B78327]" />
-                        <h4 className="font-extrabold text-base">
-                          {activeLevel.psychologicalTakeaway.title}
-                        </h4>
+                <AnimatePresence>
+                  {levelStatus === 'success' && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.94, y: 12 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.94, y: -12 }}
+                      transition={{ duration: 0.28, ease: 'easeOut' }}
+                      className="p-5 rounded-2xl bg-[#E2EFE7] dark:bg-emerald-950/80 border border-[#23785B]/40 text-[#174F3F] dark:text-emerald-200 space-y-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Trophy className="w-5 h-5 text-[#B78327]" />
+                          <h4 className="font-extrabold text-base">
+                            {activeLevel.psychologicalTakeaway.title}
+                          </h4>
+                        </div>
+                        
+                        {/* Stars badge */}
+                        <div className="flex items-center gap-1 text-amber-500 bg-white/70 dark:bg-stone-800/70 px-2.5 py-1 rounded-full text-xs font-bold shadow-xs">
+                          <Star className={`w-3.5 h-3.5 ${hintTier <= 2 ? 'fill-amber-400 text-amber-500' : 'text-stone-300'}`} />
+                          <Star className={`w-3.5 h-3.5 ${hintTier <= 1 ? 'fill-amber-400 text-amber-500' : 'text-stone-300'}`} />
+                          <Star className={`w-3.5 h-3.5 ${hintTier === 0 ? 'fill-amber-400 text-amber-500' : 'text-stone-300'}`} />
+                          <span className="text-[10px] text-stone-700 dark:text-stone-200 mr-1">
+                            {hintTier === 0 ? '٣ نجوم' : hintTier <= 2 ? 'نجمتان' : 'نجمة واحدة'}
+                          </span>
+                        </div>
                       </div>
-                      
-                      {/* Stars badge */}
-                      <div className="flex items-center gap-1 text-amber-500 bg-white/70 dark:bg-stone-800/70 px-2.5 py-1 rounded-full text-xs font-bold shadow-xs">
-                        <Star className={`w-3.5 h-3.5 ${hintTier <= 2 ? 'fill-amber-400 text-amber-500' : 'text-stone-300'}`} />
-                        <Star className={`w-3.5 h-3.5 ${hintTier <= 1 ? 'fill-amber-400 text-amber-500' : 'text-stone-300'}`} />
-                        <Star className={`w-3.5 h-3.5 ${hintTier === 0 ? 'fill-amber-400 text-amber-500' : 'text-stone-300'}`} />
-                        <span className="text-[10px] text-stone-700 dark:text-stone-200 mr-1">
-                          {hintTier === 0 ? '٣ نجوم' : hintTier <= 2 ? 'نجمتان' : 'نجمة واحدة'}
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-xs sm:text-sm leading-relaxed font-medium">
-                      {activeLevel.psychologicalTakeaway.message}
-                    </p>
-                    {activeLevel.narrativeOutro && (
-                      <p className="text-xs text-[#174F3F] dark:text-emerald-300 pt-2 border-t border-emerald-500/20 italic font-medium">
-                        🌿 {activeLevel.narrativeOutro}
+                      <p className="text-xs sm:text-sm leading-relaxed font-medium">
+                        {activeLevel.psychologicalTakeaway.message}
                       </p>
-                    )}
+                      {activeLevel.narrativeOutro && (
+                        <p className="text-xs text-[#174F3F] dark:text-emerald-300 pt-2 border-t border-emerald-500/20 italic font-medium">
+                          🌿 {activeLevel.narrativeOutro}
+                        </p>
+                      )}
 
-                    {/* Stage 30 Special Synthesis or Gentle Guide */}
-                    {activeLevel.id === 30 ? (
-                      solvedSecrets.length === 3 ? (
-                        <div className="mt-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-400 text-amber-950 dark:text-amber-200 space-y-2">
-                          <div className="flex items-center gap-2 font-black text-xs text-amber-800 dark:text-amber-300">
-                            <Sparkles className="w-4 h-4" />
-                            <span>اكتملت شظايا الأسرار الثلاثة!</span>
+                      {/* Stage 30 Special Synthesis or Gentle Guide */}
+                      {activeLevel.id === 30 ? (
+                        solvedSecrets.length === 3 ? (
+                          <div className="mt-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-400 text-amber-950 dark:text-amber-200 space-y-2">
+                            <div className="flex items-center gap-2 font-black text-xs text-amber-800 dark:text-amber-300">
+                              <Sparkles className="w-4 h-4" />
+                              <span>اكتملت شظايا الأسرار الثلاثة!</span>
+                            </div>
+                            <p className="text-xs leading-relaxed">
+                              لقد جمعتِ ندى البدايات ومخطوطة الحدود وبلورة المراقب. تحدي «السر الأعظم» متاح لكِ الآن لتركيب المعنى الشامل لسكينتكِ.
+                            </p>
+                            <div className="pt-2 flex justify-end">
+                              <button
+                                onClick={() => setActiveTab('grand_secret')}
+                                className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black transition-all cursor-pointer shadow-sm"
+                              >
+                                الانتقال إلى السر الأعظم 🌟
+                              </button>
+                            </div>
                           </div>
-                          <p className="text-xs leading-relaxed">
-                            لقد جمعتِ ندى البدايات ومخطوطة الحدود وبلورة المراقب. تحدي «السر الأعظم» متاح لكِ الآن لتركيب المعنى الشامل لسكينتكِ.
-                          </p>
-                          <div className="pt-2 flex justify-end">
-                            <button
-                              onClick={() => setActiveTab('grand_secret')}
-                              className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black transition-all cursor-pointer shadow-sm"
-                            >
-                              الانتقال إلى السر الأعظم 🌟
-                            </button>
+                        ) : (
+                          <div className="mt-3 p-4 rounded-xl bg-emerald-100/60 dark:bg-emerald-900/40 border border-emerald-300 text-emerald-900 dark:text-emerald-200 space-y-2">
+                            <p className="text-xs leading-relaxed font-medium">
+                              🌿 مبارك إتمام الرحلة الأساسية لشفرة نسمة بنجاح تام! تذكري أن عوالم الحديقة والمكتبة والكهف تحتفظ بأسرار دافئة ({solvedSecrets.length} من 3). يمكنكِ العودة للخريطة متى رغبتِ في اكتشافها برفق وبلا أي استعجال.
+                            </p>
+                            <div className="pt-2 flex justify-end">
+                              <button
+                                onClick={() => setActiveTab('map')}
+                                className="px-4 py-2 rounded-xl bg-[#174F3F] text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
+                              >
+                                العودة لخريطة العوالم 🗺️
+                              </button>
+                            </div>
                           </div>
-                        </div>
+                        )
                       ) : (
-                        <div className="mt-3 p-4 rounded-xl bg-emerald-100/60 dark:bg-emerald-900/40 border border-emerald-300 text-emerald-900 dark:text-emerald-200 space-y-2">
-                          <p className="text-xs leading-relaxed font-medium">
-                            🌿 مبارك إتمام الرحلة الأساسية لشفرة نسمة بنجاح تام! تذكري أن عوالم الحديقة والمكتبة والكهف تحتفظ بأسرار دافئة ({solvedSecrets.length} من 3). يمكنكِ العودة للخريطة متى رغبتِ في اكتشافها برفق وبلا أي استعجال.
-                          </p>
-                          <div className="pt-2 flex justify-end">
-                            <button
-                              onClick={() => setActiveTab('map')}
-                              className="px-4 py-2 rounded-xl bg-[#174F3F] text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
-                            >
-                              العودة لخريطة العوالم 🗺️
-                            </button>
-                          </div>
+                        <div className="pt-2 flex items-center justify-end">
+                          <button
+                            onClick={handleNextLevel}
+                            className="px-5 py-2.5 rounded-xl bg-[#23785B] hover:bg-[#174F3F] text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+                          >
+                            <span>المرحلة التالية</span>
+                            <ArrowLeft className="w-4 h-4" />
+                          </button>
                         </div>
-                      )
-                    ) : (
-                      <div className="pt-2 flex items-center justify-end">
-                        <button
-                          onClick={handleNextLevel}
-                          className="px-5 py-2.5 rounded-xl bg-[#23785B] hover:bg-[#174F3F] text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
-                        >
-                          <span>المرحلة التالية</span>
-                          <ArrowLeft className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {levelStatus === 'retry' && (
                   <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 text-rose-800 dark:text-rose-200 text-xs font-medium animate-fade-in">
@@ -766,12 +789,19 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
 
               </div>
 
-            </div>
+            </motion.div>
           )}
 
           {/* TAB 3: SECRETS VIEW */}
           {activeTab === 'secrets' && (
-            <div className="max-w-2xl mx-auto space-y-6">
+            <motion.div
+              key="cipher-tab-secrets"
+              initial={{ opacity: 0, scale: 0.98, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: -8 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="max-w-2xl mx-auto space-y-6"
+            >
               <div className="bg-white dark:bg-[#1A2520] p-6 rounded-3xl border border-[#D5DED7] dark:border-stone-700 shadow-sm space-y-2">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-black text-[#174F3F] dark:text-white flex items-center gap-2">
@@ -894,12 +924,19 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                   </button>
                 )}
               </div>
-            </div>
+            </motion.div>
           )}
 
-          {/* TAB 4: CABINET VIEW */}
-          {activeTab === 'cabinet' && (
-            <div className="max-w-2xl mx-auto space-y-6">
+            {/* TAB 4: CABINET VIEW */}
+            {activeTab === 'cabinet' && (
+              <motion.div
+                key="cipher-tab-cabinet"
+                initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.98, y: -8 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                className="max-w-2xl mx-auto space-y-6"
+              >
               <div className="bg-white dark:bg-[#1A2520] p-6 rounded-3xl border border-[#D5DED7] dark:border-stone-700 shadow-sm space-y-2">
                 <h3 className="text-lg font-black text-[#174F3F] dark:text-white flex items-center gap-2">
                   <span>📖 خزانة المعاني والمقتنيات النفسية</span>
@@ -971,12 +1008,19 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
           )}
 
           {/* TAB 5: GRAND SECRET (Phase 8 Synthesis) */}
           {activeTab === 'grand_secret' && (
-            <div className="max-w-2xl mx-auto space-y-6">
+            <motion.div
+              key="cipher-tab-grand-secret"
+              initial={{ opacity: 0, scale: 0.98, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: -8 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="max-w-2xl mx-auto space-y-6"
+            >
               
               {/* Header Lore */}
               <div className="bg-gradient-to-br from-amber-950 via-stone-900 to-[#121A16] p-6 sm:p-8 rounded-3xl border-2 border-amber-500/40 text-white shadow-xl space-y-5 text-center">
@@ -1166,8 +1210,9 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
                 </div>
               )}
 
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
         </div>
 

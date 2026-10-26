@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect, Suspense, lazy } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { storage } from './services/storage';
 import { UserRole } from './types';
 import { Navbar } from './components/Navbar';
@@ -96,6 +97,7 @@ const SampledMusicTester = lazy(() => import('./components/SampledMusicTester').
 const AudioEngineComparisonModal = lazy(() => import('./components/AudioEngineComparisonModal').then(m => ({ default: m.AudioEngineComparisonModal })));
 const ActivityRatingModal = lazy(() => import('./components/ActivityRatingModal').then(m => ({ default: m.ActivityRatingModal })));
 const NesmatCipherModal = lazy(() => import('./components/NesmatCipherModal').then(m => ({ default: m.NesmatCipherModal })));
+const RealPuzzlesModal = lazy(() => import('./components/RealPuzzlesModal').then(m => ({ default: m.RealPuzzlesModal })));
 const GardenWelcomeModal = lazy(() => import('./components/GardenWelcomeModal').then(m => ({ default: m.GardenWelcomeModal })));
 
 const VALID_TABS: Record<string, string> = {
@@ -428,6 +430,7 @@ export default function App() {
 
   const [isGwayaHekayaOpen, setIsGwayaHekayaOpen] = useState(false);
   const [isNesmatCipherOpen, setIsNesmatCipherOpen] = useState(false);
+  const [isRealPuzzlesOpen, setIsRealPuzzlesOpen] = useState(false);
   const [isDiscoveryQuizOpen, setIsDiscoveryQuizOpen] = useState(false);
   const [isFekerModalOpen, setIsFekerModalOpen] = useState(false);
   const [isCompanionOpen, setIsCompanionOpen] = useState(false);
@@ -572,6 +575,17 @@ export default function App() {
         break;
       case 'fun_games':
         setFunAndGamesState({ isOpen: true, tab: 'jokes' });
+        break;
+      case 'nesmat_cipher':
+      case 'cipher':
+        setIsNesmatCipherOpen(true);
+        break;
+      case 'real_puzzles':
+      case 'puzzles':
+        setIsRealPuzzlesOpen(true);
+        break;
+      case 'reframing_puzzle':
+        setIsReframingPuzzleOpen(true);
         break;
       default:
         console.warn('Unknown modal name:', modalName);
@@ -787,27 +801,35 @@ export default function App() {
           )}
 
           {currentTab === 'games' && (
-            <GamesScreen
-              onNavigate={handleNavigate}
-              onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
-              onOpenGwayaHekaya={() => setIsGwayaHekayaOpen(true)}
-              onOpenFeker={() => setIsFekerModalOpen(true)}
-              onOpenFactGame={() => setIsFactGameOpen(true)}
-              onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
-              onOpenSoundscapeStudio={() => setIsSoundscapeOpen(true)}
-              onOpenThoughtRelease={() => setIsThoughtReleaseOpen(true)}
-              onOpenFunAndGames={(tab = 'jokes') => setFunAndGamesState({ isOpen: true, tab })}
-              onOpenNesmaLaughs={() => setIsNesmaLaughsOpen(true)}
-              onOpenInnerBurdens={() => setIsInnerBurdensOpen(true)}
-              onOpenEmotionalBridge={() => setIsEmotionalBridgeOpen(true)}
-              onOpenGratitudeGarden={() => setIsGratitudeGardenOpen(true)}
-              onOpenInnerCompass={() => setIsInnerCompassOpen(true)}
-              onOpenReframingPuzzle={() => setIsReframingPuzzleOpen(true)}
-              onOpenInnerLabyrinth={() => setIsInnerLabyrinthOpen(true)}
-              onOpenDigitalRelease={() => setIsDigitalReleaseOpen(true)}
-              onOpenRelationalEnergy={() => setIsRelationalEnergyOpen(true)}
-              onOpenNesmatCipher={() => setIsNesmatCipherOpen(true)}
-            />
+            <motion.div
+              key="screen-games"
+              initial={{ opacity: 0, scale: 0.98, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: -8 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <GamesScreen
+                onNavigate={handleNavigate}
+                onOpenAllScreens={() => setIsTenScreensModalOpen(true)}
+                onOpenGwayaHekaya={() => setIsGwayaHekayaOpen(true)}
+                onOpenFeker={() => setIsFekerModalOpen(true)}
+                onOpenFactGame={() => setIsFactGameOpen(true)}
+                onOpenUntangleKnot={() => setIsUntangleKnotOpen(true)}
+                onOpenSoundscapeStudio={() => setIsSoundscapeOpen(true)}
+                onOpenThoughtRelease={() => setIsThoughtReleaseOpen(true)}
+                onOpenFunAndGames={(tab = 'jokes') => setFunAndGamesState({ isOpen: true, tab })}
+                onOpenNesmaLaughs={() => setIsNesmaLaughsOpen(true)}
+                onOpenInnerBurdens={() => setIsInnerBurdensOpen(true)}
+                onOpenEmotionalBridge={() => setIsEmotionalBridgeOpen(true)}
+                onOpenGratitudeGarden={() => setIsGratitudeGardenOpen(true)}
+                onOpenInnerCompass={() => setIsInnerCompassOpen(true)}
+                onOpenReframingPuzzle={() => setIsReframingPuzzleOpen(true)}
+                onOpenInnerLabyrinth={() => setIsInnerLabyrinthOpen(true)}
+                onOpenDigitalRelease={() => setIsDigitalReleaseOpen(true)}
+                onOpenRelationalEnergy={() => setIsRelationalEnergyOpen(true)}
+                onOpenNesmatCipher={() => setIsNesmatCipherOpen(true)}
+              />
+            </motion.div>
           )}
 
           {currentTab === 'practice' && (
@@ -1039,16 +1061,44 @@ export default function App() {
           />
         )}
 
-        {/* 🧩 5. لعبة صانع الأنماط: فك شفرة الأفكار (Cognitive Reframing Puzzle) */}
-        {isReframingPuzzleOpen && (
-          <CognitiveReframingPuzzleModal
-            isOpen={isReframingPuzzleOpen}
-            onClose={() => {
-              setIsReframingPuzzleOpen(false);
-              triggerActivityRating('reframing_puzzle', 'لعبة فك شفرة الأفكار', 'ألعاب التهدئة');
-            }}
-          />
-        )}
+        {/* 🧩 5. لعبة صانع الأنماط وواحة الألغاز (Cognitive Reframing Puzzle & Real Puzzles) */}
+        <AnimatePresence>
+          {isReframingPuzzleOpen && (
+            <motion.div
+              key="modal-reframing-puzzle"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <CognitiveReframingPuzzleModal
+                isOpen={isReframingPuzzleOpen}
+                onClose={() => {
+                  setIsReframingPuzzleOpen(false);
+                  triggerActivityRating('reframing_puzzle', 'لعبة فك شفرة الأفكار', 'ألعاب التهدئة');
+                }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* 🧩 واحة الألغاز الحقيقية المباشرة (Real Puzzles Suite) */}
+        <AnimatePresence>
+          {isRealPuzzlesOpen && (
+            <motion.div
+              key="modal-real-puzzles"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <RealPuzzlesModal
+                isOpen={isRealPuzzlesOpen}
+                onClose={() => setIsRealPuzzlesOpen(false)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* 🌀 6. لعبة متاهة الهدوء التفاعلية (The Inner Labyrinth) */}
         {isInnerLabyrinthOpen && (
@@ -1434,12 +1484,22 @@ export default function App() {
         )}
 
         {/* 🧩 Nesmat Cipher Game Modal */}
-        {isNesmatCipherOpen && (
-          <NesmatCipherModal
-            isOpen={isNesmatCipherOpen}
-            onClose={() => setIsNesmatCipherOpen(false)}
-          />
-        )}
+        <AnimatePresence>
+          {isNesmatCipherOpen && (
+            <motion.div
+              key="modal-nesmat-cipher"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <NesmatCipherModal
+                isOpen={isNesmatCipherOpen}
+                onClose={() => setIsNesmatCipherOpen(false)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* 📑 Ten Screens Global Navigation Modal */}
         {isTenScreensModalOpen && (

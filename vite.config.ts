@@ -146,6 +146,20 @@ export default defineConfig(() => {
               }
             },
             {
+              urlPattern: /^\/books\/.*\.pdf$/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'nesmat-books-cache',
+                expiration: {
+                  maxEntries: 5,
+                  maxAgeSeconds: 60 * 60 * 24 * 90
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
               handler: 'CacheFirst',
               options: {

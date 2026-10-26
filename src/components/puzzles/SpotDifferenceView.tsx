@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CheckCircle2, 
   HelpCircle, 
@@ -116,8 +117,17 @@ export const SpotDifferenceView: React.FC = () => {
         onDifficultyChange={handleDifficultyChange}
       />
 
-      {/* Header Info Bar */}
-      <div className="bg-white dark:bg-[#1A2520] p-4 rounded-3xl border border-[#D5DED7] dark:border-stone-700 shadow-sm flex flex-wrap items-center justify-between gap-3">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`spot-challenge-${challenge.id}`}
+          initial={{ opacity: 0, scale: 0.98, y: 8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.98, y: -8 }}
+          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+          className="space-y-4"
+        >
+          {/* Header Info Bar */}
+          <div className="bg-white dark:bg-[#1A2520] p-4 rounded-3xl border border-[#D5DED7] dark:border-stone-700 shadow-sm flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-[#B78327]/15 text-[#B78327] flex items-center justify-center font-bold text-lg">
             🔍
@@ -478,49 +488,59 @@ export const SpotDifferenceView: React.FC = () => {
         </div>
 
       </div>
+    </motion.div>
+  </AnimatePresence>
 
       {/* Completion Banner */}
-      {isCompleted && (
-        <div className="p-6 rounded-3xl bg-gradient-to-br from-[#E2EFE7] to-[#D5EADF] dark:from-emerald-950/80 dark:to-stone-900 border-2 border-[#23785B] shadow-xl text-center space-y-4 animate-fade-in">
-          <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-500 mx-auto flex items-center justify-center text-3xl shadow-inner">
-            🌟
-          </div>
+      <AnimatePresence>
+        {isCompleted && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.93, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.93, y: -12 }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
+            className="p-6 rounded-3xl bg-gradient-to-br from-[#E2EFE7] to-[#D5EADF] dark:from-emerald-950/80 dark:to-stone-900 border-2 border-[#23785B] shadow-xl text-center space-y-4"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-500 mx-auto flex items-center justify-center text-3xl shadow-inner">
+              🌟
+            </div>
 
-          <div className="space-y-1">
-            <h4 className="text-lg font-black text-[#174F3F] dark:text-emerald-200">
-              ألف مبارك! اكتشفتِ جميع العناصر والتفاصيل بنجاح!
-            </h4>
-            <p className="text-xs text-stone-600 dark:text-stone-300">
-              قوة الملاحظة واليقظة الذهنية هي مفتاحكِ الدائم لالتقاط مواطن السكينة في يومكِ.
-            </p>
-          </div>
+            <div className="space-y-1">
+              <h4 className="text-lg font-black text-[#174F3F] dark:text-emerald-200">
+                ألف مبارك! اكتشفتِ جميع العناصر والتفاصيل بنجاح!
+              </h4>
+              <p className="text-xs text-stone-600 dark:text-stone-300">
+                قوة الملاحظة واليقظة الذهنية هي مفتاحكِ الدائم لالتقاط مواطن السكينة في يومكِ.
+              </p>
+            </div>
 
-          <div className="p-4 rounded-2xl bg-white/80 dark:bg-stone-800/80 border border-emerald-500/30 max-w-lg mx-auto text-right space-y-1.5">
-            <span className="text-[11px] font-bold text-[#B78327] block">
-              💡 الرسالة النفسية للتحدي:
-            </span>
-            <p className="text-xs sm:text-sm font-bold text-[#174F3F] dark:text-emerald-100 leading-relaxed">
-              {challenge.psychologicalTakeaway.message}
-            </p>
-          </div>
+            <div className="p-4 rounded-2xl bg-white/80 dark:bg-stone-800/80 border border-emerald-500/30 max-w-lg mx-auto text-right space-y-1.5">
+              <span className="text-[11px] font-bold text-[#B78327] block">
+                💡 الرسالة النفسية للتحدي:
+              </span>
+              <p className="text-xs sm:text-sm font-bold text-[#174F3F] dark:text-emerald-100 leading-relaxed">
+                {challenge.psychologicalTakeaway.message}
+              </p>
+            </div>
 
-          <div className="pt-2 flex justify-center gap-3">
-            <button
-              onClick={() => resetChallenge(challengeIndex)}
-              className="px-5 py-2.5 rounded-xl bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-200 text-xs font-bold hover:bg-stone-100 transition-all cursor-pointer shadow-xs"
-            >
-              إعادة اللغز ↺
-            </button>
-            <button
-              onClick={handleNextChallenge}
-              className="px-6 py-2.5 rounded-xl bg-[#23785B] hover:bg-[#174F3F] text-white text-xs font-black transition-all cursor-pointer shadow-md flex items-center gap-1.5"
-            >
-              <span>اللغز البصري التالي</span>
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
+            <div className="pt-2 flex justify-center gap-3">
+              <button
+                onClick={() => resetChallenge(challengeIndex)}
+                className="px-5 py-2.5 rounded-xl bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-200 text-xs font-bold hover:bg-stone-100 transition-all cursor-pointer shadow-xs"
+              >
+                إعادة اللغز ↺
+              </button>
+              <button
+                onClick={handleNextChallenge}
+                className="px-6 py-2.5 rounded-xl bg-[#23785B] hover:bg-[#174F3F] text-white text-xs font-black transition-all cursor-pointer shadow-md flex items-center gap-1.5"
+              >
+                <span>اللغز البصري التالي</span>
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
