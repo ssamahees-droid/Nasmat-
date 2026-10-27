@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TEN_SCREENS } from '../constants/tenScreens';
 import { SimpleIconChevronLeft } from './common/SimpleSvgIcons';
 import { UnifiedShareButton } from './UnifiedShareButton';
+import { QuickAppTourModal } from './QuickAppTourModal';
 
 interface ScreenBannerHeaderProps {
   screenId: string;
   onNavigate: (tab: string) => void;
   onOpenAllScreens?: () => void;
+  onOpenCompanion?: () => void;
   theme?: 'dark' | 'light' | 'system';
 }
 
@@ -14,8 +16,10 @@ export const ScreenBannerHeader: React.FC<ScreenBannerHeaderProps> = ({
   screenId,
   onNavigate,
   onOpenAllScreens,
+  onOpenCompanion,
   theme = 'dark'
 }) => {
+  const [isTourOpen, setIsTourOpen] = useState(false);
   const currentScreen = TEN_SCREENS.find(s => s.id === screenId);
   if (!currentScreen) return null;
 
@@ -60,6 +64,21 @@ export const ScreenBannerHeader: React.FC<ScreenBannerHeaderProps> = ({
 
         {/* Header Actions */}
         <div className="flex items-center gap-2">
+          {/* Quick Tour Button */}
+          <button
+            type="button"
+            onClick={() => setIsTourOpen(true)}
+            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold font-tajawal border transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 ${
+              isDark 
+                ? 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-200 border-amber-500/30' 
+                : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-600/20 shadow-2xs'
+            }`}
+            title="الجولة التعليمية السريعة"
+          >
+            <span>🗺️</span>
+            <span>جولة</span>
+          </button>
+
           {/* Unified Share Button */}
           <UnifiedShareButton 
             variant="compact" 
@@ -84,6 +103,14 @@ export const ScreenBannerHeader: React.FC<ScreenBannerHeaderProps> = ({
         </div>
 
       </div>
+
+      {/* Quick App Guided Tour Modal */}
+      <QuickAppTourModal
+        isOpen={isTourOpen}
+        onClose={() => setIsTourOpen(false)}
+        onNavigate={onNavigate}
+        onOpenCompanion={onOpenCompanion}
+      />
     </div>
   );
 };

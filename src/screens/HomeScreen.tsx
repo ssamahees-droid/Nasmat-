@@ -7,7 +7,7 @@
  * Full bilingual (Arabic & English) i18n support.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MoodValue } from '../types';
 import { storage } from '../services/storage';
 import { useLanguage } from '../context/LanguageContext';
@@ -26,6 +26,8 @@ import { PWAInstallCard } from '../components/PWAInstallCard';
 import { SectionExplanationCard } from '../components/SectionExplanationCard';
 import { SECTION_EXPLANATIONS } from '../data/appExplanations';
 import { UnifiedShareButton } from '../components/UnifiedShareButton';
+import { SmartIntentMatcherCard } from '../components/SmartIntentMatcherCard';
+import { QuickAppTourModal } from '../components/QuickAppTourModal';
 
 interface HomeScreenProps {
   onNavigate: (tab: string) => void;
@@ -95,6 +97,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenEmergencyHelp,
   onOpenAllScreens,
   onOpenGratitudeGarden,
+  onOpenMindfulnessStudio,
+  onOpenRescueKit,
   isMobilePerformanceMode = false,
   onToggleMobilePerformanceMode
 }) => {
@@ -107,6 +111,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     return todayCheckin ? todayCheckin.moodValue : null;
   });
   const [justSavedCheckin, setJustSavedCheckin] = useState(false);
+  const [isQuickTourOpen, setIsQuickTourOpen] = useState(false);
+
+  // Auto-launch Quick Guided Tour on first visit
+  useEffect(() => {
+    try {
+      const tourSeen = localStorage.getItem('nesmat_quick_tour_seen');
+      if (!tourSeen) {
+        const timer = setTimeout(() => {
+          setIsQuickTourOpen(true);
+        }, 1200);
+        return () => clearTimeout(timer);
+      }
+    } catch (_) {}
+  }, []);
 
   const moodOptions: { id: MoodValue; label: string; emoji: string; tip: string }[] = [
     { 
@@ -167,66 +185,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       }`}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
-
-      {/* 🌳 شجرة نمو الوعي والسكينة */}
-      <GrowthTree 
-        onNavigate={onNavigate} 
-        onOpenGratitudeGarden={onOpenGratitudeGarden} 
-      />
-
-      {/* 📱 PWA Install Card */}
-      <PWAInstallCard />
-
-      {/* 🌿 دليل وشرح القسم */}
-      <SectionExplanationCard explanation={SECTION_EXPLANATIONS.home} />
-
-      {/* ⚡ Mobile Speed Booster Notice */}
-      {onToggleMobilePerformanceMode && (
-        <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-center justify-between text-xs sm:text-sm font-bold text-amber-900 dark:text-amber-200 shadow-2xs">
-          <div className="flex items-center gap-2">
-            <span className="text-base">⚡</span>
-            <span>
-              {isMobilePerformanceMode 
-                ? 'وضع السرعة الخفيفة للهواتف مفعل (خالي من الضبابية والأعباء) 🚀'
-                : 'هل تشعر ببطء على هاتفك؟ اضغطي هنا لتفعيل وضع السرعة الفائقة للهواتف'}
-            </span>
-          </div>
-          <button
-            onClick={onToggleMobilePerformanceMode}
-            className="px-3 py-1.5 rounded-xl bg-[#174F3F] hover:bg-[#23785B] text-white font-black text-xs transition-all cursor-pointer shadow-xs shrink-0"
-          >
-            {isMobilePerformanceMode ? 'تعديل ⚡' : 'تسريع الآن ⚡'}
-          </button>
-        </div>
-      )}
-
-      {/* 🎡 بانر شاشة الترحيب وعجلة نسمة حياة الدوارة السحرية */}
-      <section className="relative overflow-hidden p-5 sm:p-6 rounded-3xl bg-[#E2EFE7] text-[#292F2B] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 border-2 border-[#D5DED7]">
-        <div className="flex items-center gap-3.5">
-          <div className="w-13 h-13 rounded-2xl bg-[#FFFFFF] border border-[#23785B]/30 flex items-center justify-center text-3xl shadow-xs shrink-0">
-            🎡
-          </div>
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFFFF] text-[#174F3F] border border-[#D5DED7] text-[15px] font-bold">
-              <span>{t('home.wheel_banner.badge', 'شاشة الترحيب الجديدة 🌸')}</span>
-            </div>
-            <h3 className="text-[22px] sm:text-[24px] font-bold text-[#174F3F] mt-1 leading-snug">
-              {t('home.wheel_banner.title', 'عجلة نسمة حياة الدوارة السحرية (الواحات العشر)')}
-            </h3>
-            <p className="text-[16px] text-[#515B55] font-medium mt-0.5 leading-relaxed">
-              {t('home.wheel_banner.desc', 'أدِر العجلة لاكتشاف محطتك المناسبة وتحديد مشاعرك بلمسة واحدة')}
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={() => onNavigate('welcome')}
-          className="min-h-[48px] w-full sm:w-auto px-5 py-3 bg-[#174F3F] hover:bg-[#23785B] text-white font-bold text-[17px] rounded-2xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2 cursor-pointer shrink-0"
-        >
-          <span>{t('home.wheel_banner.button', 'دخول شاشة الترحيب والعجلة 🎡')}</span>
-          <ChevronIcon size={16} className="w-4 h-4" />
-        </button>
-      </section>
 
       {/* 🌸 الشاشة الأولى (الرئيسية) — واحة الترحيب المبهجة والدافئة */}
       <section className="relative overflow-hidden p-6 sm:p-9 rounded-3xl sm:rounded-4xl bg-[#FFFFFF] border-2 border-[#D5DED7] text-[#292F2B] shadow-sm transition-all">
@@ -303,6 +261,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 label="شارك تطبيق نسمة حياة 🌿"
                 className="min-h-[48px] px-5 py-3 text-[16px] font-bold" 
               />
+
+              {/* Quick Tour Button */}
+              <button
+                type="button"
+                onClick={() => setIsQuickTourOpen(true)}
+                className="min-h-[48px] px-4 py-3 rounded-2xl text-[16px] font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 dark:text-amber-200 border border-amber-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-2xs"
+                title="الجولة التعليمية السريعة"
+              >
+                <span>🗺️</span>
+                <span>جولة سريعة</span>
+              </button>
             </div>
           </div>
 
@@ -328,6 +297,75 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
         </div>
       </section>
+
+      {/* 🎡 بانر شاشة الترحيب وعجلة نسمة حياة الدوارة السحرية */}
+      <section className="relative overflow-hidden p-5 sm:p-6 rounded-3xl bg-[#E2EFE7] text-[#292F2B] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 border-2 border-[#D5DED7]">
+        <div className="flex items-center gap-3.5">
+          <div className="w-13 h-13 rounded-2xl bg-[#FFFFFF] border border-[#23785B]/30 flex items-center justify-center text-3xl shadow-xs shrink-0">
+            🎡
+          </div>
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFFFF] text-[#174F3F] border border-[#D5DED7] text-[15px] font-bold">
+              <span>{t('home.wheel_banner.badge', 'شاشة الترحيب الجديدة 🌸')}</span>
+            </div>
+            <h3 className="text-[22px] sm:text-[24px] font-bold text-[#174F3F] mt-1 leading-snug">
+              {t('home.wheel_banner.title', 'عجلة نسمة حياة الدوارة السحرية (الواحات العشر)')}
+            </h3>
+            <p className="text-[16px] text-[#515B55] font-medium mt-0.5 leading-relaxed">
+              {t('home.wheel_banner.desc', 'أدِر العجلة لاكتشاف محطتك المناسبة وتحديد مشاعرك بلمسة واحدة')}
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => onNavigate('welcome')}
+          className="min-h-[48px] w-full sm:w-auto px-5 py-3 bg-[#174F3F] hover:bg-[#23785B] text-white font-bold text-[17px] rounded-2xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2 cursor-pointer shrink-0"
+        >
+          <span>{t('home.wheel_banner.button', 'دخول شاشة الترحيب والعجلة 🎡')}</span>
+          <ChevronIcon size={16} className="w-4 h-4" />
+        </button>
+      </section>
+
+      {/* 🌳 شجرة نمو الوعي والسكينة */}
+      <GrowthTree 
+        onNavigate={onNavigate} 
+        onOpenGratitudeGarden={onOpenGratitudeGarden} 
+      />
+
+      {/* 🧭 موجه الشعور السريع وخطوة اليوم المحددة */}
+      <SmartIntentMatcherCard 
+        onNavigate={onNavigate}
+        onOpenCompanion={onOpenCompanion}
+        onOpenBreathingModal={onOpenMindfulnessStudio}
+        onOpenRescueModal={onOpenRescueKit}
+        onOpenGratitudeGardenModal={onOpenGratitudeGarden}
+      />
+
+      {/* 📱 PWA Install Card */}
+      <PWAInstallCard />
+
+      {/* 🌿 دليل وشرح القسم */}
+      <SectionExplanationCard explanation={SECTION_EXPLANATIONS.home} />
+
+      {/* ⚡ Mobile Speed Booster Notice */}
+      {onToggleMobilePerformanceMode && (
+        <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-center justify-between text-xs sm:text-sm font-bold text-amber-900 dark:text-amber-200 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <span className="text-base">⚡</span>
+            <span>
+              {isMobilePerformanceMode 
+                ? 'وضع السرعة الخفيفة للهواتف مفعل (خالي من الضبابية والأعباء) 🚀'
+                : 'هل تشعر ببطء على هاتفك؟ اضغطي هنا لتفعيل وضع السرعة الفائقة للهواتف'}
+            </span>
+          </div>
+          <button
+            onClick={onToggleMobilePerformanceMode}
+            className="px-3 py-1.5 rounded-xl bg-[#174F3F] hover:bg-[#23785B] text-white font-black text-xs transition-all cursor-pointer shadow-xs shrink-0"
+          >
+            {isMobilePerformanceMode ? 'تعديل ⚡' : 'تسريع الآن ⚡'}
+          </button>
+        </div>
+      )}
 
       {/* 🌿 تفقد المشاعر اليومية */}
       <section className="p-5 sm:p-7 border-2 border-[#D5DED7] rounded-3xl sm:rounded-4xl space-y-4 shadow-sm bg-[#FFFFFF] text-[#292F2B]">
@@ -534,6 +572,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
         <PWAUpdatePrompt />
       </div>
+
+      {/* 🗺️ Quick App Guided Onboarding Tour Modal */}
+      <QuickAppTourModal
+        isOpen={isQuickTourOpen}
+        onClose={() => setIsQuickTourOpen(false)}
+        onNavigate={onNavigate}
+        onOpenCompanion={onOpenCompanion}
+      />
 
     </div>
   );
