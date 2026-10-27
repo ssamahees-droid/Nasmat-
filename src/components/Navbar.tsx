@@ -21,6 +21,7 @@ import { UserRole } from '../types';
 import { storage } from '../services/storage';
 import { PWAInstallButton } from './PWAInstallButton';
 import { LanguageToggle } from './LanguageToggle';
+import { UnifiedShareButton } from './UnifiedShareButton';
 import { useLanguage } from '../context/LanguageContext';
 
 interface NavbarProps {
@@ -198,6 +199,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-[#D98F83] rounded-full ring-2 ring-white dark:ring-[#14271F]" />
             )}
           </button>
+
+          {/* Unified Share App Button */}
+          <UnifiedShareButton variant="navbar" />
 
           {/* Role Switcher (Hidden on small mobile headers to prevent overflow) */}
           <div className="relative hidden md:block">

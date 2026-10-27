@@ -15,8 +15,9 @@ import {
 import { storage } from '../services/storage';
 import { ContentItem, ContentType } from '../types';
 import { PsychoeducationLibraryHub } from '../components/PsychoeducationLibraryHub';
-
 import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+import { SectionExplanationCard } from '../components/SectionExplanationCard';
+import { SECTION_EXPLANATIONS } from '../data/appExplanations';
 
 interface ExploreScreenProps {
   onOpenContent: (contentId: string) => void;
@@ -192,6 +193,9 @@ export const ExploreScreen: React.FC<ExploreScreenProps> = ({
           </button>
         </div>
       </div>
+      
+      {/* Short Structured Section Guide */}
+      <SectionExplanationCard explanation={SECTION_EXPLANATIONS.explore} />
 
       {/* Tab 1: Full Psychoeducation Library (30 Topics, 6 Tracks) */}
       {activeTab === 'library' && (

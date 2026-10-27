@@ -20,6 +20,8 @@ import {
 import { RESCUE_KIT_PLANS, RescuePlan } from '../data/newPhaseData';
 
 import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+import { SectionExplanationCard } from '../components/SectionExplanationCard';
+import { SECTION_EXPLANATIONS } from '../data/appExplanations';
 
 interface RescueScreenProps {
   onNavigate: (tab: string) => void;
@@ -113,6 +115,11 @@ export const RescueScreen: React.FC<RescueScreenProps> = ({
           <p className="text-sm md:text-base text-[#9abfb0] leading-relaxed">
             عندما يفور الانفعال أو تضيق الأنفاس أو تشتتك الحيرة، لا تحتاج إلى نصائح فلسفية عامة، بل خطوات محددة بالترتيب: ماذا تفعل بجسدك الآن، وكيف تهدئ عقلك خطوة بخطوة.
           </p>
+        </div>
+
+        {/* Section Guide & Explanation Card */}
+        <div className="mb-8">
+          <SectionExplanationCard explanation={SECTION_EXPLANATIONS.rescue} />
         </div>
 
         {/* Plan Selector Grid */}

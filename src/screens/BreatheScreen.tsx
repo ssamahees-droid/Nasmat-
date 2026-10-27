@@ -23,6 +23,8 @@ import { ambientSound, SoundChannelId } from '../utils/audioSynth';
 import { storage } from '../services/storage';
 
 import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+import { SectionExplanationCard } from '../components/SectionExplanationCard';
+import { SECTION_EXPLANATIONS } from '../data/appExplanations';
 import { useLanguage } from '../context/LanguageContext';
 
 interface BreatheScreenProps {
@@ -286,6 +288,9 @@ export const BreatheScreen: React.FC<BreatheScreenProps> = ({
             : 'مش لازم تحل كل حاجة دلوقتي؛ تنفس وسيب عقلك يرتاح.'}
         </p>
       </div>
+
+      {/* Section Guide & Explanation Card */}
+      <SectionExplanationCard explanation={SECTION_EXPLANATIONS.breathe} />
 
       {/* Sessions Selector */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">

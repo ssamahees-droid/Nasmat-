@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { storage } from '../services/storage';
 import { AssessmentRecord } from '../types';
+import { SectionExplanationCard } from '../components/SectionExplanationCard';
+import { SECTION_EXPLANATIONS } from '../data/appExplanations';
 
 interface AssessmentScreenProps {
   onNavigateToContent: () => void;
@@ -251,6 +253,9 @@ export const AssessmentScreen: React.FC<AssessmentScreenProps> = ({
             اختار التقييم المناسب ليك من الأدوات المعتمدة بالأسفل:
           </p>
         </div>
+
+        {/* 🌿 دليل وشرح القسم */}
+        <SectionExplanationCard explanation={SECTION_EXPLANATIONS.self_discovery} />
 
         {/* Option 1: Initial Check (التقييم المبدئي) */}
         <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl p-5 sm:p-6 transition-all hover:border-[#A9C5A0] hover:shadow-md space-y-4">

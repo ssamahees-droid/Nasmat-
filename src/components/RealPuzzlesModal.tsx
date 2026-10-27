@@ -22,6 +22,8 @@ import { JigsawPuzzleView } from './puzzles/JigsawPuzzleView';
 import { SpotDifferenceView } from './puzzles/SpotDifferenceView';
 import { LogicPuzzlesView } from './puzzles/LogicPuzzlesView';
 import { chimeService } from '../services/chimeService';
+import { GameInstructionsModal } from './GameInstructionsModal';
+import { GAME_EXPLANATIONS } from '../data/appExplanations';
 
 interface RealPuzzlesModalProps {
   isOpen: boolean;
@@ -36,6 +38,7 @@ export const RealPuzzlesModal: React.FC<RealPuzzlesModalProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'jigsaw' | 'spot' | 'logic'>(initialTab);
   const [isMuted, setIsMuted] = useState(chimeService.isMuted());
+  const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
 
   if (!isOpen) return null;
 
@@ -75,6 +78,15 @@ export const RealPuzzlesModal: React.FC<RealPuzzlesModalProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsInstructionsOpen(true)}
+              className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-amber-500/30"
+              title="طريقة اللعب والإرشادات"
+            >
+              <span>طريقة اللعب</span>
+              <span>💡</span>
+            </button>
+
             <button
               onClick={handleToggleMute}
               className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 transition-colors cursor-pointer"
@@ -173,6 +185,12 @@ export const RealPuzzlesModal: React.FC<RealPuzzlesModalProps> = ({
           </div>
         </div>
 
+        {/* Game Instructions Modal */}
+        <GameInstructionsModal
+          isOpen={isInstructionsOpen}
+          onClose={() => setIsInstructionsOpen(false)}
+          explanation={GAME_EXPLANATIONS.real_puzzles}
+        />
       </div>
     </div>
   );

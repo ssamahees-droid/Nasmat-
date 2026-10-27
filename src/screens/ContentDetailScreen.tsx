@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { storage } from '../services/storage';
 import { ContentItem } from '../types';
+import { shareContent } from '../services/shareService';
 
 interface ContentDetailScreenProps {
   contentId: string;
@@ -51,15 +52,13 @@ export const ContentDetailScreen: React.FC<ContentDetailScreenProps> = ({
     setIsFav(updated);
   };
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: item.title,
-        text: item.description,
-        url: window.location.href
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(window.location.href);
+  const handleShare = async () => {
+    const res = await shareContent({
+      title: item.title,
+      text: item.description,
+      url: window.location.href
+    });
+    if (res.success) {
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2500);
     }

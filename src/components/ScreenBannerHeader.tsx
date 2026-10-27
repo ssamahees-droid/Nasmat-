@@ -1,6 +1,7 @@
 import React from 'react';
 import { TEN_SCREENS } from '../constants/tenScreens';
 import { SimpleIconChevronLeft } from './common/SimpleSvgIcons';
+import { UnifiedShareButton } from './UnifiedShareButton';
 
 interface ScreenBannerHeaderProps {
   screenId: string;
@@ -57,21 +58,30 @@ export const ScreenBannerHeader: React.FC<ScreenBannerHeaderProps> = ({
           </div>
         </div>
 
-        {/* Quick Screen Switcher button */}
-        {onOpenAllScreens && (
-          <button
-            onClick={onOpenAllScreens}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold font-tajawal border transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 ${
-              isDark 
-                ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-200 border-emerald-500/30' 
-                : 'bg-white hover:bg-emerald-50 text-emerald-900 border-emerald-600/20 shadow-2xs'
-            }`}
-          >
-            <span>📑</span>
-            <span>الشاشات العشر</span>
-            <SimpleIconChevronLeft size={12} className="w-3 h-3" />
-          </button>
-        )}
+        {/* Header Actions */}
+        <div className="flex items-center gap-2">
+          {/* Unified Share Button */}
+          <UnifiedShareButton 
+            variant="compact" 
+            label="مشاركة" 
+          />
+
+          {/* Quick Screen Switcher button */}
+          {onOpenAllScreens && (
+            <button
+              onClick={onOpenAllScreens}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold font-tajawal border transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 ${
+                isDark 
+                  ? 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-200 border-emerald-500/30' 
+                  : 'bg-white hover:bg-emerald-50 text-emerald-900 border-emerald-600/20 shadow-2xs'
+              }`}
+            >
+              <span>📑</span>
+              <span>الشاشات العشر</span>
+              <SimpleIconChevronLeft size={12} className="w-3 h-3" />
+            </button>
+          )}
+        </div>
 
       </div>
     </div>

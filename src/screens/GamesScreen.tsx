@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 
 import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+import { SectionExplanationCard } from '../components/SectionExplanationCard';
+import { SECTION_EXPLANATIONS } from '../data/appExplanations';
 
 interface GamesScreenProps {
   onNavigate: (tab: string) => void;
@@ -83,6 +85,9 @@ export const GamesScreen: React.FC<GamesScreenProps> = ({
           </p>
         </div>
       </section>
+
+      {/* Section Guide & Explanation Card */}
+      <SectionExplanationCard explanation={SECTION_EXPLANATIONS.games} />
 
       {/* Flagship Game: شفرة نسمة الكبرى */}
       <section className="bg-gradient-to-r from-[#174F3F] via-[#123E32] to-[#0D2C24] border-2 border-amber-500/50 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">

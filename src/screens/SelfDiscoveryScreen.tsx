@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 
 import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+import { SectionExplanationCard } from '../components/SectionExplanationCard';
+import { SECTION_EXPLANATIONS } from '../data/appExplanations';
 
 interface SelfDiscoveryScreenProps {
   onNavigate: (tab: string) => void;
@@ -78,6 +80,9 @@ export const SelfDiscoveryScreen: React.FC<SelfDiscoveryScreenProps> = ({
           </div>
         </div>
       </section>
+
+      {/* Section Explanation Guide */}
+      <SectionExplanationCard explanation={SECTION_EXPLANATIONS.self_discovery} />
 
       {/* 🧠 بطاقة بارزة: اختبارات تصنيف الشخصية والأنماط النفسية */}
       <section className="bg-[#FFFFFF] border-2 border-[#D5DED7] rounded-3xl p-6 sm:p-8 shadow-md relative overflow-hidden transition-all hover:border-[#23785B]">

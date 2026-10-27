@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { storage } from '../services/storage';
 import { User, UserPreferences } from '../types';
+import { AppHubCard } from '../components/AppHubCard';
 
 interface ProfileScreenProps {
   onNavigate: (tab: string) => void;
@@ -191,6 +192,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           تعديل
         </button>
       </div>
+
+      {/* Mobile App Install, Share & Auto-Update Hub */}
+      <AppHubCard />
 
       {/* Profile Menu Items (According to Spec page 20) */}
       <div className="bg-[#F7F3E9] border border-[#E6E8D8] rounded-3xl overflow-hidden shadow-xs divide-y divide-[#E6E8D8]/70">
@@ -853,7 +857,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   }`}
                 >
                   <span className="text-sm font-normal">عادي</span>
-                  <span className="text-[10px] opacity-80">16px</span>
+                  <span className="text-[10px] opacity-80">17px (مريح)</span>
                 </button>
 
                 <button
@@ -866,7 +870,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   }`}
                 >
                   <span className="text-base font-semibold">كبير</span>
-                  <span className="text-[10px] opacity-80">18px</span>
+                  <span className="text-[10px] opacity-80">19px (واضح)</span>
                 </button>
 
                 <button
@@ -879,7 +883,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   }`}
                 >
                   <span className="text-lg font-bold">كبير جداً</span>
-                  <span className="text-[10px] opacity-80">20px</span>
+                  <span className="text-[10px] opacity-80">21px (أكبر)</span>
                 </button>
               </div>
             </div>

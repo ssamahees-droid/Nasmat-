@@ -17,6 +17,8 @@ import {
   SavedFekerEntry 
 } from '../data/fekerAppData';
 import { TextAudioPlayer } from '../components/TextAudioPlayer';
+import { GameInstructionsModal } from '../components/GameInstructionsModal';
+import { GAME_EXPLANATIONS } from '../data/appExplanations';
 
 interface FekerAppScreenProps {
   onBackToHome?: () => void;
@@ -28,6 +30,7 @@ export const FekerAppScreen: React.FC<FekerAppScreenProps> = ({
   initialTab = 'reframing'
 }) => {
   const [activeTab, setActiveTab] = useState<'reframing' | 'game' | 'distortions' | 'archive'>(initialTab);
+  const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
 
   // Sync initialTab
   useEffect(() => {
@@ -188,15 +191,26 @@ export const FekerAppScreen: React.FC<FekerAppScreenProps> = ({
               </div>
             </div>
 
-            {onBackToHome && (
+            <div className="flex items-center gap-2">
               <button
-                onClick={onBackToHome}
-                className="btn-nesma-primary text-xs"
+                onClick={() => setIsInstructionsOpen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-bold transition-all"
+                title="دليل وطريقة اللعب"
               >
-                <span>العودة للرئيسية</span>
-                <ArrowLeft className="w-4 h-4" />
+                <Lightbulb className="w-3.5 h-3.5" />
+                <span>طريقة اللعب 💡</span>
               </button>
-            )}
+
+              {onBackToHome && (
+                <button
+                  onClick={onBackToHome}
+                  className="btn-nesma-primary text-xs"
+                >
+                  <span>العودة للرئيسية</span>
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </div>
 
           <p className="max-w-2xl text-xs sm:text-sm text-[#263830] dark:text-[#D5DFD7] leading-relaxed">
@@ -705,6 +719,13 @@ export const FekerAppScreen: React.FC<FekerAppScreenProps> = ({
             )}
           </div>
         )}
+
+        {/* Game Instructions Manual Modal */}
+        <GameInstructionsModal 
+          isOpen={isInstructionsOpen} 
+          onClose={() => setIsInstructionsOpen(false)} 
+          explanation={GAME_EXPLANATIONS.feker_app} 
+        />
 
       </main>
 

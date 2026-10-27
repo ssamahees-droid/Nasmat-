@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 
 import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+import { SectionExplanationCard } from '../components/SectionExplanationCard';
+import { SECTION_EXPLANATIONS } from '../data/appExplanations';
 
 interface StartScreenProps {
   onNavigate: (tab: string) => void;
@@ -68,6 +70,9 @@ export const StartScreen: React.FC<StartScreenProps> = ({
           </div>
         </div>
       </section>
+
+      {/* 🌿 دليل وشرح القسم */}
+      <SectionExplanationCard explanation={SECTION_EXPLANATIONS.start} />
 
       {/* Guide: How to Start based on your current state */}
       <section className="space-y-4">

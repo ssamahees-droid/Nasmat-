@@ -19,6 +19,8 @@ import {
   SavedFekerEntry 
 } from '../data/fekerAppData';
 import { TextAudioPlayer } from './TextAudioPlayer';
+import { GameInstructionsModal } from './GameInstructionsModal';
+import { GAME_EXPLANATIONS } from '../data/appExplanations';
 
 interface FekerAppModalProps {
   isOpen: boolean;
@@ -32,6 +34,7 @@ export const FekerAppModal: React.FC<FekerAppModalProps> = ({
   initialTab = 'reframing'
 }) => {
   const [activeTab, setActiveTab] = useState<'reframing' | 'game' | 'distortions' | 'archive'>(initialTab);
+  const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
 
   // Sync initial tab when changed
   useEffect(() => {
@@ -194,6 +197,14 @@ export const FekerAppModal: React.FC<FekerAppModalProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsInstructionsOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-bold transition-all"
+              title="دليل وطريقة اللعب"
+            >
+              <Lightbulb className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">طريقة اللعب</span>
+            </button>
             <button
               onClick={onClose}
               className="p-2 rounded-xl text-[#13251E]/60 dark:text-white/60 hover:text-[#13251E] dark:hover:text-white hover:bg-[#174C3C]/10 dark:hover:bg-white/10 transition-colors"
@@ -831,6 +842,13 @@ export const FekerAppModal: React.FC<FekerAppModalProps> = ({
             إغلاق
           </button>
         </div>
+
+        {/* Game Instructions Manual Modal */}
+        <GameInstructionsModal 
+          isOpen={isInstructionsOpen} 
+          onClose={() => setIsInstructionsOpen(false)} 
+          explanation={GAME_EXPLANATIONS.feker_app} 
+        />
 
       </div>
     </div>

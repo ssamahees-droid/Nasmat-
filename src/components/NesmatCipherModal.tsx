@@ -47,6 +47,8 @@ import { LabyrinthPathBoard } from './cipher/LabyrinthPathBoard';
 import { MissingPieceBoard } from './cipher/MissingPieceBoard';
 import { BurdenEliminationBoard } from './cipher/BurdenEliminationBoard';
 import { chimeService } from '../services/chimeService';
+import { GameInstructionsModal } from './GameInstructionsModal';
+import { GAME_EXPLANATIONS } from '../data/appExplanations';
 
 interface NesmatCipherModalProps {
   isOpen: boolean;
@@ -54,6 +56,7 @@ interface NesmatCipherModalProps {
 }
 
 export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, onClose }) => {
+  const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
   // Game progression & storage state
   const [completedLevels, setCompletedLevels] = useState<number[]>(() => {
     return nesmaCipherStorage.getCompletedLevels();
@@ -279,6 +282,15 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsInstructionsOpen(true)}
+              className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-800 dark:text-amber-300 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer border border-amber-500/30"
+              title="طريقة اللعب وقواعد شفرة نسمة"
+            >
+              <span>طريقة اللعب</span>
+              <span>💡</span>
+            </button>
+
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
               className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 transition-colors cursor-pointer"
@@ -1375,6 +1387,13 @@ export const NesmatCipherModal: React.FC<NesmatCipherModalProps> = ({ isOpen, on
           </div>
         </div>
       )}
+
+      {/* Game Instructions & Rules Modal */}
+      <GameInstructionsModal
+        isOpen={isInstructionsOpen}
+        onClose={() => setIsInstructionsOpen(false)}
+        explanation={GAME_EXPLANATIONS.nesmat_cipher}
+      />
     </div>
   );
 };

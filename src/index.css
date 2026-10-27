@@ -80,7 +80,7 @@
 
 @layer base {
   html {
-    font-family: 'Tajawal', 'IBM Plex Sans Arabic', 'Cairo', system-ui, -apple-system, sans-serif;
+    font-family: 'Cairo', 'Tajawal', 'IBM Plex Sans Arabic', system-ui, -apple-system, sans-serif;
     color: var(--ink);
     background-color: var(--bg);
     -webkit-tap-highlight-color: transparent;
@@ -713,3 +713,15 @@ html.mobile-low-perf,
   transform: translateY(-4px);
   transition: opacity 180ms ease-in, transform 180ms ease-in;
 }
+
+/* Application-wide Font Size Scaling Classes */
+html.font-normal {
+  font-size: 17px;
+}
+html.font-large {
+  font-size: 19px;
+}
+html.font-extralarge {
+  font-size: 21px;
+}
+

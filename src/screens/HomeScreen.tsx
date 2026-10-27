@@ -23,6 +23,9 @@ import {
 import { PWAInstallButton } from '../components/PWAInstallButton';
 import { PWAUpdatePrompt } from '../components/PWAUpdatePrompt';
 import { PWAInstallCard } from '../components/PWAInstallCard';
+import { SectionExplanationCard } from '../components/SectionExplanationCard';
+import { SECTION_EXPLANATIONS } from '../data/appExplanations';
+import { UnifiedShareButton } from '../components/UnifiedShareButton';
 
 interface HomeScreenProps {
   onNavigate: (tab: string) => void;
@@ -174,6 +177,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* 📱 PWA Install Card */}
       <PWAInstallCard />
 
+      {/* 🌿 دليل وشرح القسم */}
+      <SectionExplanationCard explanation={SECTION_EXPLANATIONS.home} />
+
       {/* ⚡ Mobile Speed Booster Notice */}
       {onToggleMobilePerformanceMode && (
         <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-center justify-between text-xs sm:text-sm font-bold text-amber-900 dark:text-amber-200 shadow-2xs">
@@ -290,6 +296,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <span>👋</span>
                 <span>{t('home.hero.welcome_screen_button', 'شاشة الترحيب')}</span>
               </button>
+
+              {/* Unified Share Button */}
+              <UnifiedShareButton 
+                variant="pill" 
+                label="شارك تطبيق نسمة حياة 🌿"
+                className="min-h-[48px] px-5 py-3 text-[16px] font-bold" 
+              />
             </div>
           </div>
 

@@ -16,6 +16,8 @@ import { storage } from '../services/storage';
 import { SupportRequest, SupportRequestType, SupportStatus } from '../types';
 
 import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+import { SectionExplanationCard } from '../components/SectionExplanationCard';
+import { SECTION_EXPLANATIONS } from '../data/appExplanations';
 
 interface SupportScreenProps {
   onOpenSafetyModal: () => void;
@@ -99,6 +101,9 @@ export const SupportScreen: React.FC<SupportScreenProps> = ({
           مش لازم تعرف تقول كل حاجة. ابدأ بس من اللي حاسس بيه.
         </p>
       </div>
+
+      {/* 🌿 دليل وشرح القسم */}
+      <SectionExplanationCard explanation={SECTION_EXPLANATIONS.support} />
 
       {/* Tabs: New Request vs My Previous Tickets */}
       <div className="flex items-center gap-2 p-1 bg-[#F7F3E9] border border-[#E6E8D8] rounded-2xl">

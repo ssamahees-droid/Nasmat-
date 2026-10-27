@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 
 import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+import { SectionExplanationCard } from '../components/SectionExplanationCard';
+import { SECTION_EXPLANATIONS } from '../data/appExplanations';
 
 interface PracticeScreenProps {
   onNavigate: (tab: string) => void;
@@ -65,6 +67,9 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({
           </p>
         </div>
       </section>
+
+      {/* Section Explanation Guide */}
+      <SectionExplanationCard explanation={SECTION_EXPLANATIONS.practice} />
 
       {/* Primary Practice Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

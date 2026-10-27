@@ -17,9 +17,14 @@ import { storage, PersonalNote } from '../services/storage';
 import { DailyCheckin, MoodValue, AssessmentRecord, WellnessHabit, HabitCategory } from '../types';
 import { RelaxationCalendarSection } from '../components/RelaxationCalendarSection';
 import { MoodJourneyChartSection } from '../components/MoodJourneyChartSection';
+import { BreathingAdherenceChartSection } from '../components/BreathingAdherenceChartSection';
 import { MoodReportGenerator } from '../components/MoodReportGenerator';
+import { AchievementShareCardModal } from '../components/AchievementShareCardModal';
+import { BrandedIdentityCardModal } from '../components/BrandedIdentityCardModal';
 
 import { ScreenBannerHeader } from '../components/ScreenBannerHeader';
+import { SectionExplanationCard } from '../components/SectionExplanationCard';
+import { SECTION_EXPLANATIONS } from '../data/appExplanations';
 
 interface JourneyScreenProps {
   onOpenAssessment: () => void;
@@ -72,6 +77,8 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
   const [isAddingHabit, setIsAddingHabit] = useState(false);
   const [newHabitTitle, setNewHabitTitle] = useState('');
   const [newHabitCategory, setNewHabitCategory] = useState<HabitCategory>('mindfulness');
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isBrandedCardOpen, setIsBrandedCardOpen] = useState(false);
 
   // Deleting check-in handler (as per spec page 7 & 18)
   const handleDeleteCheckin = (id: string) => {
@@ -165,6 +172,9 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
           «خطوة صغيرة كل يوم ممكن تعمل فرقاً»
         </p>
       </div>
+
+      {/* 🌿 دليل وشرح القسم */}
+      <SectionExplanationCard explanation={SECTION_EXPLANATIONS.journey} />
 
       {/* خطة نسمة حياة الخاصة بي (Pages 13 & 14 from PDF) */}
       {onOpenPersonalPlan && (
@@ -263,10 +273,66 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
         </div>
       )}
 
+      {/* بطاقات مشاركة الإنجازات والبطاقة التعريفية الرسمية */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <section 
+          onClick={() => setIsShareModalOpen(true)}
+          className="cursor-pointer bg-gradient-to-r from-[#174F3F] via-[#123E32] to-[#0D2C24] border border-emerald-500/30 rounded-3xl p-4 sm:p-5 shadow-xl text-white flex items-center justify-between group transition-all hover:scale-[1.01]"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-xl shrink-0 group-hover:rotate-12 transition-transform">
+              🌟
+            </div>
+            <div className="space-y-0.5">
+              <h3 className="font-extrabold text-xs sm:text-sm text-white">
+                شارك إنجازاتك اليومية 🚀
+              </h3>
+              <p className="text-[11px] text-emerald-100/80">
+                بطاقات إنجاز التنفس، المزاج، والاستمرارية
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-bold text-amber-300 group-hover:translate-x-1 transition-transform shrink-0">
+            فتح 👈
+          </span>
+        </section>
+
+        <section 
+          onClick={() => setIsBrandedCardOpen(true)}
+          className="cursor-pointer bg-gradient-to-r from-[#1B342A] via-[#162B22] to-[#0E1D17] border border-amber-400/40 rounded-3xl p-4 sm:p-5 shadow-xl text-white flex items-center justify-between group transition-all hover:scale-[1.01]"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+              🖼️
+            </div>
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1.5">
+                <h3 className="font-extrabold text-xs sm:text-sm text-white">
+                  بطاقة نسمة حياة البصرية 🎨
+                </h3>
+                <span className="text-[9px] bg-amber-500 text-stone-950 font-black px-1.5 py-0.5 rounded-full">PNG</span>
+              </div>
+              <p className="text-[11px] text-emerald-100/80">
+                تصميم بطاقة تعريفية بهوية التطبيق وتنزيلها
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-bold text-amber-300 group-hover:translate-x-1 transition-transform shrink-0">
+            تصميم 👈
+          </span>
+        </section>
+      </div>
+
       {/* الرسوم البيانية لتطور الحالة المزاجية والتقدم النفسي بواسطة recharts */}
       <MoodJourneyChartSection
         onOpenThoughtJournal={onOpenThoughtJournal}
         onOpenMindfulnessStudio={onOpenMindfulnessStudio}
+      />
+
+      {/* المتابعة اليومية للالتزام بتمارين التنفس والهدوء بواسطة recharts */}
+      <BreathingAdherenceChartSection
+        onNavigateToBreathe={onNavigateToBreathe}
+        onNavigateToListen={onNavigateToListen}
       />
 
       {/* المولد الذكي للتقرير الأسبوعي */}
@@ -730,6 +796,18 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
           </div>
         )}
       </section>
+
+      {/* Achievement Share Card Modal */}
+      <AchievementShareCardModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+      />
+
+      {/* Standalone Branded Identity Card Customizer Modal */}
+      <BrandedIdentityCardModal
+        isOpen={isBrandedCardOpen}
+        onClose={() => setIsBrandedCardOpen(false)}
+      />
     </div>
   );
 };
