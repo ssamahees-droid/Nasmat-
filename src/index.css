@@ -7,9 +7,10 @@
   --color-nesma-card: #FFFFFF;
   --color-nesma-primary: #174F3F;
   --color-nesma-deep: #174F3F;
+  --color-nesma-secondary: #205746;
   --color-nesma-interactive: #23785B;
   --color-nesma-lightgreen: #E2EFE7;
-  --color-nesma-text-main: #292F2B;
+  --color-nesma-text-main: #292F2D;
   --color-nesma-text-muted: #515B55;
   --color-nesma-border: #D5DED7;
   --color-nesma-gold: #B78327;
@@ -24,13 +25,13 @@
   --surface-alt: #E2EFE7;
   --surface-card: #FFFFFF;
   --surface-hover: #F0EDE2;
-  --ink: #292F2B;
+  --ink: #292F2D;
   --ink-dim: #515B55;
   --ink-faint: rgba(23, 79, 63, 0.08);
   --primary: #174F3F;
   --primary-hover: #123C30;
-  --secondary: #23785B;
-  --accent: #23785B;
+  --secondary: #205746;
+  --accent: #205746;
   --gold: #B78327;
   --mist: #E2EFE7;
   --border: #D5DED7;
@@ -85,8 +86,8 @@
     background-color: var(--bg);
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
-    font-size: 18px; /* Mobile First: 18px base */
-    line-height: 1.6;
+    font-size: 18px; /* Mobile First: 18px base minimum */
+    line-height: 1.65;
   }
 
   body {
@@ -94,37 +95,61 @@
     overflow-x: hidden;
     background-color: var(--bg);
     color: var(--ink);
-    font-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
     font-size: 18px;
-    line-height: 1.6;
+    line-height: 1.65;
   }
 
-  /* Clear Arabic typography hierarchy */
+  p, span, a, label, input, textarea, select, button {
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+  }
+
+  /* Clear Arabic typography hierarchy with minimum 18px body and 16px secondary */
   h1 {
-    font-size: clamp(28px, 6vw, 34px);
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-size: clamp(28px, 6vw, 36px);
     font-weight: 800;
     line-height: 1.3;
     color: var(--primary);
   }
 
   h2 {
-    font-size: clamp(24px, 5vw, 28px);
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-size: clamp(24px, 5vw, 30px);
     font-weight: 700;
     line-height: 1.35;
     color: var(--primary);
   }
 
   h3 {
-    font-size: clamp(20px, 4.5vw, 24px);
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-size: clamp(20px, 4.5vw, 26px);
     font-weight: 700;
     line-height: 1.4;
     color: var(--primary);
   }
 
+  h4, h5, h6 {
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
   p {
     font-size: 18px;
-    line-height: 1.65;
+    line-height: 1.7;
     color: var(--ink);
+  }
+
+  /* Boost contrast for any muted text in light mode to prevent fading */
+  :not(.dark):not([data-theme="dark"]) .text-stone-400,
+  :not(.dark):not([data-theme="dark"]) .text-gray-400 {
+    color: #515B55 !important;
+  }
+
+  :not(.dark):not([data-theme="dark"]) .text-stone-500,
+  :not(.dark):not([data-theme="dark"]) .text-gray-500 {
+    color: #3D4640 !important;
   }
 
   ::selection {
