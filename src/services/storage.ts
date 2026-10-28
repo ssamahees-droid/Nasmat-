@@ -1482,6 +1482,44 @@ class StorageService {
   resetAllToFactoryDemo(): void {
     localStorage.clear();
   }
+
+  /**
+   * Return Mode ("وضع العودة"):
+   * Checks the user's last visit timestamp.
+   * If last visit was >= thresholdDays ago, returns the days absent and marks session.
+   * Always updates the stored last visit timestamp.
+   */
+  checkReturnModeInactivity(thresholdDays: number = 7): { isReturnEligible: boolean; daysAbsent: number } {
+    if (typeof window === 'undefined') return { isReturnEligible: false, daysAbsent: 0 };
+    try {
+      const lastVisitStr = localStorage.getItem('nesmat_last_visit_timestamp_v1');
+      const now = new Date().getTime();
+      
+      // If no lastVisit stored yet, initialize it now (first visit for user)
+      if (!lastVisitStr) {
+        localStorage.setItem('nesmat_last_visit_timestamp_v1', now.toString());
+        return { isReturnEligible: false, daysAbsent: 0 };
+      }
+
+      const lastVisit = parseInt(lastVisitStr, 10);
+      const diffMs = now - lastVisit;
+      const daysAbsent = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      // Always update last visit timestamp to current time for future visits
+      localStorage.setItem('nesmat_last_visit_timestamp_v1', now.toString());
+
+      if (daysAbsent > thresholdDays) {
+        // Ensure Return Mode modal is presented only once per qualifying return session
+        const seenForThisReturn = sessionStorage.getItem('nesmat_return_mode_shown_session');
+        if (!seenForThisReturn) {
+          sessionStorage.setItem('nesmat_return_mode_shown_session', 'true');
+          return { isReturnEligible: true, daysAbsent };
+        }
+      }
+      return { isReturnEligible: false, daysAbsent };
+    } catch (_) {}
+    return { isReturnEligible: false, daysAbsent: 0 };
+  }
 }
 
 export const storage = new StorageService();

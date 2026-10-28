@@ -198,20 +198,25 @@ export default defineConfig(() => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
-              if (id.includes('react/') || id.includes('react-dom/')) {
-                return 'vendor-react';
-              }
-              if (id.includes('motion')) {
-                return 'vendor-motion';
-              }
-              if (id.includes('firebase')) {
-                return 'vendor-firebase';
+              if (id.includes('lucide-react')) {
+                return 'vendor-lucide';
               }
               if (id.includes('recharts') || id.includes('d3-')) {
                 return 'vendor-charts';
               }
-              if (id.includes('lucide-react')) {
-                return 'vendor-lucide';
+              if (id.includes('firebase')) {
+                return 'vendor-firebase';
+              }
+              if (id.includes('motion')) {
+                return 'vendor-motion';
+              }
+              if (
+                id.includes('node_modules/react/') || 
+                id.includes('node_modules/react-dom/') || 
+                id.includes('node_modules/scheduler/') ||
+                id.includes('node_modules/react-is/')
+              ) {
+                return 'vendor-react';
               }
             }
           }
@@ -222,6 +227,7 @@ export default defineConfig(() => {
       alias: {
         '@': path.resolve(process.cwd(), '.'),
       },
+      dedupe: ['react', 'react-dom'],
     },
     server: {
       hmr: false,

@@ -18,6 +18,7 @@ import { DailyCheckin, MoodValue, AssessmentRecord, WellnessHabit, HabitCategory
 import { RelaxationCalendarSection } from '../components/RelaxationCalendarSection';
 import { MoodJourneyChartSection } from '../components/MoodJourneyChartSection';
 import { BreathingAdherenceChartSection } from '../components/BreathingAdherenceChartSection';
+import { ConsistencyHeatmapSection } from '../components/ConsistencyHeatmapSection';
 import { MoodReportGenerator } from '../components/MoodReportGenerator';
 import { AchievementShareCardModal } from '../components/AchievementShareCardModal';
 import { BrandedIdentityCardModal } from '../components/BrandedIdentityCardModal';
@@ -333,6 +334,12 @@ export const JourneyScreen: React.FC<JourneyScreenProps> = ({
       <BreathingAdherenceChartSection
         onNavigateToBreathe={onNavigateToBreathe}
         onNavigateToListen={onNavigateToListen}
+      />
+
+      {/* 🗓️ خريطة الالتزام والاستمرارية (٣٠ يوماً) بواسطة recharts */}
+      <ConsistencyHeatmapSection
+        onNavigateToBreathe={onNavigateToBreathe}
+        onNavigateToPractice={() => onNavigate && onNavigate('practice')}
       />
 
       {/* المولد الذكي للتقرير الأسبوعي */}

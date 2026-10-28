@@ -71,6 +71,7 @@ interface HomeScreenProps {
   onOpenOrigamiGarden?: () => void;
   onOpenMusicLounge?: () => void;
   onOpenEndlessPsychology?: (cat?: string) => void;
+  onOpenModal?: (name: string) => void;
   theme?: 'dark' | 'light' | 'system';
   isMobilePerformanceMode?: boolean;
   onToggleMobilePerformanceMode?: () => void;
@@ -99,6 +100,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenGratitudeGarden,
   onOpenMindfulnessStudio,
   onOpenRescueKit,
+  onOpenModal,
   isMobilePerformanceMode = false,
   onToggleMobilePerformanceMode
 }) => {
@@ -126,36 +128,53 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     } catch (_) {}
   }, []);
 
-  const moodOptions: { id: MoodValue; label: string; emoji: string; tip: string }[] = [
+  const moodOptions: { 
+    id: MoodValue; 
+    label: string; 
+    emoji: string; 
+    tip: string;
+    actionLabel: string;
+    onAction: () => void;
+  }[] = [
     { 
       id: 'good', 
       label: t('home.mood.good', 'مرتاح ومبسوط'), 
       emoji: '😊', 
-      tip: t('home.mood.tip_good', 'يا رب دايماً في رضا وسلام! شارك امتنانك في حديقة الامتنان لتدوم البهجة 🌸')
+      tip: t('home.mood.tip_good', 'يا رب دايماً في رضا وسلام! شارك امتنانك في حديقة الامتنان لتدوم البهجة 🌸'),
+      actionLabel: 'الانتقال للحديقة 🌸',
+      onAction: () => onOpenGratitudeGarden ? onOpenGratitudeGarden() : onNavigate('start')
     },
     { 
       id: 'fair', 
       label: t('home.mood.fair', 'هادي ومستقر'), 
       emoji: '🍃', 
-      tip: t('home.mood.tip_fair', 'الهدوء نعمة جميلة؛ دقيقة تنفس عميق كفيلة بتثبيت هذا السلام في يومك 🍃')
+      tip: t('home.mood.tip_fair', 'الهدوء نعمة جميلة؛ دقيقة تنفس عميق كفيلة بتثبيت هذا السلام في يومك 🍃'),
+      actionLabel: 'دقيقة تنفس 🍃',
+      onAction: () => onNavigate('breathe')
     },
     { 
       id: 'confused', 
       label: t('home.mood.confused', 'مشوش شوية'), 
       emoji: '🤔', 
-      tip: t('home.mood.tip_confused', 'التشوش علامة على الرغبة في الفهم؛ مرآة الذات وبوصلة المشاعر بانتظارك 🧭')
+      tip: t('home.mood.tip_confused', 'التشوش علامة على الرغبة في الفهم؛ مرآة الذات وبوصلة المشاعر بانتظارك 🧭'),
+      actionLabel: 'مرآة المشاعر 🧭',
+      onAction: () => onNavigate('discovery')
     },
     { 
       id: 'not_good', 
       label: t('home.mood.not_good', 'مضغوط ومثقل'), 
       emoji: '😔', 
-      tip: t('home.mood.tip_not_good', 'سلامتك يا غالي؛ بستان الألعاب وفرقعة الأعباء صُمم خصيصاً لتخفيف هذا الحمل 🎈')
+      tip: t('home.mood.tip_not_good', 'سلامتك يا غالي؛ بستان الألعاب وفرقعة الأعباء صُمم خصيصاً لتخفيف هذا الحمل 🎈'),
+      actionLabel: 'تخفيف الحمل 🎈',
+      onAction: () => onNavigate('games')
     },
     { 
       id: 'exhausted', 
       label: t('home.mood.exhausted', 'طاقتي خلصت'), 
       emoji: '😫', 
-      tip: t('home.mood.tip_exhausted', 'أنت مش مطلوب منك تكون بطل طول الوقت؛ خذ استراحة دافية في واحة التنفس 🔋')
+      tip: t('home.mood.tip_exhausted', 'أنت مش مطلوب منك تكون بطل طول الوقت؛ خذ استراحة دافية في واحة التنفس 🔋'),
+      actionLabel: 'حقيبة الإنقاذ 🔋',
+      onAction: () => onOpenRescueKit ? onOpenRescueKit() : onNavigate('breathe')
     },
   ];
 
@@ -341,6 +360,81 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         onOpenGratitudeGardenModal={onOpenGratitudeGarden}
       />
 
+      {/* ✨ أفكار وأدوات نسمة حياة المبتكرة والاستثنائية */}
+      <section className="p-5 sm:p-7 border-2 border-[#D5DED7] rounded-3xl sm:rounded-4xl space-y-4 shadow-sm bg-[#FFFFFF] text-[#292F2B]">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D5DED7] pb-3">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E2EFE7] text-[#174F3F] text-[15px] font-bold">
+              <span>✨ مبتكر حديثاً</span>
+            </div>
+            <h2 className="text-[22px] sm:text-[25px] font-bold text-[#174F3F] mt-1">
+              أدوات التهدئة والتعبير المبتكرة 🌿
+            </h2>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          
+          {/* Tool 1: Time Capsule */}
+          <button
+            onClick={() => onOpenModal && onOpenModal('time_capsule')}
+            className="p-4 sm:p-5 rounded-2xl bg-[#F7F5EF] hover:bg-[#E2EFE7] border-2 border-[#D5DED7] hover:border-[#174F3F] text-right transition-all cursor-pointer shadow-xs space-y-2 active:scale-95 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-3xl">⏳</span>
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#FFFFFF] text-[#174F3F] border border-[#D5DED7]">
+                كبسولة الزمن
+              </span>
+            </div>
+            <h3 className="font-bold text-[18px] text-[#174F3F]">
+              رسالة لنسختك المستقبليّة
+            </h3>
+            <p className="text-xs text-[#515B55] font-medium leading-relaxed">
+              اكتب رسالة دعم ونصح لنفسك لتفتح تلقائياً في موعدك الموعود 💌
+            </p>
+          </button>
+
+          {/* Tool 2: Micro Reset Dial */}
+          <button
+            onClick={() => onOpenModal && onOpenModal('micro_reset')}
+            className="p-4 sm:p-5 rounded-2xl bg-[#F7F5EF] hover:bg-[#E2EFE7] border-2 border-[#D5DED7] hover:border-[#174F3F] text-right transition-all cursor-pointer shadow-xs space-y-2 active:scale-95 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-3xl">⏱️</span>
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#FFFFFF] text-[#174F3F] border border-[#D5DED7]">
+                تهدئة ٣٠ ثانية
+              </span>
+            </div>
+            <h3 className="font-bold text-[18px] text-[#174F3F]">
+              قرص التهدئة الخاطف
+            </h3>
+            <p className="text-xs text-[#515B55] font-medium leading-relaxed">
+              تصفية التوتر والضباب الذهني بلمسة واحدة وإيقاع تنفس متزن 🍃
+            </p>
+          </button>
+
+          {/* Tool 3: Kindness Whispers */}
+          <button
+            onClick={() => onOpenModal && onOpenModal('kindness_whispers')}
+            className="p-4 sm:p-5 rounded-2xl bg-[#F7F5EF] hover:bg-[#E2EFE7] border-2 border-[#D5DED7] hover:border-[#174F3F] text-right transition-all cursor-pointer shadow-xs space-y-2 active:scale-95 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-3xl">🌳</span>
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#FFFFFF] text-[#174F3F] border border-[#D5DED7]">
+                شجرة العرفان
+              </span>
+            </div>
+            <h3 className="font-bold text-[18px] text-[#174F3F]">
+              شجرة الهمسات المجهولة
+            </h3>
+            <p className="text-xs text-[#515B55] font-medium leading-relaxed">
+              اقتطف ورقة دعم ذهبية أو اترك همسة طيبة لإخوانك في الواحة 🌸
+            </p>
+          </button>
+
+        </div>
+      </section>
+
       {/* 📱 PWA Install Card */}
       <PWAInstallCard />
 
@@ -415,9 +509,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Active Tip */}
         {activeMoodObj && (
-          <div className="p-4 rounded-2xl border border-[#B78327]/30 bg-[#F8EED8] text-[#292F2B] flex items-center gap-3 animate-fade-in shadow-xs">
-            <span className="text-2xl sm:text-3xl shrink-0">💌</span>
-            <p className="font-medium text-[17px] sm:text-[18px] leading-relaxed">{activeMoodObj.tip}</p>
+          <div className="p-4 rounded-2xl border border-[#B78327]/30 bg-[#F8EED8] text-[#292F2B] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in shadow-xs">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl sm:text-3xl shrink-0">💌</span>
+              <p className="font-medium text-[17px] sm:text-[18px] leading-relaxed">{activeMoodObj.tip}</p>
+            </div>
+            <button
+              onClick={activeMoodObj.onAction}
+              className="min-h-[44px] px-4 py-2 bg-[#174F3F] hover:bg-[#23785B] text-white text-[15px] font-bold rounded-xl transition-all shrink-0 active:scale-95 shadow-xs flex items-center gap-1.5 cursor-pointer self-end sm:self-auto"
+            >
+              <span>{activeMoodObj.actionLabel}</span>
+              <ChevronIcon size={16} className="w-4 h-4" />
+            </button>
           </div>
         )}
       </section>

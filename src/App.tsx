@@ -99,6 +99,10 @@ const ActivityRatingModal = lazy(() => import('./components/ActivityRatingModal'
 const NesmatCipherModal = lazy(() => import('./components/NesmatCipherModal').then(m => ({ default: m.NesmatCipherModal })));
 const RealPuzzlesModal = lazy(() => import('./components/RealPuzzlesModal').then(m => ({ default: m.RealPuzzlesModal })));
 const GardenWelcomeModal = lazy(() => import('./components/GardenWelcomeModal').then(m => ({ default: m.GardenWelcomeModal })));
+const TimeCapsuleModal = lazy(() => import('./components/TimeCapsuleModal').then(m => ({ default: m.TimeCapsuleModal })));
+const MicroResetDialModal = lazy(() => import('./components/MicroResetDialModal').then(m => ({ default: m.MicroResetDialModal })));
+const KindnessWhispersModal = lazy(() => import('./components/KindnessWhispersModal').then(m => ({ default: m.KindnessWhispersModal })));
+const ReturnModeModal = lazy(() => import('./components/ReturnModeModal').then(m => ({ default: m.ReturnModeModal })));
 
 const VALID_TABS: Record<string, string> = {
   '': 'welcome',
@@ -434,6 +438,24 @@ export default function App() {
   const [isDiscoveryQuizOpen, setIsDiscoveryQuizOpen] = useState(false);
   const [isFekerModalOpen, setIsFekerModalOpen] = useState(false);
   const [isCompanionOpen, setIsCompanionOpen] = useState(false);
+  const [isTimeCapsuleOpen, setIsTimeCapsuleOpen] = useState(false);
+  const [isMicroResetOpen, setIsMicroResetOpen] = useState(false);
+  const [isKindnessWhispersOpen, setIsKindnessWhispersOpen] = useState(false);
+  const [returnModeState, setReturnModeState] = useState<{ isOpen: boolean; daysAbsent: number }>({
+    isOpen: false,
+    daysAbsent: 0
+  });
+
+  // 🌿 Check Return Mode ("وضع العودة") inactivity threshold (7 days) on app start
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const { isReturnEligible, daysAbsent } = storage.checkReturnModeInactivity(7);
+      if (isReturnEligible) {
+        setReturnModeState({ isOpen: true, daysAbsent });
+      }
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Creative Psychological Games
   const [isInnerBurdensOpen, setIsInnerBurdensOpen] = useState(false);
@@ -586,6 +608,19 @@ export default function App() {
         break;
       case 'reframing_puzzle':
         setIsReframingPuzzleOpen(true);
+        break;
+      case 'time_capsule':
+      case 'timecapsule':
+        setIsTimeCapsuleOpen(true);
+        break;
+      case 'micro_reset':
+      case 'microreset':
+        setIsMicroResetOpen(true);
+        break;
+      case 'kindness_whispers':
+      case 'kindness':
+      case 'whispers':
+        setIsKindnessWhispersOpen(true);
         break;
       default:
         console.warn('Unknown modal name:', modalName);
@@ -774,6 +809,7 @@ export default function App() {
               onOpenOrigamiGarden={() => setIsOrigamiGardenOpen(true)}
               onOpenMusicLounge={() => setIsMusicLoungeOpen(true)}
               onOpenEndlessPsychology={(cat) => setEndlessPsychologyState({ isOpen: true, category: cat || 'all' })}
+              onOpenModal={handleOpenModalByName}
             />
           )}
 
@@ -1509,6 +1545,45 @@ export default function App() {
             currentTab={currentTab}
             onNavigate={handleNavigate}
             theme={theme}
+          />
+        )}
+
+        {/* ⏳ Creative Modals: Time Capsule, Micro-Reset Dial, Kindness Whispers */}
+        {isTimeCapsuleOpen && (
+          <TimeCapsuleModal
+            isOpen={isTimeCapsuleOpen}
+            onClose={() => setIsTimeCapsuleOpen(false)}
+          />
+        )}
+
+        {isMicroResetOpen && (
+          <MicroResetDialModal
+            isOpen={isMicroResetOpen}
+            onClose={() => setIsMicroResetOpen(false)}
+          />
+        )}
+
+        {isKindnessWhispersOpen && (
+          <KindnessWhispersModal
+            isOpen={isKindnessWhispersOpen}
+            onClose={() => setIsKindnessWhispersOpen(false)}
+          />
+        )}
+
+        {/* 🌿 Return Mode Modal ("وضع العودة") */}
+        {returnModeState.isOpen && (
+          <ReturnModeModal
+            isOpen={returnModeState.isOpen}
+            daysAbsent={returnModeState.daysAbsent}
+            onClose={() => setReturnModeState(prev => ({ ...prev, isOpen: false }))}
+            onResumeJourney={() => {
+              setReturnModeState(prev => ({ ...prev, isOpen: false }));
+              handleNavigate('journey');
+            }}
+            onSelectGentleDay={() => {
+              setReturnModeState(prev => ({ ...prev, isOpen: false }));
+              handleNavigate('breathe');
+            }}
           />
         )}
 
