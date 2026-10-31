@@ -185,6 +185,29 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  // 📲 Capture & Store PWA 'beforeinstallprompt' Event
+  // Prevents the browser from showing the default automatic banner, enabling on-demand manual install via dedicated button
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      (window as any).__deferredPWAInstallPrompt = e;
+      window.dispatchEvent(new CustomEvent('nesmat_pwa_prompt_ready'));
+    };
+
+    const handleAppInstalled = () => {
+      (window as any).__deferredPWAInstallPrompt = null;
+      window.dispatchEvent(new CustomEvent('nesmat_pwa_installed'));
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
   // Theme state: light, dark, system (aligned with system preference on first boot to eliminate flicker)
   const [theme, setTheme] = useState<'dark' | 'light' | 'system'>(() => {
     const saved = localStorage.getItem('nesmat_theme');

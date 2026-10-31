@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Download, Share, PlusSquare, X, Smartphone, Check } from 'lucide-react';
 import { usePWAInstall } from '../hooks/usePWAInstall';
+import { PWAInstallGuideModal } from './PWAInstallGuideModal';
 
 interface PWAInstallButtonProps {
   variant?: 'compact' | 'full' | 'banner';
@@ -96,63 +97,11 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
         </div>
       )}
 
-      {/* iOS & Manual Installation Modal Guide */}
-      {showIOSGuide && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200"
-          dir="rtl"
-        >
-          <div className="w-full max-w-sm rounded-2xl bg-[#141a16] border border-emerald-500/30 p-5 shadow-2xl text-stone-200 space-y-4">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <div className="flex items-center gap-2 text-emerald-300 font-tajawal font-bold text-base">
-                <Smartphone className="w-5 h-5 text-emerald-400" />
-                <span>كيفية تثبيت نسمة حياة</span>
-              </div>
-              <button
-                onClick={() => setShowIOSGuide(false)}
-                className="p-1 rounded-lg hover:bg-white/10 text-stone-400 hover:text-white transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-3 text-xs leading-relaxed text-stone-300">
-              <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
-                <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-300 font-bold flex items-center justify-center shrink-0">1</span>
-                <div>
-                  <p className="font-bold text-stone-100">اضغط على زر المشاركة</p>
-                  <p className="text-stone-400 mt-0.5">في شريط متصفح سفاري (Safari) بالأسفل اضغط على أيقونة <Share className="inline w-3.5 h-3.5 text-blue-400 mx-1" /></p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
-                <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-300 font-bold flex items-center justify-center shrink-0">2</span>
-                <div>
-                  <p className="font-bold text-stone-100">اختر «إضافة إلى الشاشة الرئيسية»</p>
-                  <p className="text-stone-400 mt-0.5">مرر القائمة لأسفل ثم اضغط على <PlusSquare className="inline w-3.5 h-3.5 text-emerald-400 mx-1" /> «Add to Home Screen»</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-3 rounded-xl bg-white/5 border border-white/5">
-                <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-300 font-bold flex items-center justify-center shrink-0">3</span>
-                <div>
-                  <p className="font-bold text-stone-100">تأكيد الإضافة</p>
-                  <p className="text-stone-400 mt-0.5">اضغط على «إضافة» (Add) في الزاوية العلوية لتظهر أيقونة نسمة حياة على شاشتك الرئيسية فوراً.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <button
-                onClick={() => setShowIOSGuide(false)}
-                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-tajawal font-bold text-xs transition cursor-pointer"
-              >
-                فهمت، شكراً
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Dedicated Step-by-Step Animated Install Guide Modal */}
+      <PWAInstallGuideModal
+        isOpen={showIOSGuide}
+        onClose={() => setShowIOSGuide(false)}
+      />
     </>
   );
 };

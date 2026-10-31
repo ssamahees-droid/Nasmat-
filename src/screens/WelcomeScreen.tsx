@@ -23,6 +23,7 @@ import {
   Heart,
   Check
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useTenScreens, TenScreenItem } from '../constants/tenScreens';
 import { chimeService } from '../services/chimeService';
 import { useLanguage } from '../context/LanguageContext';
@@ -281,13 +282,29 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         </div>
 
         {/* Rotary Wheel Area */}
-        <div className="relative flex flex-col items-center justify-center my-3">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.82, rotate: -20 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          transition={{ 
+            type: "spring", 
+            stiffness: 140, 
+            damping: 18, 
+            mass: 0.9, 
+            delay: 0.15 
+          }}
+          className="relative flex flex-col items-center justify-center my-3"
+        >
           
           {/* Top Pointer Needle with tactile bump */}
-          <div className="absolute -top-3 z-30 flex flex-col items-center pointer-events-none">
+          <motion.div 
+            initial={{ opacity: 0, y: -15, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.35, duration: 0.35, ease: "easeOut" }}
+            className="absolute -top-3 z-30 flex flex-col items-center pointer-events-none"
+          >
             <div className={`w-0 h-0 border-l-[13px] border-l-transparent border-r-[13px] border-r-transparent border-t-[24px] border-t-[#B78327] drop-shadow-md transition-transform duration-75 ${needleBumping ? '-rotate-12 scale-110' : 'rotate-0'}`} />
             <div className="w-3.5 h-3.5 rounded-full bg-[#B78327] ring-2 ring-white shadow-sm -mt-1.5" />
-          </div>
+          </motion.div>
 
           {/* SVG Rotating Wheel */}
           <div className="relative p-2 rounded-full border-4 border-[#174F3F]/30 bg-[#FFFFFF] shadow-xl">
@@ -418,7 +435,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
               <ChevronLeft className="w-4 h-4 text-[#23785B]" />
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* 🌟 SINGLE ACTIVE PREVIEW CARD */}
         <div className="w-full max-w-md mx-auto">

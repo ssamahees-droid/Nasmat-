@@ -141,14 +141,19 @@
     color: var(--ink);
   }
 
-  /* Boost contrast for any muted text in light mode to prevent fading */
+  /* Boost contrast for any muted text in light mode to guarantee WCAG AA >= 4.5:1 contrast ratio */
+  :not(.dark):not([data-theme="dark"]) .text-stone-300,
   :not(.dark):not([data-theme="dark"]) .text-stone-400,
-  :not(.dark):not([data-theme="dark"]) .text-gray-400 {
+  :not(.dark):not([data-theme="dark"]) .text-gray-300,
+  :not(.dark):not([data-theme="dark"]) .text-gray-400,
+  :not(.dark):not([data-theme="dark"]) .text-slate-300,
+  :not(.dark):not([data-theme="dark"]) .text-slate-400 {
     color: #515B55 !important;
   }
 
   :not(.dark):not([data-theme="dark"]) .text-stone-500,
-  :not(.dark):not([data-theme="dark"]) .text-gray-500 {
+  :not(.dark):not([data-theme="dark"]) .text-gray-500,
+  :not(.dark):not([data-theme="dark"]) .text-slate-500 {
     color: #3D4640 !important;
   }
 

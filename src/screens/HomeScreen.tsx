@@ -205,28 +205,29 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       dir={isRTL ? 'rtl' : 'ltr'}
     >
 
-      {/* 🌸 الشاشة الأولى (الرئيسية) — واحة الترحيب المبهجة والدافئة */}
+      {/* 🌸 الشاشة الرئيسية — نسمة حياة */}
       <section className="relative overflow-hidden p-6 sm:p-9 rounded-3xl sm:rounded-4xl bg-[#FFFFFF] border-2 border-[#D5DED7] text-[#292F2B] shadow-sm transition-all">
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-4 max-w-2xl w-full">
             
-            {/* Joyful Badge Lockup */}
-            <div className="flex items-center gap-2.5">
+            {/* Identity & Guide Lockup */}
+            <div className="flex flex-wrap items-center gap-2.5">
               <span className="px-3.5 py-1.5 rounded-full text-[15px] font-bold bg-[#E2EFE7] text-[#174F3F] border border-[#23785B]/30 flex items-center gap-1.5 shadow-xs">
                 <span>🌸</span>
-                <span>{t('home.hero.badge', 'الشاشة الأولى • الرئيسية')}</span>
+                <span>نسمة حياة — مش كل وجع بيبان</span>
               </span>
-              <span className="text-[15px] font-bold text-[#515B55]">
-                {t('home.hero.sub_badge', 'مبادرة نسمة حياة للصحة النفسية')}
+              <span className="px-3 py-1.5 rounded-full text-[14px] font-bold bg-[#174F3F] text-white flex items-center gap-1.5 shadow-xs">
+                <span>🌿</span>
+                <span>المرشدة الدائمة: نسمة حياة</span>
               </span>
             </div>
 
-            <h1 className="text-[28px] sm:text-[36px] font-black leading-tight text-[#174F3F]">
-              {t('home.hero.title', 'أهلاً بك في واحتك الدافية 🌿✨')}
+            <h1 className="text-[26px] sm:text-[34px] font-black leading-tight text-[#174F3F] font-tajawal">
+              أهلًا يا صديقتي 🤍، تحبي نبدأ منين النهارده؟
             </h1>
 
-            <p className="text-[18px] leading-relaxed max-w-xl font-medium text-[#292F2B]">
-              {t('home.hero.desc', 'مساحتك العربية الآمنة والمبهجة؛ قسّمنا لك كل المحتوى على عشر شاشات مستقلة لتتنقل بينها بكل حرية وسكينة دون تشتت.')}
+            <p className="text-[17px] leading-relaxed max-w-xl font-medium text-[#292F2B]">
+              مساحتك العربية الآمنة والمبهجة لترتيب أفكارك، فهم مشاعرك، والعثور على السكينة بخطوات بسيطة ودافئة.
             </p>
 
             {/* Quick Action Buttons */}
@@ -236,7 +237,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 className="min-h-[48px] px-5 py-3 bg-[#174F3F] hover:bg-[#23785B] text-white text-[17px] font-bold rounded-2xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>🧭</span>
-                <span>{t('home.hero.start_journey', 'ابدأ رحلتك (الشاشة ٢)')}</span>
+                <span>ابدأ رحلتك</span>
               </button>
 
               <button
@@ -244,7 +245,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 className="min-h-[48px] px-5 py-3 rounded-2xl text-[17px] font-bold bg-[#E2EFE7] hover:bg-[#d0e5d8] text-[#174F3F] border border-[#D5DED7] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-xs"
               >
                 <span>🌊</span>
-                <span>{t('home.hero.breathe_button', 'دقيقة تنفس هادئة')}</span>
+                <span>دقيقة تنفس هادئة</span>
               </button>
 
               <button
@@ -252,7 +253,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 className="min-h-[48px] px-5 py-3 rounded-2xl text-[17px] font-bold bg-[#FFFFFF] hover:bg-[#F7F5EF] text-[#292F2B] border-2 border-[#D5DED7] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-xs"
               >
                 <span>🎈</span>
-                <span>{t('home.hero.games_button', 'ألعاب التهدئة والمرح')}</span>
+                <span>بستان الترويح والألعاب</span>
               </button>
 
               {onOpenCompanion && (
@@ -261,18 +262,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   className="min-h-[48px] px-5 py-3 bg-[#23785B] hover:bg-[#174F3F] text-white text-[17px] font-bold rounded-2xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <SimpleIconSparkles size={18} className="w-4.5 h-4.5 text-[#F8EED8]" />
-                  <span>{t('home.hero.companion_button', 'تحدث مع رفيقي')}</span>
+                  <span>تحدث مع رفيقي</span>
                 </button>
               )}
-
-              <button
-                onClick={() => onNavigate('welcome')}
-                className="min-h-[48px] px-4 py-3 rounded-2xl text-[17px] font-bold bg-[#E2EFE7] hover:bg-[#d0e5d8] text-[#174F3F] border border-[#23785B]/40 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-xs"
-                title={t('home.hero.welcome_screen_button', 'شاشة الترحيب')}
-              >
-                <span>👋</span>
-                <span>{t('home.hero.welcome_screen_button', 'شاشة الترحيب')}</span>
-              </button>
 
               {/* Unified Share Button */}
               <UnifiedShareButton 
@@ -280,17 +272,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 label="شارك تطبيق نسمة حياة 🌿"
                 className="min-h-[48px] px-5 py-3 text-[16px] font-bold" 
               />
-
-              {/* Quick Tour Button */}
-              <button
-                type="button"
-                onClick={() => setIsQuickTourOpen(true)}
-                className="min-h-[48px] px-4 py-3 rounded-2xl text-[16px] font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 dark:text-amber-200 border border-amber-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-2xs"
-                title="الجولة التعليمية السريعة"
-              >
-                <span>🗺️</span>
-                <span>جولة سريعة</span>
-              </button>
             </div>
           </div>
 
@@ -314,6 +295,129 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               — {todayQuote.author}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* 📱 رسالة وإجراءات التطبيق الواضحة: تثبيت تلقائي، تحديث فوري، ومشاركة */}
+      <PWAInstallCard />
+
+      {/* 🌿 شبكة أقسام التطبيق الأساسية */}
+      <section className="p-5 sm:p-7 border-2 border-[#D5DED7] rounded-3xl sm:rounded-4xl space-y-5 shadow-sm bg-[#FFFFFF] text-[#292F2B]">
+        <div className="flex items-center justify-between border-b border-[#D5DED7] pb-3">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#E2EFE7] text-[#174F3F] text-[15px] font-bold">
+              <span>🌿 بوابات الرحلة والأقسام النفسية</span>
+            </div>
+            <h2 className="text-[24px] sm:text-[28px] font-black text-[#174F3F] mt-2 font-tajawal">
+              اختر القسم الذي تحتاجه اليوم 🤍
+            </h2>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            {
+              title: 'الجلسة النفسية الأسبوعية',
+              desc: 'جلسة موجهة متكاملة لتفريغ مشاعر الأسبوع وتجديد الطاقة النفسية',
+              icon: '💬❤️',
+              bg: 'bg-[#F7F5EF]',
+              border: 'border-[#D5DED7]',
+              action: () => onNavigate('weekly-session')
+            },
+            {
+              title: 'رفيقي',
+              desc: 'صديقك الذكي والمتعاطف للاستماع والدعم في أي وقت وبدون أحكام',
+              icon: '🤝💖',
+              action: () => onOpenCompanion && onOpenCompanion(),
+              bg: 'bg-[#E2EFE7]',
+              border: 'border-[#23785B]/30'
+            },
+            {
+              title: 'اسمع نفسك',
+              desc: 'مساحة هادئة للاستماع إلى أعماقك والتواصل الحقيقي مع ذاتك',
+              icon: '🎧💚',
+              action: () => onNavigate('listen-to-yourself'),
+              bg: 'bg-[#F7F5EF]',
+              border: 'border-[#D5DED7]'
+            },
+            {
+              title: 'مكتبة الوعي النفسي',
+              desc: 'أدلة علمية ومقالات مبسطة لفهم مشاعرك واضطراباتك النفسية',
+              icon: '📖✨',
+              action: () => onNavigate('explore'),
+              bg: 'bg-[#E2EFE7]',
+              border: 'border-[#23785B]/30'
+            },
+            {
+              title: 'الألعاب والتحديات',
+              desc: 'ألعاب تفريغ الضغوط، فرقعة الأعباء، وفك العقد المعرفية بطريقة مبهجة',
+              icon: '🎮🎈',
+              action: () => onNavigate('games'),
+              bg: 'bg-[#F7F5EF]',
+              border: 'border-[#D5DED7]'
+            },
+            {
+              title: 'رحلتي وبوصلتي',
+              desc: 'بوصلة المشاعر واكتشاف الذات والأنماط الشخصية العميقة',
+              icon: '🧭🌿',
+              action: () => onNavigate('journey'),
+              bg: 'bg-[#E2EFE7]',
+              border: 'border-[#23785B]/30'
+            },
+            {
+              title: 'مساحة الأمان',
+              desc: 'خطط الإنقاذ السريع، التقييمات النفسية، وميثاق الأمان والسرية',
+              icon: '🛡️🤍',
+              action: () => onNavigate('rescue'),
+              bg: 'bg-[#F7F5EF]',
+              border: 'border-[#D5DED7]'
+            },
+            {
+              title: 'نموّي وتقدّمي',
+              desc: 'تابع إنجازاتك اليومية، سجل حضورك، وشجرة نمو وعيك وسكينتك',
+              icon: '🌱📈',
+              action: () => onNavigate('profile'),
+              bg: 'bg-[#E2EFE7]',
+              border: 'border-[#23785B]/30'
+            },
+            {
+              title: 'واحة التنفس والسكينة',
+              desc: 'جلسات تنفس موجهة لتبريد التوتر وتهدئة الجهاز العصبي فوراً',
+              icon: '🌊🍃',
+              action: () => onNavigate('breathe'),
+              bg: 'bg-[#F7F5EF]',
+              border: 'border-[#D5DED7]'
+            },
+            {
+              title: 'استوديو التمارين واليقظة',
+              desc: 'مفكرة تفريغ الأفكار، أصوات الطبيعة المهدئة، وصانع الحدود الصحية',
+              icon: '🧘🕊️',
+              action: () => onNavigate('practice'),
+              bg: 'bg-[#E2EFE7]',
+              border: 'border-[#23785B]/30'
+            }
+          ].map((card, idx) => (
+            <button
+              key={idx}
+              onClick={card.action}
+              className={`p-5 sm:p-6 rounded-2xl sm:rounded-3xl ${card.bg} border-2 ${card.border} hover:border-[#174F3F] text-right transition-all cursor-pointer shadow-xs space-y-2 active:scale-95 group flex flex-col justify-between`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-3xl sm:text-4xl p-2 rounded-2xl bg-white shadow-xs">{card.icon}</span>
+                <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#174F3F] text-white">
+                  فتح القسم 🌿
+                </span>
+              </div>
+              <div className="space-y-1 pt-2">
+                <h3 className="font-black text-[18px] sm:text-[20px] text-[#174F3F] group-hover:text-[#23785B] transition-colors font-tajawal">
+                  {card.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#515B55] font-medium leading-relaxed font-cairo">
+                  {card.desc}
+                </p>
+              </div>
+            </button>
+          ))}
         </div>
       </section>
 
@@ -434,9 +538,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         </div>
       </section>
-
-      {/* 📱 PWA Install Card */}
-      <PWAInstallCard />
 
       {/* 🌿 دليل وشرح القسم */}
       <SectionExplanationCard explanation={SECTION_EXPLANATIONS.home} />
@@ -667,14 +768,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </section>
       )}
 
-      {/* 📱 PWA Install & Update Section */}
-      <div className="pt-2 px-2 max-w-xl mx-auto w-full space-y-3">
-        <PWAInstallButton variant="banner" />
-        <div className="flex justify-center">
-          <PWAInstallButton variant="full" />
-        </div>
-        <PWAUpdatePrompt />
-      </div>
+      {/* 📱 PWA Update Listener */}
+      <PWAUpdatePrompt />
 
       {/* 🗺️ Quick App Guided Onboarding Tour Modal */}
       <QuickAppTourModal
