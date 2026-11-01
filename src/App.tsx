@@ -376,7 +376,10 @@ export default function App() {
   // Universal and Creative Modals state
   const [isGardenWelcomeOpen, setIsGardenWelcomeOpen] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
-    return !localStorage.getItem('nesma_welcome_seen');
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const lastSeen = localStorage.getItem('nesma_welcome_last_date');
+    return lastSeen !== today;
   });
   const [isSafetyModalOpen, setIsSafetyModalOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);

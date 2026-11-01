@@ -8,13 +8,27 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { MoodValue } from '../types';
 import { storage } from '../services/storage';
 import { useLanguage } from '../context/LanguageContext';
 import { useTenScreens } from '../constants/tenScreens';
 import { GrowthTree } from '../components/GrowthTree';
 import { 
-  SimpleIconSparkles, 
+  MessageCircle, 
+  Sparkles, 
+  Headphones, 
+  BookOpen, 
+  Gamepad2, 
+  Compass, 
+  Shield, 
+  Activity, 
+  Wind, 
+  Feather,
+  Search,
+  X 
+} from 'lucide-react';
+import { 
   SimpleIconCheck, 
   SimpleIconChevronLeft,
   SimpleIconChevronRight,
@@ -114,6 +128,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   });
   const [justSavedCheckin, setJustSavedCheckin] = useState(false);
   const [isQuickTourOpen, setIsQuickTourOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Auto-launch Quick Guided Tour on first visit
   useEffect(() => {
@@ -261,7 +276,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   onClick={onOpenCompanion}
                   className="min-h-[48px] px-5 py-3 bg-[#23785B] hover:bg-[#174F3F] text-white text-[17px] font-bold rounded-2xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <SimpleIconSparkles size={18} className="w-4.5 h-4.5 text-[#F8EED8]" />
+                  <Sparkles size={18} className="w-4.5 h-4.5 text-[#F8EED8]" />
                   <span>تحدث مع رفيقي</span>
                 </button>
               )}
@@ -303,122 +318,218 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
       {/* 🌿 شبكة أقسام التطبيق الأساسية */}
       <section className="p-5 sm:p-7 border-2 border-[#D5DED7] rounded-3xl sm:rounded-4xl space-y-5 shadow-sm bg-[#FFFFFF] text-[#292F2B]">
-        <div className="flex items-center justify-between border-b border-[#D5DED7] pb-3">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#E2EFE7] text-[#174F3F] text-[15px] font-bold">
-              <span>🌿 بوابات الرحلة والأقسام النفسية</span>
+        <div className="space-y-4 border-b border-[#D5DED7] pb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#E2EFE7] text-[#174F3F] text-[15px] font-bold">
+                <span>🌿 بوابات الرحلة والأقسام النفسية</span>
+              </div>
+              <h2 className="text-[24px] sm:text-[28px] font-black text-[#174F3F] mt-2 font-tajawal">
+                اختر القسم الذي تحتاجه اليوم 🤍
+              </h2>
             </div>
-            <h2 className="text-[24px] sm:text-[28px] font-black text-[#174F3F] mt-2 font-tajawal">
-              اختر القسم الذي تحتاجه اليوم 🤍
-            </h2>
+
+            {/* Search Bar */}
+            <div className="relative w-full sm:w-80">
+              <span className="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-[#515B55]">
+                <Search size={18} className="w-4.5 h-4.5" />
+              </span>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="ابحث في الأقسام والخدمات (تنفس، ألعاب، جلسة...)... 🔍"
+                className="w-full pl-9 pr-10 py-3 rounded-2xl bg-[#F7F5EF] border-2 border-[#D5DED7] focus:border-[#174F3F] text-[15px] font-medium text-[#292F2B] outline-none transition-all shadow-2xs"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#515B55] hover:text-[#174F3F]"
+                  title="مسح البحث"
+                >
+                  <X size={16} className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Quick Filter Tags */}
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            {[
+              { label: 'الكل 🌿', query: '' },
+              { label: 'جلسة 💬', query: 'جلسة' },
+              { label: 'رفيقي ✨', query: 'رفيقي' },
+              { label: 'تنفس 🌊', query: 'تنفس' },
+              { label: 'ألعاب 🎈', query: 'ألعاب' },
+              { label: 'مكتبة 📚', query: 'مكتبة' },
+              { label: 'أمان 🛡️', query: 'أمان' },
+            ].map((tag, tIdx) => (
+              <button
+                key={tIdx}
+                onClick={() => setSearchQuery(tag.query)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  searchQuery.toLowerCase() === tag.query.toLowerCase() || (tag.query === '' && searchQuery === '')
+                    ? 'bg-[#174F3F] text-white shadow-xs scale-105'
+                    : 'bg-[#F7F5EF] hover:bg-[#E2EFE7] text-[#292F2B] border border-[#D5DED7]'
+                }`}
+              >
+                {tag.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[
+        {(() => {
+          const sectionCards = [
             {
               title: 'الجلسة النفسية الأسبوعية',
-              desc: 'جلسة موجهة متكاملة لتفريغ مشاعر الأسبوع وتجديد الطاقة النفسية',
-              icon: '💬❤️',
-              bg: 'bg-[#F7F5EF]',
-              border: 'border-[#D5DED7]',
+              desc: 'جلسة موجهة متكاملة لتفريغ مشاعر الأسبوع',
+              icon: MessageCircle,
+              color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
               action: () => onNavigate('weekly-session')
             },
             {
               title: 'رفيقي',
-              desc: 'صديقك الذكي والمتعاطف للاستماع والدعم في أي وقت وبدون أحكام',
-              icon: '🤝💖',
-              action: () => onOpenCompanion && onOpenCompanion(),
-              bg: 'bg-[#E2EFE7]',
-              border: 'border-[#23785B]/30'
+              desc: 'صديقك الذكي والمتعاطف للدعم والتوجيه',
+              icon: Sparkles,
+              color: 'text-teal-700 bg-teal-50 border-teal-200',
+              action: () => onOpenCompanion && onOpenCompanion()
             },
             {
               title: 'اسمع نفسك',
-              desc: 'مساحة هادئة للاستماع إلى أعماقك والتواصل الحقيقي مع ذاتك',
-              icon: '🎧💚',
-              action: () => onNavigate('listen-to-yourself'),
-              bg: 'bg-[#F7F5EF]',
-              border: 'border-[#D5DED7]'
+              desc: 'مساحة هادئة للاستماع لأعماقك',
+              icon: Headphones,
+              color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+              action: () => onNavigate('listen-to-yourself')
             },
             {
               title: 'مكتبة الوعي النفسي',
-              desc: 'أدلة علمية ومقالات مبسطة لفهم مشاعرك واضطراباتك النفسية',
-              icon: '📖✨',
-              action: () => onNavigate('explore'),
-              bg: 'bg-[#E2EFE7]',
-              border: 'border-[#23785B]/30'
+              desc: 'أدلة علمية ومقالات لفهم مشاعرك',
+              icon: BookOpen,
+              color: 'text-teal-700 bg-teal-50 border-teal-200',
+              action: () => onNavigate('explore')
             },
             {
               title: 'الألعاب والتحديات',
-              desc: 'ألعاب تفريغ الضغوط، فرقعة الأعباء، وفك العقد المعرفية بطريقة مبهجة',
-              icon: '🎮🎈',
-              action: () => onNavigate('games'),
-              bg: 'bg-[#F7F5EF]',
-              border: 'border-[#D5DED7]'
+              desc: 'ألعاب تفريغ الضغوط وفرقعة الأعباء',
+              icon: Gamepad2,
+              color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+              action: () => onNavigate('games')
             },
             {
               title: 'رحلتي وبوصلتي',
-              desc: 'بوصلة المشاعر واكتشاف الذات والأنماط الشخصية العميقة',
-              icon: '🧭🌿',
-              action: () => onNavigate('journey'),
-              bg: 'bg-[#E2EFE7]',
-              border: 'border-[#23785B]/30'
+              desc: 'بوصلة المشاعر واكتشاف الأنماط',
+              icon: Compass,
+              color: 'text-teal-700 bg-teal-50 border-teal-200',
+              action: () => onNavigate('journey')
             },
             {
               title: 'مساحة الأمان',
-              desc: 'خطط الإنقاذ السريع، التقييمات النفسية، وميثاق الأمان والسرية',
-              icon: '🛡️🤍',
-              action: () => onNavigate('rescue'),
-              bg: 'bg-[#F7F5EF]',
-              border: 'border-[#D5DED7]'
+              desc: 'خطط الإنقاذ السريع والتقييمات',
+              icon: Shield,
+              color: 'text-red-700 bg-red-50 border-red-200',
+              action: () => onNavigate('rescue')
             },
             {
               title: 'نموّي وتقدّمي',
-              desc: 'تابع إنجازاتك اليومية، سجل حضورك، وشجرة نمو وعيك وسكينتك',
-              icon: '🌱📈',
-              action: () => onNavigate('profile'),
-              bg: 'bg-[#E2EFE7]',
-              border: 'border-[#23785B]/30'
+              desc: 'شجرة نمو الوعي وسجل الحضور',
+              icon: Activity,
+              color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+              action: () => onNavigate('profile')
             },
             {
               title: 'واحة التنفس والسكينة',
-              desc: 'جلسات تنفس موجهة لتبريد التوتر وتهدئة الجهاز العصبي فوراً',
-              icon: '🌊🍃',
-              action: () => onNavigate('breathe'),
-              bg: 'bg-[#F7F5EF]',
-              border: 'border-[#D5DED7]'
+              desc: 'جلسات تنفس لتهدئة الجهاز العصبي',
+              icon: Wind,
+              color: 'text-teal-700 bg-teal-50 border-teal-200',
+              action: () => onNavigate('breathe')
             },
             {
               title: 'استوديو التمارين واليقظة',
-              desc: 'مفكرة تفريغ الأفكار، أصوات الطبيعة المهدئة، وصانع الحدود الصحية',
-              icon: '🧘🕊️',
-              action: () => onNavigate('practice'),
-              bg: 'bg-[#E2EFE7]',
-              border: 'border-[#23785B]/30'
+              desc: 'مفكرة الأفكار وصانع الحدود',
+              icon: Feather,
+              color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+              action: () => onNavigate('practice')
             }
-          ].map((card, idx) => (
-            <button
-              key={idx}
-              onClick={card.action}
-              className={`p-5 sm:p-6 rounded-2xl sm:rounded-3xl ${card.bg} border-2 ${card.border} hover:border-[#174F3F] text-right transition-all cursor-pointer shadow-xs space-y-2 active:scale-95 group flex flex-col justify-between`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-3xl sm:text-4xl p-2 rounded-2xl bg-white shadow-xs">{card.icon}</span>
-                <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#174F3F] text-white">
-                  فتح القسم 🌿
-                </span>
-              </div>
-              <div className="space-y-1 pt-2">
-                <h3 className="font-black text-[18px] sm:text-[20px] text-[#174F3F] group-hover:text-[#23785B] transition-colors font-tajawal">
-                  {card.title}
+          ];
+
+          const filtered = sectionCards.filter(card =>
+            card.title.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+            card.desc.toLowerCase().includes(searchQuery.toLowerCase().trim())
+          );
+
+          if (filtered.length === 0) {
+            return (
+              <div className="p-8 text-center bg-[#F7F5EF] rounded-2xl border border-[#D5DED7] space-y-3">
+                <span className="text-3xl">🔍</span>
+                <h3 className="font-bold text-[18px] text-[#174F3F]">
+                  لا توجد أقسام مطابقة لبحثك "{searchQuery}"
                 </h3>
-                <p className="text-xs sm:text-sm text-[#515B55] font-medium leading-relaxed font-cairo">
-                  {card.desc}
+                <p className="text-sm text-[#515B55]">
+                  جرب البحث بكلمة أخرى مثل: تنفس، ألعاب، وعي، رفيقي، أو جلسة
                 </p>
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="px-4 py-2 bg-[#174F3F] text-white font-bold text-sm rounded-xl transition-all cursor-pointer shadow-xs"
+                >
+                  عرض جميع الأقسام 🌿
+                </button>
               </div>
-            </button>
-          ))}
-        </div>
+            );
+          }
+
+          return (
+            <motion.div 
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.05
+                  }
+                }
+              }}
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
+            >
+              {filtered.map((card, idx) => {
+                const IconComp = card.icon;
+                return (
+                  <motion.div
+                    key={idx}
+                    variants={{
+                      hidden: { opacity: 0, y: 16, scale: 0.96 },
+                      visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } }
+                    }}
+                  >
+                    <button
+                      onClick={card.action}
+                      className="w-full group p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-[#FFFFFF] hover:bg-[#F7F5EF] border-2 border-[#D5DED7] hover:border-[#174F3F] text-center sm:text-right transition-all duration-300 cursor-pointer shadow-xs hover:shadow-lg hover:-translate-y-1 active:scale-95 flex flex-col items-center sm:items-start justify-between gap-3 min-h-[140px] sm:min-h-[160px]"
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <div className={`p-3 rounded-2xl ${card.color} shadow-xs transition-transform group-hover:scale-110 duration-300`}>
+                          <IconComp size={24} className="w-6 h-6 sm:w-7 sm:h-7" />
+                        </div>
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E2EFE7] text-[#174F3F] opacity-0 group-hover:opacity-100 transition-opacity">
+                          فتح 🌿
+                        </span>
+                      </div>
+                      <div className="space-y-1 w-full">
+                        <h3 className="font-black text-[15px] sm:text-[17px] text-[#174F3F] group-hover:text-[#23785B] transition-colors font-tajawal line-clamp-1">
+                          {card.title}
+                        </h3>
+                        <p className="text-[11px] sm:text-[12px] text-[#515B55] font-medium leading-tight font-cairo line-clamp-2">
+                          {card.desc}
+                        </p>
+                      </div>
+                    </button>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          );
+        })()}
       </section>
 
       {/* 🎡 بانر شاشة الترحيب وعجلة نسمة حياة الدوارة السحرية */}
@@ -683,11 +794,29 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
 
         {/* The 9 Portals Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.08
+              }
+            }
+          }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+        >
           {destinationScreens.map((screen) => {
             return (
-              <div
+              <motion.div
                 key={screen.id}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
+                }}
                 className="group p-5 sm:p-6 rounded-3xl border-2 border-[#D5DED7] hover:border-[#23785B] bg-[#FFFFFF] transition-all duration-200 flex flex-col justify-between gap-5 shadow-xs hover:shadow-md"
               >
                 {/* Header of Card */}
@@ -738,10 +867,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   <span>{t('home.portals.enter', 'ادخل الشاشة {num}', { num: screen.numberArabic })}</span>
                   <ChevronIcon size={16} className={`w-4 h-4 transition-transform ${isRTL ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
                 </button>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </section>
 
       {/* 🛡️ شريط الطوارئ والمساعدة الفورية */}

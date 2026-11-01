@@ -25,9 +25,19 @@ export const GardenWelcomeModal: React.FC<GardenWelcomeModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
+  // Helper to get local date string YYYY-MM-DD in user's local timezone
+  const getLocalDateString = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const handleStartJourney = () => {
     try {
-      localStorage.setItem('nesma_welcome_seen', 'true');
+      const today = getLocalDateString();
+      localStorage.setItem('nesma_welcome_last_date', today);
     } catch (e) {
       console.warn('Storage error saving welcome state:', e);
     }
@@ -36,7 +46,8 @@ export const GardenWelcomeModal: React.FC<GardenWelcomeModalProps> = ({
 
   const handleSkipWelcome = () => {
     try {
-      localStorage.setItem('nesma_welcome_seen', 'true');
+      const today = getLocalDateString();
+      localStorage.setItem('nesma_welcome_last_date', today);
     } catch (e) {
       console.warn('Storage error saving welcome state:', e);
     }
